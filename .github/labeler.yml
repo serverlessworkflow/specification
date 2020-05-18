@@ -2,7 +2,7 @@ workflow:
   - ./*
 spec:
   - spec.md
-example:
+examples:
   - examples*.md
 usecases:
   - usecases.md
