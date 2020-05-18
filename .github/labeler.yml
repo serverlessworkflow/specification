@@ -1,16 +1,2 @@
 workflow:
   - ./*
-spec:
-  - spec.md
-examples:
-  - examples*.md
-usecases:
-  - usecases.md
-roadmap:
-  - roadmap.md
-community:
-  - community/*
-governance:
-  - governance/*
-schema:
-  - schema/*
