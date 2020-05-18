@@ -1,11 +1,14 @@
-name: "Close stale issues"
+name: Mark stale issues and pull requests
+
 on:
   schedule:
     - cron: "0 0 * * *"
 
 jobs:
   stale:
+
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/stale@v1
         with:
