@@ -1,7 +1,16 @@
-spec: spec.md
-example: examples*.md
-usecases: usecases.md
-roadmap: roadmap.md
-community: community/*
-governance: governance/*
-schema: schema/*
+workflow:
+  - ./*
+spec:
+  - spec.md
+example:
+  - examples*.md
+usecases:
+  - usecases.md
+roadmap:
+  - roadmap.md
+community:
+  - community/*
+governance:
+  - governance/*
+schema:
+  - schema/*
