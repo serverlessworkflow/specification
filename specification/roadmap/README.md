@@ -45,14 +45,14 @@ _Status description:_
 | 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) | |
 | 🚩 | Decide on state/task/stage/step naming convention | [issue link](https://github.com/cncf/wg-serverless/issues/127) |
 | ✏️ | Finish specification primer document | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) |
-| ✔ | Update Switch State | [spec doc](spec.md) |
-| ✔ | Rename Relay to Inject state | [spec doc](spec.md) |
-| ✔️| Update waitForCompletion property of Parallel State | [spec doc](spec.md) |
-| ✔️| Add timeout property to actions | [spec doc](spec.md) |
-| ✔️| Add examples comparing Argo workflow and spec markups | [examples doc](examples-argo.md) |
-| ✔️| Add ability to produce events during state transitions | [spec doc](spec.md) |
-| ✔️| Add event-based condition capabilities to Switch State | [spec doc](spec.md) |
-| ✔️| Add examples comparing Brigade workflow and spec markups | [examples doc](examples-brigade.md) |
-| ✔️| Update produceEvent data property | [spec doc](spec.md) |
-| ✔️| Change uppercase property and enum types to lowercase | [spec doc](spec.md) |
-| ✔️| Add Parallel State Exception Handling section | [spec doc](spec.md) |
+| ✔ | Update Switch State | [spec doc](../README.md) |
+| ✔ | Rename Relay to Inject state | [spec doc](../README.md) |
+| ✔️| Update waitForCompletion property of Parallel State | [spec doc](../README.md) |
+| ✔️| Add timeout property to actions | [spec doc](../README.md) |
+| ✔️| Add examples comparing Argo workflow and spec markups | [examples doc](../examples/examples-argo.md) |
+| ✔️| Add ability to produce events during state transitions | [spec doc](../README.md) |
+| ✔️| Add event-based condition capabilities to Switch State | [spec doc](../README.md) |
+| ✔️| Add examples comparing Brigade workflow and spec markups | [examples doc](../examples/examples-brigade.md) |
+| ✔️| Update produceEvent data property | [spec doc](../README.md) |
+| ✔️| Change uppercase property and enum types to lowercase | [spec doc](../README.md) |
+| ✔️| Add Parallel State Exception Handling section | [spec doc](../README.md) |

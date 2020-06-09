@@ -4045,16 +4045,16 @@ The extension mechanism can be used to define custom workflow elements. It is ta
 solving custom requirements that go beyond the core of the workflow specification, for example
 logging, simulation, debugging, tracing, etc.
 
-You can find more info and examples of element extensions [here](extending.md).
+You can find more info and examples of element extensions [here](extending/README.md).
 
 ## Use Cases
 
-You can find different Serverless Workflow use cases [here](usecases.md)
+You can find different Serverless Workflow use cases [here](usecases/README.md)
 
 ## Examples
 
-You can find different Serverless Workflow examples [here](examples.md)
+You can find different Serverless Workflow examples [here](examples/README.md)
 
 ## Reference
 
-You can find a list of other languages, technologies and specifications related to workflows [here](references.md)
+You can find a list of other languages, technologies and specifications related to workflows [here](references/README.md)
