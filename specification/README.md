@@ -8,7 +8,7 @@ workflows responsible for orchestrating event-driven serverless applications.
 ## License
 
 Serverless Workflow specification is free and open-source, operating under the
-[Apache License version 2.0](LICENSE).
+[Apache License version 2.0](../LICENSE).
 
 ## Status of this document
 

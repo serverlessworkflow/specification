@@ -22,9 +22,9 @@ The following documents are available:
 || Latest Release | Working Draft |
 | :--- | :--- | :--- |
 | **Core Specification:** | | |
-| Serverless Workflow| [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) | [master](https://github.com/cncf/wg-serverless/blob/master/workflow/spec/spec.md)  |
+| Serverless Workflow| [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) | [master](specification/README.md)  |
 | **Additional Documentation:** | | |
-| Model JSON Schema | [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/schema/serverless-workflow-schema-v01.json) | [master](https://github.com/cncf/wg-serverless/blob/master/workflow/spec/schema/serverless-workflow-schema.json) |
+| Model JSON Schema | [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/schema/serverless-workflow-schema-v01.json) | [master](specification/schema/serverless-workflow-schema.json) |
 
 ## Community
 
@@ -32,10 +32,9 @@ We have an growing community working together to build a dynamic serverless work
 ecosystem. Community contributions are welcome and much needed to foster specification growth.
 
 To learn about current community efforts and how to contribute
-reference the [Serverless Workflow Community doc](community/readme.md).
+reference the [Serverless Workflow Community doc](specification/community/README.md).
 
 As a CNCF member project, we abide by the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md).
-You can find the Serverless Workflow specification Governance information [here](governance/readme.md).
   
 ## Communication
 
