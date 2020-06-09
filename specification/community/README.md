@@ -1,4 +1,4 @@
-# Serverless Workflow Community  
+# Community  
 
 - [Contributors](contributors.md): People and companies contributing to the
   Serverless workflow specification and ecosystem
