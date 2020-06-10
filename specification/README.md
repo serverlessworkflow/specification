@@ -19,6 +19,7 @@ This document is a working draft.
 - [Overview](#Overview)
 - [Workflow Format](#Workflow-Format)
 - [Functional Scope](#Functional-Scope)
+- [Specification Goals](#Specification-Goals)
 - [Specification Details](#Specification-Details)
   - [Workflow Model](#Workflow-Model)
   - [Workflow Definition](#Workflow-Definition)
@@ -53,15 +54,15 @@ Many different workflow implementations (both proprietary and open-source) exist
 and capabilities. When picking a current implementations, it is very difficult to later on switch to a different one
 without investing a lot of time, and effort.
 
-Serverless Workflow is a specification that defines the model for workflows
+Serverless Workflow is a CNCF specification that defines the model for workflows
 responsible for orchestrating event-driven serverless applications.
 
 Main goals of the specification include:
 
-- To facilitate Serverless Workflow portability across different vendor platforms
-- To be completely vendor neutral
-- To support both stateless and stateful Serverless Workflow orchestration
-- To define a light-weight and powerful Serverless Workflow model
+- Facilitate Serverless Workflow portability across different vendor platforms
+- Be completely vendor neutral
+- Support both stateless and stateful Serverless Workflow orchestration
+- Define a light-weight and powerful Serverless Workflow model
 
 Workflows defined using the serverless workflow specification can be used to:
 
@@ -78,7 +79,8 @@ from states to functions, from one function to another function, and from one st
 The Serverless workflow format is defined with [JSON](https://www.json.org/json-en.html) or [YAML](https://yaml.org/).
 Structure of serverless workflows is described via [JSON Schema](https://json-schema.org/).
 
-Serverless Workflow definitions are considered specification-compliant if they conform to the [workflow schema](schema/serverless-workflow-schema.json).
+Serverless Workflow definitions are considered specification-compliant if they conform to the 
+[workflow schema](schema/serverless-workflow-schema.json).
 
 Note that this schema reflects the current status of the specification as is updated alongside this document.
 
@@ -100,6 +102,23 @@ incoming events can trigger function invocations during workflow execution.
 
 <p align="center">
 <img src="media/spec/sample-serverless-workflow2.png" height="400px" alt="Serverless Workflow Diagram"/>
+</p>
+
+## Specification Goals
+
+At the core of the Serverless Workflow specification is its [JSON Schema](schema/serverless-workflow-schema.json).
+This schema defines the workflow model. It can also be used for generation of many different artifacts
+such as APIs, and SPIs. We plan to provide these in the near future, and hope to expand them 
+to many different languages. This speficiation also strives to soon provide a TCK with a set of tests 
+implementations can use to test conformance to the specification.
+
+The specification relies on runtime implementations to adopt the markup and provide execution semantics.
+With all this in place the overall goal of the Serverless Workflow Specification is to provide 
+a JSON/YAML based markup which can be used to model serverless orchestration workflows which is executable
+on many different runtimes and thus on many different cloud/container platforms.
+
+<p align="center">
+<img src="media/spec/spec-goals.png" height="400px" alt="Serverless Workflow Specification Goals"/>
 </p>
 
 ## Specification Details
