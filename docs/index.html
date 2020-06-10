@@ -1,1 +1,208 @@
-Serverless Workflow Specification - Website
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/sws.css">
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Serverless Workflow Specification</title>
+</head>
+
+<body id="page-top">
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger justify-content-left" href="https://www.cncf.io/" target="_blank">
+            <img src="img/cncf-white.png" width="220px"/></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/cncf/wg-serverless-workflow/blob/master/specification/README.md" target="_blank"><i class="fa fa-external-link" style="color: #ffffff;"></i> Specification</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#" target="_blank"><i class="fa fa-external-link" style="color: #ffffff;"></i> Primer</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/cncf/wg-serverless-workflow/tree/master/specification/examples" target="_blank"><i class="fa fa-external-link" style="color: #ffffff;"></i> Examples</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/cncf/wg-serverless-workflow/blob/master/specification/community/contributors.md" target="_blank"><i class="fa fa-external-link" style="color: #ffffff;"></i> Contributors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/cncf/wg-serverless-workflow" target="_blank"><i class="fa fa-github" style="color: #ffffff;"></i> Github Repo</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="text-white" style="background-color: #000000">
+    <div class="container welcome-custom">
+        <div class="row">
+            <div class="col-sm-4" style="align-items: top;">
+                <img src="img/sw-logo-header.png" width="330"/>
+            </div>
+            <div class="col-sm-8" style="align-self: center;">
+                <h1>Serverless Workflow</h1>
+                <hr/>
+                <h4>A specification for describing workflows that orchestrate serverless, event-driven
+                    applications</h4></p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2>Why Serverless Workflow</h2>
+                <hr class="hr-short"/>
+                <p class="lead">
+                    Workflows have become key components of Serverless applications, yet implementations tend
+                    to describe workflows differently.
+                </p>
+                <br/>
+                <div class="card-group">
+                    <div class="card text-center">
+                        <div style="font-size: 30px;"><i class="fa fa-code" style="color: #a332ff;"></i>
+                         Consistency</div>
+                        <div class="card-body">
+                            <p class="mt-auto"><h5>
+                            The lack of a common way of describing serverless workflows means developers
+                            do not have a consistent way of modelling their serverless orchestrations.
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="card text-center">
+                        <div style="font-size: 30px;"><i class="fa fa-globe" style="color: #a332ff;"></i>
+                            Portability</div>
+                        <div class="card-body">
+                            <p class="mt-auto"><h5>
+                            The portability and productivity we can achieve from modeling serverless workflows is hindered overall.
+                        </h5>
+                        </div>
+                    </div>
+                    <div class="card text-center">
+                        <div style="font-size: 30px;"><i class="fa fa-cogs" style="color: #a332ff;"></i>
+                            Accessibility</div>
+                        <div class="card-body">
+                            <p class="mt-auto"><h5>
+                            No common workflow format means no common libraries, tooling, and infrastructure for modeling
+                            serverless workflows across different cloud platforms and/or containers.
+                        </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="whatis" class="section-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2>What is Serverless Workflow</h2>
+                <hr class="hr-short"/>
+                <p class="lead">
+                    Serverless Workflow is a <a href="https://github.com/cncf/wg-serverless-workflow/blob/master/specification/README.md" target="_blank">specification</a>
+                    for describing workflows in a common way.
+                    Serverless Workflow seeks to provide a vendor-neutral and platform-independent markup for
+                    orchestrating services on cloud and container platforms.
+                </p>
+                <p class="lead">
+                <br/>
+                <hr class="hr-short" style="width: 30%"/>
+                <img src="img/spec-goals-ws.png" width="700px"/>
+                <hr class="hr-short" style="width: 30%"/>
+                <br/>
+                </p>
+                <p class="lead">
+                    Serverless Workflow is a new effort and it's still under active development.
+                    Its working group consists of a number of leaders in the business automation industry and enthusiasts in that field.
+                    The specification is under the <a href="https://cncf.io/" target="_blank">Cloud Native Computing Foundation</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contribute">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2>Contribute to the Serverless Workflow project</h2>
+                <hr class="hr-short"/>
+                <p class="lead">
+                    Serverless Workflow is organized via the CNCF's <a href="https://github.com/cncf/wg-serverless" target="_blank">Serverless Working Group</a> and everyone is encouraged to join us.
+                    If you're interested in contributing, please collaborate with us in the <a href="https://github.com/cncf/wg-serverless-workflow" target="_blank">Serverless Workflow Github org</a>,
+                    join our weekly call on the first Monday every month at 10AM PT (USA Pacific) via <a href="https://zoom.us/my/cncfserverlesswg" target="_blank">Zoom</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="resources" class="section-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2>Resources</h2>
+                <hr class="hr-short"/>
+                <p class="lead">
+                <h2>Videos and Presentations</h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Speakers</th>
+                        <th>Event</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><a href="https://github.com/cncf/wg-serverless-workflow/blob/master/specification/community/presentations/2020-4-15-toc-pres.pdf" target="_blank">Introduction to Serverless Workflow Specification</a></td>
+                        <td>Tihomir Surdilovic</td>
+                        <td>CNCF TOC Sandbox Proposal</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://www.youtube.com/watch?v=2MPX3CGUsVE" target="_blank">Serverless Workflow, a New Approach to Business Automation</a></td>
+                        <td>Tihomir Surdilovic</td>
+                        <td>YouTube Live Event</td>
+                    </tr>
+                    </tbody>
+                </table>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-5 footer-custom">
+    <div class="container">
+        <a class="justify-content-left" href="https://www.cncf.io/" target="_blank">
+            <img src="img/cncf-white.png" width="220px"/></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"/>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+</body>
+</html>
