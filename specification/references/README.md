@@ -50,15 +50,15 @@ The [BPMN specification](https://www.omg.org/spec/BPMN/) provides XML Schemas fo
 
   **Loan Approval Workflow**
 
-  ![Loan Approval Example](media/references/loan-approval-workflow.png)
+  ![Loan Approval Example](../media/references/loan-approval-workflow.png)
 
-  You can find the BPMN XML which can be executed in a number of Open Source and Proprietary engines [here](media/references/loan-approval-workflow.bpmn)
+  You can find the BPMN XML which can be executed in a number of Open Source and Proprietary engines [here](../media/references/loan-approval-workflow.bpmn)
 
   **Travel Booking Workflow**
 
-  ![Travel Booking Example](media/references/travel-booking-workflow.png)
+  ![Travel Booking Example](../media/references/travel-booking-workflow.png)
 
-  You can find the BPMN XML which can be executed in a number of Open Source and Proprietary engines [here](media/references/travel-booking-workflow.bpmn)
+  You can find the BPMN XML which can be executed in a number of Open Source and Proprietary engines [here](../media/references/travel-booking-workflow.bpmn)
 </details>
 
 ## Mistral Workflow Language
