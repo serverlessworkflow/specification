@@ -1,0 +1,47 @@
+body {
+    font-family: 'Architects Daughter', cursive;
+}
+header {
+  padding: 156px 0 100px;
+}
+section {
+  padding: 150px 0;
+}
+.section-dark {
+    background-color: #000000;
+    color: #ffffff;
+}
+hr{
+   height: 4px;
+   background-color: #a332ff;
+   border: none;
+}
+a {
+  color: #a332ff;
+}
+.navbar-custom {
+    background-color: #000000;
+}
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+    color: #ffffff
+}
+.navbar-custom .navbar-nav .nav-link {
+    color: #ffffff
+}
+.navbar-custom .nav-item.active .nav-link,
+.navbar-custom .nav-item:focus .nav-link,
+.navbar-custom .nav-item:hover .nav-link {
+    color: #ffffff;
+}
+.footer-custom {
+    background-color: #000000;
+}
+.welcome-custom {
+    background-color: #000000;
+}
+.hr-short{
+   height: 4px;
+   background-color: #a332ff;
+   border: none;
+}
