@@ -109,12 +109,12 @@ incoming events can trigger function invocations during workflow execution.
 At the core of the Serverless Workflow specification is its [JSON Schema](schema/serverless-workflow-schema.json).
 This schema defines the workflow model. It can also be used for generation of many different artifacts
 such as APIs, and SPIs. We plan to provide these in the near future, and hope to expand them 
-to many different languages. This speficiation also strives to soon provide a TCK with a set of tests 
+to many different languages. This speficiation also strives to soon provide a TCK with a set of tests which 
 implementations can use to test conformance to the specification.
 
 The specification relies on runtime implementations to adopt the markup and provide execution semantics.
 With all this in place the overall goal of the Serverless Workflow Specification is to provide 
-a JSON/YAML based markup which can be used to model serverless orchestration workflows which is executable
+a JSON/YAML based markup which can be used to model serverless orchestration workflows that are executable
 on many different runtimes and thus on many different cloud/container platforms.
 
 <p align="center">
