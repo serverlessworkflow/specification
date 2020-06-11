@@ -100,9 +100,7 @@ Serverless Workflow allows users to:
 Following diagram illustrates functional flow that involves states, events and functions. It shows that
 incoming events can trigger function invocations during workflow execution.
 
-<p align="center">
-<img src="media/spec/sample-serverless-workflow2.png" height="400px" alt="Serverless Workflow Diagram"/>
-</p>
+![Serverless Workflow Diagram](media/spec/sample-serverless-workflow2_small.png)
 
 ## Specification Goals
 
@@ -117,9 +115,7 @@ With all this in place the overall goal of the Serverless Workflow Specification
 a JSON/YAML based markup which can be used to model serverless orchestration workflows that are executable
 on many different runtimes and thus on many different cloud/container platforms.
 
-<p align="center">
-<img src="media/spec/spec-goals.png" height="400px" alt="Serverless Workflow Specification Goals"/>
-</p>
+![Serverless Workflow Specification Goals](media/spec/spec-goals_small.png)
 
 ## Specification Details
 
@@ -285,9 +281,7 @@ As mentioned, implementation compliance is based on the workflow definition lang
 Defines the top-level structure of a serverless workflow model.
 Following figure describes the main workflow definition blocks.
 
-<p align="center">
-<img src="media/spec/workflowdefinitionblocks.png" height="300px" alt="Serverless Workflow Definitions Blocks"/>
-</p>
+![Serverless Workflow Definitions Blocks](media/spec/workflowdefinitionblocks_small.png)
 
 #### Function Definition
 
@@ -620,15 +614,11 @@ The "exclusive" property determines if the state should wait for any of the defi
 
 Following two figures illustrate the "exclusive" property:
 
-<p align="center">
-<img src="media/spec/event-state-exclusive-true.png" height="300px" alt="Event state with exclusive set to true"/>
-</p>
+![Event state with exclusive set to true](media/spec/event-state-exclusive-true_small.png)
 
 If the event state in this case is a starting state, any of the defined events would start a new workflow instance.
 
-<p align="center">
-<img src="media/spec/event-state-exclusive-false.png" height="300px" alt="Event state with exclusive set to false"/>
-</p>
+![Event state with exclusive set to false](media/spec/event-state-exclusive-false_small.png)
 
 If the event state in this case is a starting state, occurrence of all defined events would start a new
  workflow instance.
@@ -3265,9 +3255,7 @@ If no input is provided the default data input is the empty object:
 
 Workflow data input is passed to the workflow's [start state](#Start-Definition) state as data input.
 
-<p align="center">
-<img src="media/spec/workflowdatainput.png" height="350px" alt="Workflow data input"/>
-</p>
+![Workflow data input](media/spec/workflowdatainput_small.png)
 
 In order to define the structure of expected workflow data input you can use the workflow
 "dataInputSchema" property. This property allows you to link to a [JSON Schema](https://json-schema.org/) definition
@@ -3281,9 +3269,7 @@ CloudEvents can contain data which is needed to make further orchestration decis
 is merged with the data input of the Event state, so it can be used inside defined actions
 or be passed as data output to transition states.
 
-<p align="center">
-<img src="media/spec/eventdatamerged.png" height="350px" alt="Event data merged with state data input"/>
-</p>
+![Event data merged with state data input](media/spec/eventdatamerged_small.png)
 
 Similarly for Callback states, the callback event data is merged with the data input of the Callback state.
 
@@ -3292,9 +3278,7 @@ Similarly for Callback states, the callback event data is merged with the data i
 [Event](#Event-State), [Callback](#Callback-State), and [Operation](#Operation-State) states can execute [actions](#Action-Definition). Actions can invoke different services (functions). Functions can return results that may be needed to make
 further orchestration decisions. Results data from function invocations is merged with the state data.
 
-<p align="center">
-<img src="media/spec/actionsdatamerged.png" height="350px" alt="Actions data merged with state data"/>
-</p>
+![Actions data merged with state data](media/spec/actionsdatamerged_small.png)
 
 #### Information Passing Between States
 
@@ -3307,9 +3291,7 @@ There are two of rules to consider here:
 - If the state is the starting state its data input is the [workflow data input](#Workflow-data-input).
 - If the state is an end state ("end" property is defined), its data output is the [workflow data output](#Workflow-data-output).  
 
-<p align="center">
-<img src="media/spec/basic-state-data-passing.png" height="350px" alt="Basic state data passing"/>
-</p>
+![Basic state data passing](media/spec/basic-state-data-passing_small.png)
 
 In order to define the structure of expected state data input and output you can use the workflow
 "dataInputSchema" and "dataOutputSchema" properties. These property allows you to link to [JSON Schema](https://json-schema.org/) definitions
@@ -3407,9 +3389,7 @@ we can define a state filter:
 
 The state data output then would include only the fruits data.
 
-<p align="center">
-<img src="media/spec/state-data-filter-example1.png" height="400px" alt="State Data Filter Example"/>
-</p>
+![State Data Filter Example](media/spec/state-data-filter-example1_small.png)
 
 For our second example lets say that we are interested in only vegetable that are "veggie like".
 Here we have two ways of filtering our data, depending on if actions within our state need access to all vegetables, or
@@ -3433,9 +3413,7 @@ The first way would be to use both dataInputPath, and dataOutputPath:
 The states data input filter selects all the vegetables from the main data input. Once all actions have performed, before the state transition
 or workflow execution completion (if this is an end state), the dataOutputPath of the state filter selects only the vegetables which are "veggie like".
 
-<p align="center">
-<img src="media/spec/state-data-filter-example2.png" height="400px" alt="State Data Filter Example"/>
-</p>
+![State Data Filter Example](media/spec/state-data-filter-example2_small.png)
 
 The second way would be to directly filter only the "veggie like" vegetables with just the data input path:
 
@@ -3489,9 +3467,7 @@ parts of the action results that need to be merged back into the state data.
 
 To give an example, let's say we have an action which returns a list of breads and we want to add this list our fruits and vegetables data:
 
-<p align="center">
-<img src="media/spec/action-data-filter-example1.png" height="450px" alt="Action Data Filter Example"/>
-</p>
+![Action Data Filter Example](media/spec/action-data-filter-example1_small.png)
 
 #### <a name="event-data-filter"></a> State information filtering - Event Data Filter
 
@@ -3523,9 +3499,7 @@ that you need to be merged with the state data.
 
 Here is an example using an event filter:
 
-<p align="center">
-<img src="media/spec/event-data-filter-example1.png" height="400px" alt="Event Data Filter Example"/>
-</p>
+![Event Data Filter Example](media/spec/event-data-filter-example1_small.png)
 
 Similarly the consumed callback CloudEvent in [Callback states](#Callback-State) can be filtered using
 an event filter.
@@ -3559,9 +3533,7 @@ with the states data.
 
 Here is an example using an error filter:
 
-<p align="center">
-<img src="media/spec/error-data-filter-example1.png" height="400px" alt="Error Data Filter Example"/>
-</p>
+![Error Data Filter Example](media/spec/error-data-filter-example1_small.png)
 
 #### <a name="error-data-filter"></a> State information filtering - Using multiple filters
 
@@ -3662,9 +3634,7 @@ We also assume for this example that the CloudEvent that our event state is set 
 Here is a sample diagram showing our workflow, each numbered step on this diagram shows a certain defined point during
 workflow execution at which data filters are invoked and correspond to the numbered items below.
 
-<p align="center">
-<img src="media/spec/using-multiple-filters-example.png" height="400px" alt="Using Multple Filters Example"/>
-</p>
+![Using Multple Filters Example](media/spec/using-multiple-filters-example_small.png)
 
 **(1) Workflow execution starts**: Workflow data is passed to our "WaitForCustomerToArrive" event state as data input.
 Workflow transitions to its starting state, namely the "WaitForCustomerToArrive" event state.

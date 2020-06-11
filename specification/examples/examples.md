@@ -117,9 +117,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-helloworld.png" height="400px" alt="Hello World Example"/>
-</p>
+![Hello World Example](../media/examples/example-helloworld_small.png)
 
 ### Greeting Example
 
@@ -244,9 +242,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-greeting.png" height="500px" alt="Greeting Example"/>
-</p>
+![Greeting Example](../media/examples/example-greeting_small.png)
 
 ### Event Based Greeting Example
 
@@ -415,9 +411,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-eventbasedgreeting.png" height="500px" alt="Event Based Greeting Example"/>
-</p>
+![Event Based Greeting Example](../media/examples/example-eventbasedgreeting_small.png)
 
 ### Solving Math Problems Example
 
@@ -550,9 +544,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-looping.png" height="500px" alt="Looping Example"/>
-</p>
+![Looping Example](../media/examples/example-looping_small.png)
 
 ### Parallel Execution Example
 
@@ -671,11 +663,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-parallel.png" height="500px" alt="Parallel Example"/>
-</p>
-
-
+![Parallel Example](../media/examples/example-parallel_small.png)
 
 ### Event Based Transitions Example
 
@@ -821,10 +809,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-eventbasedswitch.png" height="500px" alt="Event Based Switch Example"/>
-</p>
-
+![Event Based Switch Example](../media/examples/example-eventbasedswitch_small.png)
 
 ### Applicant Request Decision Example
 
@@ -980,9 +965,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-switchstate.png" height="500px" alt="Switch State Example"/>
-</p>
+![Switch State Example](../media/examples/example-switchstate_small.png)
 
 ### Provision Orders Example
 
@@ -1190,9 +1173,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-handlerrors.png" height="500px" alt="Handle Errors Example"/>
-</p>
+![Handle Errors Example](../media/examples/example-handlerrors_small.png)
 
 ### Monitor Job Example
 
@@ -1499,9 +1480,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/examples-jobmonitoring.png" height="500px" alt="Job Monitoring Example"/>
-</p>
+![Job Monitoring Example](../media/examples/examples-jobmonitoring_small.png)
 
 ### Send CloudEvent On Workfow Completion Example
 
@@ -1693,9 +1672,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-sendcloudeentonworkflowcompletion.png" height="500px" alt="Send CloudEvent on Workflow Completion Example"/>
-</p>
+![Send CloudEvent on Workflow Completion Example](../media/examples/example-sendcloudeentonworkflowcompletion_small.png)
 
 ### Monitor Patient Vital Signs Example
 
@@ -1898,9 +1875,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-monitorpatientvitalsigns.png" height="500px" alt="Monitor Patient Vital Signs Example"/>
-</p>
+![Monitor Patient Vital Signs Example](../media/examples/example-monitorpatientvitalsigns_small.png)
 
 ### Finalize College Application Example
 
@@ -2043,9 +2018,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-finalizecollegeapplication.png" height="500px" alt="Finalize College Application Example"/>
-</p>
+![Finalize College Application Example](../media/examples/example-finalizecollegeapplication_small.png)
 
 ### Perform Customer Credit Check Example
 
@@ -2298,9 +2271,7 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-customercreditcheck.png" height="500px" alt="Perform Customer Credit Check Example"/>
-</p>
+![Perform Customer Credit Check Example](../media/examples/example-customercreditcheck_small.png)
 
 ### Handle Car Auction Bids Example
 
@@ -2438,6 +2409,4 @@ states:
 
 #### Workflow Diagram
 
-<p align="center">
-<img src="../media/examples/example-carauctionbid.png" height="500px" alt="Handle Car Auction Bid Example"/>
-</p>
+![Handle Car Auction Bid Example](../media/examples/example-carauctionbid_small.png)

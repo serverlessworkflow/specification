@@ -1,6 +1,4 @@
-<p align="center">
-<img src="specification/media/sw-logo.png" alt="Serverless Workflow Specification"/>
-</p>
+![Serverless Workflow Specification](specification/media/sw-logo.png)
 
 Serverless Workflow Specification defines the model for Workflows
 responsible for orchestrating event-driven, serverless applications.

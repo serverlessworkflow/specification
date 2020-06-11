@@ -28,7 +28,7 @@ These can include:
 - Communication with Bidding and Inventory services
 - Make decisions to start/end the auction under certain conditions
 
-<p align="center"><img src="../media/usecases/usecase-vehicle-auction.png"/></p>
+![Diagram showing the vehicle auction workflow](../media/usecases/usecase-vehicle-auction.png)
 
 ## Payment Processing
 
@@ -36,14 +36,14 @@ Servlerless Workflows are ideal for coordinating session-based apps such as e-co
 use Serverless Workflows to coordinate all steps of the checkout process allowing for example users to take a picture
 of their credit card rather than having to type in the numbers and information.
 
-<p align="center"><img src="../media/usecases/usecase-app-payment.png"/></p>
+![Diagram showing the payment processing workflow](../media/usecases/usecase-app-payment.png)
 
 ## Data Analysis
 
 You can use Serverless Workflows to coordinate data analysis of Marketing and Sales information.
 Analysis can be scheduled on a timely basis to trigger workflow coordination of different ETL services.
 
-<p align="center"><img src="../media/usecases/usecase-data-analysis.png"/></p>
+![Diagram showing the data analysis workflow](../media/usecases/usecase-data-analysis.png)
 
 ## Error Notifications
 
@@ -52,7 +52,7 @@ In conjunction with available messaging services you can notify developers on di
  including error information and exactly the point in the execution the failure happened.
  At the same time you can log the workflow execution status to cloud storage services for further analysis.
 
-<p align="center"><img src="../media/usecases/usecase-error-notifications.png"/></p>
+![Diagram showing a workflow with error notifications](../media/usecases/usecase-error-notifications.png)
 
 ## Continuous Integration And Deployment
 
@@ -60,4 +60,4 @@ Serverless Workflows can help you build solid continuous integration and deploym
 Code check-ins can trigger website builds and automatic redeploys. Pull requests can trigger
 running automated tests to make sure code is well-tested before human reviews.
 
-<p align="center"><img src="../media/usecases/usecase-continuous-integration.png"/></p>
+![Diagram showing the continuous integration workflow](../media/usecases/usecase-continuous-integration.png)
