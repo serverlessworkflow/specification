@@ -119,7 +119,7 @@
           "$ref": "#/definitions/expression"
         },
         "produceEvent": {
-          "description": "Reference one of the defined events by name and set its data",
+          "description": "Reference one of the defined 'produce' events by name and set its data",
           "$ref": "#/definitions/produceevent"
         },
         "nextState": {
@@ -151,6 +151,58 @@
         "expression",
         "transition"
       ]
+    },
+    "eventdef": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique event name",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "description": "CloudEvent source"
+        },
+        "type": {
+          "type": "string",
+          "description": "CloudEvent type"
+        },
+        "kind": {
+          "type" : "string",
+          "enum": ["consume", "produce"],
+          "description": "Defines the events as either being consumed or produced by the workflow. Default is consumed",
+          "default": "consume"
+        },
+        "correlationToken": {
+          "type": "string",
+          "description": "Context attribute name of the CloudEvent which value is to be used for event correlation"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata",
+          "description": "Metadata information"
+        }
+      },
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "consume"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "name",
+          "source",
+          "type"
+        ]
+      },
+      "else": {
+        "required": [
+          "name",
+          "type"
+        ]
+      }
     },
     "eventactions": {
       "type": "object",
@@ -1564,7 +1616,7 @@
           "description": "Kind of end definition"
         },
         "produceEvent": {
-          "description": "If end kind is event, select one of the defined events by name and set its data",
+          "description": "If end kind is event, select one of the defined 'produce' events by name and set its data",
           "$ref": "#/definitions/produceevent"
         }
       },

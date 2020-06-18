@@ -571,6 +571,7 @@ events:
   type: exec
 - name: nextEvent
   type: next
+  kind: produce
 functions:
 - name: consoleLogFunction
   type: console
