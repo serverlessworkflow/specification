@@ -268,7 +268,7 @@ Since function definitions are reusable, their data input parameters are defined
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique event name | string | yes |
-| source | CloudEvent source | string | yes if kind is set to "consume", otherwise no |
+| source | CloudEvent source | string | yes if kind is set to "consumed", otherwise no |
 | type | CloudEvent type | string | yes |
 | correlationToken | Context attribute name of the CloudEvent which value is to be used for event correlation | string | no |
 | kind | Defines the events as either being consumed or produced by the workflow. Default is consumed. | enum | no |
@@ -322,8 +322,8 @@ This is to assure the consistency and portability of consumed or produced events
 
 The event definition "kind" property defines if this event is consumed or produced. The default is consumed. 
 If the event is produced, implementations must provide the value of the event source when producing the CloudEvent.
-In this case (when "kind" is set to "produce") the "source" property of the event definition is not a required 
-property. Otherwise ("kind" is set to "consume") the "source" property must be defined.
+In this case (when "kind" is set to "produced") the "source" property of the event definition is not a required 
+property. Otherwise ("kind" is set to "consumed") the "source" property must be defined.
 
 To support use case where workflows need to perform actions across multiple types
 of events, users can specify a correlation token to correlate these events.
@@ -2635,9 +2635,9 @@ data: "$.provisionedOrders"
 
 </details>
 
-Defines the CloudEvent to be produce when workflow execution completes or during a workflow transition. 
+Defines the CloudEvent to be produced when workflow execution completes or during a workflow transition. 
 The "eventRef" property must match the name of
-one of the defined 'produce' events in the [events](#Event-Definition) definition.
+one of the defined 'produced' events in the [events](#Event-Definition) definition.
 
 The data property defines a JSONPath expression which selects elements of the states data output to be placed into the
 data section of the produced CloudEvent.
@@ -2668,7 +2668,7 @@ So the options for next state transitions are:
 - Use a combination of name and id properties
 
 Events can be produced during state transitions. The "produceEvent" property allows you
-to reference one of the defined 'produce' events in the workflow [events definitions](#Event-Definition).
+to reference one of the defined 'produced' events in the workflow [events definitions](#Event-Definition).
 It also allows you to select part of states data to be sent as the event payload.
 
 #### Restricting Transitions based on state output

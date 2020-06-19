@@ -1586,7 +1586,7 @@ CloudEvent upon completion of the workflow could look like:
 {
     "name": "provisioningCompleteEvent",
     "type": "provisionCompleteType",
-    "kind": "produce"
+    "kind": "produced"
 }
 ],
 "functions": [
@@ -1653,7 +1653,7 @@ name: Send CloudEvent on provision completion
 events:
 - name: provisioningCompleteEvent
   type: provisionCompleteType
-  kind: produce
+  kind: produced
 functions:
 - name: provisionOrderFunction
   resource: functionResourse
