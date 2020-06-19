@@ -1,0 +1,48 @@
+{
+  "$id": "https://wg-serverless.org/serverless-workflow-events-schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Serverless Workflow is a vendor-neutral specification for defining the model of workflows responsible for orchestrating event-driven serverless applications",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "events": {
+      "type": "array",
+      "description": "Workflow event definitions. Defines events that can be consumed or produced",
+      "items": {
+        "type": "object",
+        "$ref": "#/definitions/eventdef"
+      }
+    },
+    "eventdef": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique event name",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "description": "CloudEvent source"
+        },
+        "type": {
+          "type": "string",
+          "description": "CloudEvent type"
+        },
+        "correlationToken": {
+          "type": "string",
+          "description": "Context attribute name of the CloudEvent which value is to be used for event correlation"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata",
+          "description": "Metadata information"
+        }
+      },
+      "required": [
+        "name",
+        "source",
+        "type"
+      ]
+    }
+  }
+}

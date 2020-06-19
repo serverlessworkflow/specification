@@ -80,7 +80,7 @@ The Serverless workflow format is defined with [JSON](https://www.json.org/json-
 Structure of serverless workflows is described via [JSON Schema](https://json-schema.org/).
 
 Serverless Workflow definitions are considered specification-compliant if they conform to the 
-[workflow schema](schema/serverless-workflow-schema.json).
+[workflow schema](schema/workflow.json).
 
 Note that this schema reflects the current status of the specification as is updated alongside this document.
 
@@ -106,7 +106,7 @@ incoming events can trigger function invocations during workflow execution.
 
 ## Specification Goals
 
-At the core of the Serverless Workflow specification is its [JSON Schema](schema/serverless-workflow-schema.json).
+At the core of the Serverless Workflow specification is its [JSON Schema](schema/workflow.json).
 This schema defines the workflow model. It can also be used for generation of many different artifacts
 such as APIs, and SPIs. We plan to provide these in the near future, and hope to expand them 
 to many different languages. This speficiation also strives to soon provide a TCK with a set of tests which 
@@ -138,9 +138,9 @@ States can wait on the arrival events to perform their actions. When states
 complete their tasks, they can transition to other states or stop workflow execution.
 See the [Transitions](#Transitions) section for more details on workflow progression.
 
-A Serverless Workflow can be naturally implemented as a state machine or a workflow engine.
+A Serverless Workflow can be naturally implemented as a workflow engine.
 This specification does not mandate a specific implementation decision in this regard.
-As mentioned, implementation compliance is based on the workflow definition language only.
+Implementation compliance is based on the workflow definition language.
 
 ### Workflow Definition
 
