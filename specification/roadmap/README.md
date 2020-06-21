@@ -59,3 +59,4 @@ _Status description:_
 | ✔️| Add Go SDK | [sdk doc](../../sdk/go/README.md) |
 | ✔️| Add Java SDK | [sdk doc](../../sdk/java/README.md) |
 | ✔️| Allow to define events as produced or consumed | [spec doc](../README.md) |
+| ✔️| Add "triggered" start definition | [spec doc](../README.md) |
