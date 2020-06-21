@@ -1994,7 +1994,8 @@ In that case you would use the SubFlow State.
 It also allows users to model their workflows with reusability and logical grouping in mind.
 
 This state allows you to include/inject a uniquely identified sub-workflow and start its execution.
-Another use of this state is within [branches](#parallel-state-branch) of the [Parallel State](#Parallel-State). Instead of having to define all states
+Another use of this state is within [branches](#parallel-state-branch) of the [Parallel State](#Parallel-State). 
+Instead of having to define all states
 in each branch, you could separate the branch states into individual sub-workflows and call the SubFlow state
 as a single state in each.
 
@@ -2005,6 +2006,8 @@ is completed or not.
 Each sub-workflow receives the same copy of the SubFlow state's data input.
 If waitForCompletion property is set to true, sub-workflows have the ability to edit the parent's workflow data.
 If this property is set to false, data access to parent's workflow should not be allowed.
+
+Sub-workflows inherit all the [function](#Function-Definition) and [event](#Event-Definition) definitions of their parent workflow.
 
 #### Inject State
 
