@@ -1206,7 +1206,6 @@ Once all actions have been performed, a transition to another state can occur.
           "description": "State start definition"
         }
     },
->>>>>>> Change all uppercase properties and enum types to lowercase
     "oneOf": [
       {
         "$ref": "#/definitions/databasedswitch"
