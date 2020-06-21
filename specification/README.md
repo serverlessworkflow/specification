@@ -2431,8 +2431,9 @@ If the defined callback event has not been received during this time period, the
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| kind | End kind ("default", "scheduled") | enum | yes |
+| kind | End kind ("default", "scheduled", "triggered") | enum | yes |
 | [schedule](#Schedule-Definition) | If kind is "scheduled", define when the starting state is or becomes active | object | yes only if kind is "scheduled" |
+| [trigger](#Trigger-Definition) | If kind is "triggered", define the repeating intervals at which to start workflow instances | object | yes only if kind is "triggered" |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2447,10 +2448,10 @@ If the defined callback event has not been received during this time period, the
 
 ```json
 {
-      "kind": "scheduled",
-      "schedule": {
-        "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
-      }
+  "kind": "scheduled",
+  "schedule": {
+    "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+  }
 }
 ```
 
@@ -2469,14 +2470,16 @@ schedule:
 
 </details>
 
-Any state can declare to be the start state of the workflow, meaning that when a workflow intance is created it will be the initial
+Any state can declare to be the start state of the workflow, meaning that when a workflow instance is created it will be the initial
 state to be executed. A workflow definition can declare one workflow start state.
 
 The start definition provides a "kind" parameter which describes the starting options:
 
 - **default** - The start state is always "active" and there are no restrictions imposed on its execution.
-- **scheduled** -  The start state is only "active" as described in the schedule definition. Workflow instance creation can only be performed for this workflow
+- **scheduled** - The start state is only "active" as described in the schedule definition. Workflow instance creation can only be performed for this workflow
 as described by the provided schedule.
+- **triggered** - The starting state is triggered and a new workflow instance is created periodically specified by repeating intervals.
+
 
 Defining a schedule for the start definition allows you to model workflows which are only "active" during certain time intervals. For example let's say
 we have a workflow that orchestrates an online auction and should be valid only from when the auction starts until it ends. Before the auction starts or after
@@ -2487,7 +2490,19 @@ There are two cases to discuss when dealing with scheduled start states:
 1. **Starting States in [Parallel](#Parallel-State) state [branches](#parallel-state-branch)**: if a state in a parallel state branch defines a scheduled start state which is not "active" at the time the branch is executed, the parent workflow should not wait until it becomes active and just complete execution of the branch.
 2. **Starting states in [SubFlow](#SubFlow-State) states**: if a state in a workflow definition (referenced by SubFlow state) defines a scheduled start state that is not "active" at the time the SubFlow state is executed, the parent workflow should not wait until it becomes active and simply complete execution of the SubFlow state.
 
-For more information about the schedule definition see the next section.
+Defining a trigger for the start definition allows you to create process instances periodically based on defined repeating intervals.
+Trigger definitions can handle absolute time intervals (not calculated in respect to some particular point in time).
+For example let's say we have a workflow which performs data batch processing which has to be done periodically. In this case we could use a cron definition
+
+``` text
+0 0/5 * * * ?
+```
+
+to define that this workflow should be triggered every 5 minutes, starting at full hour. 
+[See here](#http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html) to get more information on defining cron expressions.
+
+Note that starting [Event](#Event-State) states **cannot** define its start definition to be "triggered". Starting event states wait for occurrences of events 
+in order to become active. Therefore workflows which define event starting states cannot be periodically triggered.
 
 #### Schedule Definition
 
@@ -2542,6 +2557,38 @@ which waits to consume event "X", meaning that the workflow instance should be c
 a specific interval, the "waiting" for event "X" should only be started when the starting state becomes active.
 
 Once a workflow instance is created, the start state schedule can be ignored for that particular workflow instance. States should from then on rely on their timeout properties for example to restrict the waiting time of incoming events, function executions, etc.  
+
+#### Trigger Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| interval | Repeating interval described using a cron expression. New workflow instance is created each time. | string | yes |
+
+<details><summary><strong>Click to view JSON Schema</strong></summary>
+
+```json
+{
+  "type": "object",
+  "description": "Start state trigger definition",
+  "properties": {
+    "interval": {
+      "type": "string",
+      "description":  "Repeating interval described using a cron expression. New workflow instance is created each time."
+    }
+  },
+  "required": [
+    "interval"
+  ]
+}
+```
+
+</details>
+
+The interval property uses a [cron expression](#http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html)) 
+to describe a repeating interval upon which the state becomes active and a new workflow instance is created.
+
+Note that starting [Event](#Event-State) states **cannot** define its start definition to be "triggered". Starting event states wait for occurrences of events 
+in order to become active. Therefore workflows which define event starting states cannot be periodically triggered.
 
 #### End Definition
 

@@ -16,6 +16,7 @@
 - [Finalize College Application (Event state)](#Finalize-College-Application-Example)
 - [Perform Customer Credit Check (Callback state)](#Perform-Customer-Credit-Check-Example)
 - [Handle Car Auction Bids (Scheduled start Event state)](#Handle-Car-Auction-Bids-Example)
+- [Check Inbox Periodically (Triggered Workflow start)](#Check-Inbox-Periodically)
 
 ### Hello World Example
 
@@ -2326,7 +2327,7 @@ Bidding is done via an online application and bids are received as events are as
           "bidder": {
             "id": "xyz",
             "firstName": "John",
-            "lastName": "Wayne",
+            "lastName": "Wayne"
           }
         }
       ]
@@ -2440,4 +2441,161 @@ states:
 
 <p align="center">
 <img src="../media/examples/example-carauctionbid.png" height="500px" alt="Handle Car Auction Bid Example"/>
+</p>
+
+### Check Inbox Periodically
+
+#### Description
+
+In this example we show the use of timed start event property. The example workflow checks the users inbox every 15 minutes 
+and send them a text message when there are important emails.
+
+The results of the inbox service called is expected to be for example
+
+```json
+{
+  "messages": [
+    {
+      "title": "Update your health benefits",
+      "from": "HR",
+      "priority": "high"
+    },
+    {
+      "title": "New job candidate resume",
+      "from": "Recruiting",
+      "priority": "medium"
+    },
+    ...
+  ]
+}
+```
+
+For the sake to focus on the period workflow start, we model the "SendTextMessageForHighPriority" state as a SubFlow state. 
+This Subflow state can be made of a Switch state that checks the message priority and if so transitions to an Operation 
+state which calls the "sendTextFunction" function.
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+"id": "checkInbox",
+"description": "Periodically Check Inbox",
+"version": "1.0",
+"functions": [
+    {
+        "name": "checkInboxFunction",
+        "resource": "inboxFunctionResource",
+        "type": "getNewMessages"
+    },
+    {
+        "name": "sendTextFunction",
+        "resource": "sendTextFunctionResource"
+    }
+],
+"states": [
+    {
+        "name": "CheckInbox",
+        "type": "operation",
+        "start": {
+            "kind": "triggered",
+            "trigger": {
+                "interval": "0 0/15 * * * ?"
+            }
+        },
+        "actionMode": "sequential",
+        "actions": [
+            {
+                "functionRef": {
+                    "refName": "checkInboxFunction"
+                }
+            }
+        ],
+        "transition": {
+            "nextState": "SendTextForHighPrioriry"
+        }
+    },
+    {
+        "name": "SendTextForHighPrioriry",
+        "type": "foreach",
+        "inputCollection": "$.message",
+        "inputParameter": "$.singlemessage",
+        "states": [
+            {
+                "name": "SendTextMessageForHighPriority",
+                "type": "subflow",
+                "start": {
+                    "kind": "default"
+                },
+                "workflowId": "sendTextMessageForHighPriorityId",
+                "end": {
+                    "kind": "default"
+                }
+            }
+        ],
+        "end": {
+            "kind": "default"
+        }
+    }
+]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: checkInbox
+description: Periodically Check Inbox
+version: '1.0'
+functions:
+- name: checkInboxFunction
+  resource: inboxFunctionResource
+  type: getNewMessages
+- name: sendTextFunction
+  resource: sendTextFunctionResource
+states:
+- name: CheckInbox
+  type: operation
+  start:
+    kind: triggered
+    trigger:
+      interval: 0 0/15 * * * ?
+  actionMode: sequential
+  actions:
+  - functionRef:
+      refName: checkInboxFunction
+  transition:
+    nextState: SendTextForHighPrioriry
+- name: SendTextForHighPrioriry
+  type: foreach
+  inputCollection: "$.message"
+  inputParameter: "$.singlemessage"
+  states:
+  - name: SendTextMessageForHighPriority
+    type: subflow
+    start:
+      kind: default
+    workflowId: sendTextMessageForHighPriorityId
+    end:
+      kind: default
+  end:
+    kind: default
+```
+
+</td>
+</tr>
+</table>
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-periodicalexec.png" height="400px" alt="Check Inbox Periodically Example"/>
 </p>
