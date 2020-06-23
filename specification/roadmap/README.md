@@ -60,3 +60,4 @@ _Status description:_
 | ✔️| Add Java SDK | [sdk doc](../../sdk/java/README.md) |
 | ✔️| Allow to define events as produced or consumed | [spec doc](../README.md) |
 | ✔️| Add "triggered" start definition | [spec doc](../README.md) |
+| ✔️| Update scheduled start definition - adding cron def | [spec doc](../README.md) |

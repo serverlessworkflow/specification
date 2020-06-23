@@ -1509,66 +1509,33 @@
           "type": "string",
           "enum": [
             "default",
-            "scheduled",
-            "triggered"
+            "scheduled"
           ],
           "description": "Kind of start definition"
         },
         "schedule": {
-          "description": "If kind is scheduled, define when the starting state is or becomes active",
+          "description": "If kind is 'scheduled', define when the time/repeating intervals at which workflow instances can/should be started",
           "$ref": "#/definitions/schedule"
-        },
-        "trigger": {
-          "description": "If kind is 'triggered'', define the repeating intervals at which to start workflow instances",
-          "$ref": "#/definitions/trigger"
         }
       },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "kind": {
-                "const": "scheduled"
-              }
-            }
-          },
-          "then": {
-            "required": [
-              "kind",
-              "schedule"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "kind": {
-                "const": "triggered"
-              }
-            }
-          },
-          "then": {
-            "required": [
-              "kind",
-              "trigger"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "kind": {
-                "const": "default"
-              }
-            }
-          },
-          "then": {
-            "required": [
-              "kind"
-            ]
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "scheduled"
           }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "kind",
+          "schedule"
+        ]
+      },
+      "else": {
+        "required": [
+          "kind"
+        ]
+      }
     },
     "schedule": {
       "type": "object",
@@ -1576,24 +1543,24 @@
       "properties": {
         "interval": {
           "type": "string",
-          "description":  "Time interval describing when the workflow starting state is active"
-        }
-      },
-      "required": [
-        "interval"
-      ]
-    },
-    "trigger": {
-      "type": "object",
-      "description": "Start state trigger definition",
-      "properties": {
-        "interval": {
+          "description":  "Time interval (ISO 8601 format) describing when the workflow starting state is active"
+        },
+        "cron": {
           "type": "string",
-          "description":  "Repeating interval described using a cron expression. New workflow instance is created each time."
+          "description":  "Repeating interval (cron expression) describing when the workflow starting state should be triggered"
         }
       },
-      "required": [
-        "interval"
+      "oneOf": [
+        {
+          "required": [
+            "interval"
+          ]
+        },
+        {
+          "required": [
+            "cron"
+          ]
+        }
       ]
     },
     "end": {

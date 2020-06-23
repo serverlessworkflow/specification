@@ -16,7 +16,7 @@
 - [Finalize College Application (Event state)](#Finalize-College-Application-Example)
 - [Perform Customer Credit Check (Callback state)](#Perform-Customer-Credit-Check-Example)
 - [Handle Car Auction Bids (Scheduled start Event state)](#Handle-Car-Auction-Bids-Example)
-- [Check Inbox Periodically (Triggered Workflow start)](#Check-Inbox-Periodically)
+- [Check Inbox Periodically (Cron-based Workflow start)](#Check-Inbox-Periodically)
 
 ### Hello World Example
 
@@ -2447,7 +2447,7 @@ states:
 
 #### Description
 
-In this example we show the use of timed start event property. The example workflow checks the users inbox every 15 minutes 
+In this example we show the use of scheduled cron-based start event property. The example workflow checks the users inbox every 15 minutes 
 and send them a text message when there are important emails.
 
 The results of the inbox service called is expected to be for example
@@ -2505,9 +2505,9 @@ state which calls the "sendTextFunction" function.
         "name": "CheckInbox",
         "type": "operation",
         "start": {
-            "kind": "triggered",
-            "trigger": {
-                "interval": "0 0/15 * * * ?"
+            "kind": "scheduled",
+            "schedule": {
+                "cron": "0 0/15 * * * ?"
             }
         },
         "actionMode": "sequential",
