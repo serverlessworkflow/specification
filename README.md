@@ -42,6 +42,20 @@ As a CNCF member project, we abide by the [CNCF Code of Conduct](https://github.
 - Subscription: [https://lists.cncf.io/g/cncf-wg-serverless](https://lists.cncf.io/g/cncf-wg-serverless)
 - Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) #serverless-workflow
 
+## Code of Conduct
+
+As contributors and maintainers of this project, and in the interest of fostering
+an open and welcoming community, we pledge to respect all people who contribute
+through reporting issues, posting feature requests, updating documentation,
+submitting pull requests or patches, and other activities.
+
+We are committed to making participation in this project a harassment-free experience for
+everyone, regardless of level of experience, gender, gender identity and expression,
+sexual orientation, disability, personal appearance, body size, race, ethnicity, age,
+religion, or nationality.
+
+See our full project Code of Conduct information [here](code-of-conduct.md).
+
 ## Meeting time
 
 See the [CNCF public events calendar](https://www.cncf.io/community/calendar/).
