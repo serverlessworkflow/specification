@@ -48,4 +48,8 @@ If you are participating insome way, please add your information via pull reques
   
 * **Accenture**
     * Mona Borham
+    
+* **Oracle Cloud Infrastructure**
+    * Kay Singh      
+    
 
