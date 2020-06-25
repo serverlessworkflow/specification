@@ -2490,7 +2490,7 @@ There are two cases to discuss when dealing with interval-based scheduled starts
 1. **Starting States in [Parallel](#Parallel-State) state [branches](#parallel-state-branch)**: if a state in a parallel state branch defines a scheduled start state which is not "active" at the time the branch is executed, the parent workflow should not wait until it becomes active and just complete execution of the branch.
 2. **Starting states in [SubFlow](#SubFlow-State) states**: if a state in a workflow definition (referenced by SubFlow state) defines a scheduled start state that is not "active" at the time the SubFlow state is executed, the parent workflow should not wait until it becomes active and simply complete execution of the SubFlow state.
 
-You an also define a cron-based scheduled starts which allow to define periodically started workflow instances based on a [cron](https://en.wikipedia.org/wiki/Cron) definition.
+You can also define a cron-based scheduled starts which allow to define periodically started workflow instances based on a [cron](https://en.wikipedia.org/wiki/Cron) definition.
 Cron-based scheduled starts can handle absolute time intervals (not calculated in respect to some particular point in time).
 One use case for cron-based scheduled starts is let's say we have a workflow which performs data batch processing which has to be done periodically. 
 In this case we could use a cron definition
