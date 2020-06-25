@@ -44,23 +44,13 @@
       "description": "URI to JSON Schema that workflow data output adheres to"
     },
     "metadata": {
-      "$ref": "#/definitions/metadata"
+      "$ref": "common.json#/definitions/metadata"
     },
     "events": {
-      "type": "array",
-      "description": "Workflow event definitions. Defines events that can be consumed or produced",
-      "items": {
-        "type": "object",
-        "$ref": "#/definitions/eventdef"
-      }
+      "$ref": "events.json#/definitions/events"
     },
     "functions": {
-      "type": "array",
-      "description": "Workflow function definitions",
-      "items": {
-        "type": "object",
-        "$ref": "#/definitions/function"
-      }
+      "$ref": "functions.json#/definitions/functions"
     },
     "states": {
       "type": "array",
@@ -121,10 +111,6 @@
     "states"
   ],
   "definitions": {
-    "metadata": {
-      "type": "object",
-      "description": "Metadata information"
-    },
     "transition": {
       "type": "object",
       "properties": {
@@ -164,37 +150,6 @@
       "required": [
         "expression",
         "transition"
-      ]
-    },
-    "eventdef": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Unique event name",
-          "minLength": 1
-        },
-        "source": {
-          "type": "string",
-          "description": "CloudEvent source"
-        },
-        "type": {
-          "type": "string",
-          "description": "CloudEvent type"
-        },
-        "correlationToken": {
-          "type": "string",
-          "description": "Context attribute name of the CloudEvent which value is to be used for event correlation"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata",
-          "description": "Metadata information"
-        }
-      },
-      "required": [
-        "name",
-        "source",
-        "type"
       ]
     },
     "eventactions": {
@@ -278,31 +233,6 @@
       },
       "required": [
         "expression"
-      ]
-    },
-    "function": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Unique function name",
-          "minLength": 1
-        },
-        "resource": {
-          "type": "string",
-          "description": "Function resource (URI)"
-        },
-        "type": {
-          "type": "string",
-          "description": "Function type"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        }
-      },
-      "required": [
-        "name",
-        "resource"
       ]
     },
     "functionref": {
@@ -434,7 +364,7 @@
           "description": "URI to JSON Schema that state data output adheres to"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -553,7 +483,7 @@
           "description": "State end definition"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -672,7 +602,7 @@
           "description": "URI to JSON Schema that state data output adheres to"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -798,7 +728,7 @@
           "description": "URI to JSON Schema that state data output adheres to"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -911,7 +841,7 @@
           "description": "URI to JSON Schema that state data output adheres to"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -992,7 +922,7 @@
           "description": "URI to JSON Schema that state data output adheres to"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -1033,7 +963,7 @@
         "$ref": "#/definitions/eventdatafilter"
       },
       "metadata": {
-        "$ref": "#/definitions/metadata"
+        "$ref": "common.json#/definitions/metadata"
       },
       "required": ["eventRef", "transition"]
     },
@@ -1060,7 +990,7 @@
         }
       },
       "metadata": {
-        "$ref": "#/definitions/metadata"
+        "$ref": "common.json#/definitions/metadata"
       },
       "required": ["path", "value", "operator", "transition"]
     },
@@ -1127,7 +1057,7 @@
           "description": "URI to JSON Schema that state data output adheres to"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -1217,7 +1147,7 @@
           "description": "URI to JSON Schema that state data output adheres to"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -1377,7 +1307,7 @@
           "description": "URI to JSON Schema that state data output adheres to"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -1502,7 +1432,7 @@
           "description": "State end definition"
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "oneOf": [
@@ -1602,7 +1532,7 @@
           "kind"
         ]
       }
-    }, 
+    },
     "schedule": {
       "type": "object",
       "description": "Start state schedule definition",
