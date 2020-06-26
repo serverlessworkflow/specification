@@ -218,33 +218,42 @@ Following figure describes the main workflow definition blocks.
 | type | Function type | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
-{
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "description": "Unique function name",
-      "minLength": 1
-    },
-    "resource": {
-      "type": "string",
-      "description": "Function resource (URI)"
-    },
-    "type": {
-      "type": "string",
-      "description": "Function type"
-    },
-    "metadata": {
-       "$ref": "#/definitions/metadata",
-       "description": "Metadata information"
-    }
-  },
-  "required": ["name", "resource"]
+{  
+   "name": "HelloWorldFunction",
+   "resource": "https://hellworldservice.test.com:8443/api/hellofunction",
+   "type": "REST",
+   "metadata": {
+      "authToken": "$.token"
+   }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: HelloWorldFunction
+resource: https://hellworldservice.test.com:8443/api/hellofunction
+type: REST
+metadata:
+  authToken: "$.token"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -264,36 +273,39 @@ Since function definitions are reusable, their data input parameters are defined
 | correlationToken | Context attribute name of the CloudEvent which value is to be used for event correlation | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
-{
-    "type": "object",
-    "properties": {
-        "name": {
-            "type": "string",
-            "description": "Unique event name"
-        },
-        "source": {
-            "type": "string",
-            "description": "CloudEvent source"
-        },
-        "type": {
-            "type": "string",
-            "description": "CloudEvent type"
-        },
-        "correlationToken": {
-            "type": "string",
-            "description": "Context attribute name of the CloudEvent which value is to be used for event correlation"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata",
-          "description": "Metadata information"
-        }
-    },
-    "required": ["name", "source", "type"]
+{  
+   "name": "ApplicationSubmitted",
+   "type": "org.application.submit",
+   "source": "applicationssource",
+   "correlationToken": "applicantId"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: ApplicationSubmitted
+type: org.application.submit
+source: applicationssource
+correlationToken: applicantId
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -405,130 +417,104 @@ Following is a detailed description of each of the defined states:
 | [end](#End-Definition) | Is this state an end state | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
 <p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "This state is used to wait for events from event sources, then consumes them and invoke one or more actions to run in sequence or parallel",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique state id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["event"],
-            "description": "State type"
-        },
-        "exclusive": {
-            "type": "boolean",
-            "default": true,
-            "description": "If true consuming one of the defined events causes its associated actions to be performed. If false all of the defined events must be consumed in order for actions to be performed"
-        },
-        "eventsActions": {
-            "type": "array",
-            "description": "Define what events to be consumed and one or more actions to be performed",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/eventactions"
+"name": "MonitorVitals",
+"type": "event",
+"start": {
+    "kind": "default"
+},
+"exclusive": true,
+"eventsActions": [{
+        "eventRefs": ["HighBodyTemperature"],
+        "actions": [{
+            "functionRef": {
+                "refName": "sendTylenolOrder",
+                "parameters": {
+                    "patientid": "$.patientId"
+                }
             }
-        },
-        "timeout": {
-            "type": "string",
-            "description": "Time period to wait for incoming events (ISO 8601 format)"
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "retry": {
-            "type": "array",
-            "description": "States retry definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/retry"
-            }
-        },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-            }
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-          },
-        "transition": {
-          "description": "Next transition of the workflow after all the actions have been performed",
-          "$ref": "#/definitions/transition"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        }
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        }
+        }]
     },
-    "oneOf": [
-      {
-        "required": [
-          "name",
-          "type",
-          "eventsActions",
-          "end"
-        ]
-      },
-      {
-        "required": [
-          "name",
-          "type",
-          "eventsActions",
-          "transition"
-        ]
-      },
-      {
-        "required": [
-          "start",
-          "name",
-          "type",
-          "eventsActions",
-          "transition"
-        ]
-      },
-      {
-        "required": [
-          "start",
-          "name",
-          "type",
-          "eventsActions",
-          "end"
-        ]
-      }
-   ]
+    {
+        "eventRefs": ["HighBloodPressure"],
+        "actions": [{
+            "functionRef": {
+                "refName": "callNurse",
+                "parameters": {
+                    "patientid": "$.patientId"
+                }
+            }
+        }]
+    },
+    {
+        "eventRefs": ["HighRespirationRate"],
+        "actions": [{
+            "functionRef": {
+                "refName": "callPulmonologist",
+                "parameters": {
+                    "patientid": "$.patientId"
+                }
+            }
+        }]
+    }
+],
+"end": {
+    "kind": "terminate"
+}
 }
 ```
 
-</p>
+</td>
+<td valign="top">
+
+```yaml
+name: MonitorVitals
+type: event
+start:
+  kind: default
+exclusive: true
+eventsActions:
+- eventRefs:
+  - HighBodyTemperature
+  actions:
+  - functionRef:
+      refName: sendTylenolOrder
+      parameters:
+        patientid: "$.patientId"
+- eventRefs:
+  - HighBloodPressure
+  actions:
+  - functionRef:
+      refName: callNurse
+      parameters:
+        patientid: "$.patientId"
+- eventRefs:
+  - HighRespirationRate
+  actions:
+  - functionRef:
+      refName: callPulmonologist
+      parameters:
+        patientid: "$.patientId"
+end:
+  kind: terminate
+```
+
+</td>
+</tr>
+</table>
+
 </details>
 
 Event states await one or more events and perform actions when they are received.
