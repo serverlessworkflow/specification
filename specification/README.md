@@ -160,126 +160,46 @@ Implementation compliance is based on the workflow definition language.
 | [extensions](#Extending) | Workflow custom extensions | array | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
 <p>
 
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
 ```json
-{
-    "$id": "https://wg-serverless.org/workflow.schema",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "description": "Serverless Workflow is a vendor-neutral specification for defining the model of workflows responsible for orchestrating event-driven serverless application",
-    "type": "object",
-    "properties": {
-        "id": {
-          "type": "string",
-          "description": "Workflow unique identifier",
-          "minLength": 1
-        },
-        "name": {
-          "type": "string",
-          "description": "Workflow name",
-          "minLength": 1
-        },
-        "description": {
-          "type": "string",
-          "description": "Workflow description"
-        },
-        "version": {
-          "type": "string",
-          "description": "Workflow version",
-          "minLength": 1
-        },
-        "schemaVersion": {
-          "type": "string",
-          "description": "Serverless Workflow schema version",
-          "minLength": 1
-        },
-        "expressionLanguage": {
-          "type": "string",
-          "description": "Default expression language to be used throughout the workflow definition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that workflow data input adheres to"
-        },
-        "events": {
-            "type": "array",
-            "description": "Workflow event definitions. Defines events that can be consumed or produced",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/eventdef"
-            }
-        },
-        "functions": {
-            "type": "array",
-            "description": "Workflow function definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/function"
-            }
-        },
-        "states": {
-            "type": "array",
-            "description": "State Definitions",
-            "items": {
-                "type": "object",
-                "anyOf": [
-                    {
-                      "title": "Delay State",
-                      "$ref": "#/definitions/delaystate"
-                    },
-                    {
-                      "title": "Event State",
-                      "$ref": "#/definitions/eventstate"
-                    },
-                    {
-                      "title": "Operation State",
-                      "$ref": "#/definitions/operationstate"
-                    },
-                    {
-                      "title": "Parallel State",
-                      "$ref": "#/definitions/parallelstate"
-                    },
-                    {
-                      "title": "Switch State",
-                      "$ref": "#/definitions/switchstate"
-                    },
-                    {
-                      "title": "SubFlow State",
-                      "$ref": "#/definitions/subflowstate"
-                    },
-                    {
-                      "title": "Inject State",
-                      "$ref": "#/definitions/injectstate"
-                    },
-                    {
-                      "title": "ForEach State",
-                      "$ref": "#/definitions/foreachstate"
-                    },
-                    {
-                      "title": "Callback State",
-                      "$ref": "#/definitions/callbackstate"
-                    }
-                ]
-            }
-        },
-        "extensions": {
-          "type": "array",
-          "description": "Workflow Extensions",
-          "items": {
-            "type": "object"
-          }
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        }
-    },
-    "required": ["id", "name", "version", "states"]
+{  
+   "id": "sampleWorkflow",
+   "version": "1.0",
+   "name": "Sample Workflow",
+   "description": "Sample Workflow",
+   "functions": [],
+   "events": [],
+   "states":[]
 }
 ```
 
-</p>
+</td>
+<td valign="top">
+
+```yaml
+id: sampleWorkflow
+version: '1.0'
+name: Sample Workflow
+description: Sample Workflow
+functions: []
+events: []
+states: []
+```
+
+</td>
+</tr>
+</table>
+
 </details>
 
 Defines the top-level structure of a serverless workflow model.
