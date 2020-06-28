@@ -2512,7 +2512,8 @@ the needed events at the defined times to trigger workflow instance creation.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | interval | Time interval describing when the workflow starting state is active. (ISO 8601 time interval format). | string | yes if cron not defined |
-| cron | "Repeating interval (cron expression) describing when the workflow starting state should be triggered | string | yes if interval not defined |
+| cron | Repeating interval (cron expression) describing when the workflow starting state should be triggered | string | yes if interval not defined |
+| directInvoke | Define if workflow instances can be created outside of the defined interval/cron | enum | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2527,7 +2528,8 @@ the needed events at the defined times to trigger workflow instance creation.
 
 ```json
 {
-   "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+   "cron": "0 0/15 * * * ?",
+   "directInvoke": "allow"
 }
 ```
 
@@ -2535,7 +2537,8 @@ the needed events at the defined times to trigger workflow instance creation.
 <td valign="top">
 
 ```yaml
-interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
+cron: 0 0/15 * * * ?
+directInvoke: allow
 ```
 
 </td>
@@ -2568,6 +2571,8 @@ to describe a repeating interval upon which the state becomes active and a new w
 Note that when the starting state of the workflow is an [Event](#Event-State) 
 defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service which issues 
 the needed events at the defined times to trigger workflow instance creation.
+
+The directInvoke property defines if workflow instances are allowed to be created outside of the defined interval or cron expression.
 
 #### End Definition
 
