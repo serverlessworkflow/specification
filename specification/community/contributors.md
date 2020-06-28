@@ -32,7 +32,8 @@ If you are participating insome way, please add your information via pull reques
 * **Red Hat**
   * Ruben Romero Montes
   * Tihomir Surdilovic
-
+  * Ricardo Zanini 
+  
 * **Camunda**
   * Mauricio Salatino
   * Falko Menge
