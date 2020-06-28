@@ -160,126 +160,46 @@ Implementation compliance is based on the workflow definition language.
 | [extensions](#Extending) | Workflow custom extensions | array | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
 <p>
 
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
 ```json
-{
-    "$id": "https://wg-serverless.org/workflow.schema",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "description": "Serverless Workflow is a vendor-neutral specification for defining the model of workflows responsible for orchestrating event-driven serverless application",
-    "type": "object",
-    "properties": {
-        "id": {
-          "type": "string",
-          "description": "Workflow unique identifier",
-          "minLength": 1
-        },
-        "name": {
-          "type": "string",
-          "description": "Workflow name",
-          "minLength": 1
-        },
-        "description": {
-          "type": "string",
-          "description": "Workflow description"
-        },
-        "version": {
-          "type": "string",
-          "description": "Workflow version",
-          "minLength": 1
-        },
-        "schemaVersion": {
-          "type": "string",
-          "description": "Serverless Workflow schema version",
-          "minLength": 1
-        },
-        "expressionLanguage": {
-          "type": "string",
-          "description": "Default expression language to be used throughout the workflow definition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that workflow data input adheres to"
-        },
-        "events": {
-            "type": "array",
-            "description": "Workflow event definitions. Defines events that can be consumed or produced",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/eventdef"
-            }
-        },
-        "functions": {
-            "type": "array",
-            "description": "Workflow function definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/function"
-            }
-        },
-        "states": {
-            "type": "array",
-            "description": "State Definitions",
-            "items": {
-                "type": "object",
-                "anyOf": [
-                    {
-                      "title": "Delay State",
-                      "$ref": "#/definitions/delaystate"
-                    },
-                    {
-                      "title": "Event State",
-                      "$ref": "#/definitions/eventstate"
-                    },
-                    {
-                      "title": "Operation State",
-                      "$ref": "#/definitions/operationstate"
-                    },
-                    {
-                      "title": "Parallel State",
-                      "$ref": "#/definitions/parallelstate"
-                    },
-                    {
-                      "title": "Switch State",
-                      "$ref": "#/definitions/switchstate"
-                    },
-                    {
-                      "title": "SubFlow State",
-                      "$ref": "#/definitions/subflowstate"
-                    },
-                    {
-                      "title": "Inject State",
-                      "$ref": "#/definitions/injectstate"
-                    },
-                    {
-                      "title": "ForEach State",
-                      "$ref": "#/definitions/foreachstate"
-                    },
-                    {
-                      "title": "Callback State",
-                      "$ref": "#/definitions/callbackstate"
-                    }
-                ]
-            }
-        },
-        "extensions": {
-          "type": "array",
-          "description": "Workflow Extensions",
-          "items": {
-            "type": "object"
-          }
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        }
-    },
-    "required": ["id", "name", "version", "states"]
+{  
+   "id": "sampleWorkflow",
+   "version": "1.0",
+   "name": "Sample Workflow",
+   "description": "Sample Workflow",
+   "functions": [],
+   "events": [],
+   "states":[]
 }
 ```
 
-</p>
+</td>
+<td valign="top">
+
+```yaml
+id: sampleWorkflow
+version: '1.0'
+name: Sample Workflow
+description: Sample Workflow
+functions: []
+events: []
+states: []
+```
+
+</td>
+</tr>
+</table>
+
 </details>
 
 Defines the top-level structure of a serverless workflow model.
@@ -298,33 +218,42 @@ Following figure describes the main workflow definition blocks.
 | type | Function type | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
-{
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "description": "Unique function name",
-      "minLength": 1
-    },
-    "resource": {
-      "type": "string",
-      "description": "Function resource (URI)"
-    },
-    "type": {
-      "type": "string",
-      "description": "Function type"
-    },
-    "metadata": {
-       "$ref": "#/definitions/metadata",
-       "description": "Metadata information"
-    }
-  },
-  "required": ["name", "resource"]
+{  
+   "name": "HelloWorldFunction",
+   "resource": "https://hellworldservice.test.com:8443/api/hellofunction",
+   "type": "REST",
+   "metadata": {
+      "authToken": "$.token"
+   }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: HelloWorldFunction
+resource: https://hellworldservice.test.com:8443/api/hellofunction
+type: REST
+metadata:
+  authToken: "$.token"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -344,36 +273,39 @@ Since function definitions are reusable, their data input parameters are defined
 | correlationToken | Context attribute name of the CloudEvent which value is to be used for event correlation | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
-{
-    "type": "object",
-    "properties": {
-        "name": {
-            "type": "string",
-            "description": "Unique event name"
-        },
-        "source": {
-            "type": "string",
-            "description": "CloudEvent source"
-        },
-        "type": {
-            "type": "string",
-            "description": "CloudEvent type"
-        },
-        "correlationToken": {
-            "type": "string",
-            "description": "Context attribute name of the CloudEvent which value is to be used for event correlation"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata",
-          "description": "Metadata information"
-        }
-    },
-    "required": ["name", "source", "type"]
+{  
+   "name": "ApplicationSubmitted",
+   "type": "org.application.submit",
+   "source": "applicationssource",
+   "correlationToken": "applicantId"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: ApplicationSubmitted
+type: org.application.submit
+source: applicationssource
+correlationToken: applicantId
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -485,130 +417,104 @@ Following is a detailed description of each of the defined states:
 | [end](#End-Definition) | Is this state an end state | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
 <p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "This state is used to wait for events from event sources, then consumes them and invoke one or more actions to run in sequence or parallel",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique state id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["event"],
-            "description": "State type"
-        },
-        "exclusive": {
-            "type": "boolean",
-            "default": true,
-            "description": "If true consuming one of the defined events causes its associated actions to be performed. If false all of the defined events must be consumed in order for actions to be performed"
-        },
-        "eventsActions": {
-            "type": "array",
-            "description": "Define what events to be consumed and one or more actions to be performed",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/eventactions"
+"name": "MonitorVitals",
+"type": "event",
+"start": {
+    "kind": "default"
+},
+"exclusive": true,
+"eventsActions": [{
+        "eventRefs": ["HighBodyTemperature"],
+        "actions": [{
+            "functionRef": {
+                "refName": "sendTylenolOrder",
+                "parameters": {
+                    "patientid": "$.patientId"
+                }
             }
-        },
-        "timeout": {
-            "type": "string",
-            "description": "Time period to wait for incoming events (ISO 8601 format)"
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "retry": {
-            "type": "array",
-            "description": "States retry definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/retry"
-            }
-        },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-            }
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-          },
-        "transition": {
-          "description": "Next transition of the workflow after all the actions have been performed",
-          "$ref": "#/definitions/transition"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        }
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        }
+        }]
     },
-    "oneOf": [
-      {
-        "required": [
-          "name",
-          "type",
-          "eventsActions",
-          "end"
-        ]
-      },
-      {
-        "required": [
-          "name",
-          "type",
-          "eventsActions",
-          "transition"
-        ]
-      },
-      {
-        "required": [
-          "start",
-          "name",
-          "type",
-          "eventsActions",
-          "transition"
-        ]
-      },
-      {
-        "required": [
-          "start",
-          "name",
-          "type",
-          "eventsActions",
-          "end"
-        ]
-      }
-   ]
+    {
+        "eventRefs": ["HighBloodPressure"],
+        "actions": [{
+            "functionRef": {
+                "refName": "callNurse",
+                "parameters": {
+                    "patientid": "$.patientId"
+                }
+            }
+        }]
+    },
+    {
+        "eventRefs": ["HighRespirationRate"],
+        "actions": [{
+            "functionRef": {
+                "refName": "callPulmonologist",
+                "parameters": {
+                    "patientid": "$.patientId"
+                }
+            }
+        }]
+    }
+],
+"end": {
+    "kind": "terminate"
+}
 }
 ```
 
-</p>
+</td>
+<td valign="top">
+
+```yaml
+name: MonitorVitals
+type: event
+start:
+  kind: default
+exclusive: true
+eventsActions:
+- eventRefs:
+  - HighBodyTemperature
+  actions:
+  - functionRef:
+      refName: sendTylenolOrder
+      parameters:
+        patientid: "$.patientId"
+- eventRefs:
+  - HighBloodPressure
+  actions:
+  - functionRef:
+      refName: callNurse
+      parameters:
+        patientid: "$.patientId"
+- eventRefs:
+  - HighRespirationRate
+  actions:
+  - functionRef:
+      refName: callPulmonologist
+      parameters:
+        patientid: "$.patientId"
+end:
+  kind: terminate
+```
+
+</td>
+</tr>
+</table>
+
 </details>
 
 Event states await one or more events and perform actions when they are received.
@@ -649,38 +555,47 @@ have not been received during this time, the state should transition to the next
 | [actions](#Action-Definition) | Actions to be performed if expression matches | array | yes |
 | [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Defines what events to act upon and actions to be performed",
-    "properties": {
-        "eventRefs": {
-          "type" : "array",
-          "description": "References one or more unique event names in the defined workflow events"
-        },
-        "actionMode": {
-            "type" : "string",
-            "enum": ["sequential", "parallel"],
-            "description": "Specifies how actions are to be performed (in sequence of parallel)",
-            "default": "sequential"
-        },
-        "actions": {
-            "type": "array",
-            "description": "Actions to be performed if expression matches",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/action"
+    "eventRefs": ["HighBodyTemperature"],
+    "actions": [{
+        "functionRef": {
+            "refName": "sendTylenolOrder",
+            "parameters": {
+                "patientid": "$.patientId"
             }
-        },
-        "eventDataFilter": {
-          "$ref": "#/definitions/eventdatafilter"
         }
-    },
-    "required": ["eventRefs", "actions"]
+    }]
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+eventRefs:
+- HighBodyTemperature
+actions:
+- functionRef:
+    refName: sendTylenolOrder
+    parameters:
+      patientid: "$.patientId"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -752,32 +667,45 @@ instance in case it is an end state without performing any actions.
 | timeout | Time period to wait for function execution to complete (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | no |
 | [actionDataFilter](#action-data-filter) | Action data filter definition | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Action Definition",
-    "properties": {
-        "name": {
-            "type": "string",
-            "description": "Unique action definition name"
-        },
-        "functionRef": {
-            "$ref": "#/definitions/functionref",
-            "description": "References a reusable function definition"
-        },
-        "timeout": {
-          "type": "string",
-          "description": "Time period to wait for function execution to complete"
-        },
-        "actionDataFilter": {
-          "$ref": "#/definitions/actiondatafilter"
+    "name": "Finalize Application Action",
+    "functionRef": {
+        "refName": "finalizeApplicationFunction",
+        "parameters": {
+            "student": "$.applicantId"
         }
     },
-    "required": ["functionRef"]
+    "timeout": "PT15M"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: Finalize Application Action
+functionRef:
+  refName: finalizeApplicationFunction
+  parameters:
+    student: "$.applicantId"
+timeout: PT15M
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -797,27 +725,38 @@ the workflow execution in case it is an end state.
 | refName | Name of the referenced function | string | yes |
 | parameters | Parameters to be passed to the referenced function | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "description": "Function Reference",
-  "properties": {
-    "refName": {
-      "type": "string",
-      "description": "Name of the referenced function"
-    },
+    "refName": "finalizeApplicationFunction",
     "parameters": {
-      "type": "object",
-      "description": "Function parameters"
+        "student": "$.applicantId"
     }
-  },
-  "required": [
-    "refName"
-  ]
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+refName: finalizeApplicationFunction
+parameters:
+  student: "$.applicantId"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -835,28 +774,48 @@ see the [Workflow Error Handling section](#Workflow-Error-Handling).
 | [errorDataFilter](#error-data-filter) | Error data filter definition | object | yes |
 | [transition](#Transitions) | Next transition of the workflow when expression matches | object | yes |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "properties": {
-     "expression": {
-       "description": "Boolean expression which consists of one or more Error operands and the Boolean operators",
-       "$ref": "#/definitions/expression"
-     },
-     "errorDataFilter": {
-      "$ref": "#/definitions/errordatafilter",
-      "description": "Error data filter"
-    },
-    "transition": {
-      "description": "Next transition of the workflow when expression matches",
-      "$ref": "#/definitions/transition"
-    }
-  },
-  "required": ["expression", "transition"]
+   "expression": {
+       "language": "spel",
+       "body": "$.exception != null"
+   },
+   "errorDataFilter": {
+     "dataOutputPath": "$.exception"
+   },
+   "transition": {
+     "nextState": "SubmitError"
+   }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+expression:
+  language: spel
+  body: "$.exception != null"
+errorDataFilter:
+  dataOutputPath: "$.exception"
+transition:
+  nextState: SubmitError
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -867,25 +826,35 @@ see the [Workflow Error Handling section](#Workflow-Error-Handling).
 | language | Expression language. For example 'spel', 'jexl', 'cel', etc| string | no |
 | body | Expression body, for example "(event1 or event2) and event3" | string | yes |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "description": "Defines the language and body of expression",
-  "properties": {
-    "language": {
-      "type": "string",
-      "description": "Expression language. For example 'spel', 'jexl', 'cel', etc"
-    },
-    "body": {
-      "type": "string",
-      "description": "The expression body. For example, (event1 or event2) and event3"
-    }
-  },
-  "required": ["body"]
+   "language": "spel",
+   "body": "$.exception != null"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+language: spel
+body: "$.exception != null"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -906,35 +875,42 @@ expression language used for all defined expressions.
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
 | maxAttempts | Maximum number of retry attempts (1 by default). Value of 0 means no retries are performed | integer | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Retry Definition",
-    "properties": {
-        "expression": {
-          "description": "Expression that matches against states data output",
-          "$ref": "#/definitions/expression"
-        },
-        "interval": {
-            "type": "string",
-            "description": "Interval value for retry (ISO 8601 repeatable format)"
-        },
-        "multiplier": {
-            "type": "string",
-            "description": "Multiplier value by which interval increases during each attempt (ISO 8601 time format)"
-        },
-        "maxAttempts": {
-            "type": "integer",
-            "default": 1,
-            "minimum": 0,
-            "description": "Maximum number of retry attempts (1 by default). Value of 0 means no retries are performed"
-        }
-    },
-    "required": ["expression"]
+   "expression": {
+     "language": "spel",
+     "body": "$.error.name eq 'FunctionError'"
+   },
+   "interval": "PT2M",
+   "maxAttempts": 3
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+expression:
+  language: spel
+  body: "$.error.name eq 'FunctionError'"
+interval: PT2M
+maxAttempts: 3
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -969,31 +945,47 @@ For more information reference the [Workflow Error Handling - Retrying](#workflo
 | [produceEvent](#ProduceEvent-Definition) | Event to be produced when this transition happens | object | no |
 | [nextState](#Transitions) | State to transition to next | string | yes |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "expression": {
-      "description": "Boolean expression evaluated against state's data output. Must evaluate to true for the transition to be valid",
-      "$ref": "#/definitions/expression"
-    },
-    "produceEvent": {
-      "description": "Reference one of the defined events by name and set its data",
-      "$ref": "#/definitions/produceevent"
-    },
-    "nextState": {
-      "type": "string",
-      "description": "State to transition to next",
-      "minLength": 1
-    }
-  },
-  "required": [
-    "nextState"
-  ]
+   "expression": {
+      "language": "spel",
+      "body": "$.result ne null"
+   },
+   "produceEvent": {
+       "eventRef": "produceResultEvent",
+       "data": "$.result"
+   },
+   "nextState": "EvalResultState"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+expression:
+  language: spel
+  body: "$.result ne null"
+produceEvent:
+  eventRef: produceResultEvent
+  data: "$.result"
+nextState: EvalResultState
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -1019,108 +1011,57 @@ Defines a transition from point A to point B in the serverless workflow. For mor
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Defines actions be performed. Does not wait for incoming events",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique state id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["operation"],
-            "description": "State type"
-        },
-        "actionMode": {
-            "type" : "string",
-            "enum": ["sequential", "parallel"],
-            "description": "Specifies whether actions are performed in sequence or in parallel",
-            "default": "sequential"
-        },
-        "actions": {
-            "type": "array",
-            "description": "Actions to be performed",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/action"
+    "name": "RejectApplication",
+    "type": "operation",
+    "actionMode": "sequential",
+    "actions": [
+        {
+            "functionRef": {
+                "refName": "sendRejectionEmailFunction",
+                "parameters": {
+                    "applicant": "$.customer"
+                }
             }
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "retry": {
-            "type": "array",
-            "description": "States retry definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/retry"
-            }
-        },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-            }
-        },
-        "transition": {
-          "description": "Next transition of the workflow after all the actions have been performed",
-          "$ref": "#/definitions/transition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
         }
-    },
-    "oneOf": [
-     {
-       "required": [
-         "name",
-         "type",
-         "actionMode",
-         "actions",
-         "end"
-       ]
-     },
-     {
-       "required": [
-         "name",
-         "type",
-         "actionMode",
-         "actions",
-         "transition"
-       ]
-     }
-   ]
+    ],
+    "end": {
+        "kind": "default"
+    }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: RejectApplication
+type: operation
+actionMode: sequential
+actions:
+- functionRef:
+    refName: sendRejectionEmailFunction
+    parameters:
+      applicant: "$.customer"
+end:
+  kind: default
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -1144,78 +1085,68 @@ Once all actions have been performed, a transition to another state can occur.
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
-{
-    "type": "object",
-    "description": "Permits transitions to other states based on matched data condition or events",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique state id",
-            "minLength": 1
+{  
+     "name":"CheckVisaStatus",
+     "type":"switch",
+     "start": {
+        "kind": "default"
+     },
+     "eventConditions": [
+        {
+          "eventRef": "visaApprovedEvent",
+          "transition": {
+            "nextState": "HandleApprovedVisa"
+          }
         },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["switch"],
-            "description": "State type"
-        },
-        "conditions": {
-            "type": "array",
-            "description": "Defines conditions evaluated against state data",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/condition"
-            }
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-            }
-        },
-        "default": {
-            "description": "Next transition of the workflow if there is no match for any conditions",
-            "$ref": "#/definitions/transition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
+        {
+          "eventRef": "visaRejectedEvent",
+          "transition": {
+            "nextState": "HandleRejectedVisa"
+          }
         }
-    },
-    "oneOf": [
-      {
-        "$ref": "#/definitions/databasedswitch"
-      },
-      {
-        "$ref": "#/definitions/eventbasedswitch"
-      } 
-    ]
+     ],
+     "eventTimeout": "PT1H",
+     "default": {
+        "nextState": "HandleNoVisaDecision"
+     }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: CheckVisaStatus
+type: switch
+start:
+  kind: default
+eventConditions:
+- eventRef: visaApprovedEvent
+  transition:
+    nextState: HandleApprovedVisa
+- eventRef: visaRejectedEvent
+  transition:
+    nextState: HandleRejectedVisa
+eventTimeout: PT1H
+default:
+  nextState: HandleNoVisaDecision
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -1246,40 +1177,42 @@ Switch states cannot be workflow ending states.
 | [transition](#Transitions) | Next transition of the workflow if condition is matched | object | yes |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Switch state condition",
-    "properties": {
-        "path": {
-            "type": "string",
-            "description": "JSONPath expression that selects elements of state data"
-        },
-        "value": {
-            "type": "string",
-            "description": "Matching value"
-        },
-        "operator": {
-            "type" : "string",  
-            "enum": ["exists", "notexists", "null", "notnull",
-                     "equals", "notequals", "lessthan", "lessthanorequals", 
-                     "greaterthan", "greaterthanorequals", "matches", "notmatches",
-                     "custom"],
-            "description": "Condition operator"
-        },
-        "transition": {
-          "description": "Next transition of the workflow if there is valid matches",
-          "$ref": "#/definitions/transition"
-        }
-    },
-    "metadata": {
-       "$ref": "#/definitions/metadata"
-    },
-    "required": ["path", "value", "operator", "transition"]
+      "path": "$.applicant.age",
+      "value": "18",
+      "operator": "greaterthanorequals",
+      "transition": {
+        "nextState": "StartApplication"
+      }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+path: "$.applicant.age"
+value: '18'
+operator: greaterthanorequals
+transition:
+  nextState: StartApplication
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -1302,32 +1235,38 @@ so use of one of the operators other than "Custom" are if possible preferred.
 | [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-     "type": "object",
-      "description": "Switch state data event condition",
-      "properties": {
-        "eventRef": {
-          "type" : "string",
-          "description": "References an unique event name in the defined workflow events"
-        },
-        "transition": {
-          "description": "Next transition of the workflow if there is valid matches",
-          "$ref": "#/definitions/transition"
-        }
-      },
-      "eventDataFilter": {
-        "description": "Event data filter definition",
-        "$ref": "#/definitions/eventdatafilter"
-      },
-      "metadata": {
-        "$ref": "#/definitions/metadata"
-      },
-      "required": ["eventRef", "transition"]
+      "eventRef": "visaApprovedEvent",
+      "transition": {
+        "nextState": "HandleApprovedVisa"
+      }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+eventRef: visaApprovedEvent
+transition:
+  nextState: HandleApprovedVisa
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -1353,106 +1292,42 @@ the "eventDataFilter" defines the event data filter to be used to filter event d
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) |If this state an end state | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Causes the workflow execution to delay for a specified duration",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique state id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["delay"],
-            "description": "State type"
-        },
-        "timeDelay": {
-            "type": "string",
-            "description": "Amount of time (ISO 8601 format) to delay"
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-            }
-        },
-        "transition": {
-          "description": "Next transition of the workflow after the delay",
-          "$ref": "#/definitions/transition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
-        }
-    },
-   "oneOf": [
-    {
-      "required": [
-        "name",
-        "type",
-        "timeDelay",
-        "end"
-      ]
-    },
-    {
-      "required": [
-        "name",
-        "type",
-        "timeDelay",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "timeDelay",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "timeDelay",
-        "end"
-      ]
-    }
-  ]
+      "name": "WaitForCompletion",
+      "type": "delay",
+      "timeDelay": "PT5S",
+      "transition": {
+        "nextState":"GetJobStatus"
+      }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: WaitForCompletion
+type: delay
+timeDelay: PT5S
+transition:
+  nextState: GetJobStatus
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -1478,131 +1353,100 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
-{
-    "type": "object",
-    "description": "Consists of a number of states that are executed in parallel",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique State id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["parallel"],
-            "description": "State type"
-        },
-        "branches": {
-            "type": "array",
-            "description": "Branch Definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/branch"
+  {  
+     "name":"ParallelExec",
+     "type":"parallel",
+     "start": {
+       "kind": "default"
+     },
+     "completionType": "and",
+     "branches": [
+        {
+          "name": "Branch1",
+          "states": [
+            {
+                "name":"ShortDelay",
+                 "type":"delay",
+                 "start": {
+                    "kind": "default"
+                },
+                 "timeDelay": "PT15S",
+                 "end": {
+                   "kind": "default"
+                 }
             }
+          ]
         },
-        "completionType": {
-            "type" : "string",  
-            "enum": ["and", "xor", "n_of_m"],
-            "description": "Option types on how to complete branch execution.",
-            "default": "and"
-        },
-        "n": {
-           "type": "integer",
-            "default": 0,
-            "minimum": 0,
-            "description": "Used when completionType is set to 'n_of_m' to specify the 'N' value"
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "retry": {
-            "type": "array",
-            "description": "States retry definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/retry"
-            }
-        },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-            }
-        },
-        "transition": {
-          "description": "Next transition of the workflow after all branches have completed execution",
-          "$ref": "#/definitions/transition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        },
-         "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
-         "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
+        {
+          "name": "Branch2",
+          "states": [
+             {
+                 "name":"LongDelay",
+                  "type":"delay",
+                  "start": {
+                     "kind": "default"
+                  },
+                  "timeDelay": "PT2M",
+                  "end": {
+                    "kind": "default"
+                  }
+             }
+          ]
         }
-    },
-    "oneOf": [
-    {
-      "required": [
-        "name",
-        "type",
-        "branches",
-        "end"
-      ]
-    },
-    {
-      "required": [
-        "name",
-        "type",
-        "branches",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "branches",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "branches",
-        "transition",
-        "end"
-      ]
-    }
-  ]
+     ],
+     "end": {
+       "kind": "default"
+     }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: ParallelExec
+type: parallel
+start:
+  kind: default
+completionType: and
+branches:
+- name: Branch1
+  states:
+  - name: ShortDelay
+    type: delay
+    start:
+      kind: default
+    timeDelay: PT15S
+    end:
+      kind: default
+- name: Branch2
+  states:
+  - name: LongDelay
+    type: delay
+    start:
+      kind: default
+    timeDelay: PT2M
+    end:
+      kind: default
+end:
+  kind: default
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -1625,62 +1469,54 @@ Exceptions may occur during execution of branches of the Parallel state, this is
 | name | Branch name | string | yes |
 | [states](#State-Definition) | States to be executed in this branch | array | yes |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Branch Definition",
-    "properties": {
-        "name": {
-            "type": "string",
-            "description": "Branch name"
-        },
-        "states": {
-            "type": "array",
-            "description": "State Definitions",
-            "items": {
-                        "type": "object",
-                        "anyOf": [
-                            {
-                              "title": "Delay State",
-                              "$ref": "#/definitions/delaystate"
-                            },
-                            {
-                              "title": "Event State",
-                              "$ref": "#/definitions/eventstate"
-                            },
-                            {
-                              "title": "Operation State",
-                              "$ref": "#/definitions/operationstate"
-                            },
-                            {
-                              "title": "Switch State",
-                              "$ref": "#/definitions/switchstate"
-                            },
-                            {
-                              "title": "SubFlow State",
-                              "$ref": "#/definitions/subflowstate"
-                            },
-                            {
-                              "title": "Inject State",
-                              "$ref": "#/definitions/injectstate"
-                            },
-                            {
-                              "title": "ForEach State",
-                              "$ref": "#/definitions/foreachstate"
-                            },
-                            {
-                              "title": "Callback State",
-                              "$ref": "#/definitions/callbackstate"
-                            }
-                        ]
-                    }
+      "name": "Branch1",
+      "states": [
+        {
+            "name":"ShortDelay",
+             "type":"delay",
+             "start": {
+                "kind": "default"
+            },
+             "timeDelay": "PT15S",
+             "end": {
+               "kind": "default"
+             }
         }
-    },
-    "required": ["name", "states"]
+      ]
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: Branch1
+states:
+- name: ShortDelay
+  type: delay
+  start:
+    kind: default
+  timeDelay: PT15S
+  end:
+    kind: default
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -1879,111 +1715,42 @@ For more information see the [workflow error handling and retrying section](#wor
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Defines a sub-workflow to be executed",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique state id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["subflow"],
-            "description": "State type"
-        },
-        "waitForCompletion": {
-            "type": "boolean",
-            "default": false,
-            "description": "Workflow execution must wait for sub-workflow to finish before continuing"
-        },
-        "workflowId": {
-            "type": "string",
-            "description": "Sub-workflow unique id"
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-           }
-        },
-        "transition": {
-          "description": "Next transition of the workflow after subflow has completed",
-          "$ref": "#/definitions/transition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
-        }
-    },
-    "oneOf": [
-    {
-      "required": [
-        "name",
-        "type",
-        "workflowId",
-        "end"
-      ]
-    },
-    {
-      "required": [
-        "name",
-        "type",
-        "workflowId",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "workflowId",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "workflowId",
-        "end"
-      ]
+    "name": "HandleApprovedVisa",
+    "type": "subflow",
+    "workflowId": "handleApprovedVisaWorkflowID",
+    "end": {
+      "kind": "default"
     }
-  ]
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: HandleApprovedVisa
+type: subflow
+workflowId: handleApprovedVisaWorkflowID
+end:
+  kind: default
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -2025,94 +1792,50 @@ Sub-workflows inherit all the [function](#Function-Definition) and [event](#Even
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
-{
-    "type": "object",
-    "description": "Inject static data into state data. Does not perform any actions",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique state id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["inject"],
-            "description": "State type"
-        },
-        "data": {
-            "type": "object",
-            "description": "JSON object which can be set as states data input and can be manipulated via filters"
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "transition": {
-          "description": "Next transition of the workflow after subflow has completed",
-          "$ref": "#/definitions/transition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
-        }
-    },
-    "oneOf": [
-    {
-      "required": [
-        "name",
-        "type",
-        "end"
-      ]
-    },
-    {
-      "required": [
-        "name",
-        "type",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "end"
-      ]
-    }
-  ]
+{  
+     "name":"Hello",
+     "type":"inject",
+     "start": {
+       "kind": "default"
+     },
+     "data": {
+        "result": "Hello"
+     },
+     "transition": {
+       "nextState": "World"
+     }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: Hello
+type: inject
+start:
+  kind: default
+data:
+  result: Hello
+transition:
+  nextState: World
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -2296,181 +2019,99 @@ This allows you to test if your workflow behaves properly for cases when there a
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "Execute a set of defined states for each element of the data input array",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique State id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["foreach"],
-            "description": "State type"
-        },
-        "inputCollection": {
-           "type": "string",
-           "description": "JSONPath expression selecting a JSON array element of the states data input"
-         },
-         "outputCollection": {
-           "type": "string",
-           "description": "JSONPath expression specifying where in the states data output to place the final data output of each iteration of the executed states"
-         },
-         "inputParameter": {
-            "type": "string",
-             "description": "JSONPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with a unique element of the inputCollection array"
-         },
-         "max": {
-           "type": "integer",
-            "default": 0,
-            "minimum": 0,
-            "description": "Specifies how upper bound on how many iterations may run in parallel"
-         },
-         "timeDelay": {
-             "type": "string",
-             "description": "Amount of time (ISO 8601 format) to wait between each iteration "
-         },
-        "states": {
-            "type": "array",
-            "description": "States to be executed for each of the elements of inputCollection",
-            "items": {
-                "type": "object",
-                "anyOf": [
-                    {
-                      "title": "Delay State",
-                      "$ref": "#/definitions/delaystate"
-                    },
-                    {
-                      "title": "Event State",
-                      "$ref": "#/definitions/eventstate"
-                    },
-                    {
-                      "title": "Operation State",
-                      "$ref": "#/definitions/operationstate"
-                    },
-                    {
-                      "title": "Switch State",
-                      "$ref": "#/definitions/switchstate"
-                    },
-                    {
-                      "title": "SubFlow State",
-                      "$ref": "#/definitions/subflowstate"
-                    },
-                    {
-                      "title": "Inject State",
-                      "$ref": "#/definitions/injectstate"
-                    },
-                    {
-                      "title": "ForEach State",
-                      "$ref": "#/definitions/foreachstate"
-                    },
-                    {
-                      "title": "Callback State",
-                      "$ref": "#/definitions/callbackstate"
-                    }
-                ]
-            }
-        },
-        "stateDataFilter": {
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "retry": {
-            "type": "array",
-            "description": "States retry definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/retry"
-            }
-        },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-            }
-        },
-        "transition": {
-          "description": "Next transition of the workflow after state has completed",
-          "$ref": "#/definitions/transition"
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
-        },
+    "name": "ProvisionOrdersState",
+    "type": "foreach",
+    "start": {
+       "kind": "default"
+    },
+    "inputCollection": "$.orders",
+    "inputParameter": "$.singleorder",
+    "outputCollection": "$.results",
+    "states": [
+    {
+        "name": "DoProvision",
+        "type": "operation",
         "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
+          "kind": "default"
         },
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
+        "actionMode": "sequential",
+        "actions": [
+        {
+            "functionRef": {
+                "refName": "provisionOrderFunction",
+                "parameters": {
+                    "order": "$.order"
+                }
+            }
         }
-    },
-    "oneOf": [
-    {
-      "required": [
-        "name",
-        "type",
-        "inputCollection",
-        "inputParameter",
-        "states",
-        "end"
-      ]
-    },
-    {
-      "required": [
-        "name",
-        "type",
-        "inputCollection",
-        "inputParameter",
-        "states",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "inputCollection",
-        "inputParameter",
-        "states",
-        "end"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "inputCollection",
-        "inputParameter",
-        "states",
-        "transition"
-      ]
+        ],
+        "end": {
+            "kind": "default"
+        }
     }
-  ]
+    ],
+    "stateDataFilter": {
+        "dataOutputPath": "$.provisionedOrders"
+    },
+    "end": {
+        "kind": "event",
+        "produceEvent": {
+            "eventRef": "provisioningCompleteEvent",
+            "data": "$.provisionedOrders"
+        }
+    }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+name: ProvisionOrdersState
+type: foreach
+start:
+  kind: default
+inputCollection: "$.orders"
+inputParameter: "$.singleorder"
+outputCollection: "$.results"
+states:
+- name: DoProvision
+  type: operation
+  start:
+    kind: default
+  actionMode: sequential
+  actions:
+  - functionRef:
+      refName: provisionOrderFunction
+      parameters:
+        order: "$.order"
+  end:
+    kind: default
+stateDataFilter:
+  dataOutputPath: "$.provisionedOrders"
+end:
+  kind: event
+  produceEvent:
+    eventRef: provisioningCompleteEvent
+    data: "$.provisionedOrders"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -2695,138 +2336,63 @@ defined in the orders array of its data input.
 | [end](#End-Definition) | Is this state an end state | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
 <p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-    "type": "object",
-    "description": "This state performs an action, then waits for the callback event that denotes completion of the action",
-    "properties": {
-        "id": {
-            "type": "string",
-            "description": "Unique state id",
-            "minLength": 1
-        },
-        "name": {
-            "type": "string",
-            "description": "State name"
-        },
-        "type": {
-            "type" : "string",
-            "enum": ["callback"],
-            "description": "State type"
+        "name": "CheckCredit",
+        "type": "callback",
+        "start": {
+           "kind": "default"
         },
         "action": {
-            "description": "Defines the action to be executed",
-            "$ref": "#/definitions/callbackaction"
-        },
-        "eventRef": {
-          "type" : "string",
-          "description": "References an unique callback event name in the defined workflow events"
-        },
-        "timeout": {
-            "type": "string",
-            "description": "Time period to wait for incoming events (ISO 8601 format)"
-        },
-        "eventDataFilter": {
-          "description": "Callback event data filter definition",
-          "$ref": "#/definitions/eventdatafilter"
-        },
-        "stateDataFilter": {
-          "description": "State data filter definition",
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "retry": {
-            "type": "array",
-            "description": "States retry definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/retry"
+            "functionRef": {
+                "refName": "callCreditCheckMicroservice",
+                "parameters": {
+                    "customer": "$.customer"
+                }
             }
         },
-        "onError": {
-            "type": "array",
-            "description": "States error handling definitions",
-            "items": {
-                "type": "object",
-                "$ref": "#/definitions/error"
-            }
-        },
-        "dataInputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data input adheres to"
-        },
-        "dataOutputSchema": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to JSON Schema that state data output adheres to"
-          },
+        "eventRef": "CreditCheckCompletedEvent",
+        "timeout": "PT15M",
         "transition": {
-          "description": "Next transition of the workflow after all the actions have been performed",
-          "$ref": "#/definitions/transition"
-        },
-         "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
-        },
-        "metadata": {
-          "$ref": "#/definitions/metadata"
+            "nextState": "EvaluateDecision"
         }
-    },
-    "oneOf": [
-    {
-      "required": [
-        "name",
-        "type",
-        "action",
-        "eventRef",
-        "timeout",
-        "end"
-      ]
-    },
-    {
-      "required": [
-        "name",
-        "type",
-        "action",
-        "eventRef",
-        "timeout",
-        "transition"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "action",
-        "eventRef",
-        "timeout",
-        "end"
-      ]
-    },
-    {
-      "required": [
-        "start",
-        "name",
-        "type",
-        "action",
-        "eventRef",
-        "timeout",
-        "transition"
-      ]
-    }
-  ]
 }
 ```
 
-</p>
+</td>
+<td valign="top">
+
+```yaml
+name: CheckCredit
+type: callback
+start:
+  kind: default
+action:
+  functionRef:
+    refName: callCreditCheckMicroservice
+    parameters:
+      customer: "$.customer"
+eventRef: CreditCheckCompletedEvent
+timeout: PT15M
+transition:
+  nextState: EvaluateDecision
+```
+
+</td>
+</tr>
+</table>
+
 </details>
 
 Serverless orchestration can at times require manual steps/decisions to be made. While some work performed
@@ -2858,46 +2424,38 @@ If the defined callback event has not been received during this time period, the
 | kind | End kind ("default", "scheduled") | enum | yes |
 | [schedule](#Schedule-Definition) | If kind is "scheduled", define when the starting state is or becomes active | object | yes only if kind is "scheduled" |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "description": "State start definition",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "enum": [
-        "default",
-        "scheduled"
-      ],
-      "description": "Kind of start definition"
-    },
-    "schedule": {
-      "description": "If kind is scheduled, define when the starting state is or becomes active",
-      "$ref": "#/definitions/schedule"
-    }
-  },
-  "if": {
-    "properties": {
-      "kind": {
-        "const": "scheduled"
+      "kind": "scheduled",
+      "schedule": {
+        "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
       }
-    }
-  },
-  "then": {
-    "required": [
-      "kind",
-      "schedule"
-    ]
-  },
-  "else": {
-    "required": [
-      "kind"
-    ]
-  }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+kind: scheduled
+schedule:
+  interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -2927,23 +2485,33 @@ For more information about the schedule definition see the next section.
 | --- | --- | --- | --- |
 | interval | Time interval describing when the workflow starting state is active. (ISO 8601 time interval format). | string | yes |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "description": "Start state schedule definition",
-  "properties": {
-    "interval": {
-      "type": "string",
-      "description":  "Time interval describing when the workflow starting state is active"
-    }
-  },
-  "required": [
-    "interval"
-  ]
+   "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -2972,47 +2540,40 @@ Once a workflow instance is created, the start state schedule can be ignored for
 | kind | End kind ("default", "terminate", or "event") | enum | yes |
 | [produceEvent](#ProduceEvent-Definition) | If kind is "event", define what type of event to produce | object | yes only if kind is "EVENT" |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "description": "State end definition",
-  "properties": {
-    "kind": {
-      "type": "string",
-      "enum": [
-        "default",
-        "terminate",
-        "event"
-      ],
-      "description": "Kind of end definition"
-    },
+    "kind": "event",
     "produceEvent": {
-      "description": "If end kind is event, select one of the defined events by name and set its data",
-      "$ref": "#/definitions/produceevent"
+        "eventRef": "provisioningCompleteEvent",
+        "data": "$.provisionedOrders"
     }
-  },
-  "if": {
-    "properties": {
-      "kind": {
-        "const": "event"
-      }
-    }
-  },
-  "then": {
-    "required": [
-      "kind",
-      "produceEvent"
-    ]
-  },
-  "else": {
-    "required": [
-      "kind"
-    ]
-  }
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+kind: event
+produceEvent:
+  eventRef: provisioningCompleteEvent
+  data: "$.provisionedOrders"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -3032,27 +2593,35 @@ are completed. If a terminate end is reached inside a ForEach, Parallel, or SubF
 | eventRef | Reference to a defined unique event name in the [events](#Event-Definition) definition | string | yes |
 | data | If String, JSONPath expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the data of produced event. | string or object | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "description": "Produce an event and set its data",
-  "properties": {
-    "eventRef": {
-      "type": "string",
-      "description": "References a name of a defined event"
-    },
-    "data": {
-      "type": ["string", "object"],
-      "description": "JSONPath expression which selects parts of the states data output to become the data of the produced event"
-    }
-  },
-  "required": [
-    "eventRef"
-  ]
+    "eventRef": "provisioningCompleteEvent",
+    "data": "$.provisionedOrders"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+eventRef: provisioningCompleteEvent
+data: "$.provisionedOrders"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -3067,41 +2636,6 @@ allows for event-based orchestration communication.
 
 For example, completion of an orchestration workflow can notify other orchestration workflows to decide if they need to act upon
  the produced event. This can create very dynamic orchestration scenarios.
-
-#### Filter Definition
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| inputPath |Input path (JSONPath) | string | yes |
-| resultPath |Result Path (JSONPath) | string | no |
-| outputPath |Output Path (JSONPath) | string | no |
-
-<details><summary><strong>Click to view JSON Schema</strong></summary>
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "inputPath": {
-      "type": "string",
-      "description": "Select input data of either Event, State or Action as JSONPath"
-    },
-    "resultPath": {
-      "type": "string",
-      "description": "Specify result JSON node of Action Output as JSONPath"
-    },
-    "outputPath": {
-      "type": "string",
-      "description": "Specify output data of State or Action as JSONPath"
-    }
-  },
-  "required": ["inputPath"]
-}
-```
-
-</details>
-
-Filters are used for data flow through the workflow. This is described in detail in the [Information Passing](#Information-Passing-Between-States) section.
 
 #### Transitions
 
@@ -3342,24 +2876,35 @@ actions they perform.
 | dataInputPath | JSONPath definition that selects parts of the states data input | string | no |
 | dataOutputPath | JSONPath definition that selects parts of the states data output | string | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "dataInputPath": {
-      "type": "string",
-      "description": "JSONPath definition that selects parts of the states data input"
-    },
-    "dataOutputPath": {
-      "type": "string",
-      "description": "JSONPath definition that selects parts of the states data output"
-    }
-  },
-  "required": []
+    "dataInputPath": "$.orders",
+    "dataOutputPath": "$.provisionedOrders"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+dataInputPath: "$.orders"
+dataOutputPath: "$.provisionedOrders"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -3461,24 +3006,35 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 | dataInputPath | JSONPath definition that selects parts of the states data input to be the action data | string | no |
 | dataResultsPath | JSONPath definition that selects parts of the actions data result, to be merged with the states data | string | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "dataInputPath": {
-      "type": "string",
-      "description": "JSONPath definition that selects parts of the states data input to be the action data"
-    },
-    "dataResultsPath": {
-      "type": "string",
-      "description": "JSONPath definition that selects parts of the actions data result, to be merged with the states data"
-    }
-  },
-  "required": []
+  "dataInputPath": "$.language", 
+  "dataResultsPath": "$.payload.greeting"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+dataInputPath: "$.language"
+dataResultsPath: "$.payload.greeting"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -3501,20 +3057,33 @@ To give an example, let's say we have an action which returns a list of breads a
 | --- | --- | --- | --- |
 | dataOutputPath | JSONPath definition that selects parts of the event data, to be merged with the states data | string | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "dataOutputPath": {
-      "type": "string",
-      "description": "JSONPath definition that selects parts of the event data, to be merged with the states data"
-    }
-  },
-  "required": []
+    "dataOutputPath": "$.data.results"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+dataOutputPath: "$.data.results"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
@@ -3538,20 +3107,33 @@ an event filter.
 | --- | --- | --- | --- |
 | dataOutputPath | JSONPath definition that selects parts of the error data, to be merged with the states data | string | no |
 
-<details><summary><strong>Click to view JSON Schema</strong></summary>
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
 ```json
 {
-  "type": "object",
-  "properties": {
-    "dataOutputPath": {
-      "type": "string",
-      "description": "JSONPath definition that selects parts of the error data, to be merged with the states data"
-    }
-  },
-  "required": []
+  "dataOutputPath": "$.exception"
 }
 ```
+
+</td>
+<td valign="top">
+
+```yaml
+dataOutputPath: "$.exception"
+```
+
+</td>
+</tr>
+</table>
 
 </details>
 
