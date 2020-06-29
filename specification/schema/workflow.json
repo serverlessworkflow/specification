@@ -1229,7 +1229,7 @@
         },
         "max": {
           "type": "integer",
-          "default": "0",
+          "default": 0,
           "minimum": 0,
           "description": "Specifies how upper bound on how many iterations may run in parallel"
         },
