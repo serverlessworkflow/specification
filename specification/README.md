@@ -1523,7 +1523,7 @@ states:
 
 Each branch receives the same copy of the Parallel state's data input.
 
-A branch can define either actions to be executed within that branch or states.
+A branch can define either states or actions to be executed.
 
 States within each branch are only allowed to transition to states defined in the same branch.
 Transitions to other branches or workflow states are not allowed.
@@ -2120,7 +2120,7 @@ end:
 
 </details>
 
-The ForEach state can be used to execute a defined set of states or actions for each element of an array (defined in the states data input).
+ForEach states can be used to execute a defined set of states or actions for each element of an array (defined in the states data input).
 While the [Parallel state](#Parallel-State) performs multiple branches of states or actions using the
 same data input, the ForEach state performs the defined steps or actions for multiple entries of an array in the states data input.
 

@@ -1389,7 +1389,7 @@
             "type",
             "inputCollection",
             "inputParameter",
-            "events",
+            "actions",
             "end"
           ]
         },
@@ -1399,7 +1399,7 @@
             "type",
             "inputCollection",
             "inputParameter",
-            "events",
+            "actions",
             "transition"
           ]
         },
@@ -1410,7 +1410,7 @@
             "type",
             "inputCollection",
             "inputParameter",
-            "events",
+            "actions",
             "end"
           ]
         },
@@ -1421,7 +1421,7 @@
             "type",
             "inputCollection",
             "inputParameter",
-            "events",
+            "actions",
             "transition"
           ]
         }
