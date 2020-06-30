@@ -56,3 +56,4 @@ _Status description:_
 | ✔️| Update produceEvent data property | [spec doc](../README.md) |
 | ✔️| Change uppercase property and enum types to lowercase | [spec doc](../README.md) |
 | ✔️| Add Parallel State Exception Handling section | [spec doc](../README.md) |
+| ✔️| Add Go SDK | [sdk doc](../../sdk/go/README.md) |
