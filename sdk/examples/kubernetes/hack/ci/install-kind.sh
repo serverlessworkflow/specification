@@ -15,7 +15,8 @@ if [ ! -f "${kind_install_dir}"/kind ]; then
     chmod +x "${PWD}"/kind &&
         mkdir -p "${kind_install_dir}" &&
         mv -v "${PWD}"/kind "${kind_install_dir}"/kind
-        ln -s "${kind_install_dir}"/kind kind
 else
     echo "KIND already installed, skipping"
 fi
+
+ln -s "${kind_install_dir}"/kind kind

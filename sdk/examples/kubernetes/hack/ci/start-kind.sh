@@ -10,9 +10,9 @@ fi
 
 file kind
 
-if [[ ! "$(kind get clusters)" =~ ${CLUSTER_NAME} ]]; then
+if [[ ! "$(./kind get clusters)" =~ ${CLUSTER_NAME} ]]; then
     echo "---> Creating cluster named '${CLUSTER_NAME}'"
-    kind create cluster --name "${CLUSTER_NAME}" --wait 1m $KIND_KUBE_VERSION
+    ./kind create cluster --name "${CLUSTER_NAME}" --wait 1m $KIND_KUBE_VERSION
 else
     echo "---> Already found cluster named '${CLUSTER_NAME}'"
 fi
