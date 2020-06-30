@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/RHsyseng/operator-utils v0.0.0-20200417214513-7aac0c82a293
-	github.com/cncf/wg-serverless-workflow/sdk/go v0.0.0-20200630191243-f244d16fd11c
+	github.com/cncf/wg-serverless-workflow/sdk/go v0.0.0-20200630210910-fed20b3e7be1
 	github.com/go-openapi/runtime v0.19.19 // indirect
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/net v0.0.0-20200625001655-4c5254603344 // indirect
