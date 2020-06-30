@@ -2490,7 +2490,7 @@ There are two cases to discuss when dealing with interval-based scheduled starts
 1. **Starting States in [Parallel](#Parallel-State) state [branches](#parallel-state-branch)**: if a state in a parallel state branch defines a scheduled start state which is not "active" at the time the branch is executed, the parent workflow should not wait until it becomes active and just complete execution of the branch.
 2. **Starting states in [SubFlow](#SubFlow-State) states**: if a state in a workflow definition (referenced by SubFlow state) defines a scheduled start state that is not "active" at the time the SubFlow state is executed, the parent workflow should not wait until it becomes active and simply complete execution of the SubFlow state.
 
-You can also define a cron-based scheduled starts which allow to define periodically started workflow instances based on a [cron](https://en.wikipedia.org/wiki/Cron) definition.
+You can also define a cron-based scheduled starts which allow to define periodically started workflow instances based on a [cron](http://crontab.org/) definition.
 Cron-based scheduled starts can handle absolute time intervals (not calculated in respect to some particular point in time).
 One use case for cron-based scheduled starts is let's say we have a workflow which performs data batch processing which has to be done periodically. 
 In this case we could use a cron definition
@@ -2500,7 +2500,17 @@ In this case we could use a cron definition
 ```
 
 to define that this workflow should be triggered every 5 minutes, starting at full hour. 
-[See here](https://en.wikipedia.org/wiki/Cron) to get more information on defining cron expressions.
+
+Here are some more examples of cron expressions and their meanings:
+
+``` text
+* * * * *   - Trigger workflow instance at the top of every minute
+0 * * * *   - Trigger workflow instance at the top of every hour
+0 */2 * * * - Trigger workflow instance every 2 hours
+0 9 8 * *   - Trigger workflow instance at 9:00:00AM on the eighth day of every month
+```
+
+[See here](http://crontab.org/) to get more information on defining cron expressions.
 
 One thing to discuss when dealing with cron-based scheduled stars is when the starting state of the workflow is an [Event](#Event-State).
 Event states define that workflow instances are triggered by existence of the defined event(s). 
@@ -2565,7 +2575,7 @@ a specific interval, the "waiting" for event "X" should only be started when the
 
 Once a workflow instance is created, the start state schedule can be ignored for that particular workflow instance. States should from then on rely on their timeout properties for example to restrict the waiting time of incoming events, function executions, etc.  
 
-The cron property uses a [cron expression](https://en.wikipedia.org/wiki/Cron) 
+The cron property uses a [cron expression](http://crontab.org/) 
 to describe a repeating interval upon which the state becomes active and a new workflow instance is created.
 
 Note that when the starting state of the workflow is an [Event](#Event-State) 
