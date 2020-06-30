@@ -26,6 +26,22 @@ The following documents are available:
 | **Additional Documentation:** | | |
 | Model JSON Schema | [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/schema/serverless-workflow-schema-v01.json) | [master](specification/schema/workflow.json) |
 
+## SDKs
+
+In addition to the documentation mentioned above, there is also a set of SDKs being developed and are part of the specification:
+
+- [Go](https://github.com/cncf/wg-serverless-workflow/tree/master/sdk/go)
+- Java - coming soon
+
+Being an open source community the Serverless Workflow team is open for new members as well open to their contributions. 
+In order to ensure that an SDK is going to be supported and maintained the Serverless Workflow community would like to ensure that:
+
+* Each SDK has active points of contact.
+* Each SDK supports the latest(N), and N-1, major releases of the specification.
+* Within the scope of a major release, only support for the latest minor version is needed.
+
+Support for release candidates is not required, but strongly encouraged.
+
 ## Community
 
 We have an growing community working together to build a dynamic serverless workflow
