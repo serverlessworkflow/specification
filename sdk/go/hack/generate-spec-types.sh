@@ -24,3 +24,5 @@ sed -i '/runtime.RawExtension/i \/\/ \+kubebuilder:pruning:PreserveUnknownFields
 mv -v generated.types_spec.go ./pkg/apis/serverlessworkflow/
 
 go fmt ./pkg/...
+
+sh ./hack/run-controller-gen.sh
