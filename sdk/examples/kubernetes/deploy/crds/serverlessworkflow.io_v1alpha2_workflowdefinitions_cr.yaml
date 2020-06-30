@@ -1,0 +1,42 @@
+apiVersion: serverlessworkflow.io/v1alpha2
+kind: WorkflowDefinition
+metadata:
+  name: travel-agency-workflow
+spec:
+  # one can build an entire workflow following the specification
+  # for a matter of example, we separated the events in a EventGroup type, so it can be reused
+  # but could also be defined directly in this CR on `events` field
+  # see: https://github.com/cncf/wg-serverless-workflow/blob/master/specification/examples/examples.md#event-based-transitions-example
+  id: "eventbasedswitch"
+  version: "1.0"
+  name: "Event Based Switch Transitions"
+  states:
+    - name: "CheckVisaStatus"
+      type: "switch"
+      start:
+        kind: "default"
+      eventConditions:
+        - eventRef: "visaApprovedEvent"
+          transition:
+            nextState: "HandleApprovedVisa"
+        - eventRef: "visaRejectedEvent"
+          transition:
+            nextState: "HandleRejectedVisa"
+      eventTimeout: "PT1H"
+      default:
+        nextState: "HandleNoVisaDecision"
+    - name: "HandleApprovedVisa"
+      type: "subflow"
+      worflowId: "handleApprovedVisaWorkflowID"
+      end:
+        kind: "default"
+    - name: "HandleRejectedVisa"
+      type: "subflow"
+      workflowId: "handleRejectedVisaWorkflowID"
+      end:
+        kind: "default"
+    - name: "HandleNoVisaDecision"
+      type: "subflow"
+      workflowId: "handleNoVisaDecisionWorkfowId"
+      end:
+        kind: "default"

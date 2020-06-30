@@ -1,0 +1,7 @@
+apiVersion: serverlessworkflow.io/v1alpha2
+kind: WorkflowResource
+metadata:
+  name: example-workflow
+spec:
+  # the workflow would be fetched and parsed by the Kubernetes application on deploy time
+  resource: "http://example.com/workflows/myworkflow.sw.json"

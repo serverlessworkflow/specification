@@ -1,0 +1,13 @@
+apiVersion: serverlessworkflow.io/v1alpha2
+kind: EventGroup
+metadata:
+  name: travel-agency-events
+spec:
+  # based on: https://github.com/cncf/wg-serverless-workflow/blob/master/specification/examples/examples.md#event-based-transitions-example
+  events:
+    - name: "visaApprovedEvent"
+      type: "VisaApproved"
+      source: "visaCheckSource"
+    - name: "visaRejectedEvent"
+      type: "VisaRejected"
+      source: "visaCheckSource"

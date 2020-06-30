@@ -1,0 +1,16 @@
+apiVersion: serverlessworkflow.io/v1alpha2
+kind: FunctionGroup
+metadata:
+  name: monitor-job-functions
+spec:
+  # based on: https://github.com/cncf/wg-serverless-workflow/blob/master/specification/examples/examples.md#monitor-job-example
+  # one can have lots of function references here to be reused across many workflow instances
+  functions:
+    - name: "submitJob"
+      resource: "submitJobResource"
+    - name: "checkJobStatus"
+      resource: "checkJobStatusResource"
+    - name: "reportJobSucceeded"
+      resource: "reportJobSucceededResource"
+    - name: "reportJobFailed"
+      resource: "reportJobFailedResource"

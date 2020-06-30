@@ -1,0 +1,78 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: workflowresources.serverlessworkflow.io
+spec:
+  group: serverlessworkflow.io
+  names:
+    kind: WorkflowResource
+    listKind: WorkflowResourceList
+    plural: workflowresources
+    singular: workflowresource
+  scope: Namespaced
+  versions:
+  - name: v1alpha2
+    schema:
+      openAPIV3Schema:
+        description: WorkflowResource represents a Serverless Workflow instance deployment
+          on a Kubernetes cluster. It has a reference for a workflow resource file
+          needed for a Kubernetes native application to deploy a Serverless Workflow
+          instance in the cluster.
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: WorkflowResourceSpec defines the desired state of WorkflowResource
+            properties:
+              resource:
+                description: Resource (URI) for a serverless workflow instance to
+                  be deployed
+                type: string
+            type: object
+          status:
+            description: WorkflowResourceStatus defines the observed state of WorkflowResource
+            properties:
+              conditions:
+                description: Actual status conditions for the WorkflowDefinition instance
+                items:
+                  description: Condition describes a general structure for Kubernetes
+                    based resources
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime ...
+                      format: date-time
+                      type: string
+                    message:
+                      description: Message ...
+                      type: string
+                    reason:
+                      description: Reason of this condition
+                      type: string
+                    status:
+                      description: Status ...
+                      type: string
+                    type:
+                      description: Type of this condition
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-type: atomic
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

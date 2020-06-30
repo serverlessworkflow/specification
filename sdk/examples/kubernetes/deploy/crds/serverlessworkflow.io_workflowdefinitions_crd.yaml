@@ -1,0 +1,173 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: workflowdefinitions.serverlessworkflow.io
+spec:
+  group: serverlessworkflow.io
+  names:
+    kind: WorkflowDefinition
+    listKind: WorkflowDefinitionList
+    plural: workflowdefinitions
+    singular: workflowdefinition
+  scope: Namespaced
+  versions:
+  - name: v1alpha2
+    schema:
+      openAPIV3Schema:
+        description: WorkflowDefinition represents a Serverless Workflow instance
+          deployment on a Kubernetes cluster. It has every information needed for
+          a Kubernetes native application to deploy a Serverless Workflow instance
+          in the cluster.
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: WorkflowDefinitionSpec defines the desired state of WorkflowDefinition
+            properties:
+              dataInputSchema:
+                description: URI to JSON Schema that workflow data input adheres to
+                type: string
+              dataOutputSchema:
+                description: URI to JSON Schema that workflow data output adheres
+                  to
+                type: string
+              description:
+                description: Workflow description
+                type: string
+              events:
+                description: Events corresponds to the JSON schema field "events".
+                items:
+                  properties:
+                    correlationToken:
+                      description: Context attribute name of the CloudEvent which
+                        value is to be used for event correlation
+                      type: string
+                    metadata:
+                      additionalProperties:
+                        type: string
+                      description: Metadata information
+                      type: object
+                    name:
+                      description: Unique event name
+                      type: string
+                    source:
+                      description: CloudEvent source
+                      type: string
+                    type:
+                      description: CloudEvent type
+                      type: string
+                  required:
+                  - name
+                  - source
+                  - type
+                  type: object
+                type: array
+              expressionLanguage:
+                description: Default expression language to be used throughout the
+                  workflow definition
+                type: string
+              extensions:
+                description: Workflow extensions
+                items:
+                  type: object
+                type: array
+                x-kubernetes-preserve-unknown-fields: true
+              functions:
+                description: Functions corresponds to the JSON schema field "functions".
+                items:
+                  properties:
+                    metadata:
+                      additionalProperties:
+                        type: string
+                      description: Metadata corresponds to the JSON schema field "metadata".
+                      type: object
+                    name:
+                      description: Unique function name
+                      type: string
+                    resource:
+                      description: Function resource (URI)
+                      type: string
+                    type:
+                      description: Function type
+                      type: string
+                  required:
+                  - name
+                  - resource
+                  type: object
+                type: array
+              id:
+                description: Workflow unique identifier
+                type: string
+              metadata:
+                additionalProperties:
+                  type: string
+                description: Metadata corresponds to the JSON schema field "metadata".
+                type: object
+              name:
+                description: Workflow name
+                type: string
+              schemaVersion:
+                description: Serverless Workflow schema version
+                type: string
+              states:
+                description: State definitions
+                items:
+                  type: object
+                type: array
+                x-kubernetes-preserve-unknown-fields: true
+              version:
+                description: Workflow version
+                type: string
+            required:
+            - id
+            - name
+            - states
+            - version
+            type: object
+          status:
+            description: WorkflowDefinitionStatus defines the observed state of WorkflowDefinition
+            properties:
+              conditions:
+                description: Actual status conditions for the WorkflowDefinition instance
+                items:
+                  description: Condition describes a general structure for Kubernetes
+                    based resources
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime ...
+                      format: date-time
+                      type: string
+                    message:
+                      description: Message ...
+                      type: string
+                    reason:
+                      description: Reason of this condition
+                      type: string
+                    status:
+                      description: Status ...
+                      type: string
+                    type:
+                      description: Type of this condition
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-type: atomic
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
