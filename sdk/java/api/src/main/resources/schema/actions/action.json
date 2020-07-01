@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "javaType": "io.cncf.serverlessworkflow.api.actions.Action",
+  "description": "Action Definition",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique action definition name"
+    },
+    "functionRef": {
+      "description": "References a reusable function definition to be invoked",
+      "$ref": "../functions/functionref.json"
+    },
+    "timeout": {
+      "type": "string",
+      "description": "Time period to wait for function execution to complete"
+    },
+    "actionDataFilter": {
+      "$ref": "../filters/actiondatafilter.json"
+    }
+  },
+  "required": [
+    "functionRef"
+  ]
+}

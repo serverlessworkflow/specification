@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "javaType": "io.cncf.serverlessworkflow.api.expression.Expression",
+  "properties": {
+    "language": {
+      "type": "string",
+      "description": "Expression language. For example 'spel', 'jexl', 'cel', etc",
+      "minLength": 1
+    },
+    "body": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "body"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "javaType": "io.cncf.serverlessworkflow.api.states.SubflowState",
+  "javaInterfaces": [
+    "io.cncf.serverlessworkflow.api.interfaces.State"
+  ],
+  "description": "Defines a sub-workflow to be executed",
+  "extends": {
+    "$ref": "defaultstate.json"
+  },
+  "properties": {
+    "waitForCompletion": {
+      "type": "boolean",
+      "default": false,
+      "description": "Workflow execution must wait for local workflow to finish before continuing."
+    },
+    "workflowId": {
+      "type": "string",
+      "description": "Sub-workflow unique id."
+    }
+  },
+  "required": [
+    "workflowId"
+  ]
+}
