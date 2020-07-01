@@ -58,3 +58,4 @@ _Status description:_
 | ✔️| Add Parallel State Exception Handling section | [spec doc](../README.md) |
 | ✔️| Add Go SDK | [sdk doc](../../sdk/go/README.md) |
 | ✔️| Add Java SDK | [sdk doc](../../sdk/java/README.md) |
+| ✔️| Add Go SDK Kubernetes Example | [example doc](../../sdk/examples/kubernetes/README.md) |
