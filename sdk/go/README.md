@@ -1,6 +1,6 @@
-# Serverless Specification Go SDK
+# Serverless Workflow Specification Go SDK
 
-In this directory you will find all the [specification types](https://github.com/cncf/wg-serverless-workflow/tree/master/specification/schema) defined by our schemas in Go.
+In this directory you will find all the [specification types](https://github.com/cncf/wg-serverless-workflow/tree/master/specification/schema) defined by our Json Schemas, in Go.
 
 Some types defined by the specification can be generic objects (such as [`Extensions`](https://github.com/cncf/wg-serverless-workflow/tree/master/specification#Extending)) 
 or share a minimum interface, like [`States`](https://github.com/cncf/wg-serverless-workflow/tree/master/specification#State-Definition). 
