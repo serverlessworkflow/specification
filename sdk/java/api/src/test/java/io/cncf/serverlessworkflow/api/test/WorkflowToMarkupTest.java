@@ -18,64 +18,29 @@ package io.cncf.serverlessworkflow.api.test;
 
 import io.cncf.serverlessworkflow.api.Workflow;
 import io.cncf.serverlessworkflow.api.end.End;
+import io.cncf.serverlessworkflow.api.events.EventDefinition;
+import io.cncf.serverlessworkflow.api.functions.Function;
+import io.cncf.serverlessworkflow.api.interfaces.State;
 import io.cncf.serverlessworkflow.api.start.Start;
-import io.cncf.serverlessworkflow.api.states.DefaultState;
 import io.cncf.serverlessworkflow.api.states.DelayState;
 import io.cncf.serverlessworkflow.api.test.utils.WorkflowTestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static io.cncf.serverlessworkflow.api.states.DefaultState.Type.DELAY;
 
 public class WorkflowToMarkupTest {
-
-    private static String testDelayStateYaml = "id: \"test-workflow\"\n" +
-            "name: \"test-workflow-name\"\n" +
-            "version: \"1.0\"\n" +
-            "events: []\n" +
-            "functions: []\n" +
-            "states:\n" +
-            "- timeDelay: \"PT1M\"\n" +
-            "  name: \"delayState\"\n" +
-            "  type: \"delay\"\n" +
-            "  start:\n" +
-            "    kind: \"default\"\n" +
-            "  end:\n" +
-            "    kind: \"default\"\n" +
-            "  onError: []\n" +
-            "  retry: []\n";
-
-    private static String testDelayStateJson = "{\n" +
-            "  \"id\" : \"test-workflow\",\n" +
-            "  \"name\" : \"test-workflow-name\",\n" +
-            "  \"version\" : \"1.0\",\n" +
-            "  \"events\" : [ ],\n" +
-            "  \"functions\" : [ ],\n" +
-            "  \"states\" : [ {\n" +
-            "    \"timeDelay\" : \"PT1M\",\n" +
-            "    \"name\" : \"delayState\",\n" +
-            "    \"type\" : \"delay\",\n" +
-            "    \"start\" : {\n" +
-            "      \"kind\" : \"default\"\n" +
-            "    },\n" +
-            "    \"end\" : {\n" +
-            "      \"kind\" : \"default\"\n" +
-            "    },\n" +
-            "    \"onError\" : [ ],\n" +
-            "    \"retry\" : [ ]\n" +
-            "  } ]\n" +
-            "}";
-
     @Test
-    public void testSingleDelayState() {
+    public void testSingleState() {
 
         Workflow workflow = new Workflow().withId("test-workflow").withName("test-workflow-name").withVersion("1.0")
                 .withStates(Arrays.asList(
-                        new DelayState().withName("delayState").withType(DefaultState.Type.DELAY).withStart(
-                                new Start().withKind(Start.Kind.DEFAULT)
-                        )
+                        new DelayState().withName("delayState").withType(DELAY)
+                                .withStart(
+                                        new Start().withKind(Start.Kind.DEFAULT)
+                                )
                                 .withEnd(
                                         new End().withKind(End.Kind.DEFAULT)
                                 )
@@ -84,7 +49,79 @@ public class WorkflowToMarkupTest {
                 );
 
         assertNotNull(workflow);
-        assertEquals(testDelayStateJson, WorkflowTestUtils.toJson(workflow));
-        assertEquals(testDelayStateYaml, WorkflowTestUtils.toYaml(workflow));
+        assertEquals(1, workflow.getStates().size());
+        State state = workflow.getStates().get(0);
+        assertTrue(state instanceof DelayState);
+
+        assertNotNull(WorkflowTestUtils.toJson(workflow));
+        assertNotNull(WorkflowTestUtils.toYaml(workflow));
+    }
+
+    @Test
+    public void testSingleFunction() {
+
+        Workflow workflow = new Workflow().withId("test-workflow").withName("test-workflow-name").withVersion("1.0")
+                .withFunctions(Arrays.asList(
+                        new Function().withName("testFunction").withResource("testResource").withType("testType"))
+                )
+                .withStates(Arrays.asList(
+                        new DelayState().withName("delayState").withType(DELAY)
+                                .withStart(
+                                        new Start().withKind(Start.Kind.DEFAULT)
+                                )
+                                .withEnd(
+                                        new End().withKind(End.Kind.DEFAULT)
+                                )
+                                .withTimeDelay("PT1M")
+                        )
+                );
+
+        assertNotNull(workflow);
+        assertEquals(1, workflow.getStates().size());
+        State state = workflow.getStates().get(0);
+        assertTrue(state instanceof DelayState);
+        assertNotNull(workflow.getFunctions());
+        assertEquals(1, workflow.getFunctions().size());
+        assertEquals("testFunction", workflow.getFunctions().get(0).getName());
+
+        assertNotNull(WorkflowTestUtils.toJson(workflow));
+        assertNotNull(WorkflowTestUtils.toYaml(workflow));
+    }
+
+    @Test
+    public void testSingleEvent() {
+
+        Workflow workflow = new Workflow().withId("test-workflow").withName("test-workflow-name").withVersion("1.0")
+                .withEvents(Arrays.asList(
+                        new EventDefinition().withName("testEvent").withSource("testSource").withType("testType"))
+                )
+                .withFunctions(Arrays.asList(
+                        new Function().withName("testFunction").withResource("testResource").withType("testType"))
+                )
+                .withStates(Arrays.asList(
+                        new DelayState().withName("delayState").withType(DELAY)
+                                .withStart(
+                                        new Start().withKind(Start.Kind.DEFAULT)
+                                )
+                                .withEnd(
+                                        new End().withKind(End.Kind.DEFAULT)
+                                )
+                                .withTimeDelay("PT1M")
+                        )
+                );
+
+        assertNotNull(workflow);
+        assertEquals(1, workflow.getStates().size());
+        State state = workflow.getStates().get(0);
+        assertTrue(state instanceof DelayState);
+        assertNotNull(workflow.getFunctions());
+        assertEquals(1, workflow.getFunctions().size());
+        assertEquals("testFunction", workflow.getFunctions().get(0).getName());
+        assertNotNull(workflow.getEvents());
+        assertEquals(1, workflow.getEvents().size());
+        assertEquals("testEvent", workflow.getEvents().get(0).getName());
+
+        assertNotNull(WorkflowTestUtils.toJson(workflow));
+        assertNotNull(WorkflowTestUtils.toYaml(workflow));
     }
 }
