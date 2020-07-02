@@ -16,16 +16,14 @@
  */
 package io.cncf.serverlessworkflow.api.test.utils;
 
-import io.cncf.serverlessworkflow.api.mapper.JsonObjectMapper;
-import io.cncf.serverlessworkflow.api.mapper.YamlObjectMapper;
-import io.cncf.serverlessworkflow.api.Workflow;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-
+import io.cncf.serverlessworkflow.api.Workflow;
+import io.cncf.serverlessworkflow.api.mapper.JsonObjectMapper;
+import io.cncf.serverlessworkflow.api.mapper.YamlObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

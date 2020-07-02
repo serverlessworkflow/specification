@@ -19,6 +19,12 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.cncf</groupId>
+            <artifactId>serverlessworkflow-api</artifactId>
+            <version>${version}</version>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

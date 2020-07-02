@@ -17,11 +17,11 @@
 package io.cncf.serverlessworkflow.api.mapper;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.cncf.serverlessworkflow.api.interfaces.WorkflowPropertySource;
 import io.cncf.serverlessworkflow.api.deserializers.*;
 import io.cncf.serverlessworkflow.api.events.EventsActions;
 import io.cncf.serverlessworkflow.api.interfaces.Extension;
 import io.cncf.serverlessworkflow.api.interfaces.State;
+import io.cncf.serverlessworkflow.api.interfaces.WorkflowPropertySource;
 import io.cncf.serverlessworkflow.api.serializers.*;
 import io.cncf.serverlessworkflow.api.states.DefaultState;
 import io.cncf.serverlessworkflow.api.states.OperationState;

@@ -16,22 +16,18 @@
  */
 package io.cncf.serverlessworkflow.api.test;
 
+import io.cncf.serverlessworkflow.api.Workflow;
 import io.cncf.serverlessworkflow.api.end.End;
 import io.cncf.serverlessworkflow.api.start.Start;
 import io.cncf.serverlessworkflow.api.states.DefaultState;
+import io.cncf.serverlessworkflow.api.states.DelayState;
 import io.cncf.serverlessworkflow.api.test.utils.WorkflowTestUtils;
 import org.junit.jupiter.api.Test;
 
-import io.cncf.serverlessworkflow.api.Workflow;
-import io.cncf.serverlessworkflow.api.mapper.JsonObjectMapper;
-import io.cncf.serverlessworkflow.api.mapper.YamlObjectMapper;
-import io.cncf.serverlessworkflow.api.states.DelayState;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class WorkflowToMarkupTest {
 

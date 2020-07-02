@@ -21,8 +21,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import io.cncf.serverlessworkflow.api.interfaces.WorkflowPropertySource;
 import io.cncf.serverlessworkflow.api.interfaces.Extension;
+import io.cncf.serverlessworkflow.api.interfaces.WorkflowPropertySource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
