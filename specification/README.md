@@ -2580,7 +2580,7 @@ The cron property uses a [cron expression](http://crontab.org/)
 to describe a repeating interval upon which the state becomes active and a new workflow instance is created.
 
 The timezone is used to define a time zone name to evaluate the cron expression against. If not specified it should default to the local
-machine time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezon names.
+machine time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezone names.
 
 Note that when the starting state of the workflow is an [Event](#Event-State) 
 defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service which issues 
