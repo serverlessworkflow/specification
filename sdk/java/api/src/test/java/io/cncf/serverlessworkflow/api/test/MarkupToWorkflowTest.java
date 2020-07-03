@@ -17,12 +17,12 @@
 package io.cncf.serverlessworkflow.api.test;
 
 import io.cncf.serverlessworkflow.api.Workflow;
+import io.cncf.serverlessworkflow.api.states.DefaultState;
 import io.cncf.serverlessworkflow.api.test.utils.WorkflowTestUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MarkupToWorkflowTest {
 
