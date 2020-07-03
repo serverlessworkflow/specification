@@ -167,7 +167,6 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${version.surefire.plugin}</version>
                     <configuration>
-                        <forkCount>1</forkCount>
                         <argLine>
                             --illegal-access=permit
                         </argLine>
