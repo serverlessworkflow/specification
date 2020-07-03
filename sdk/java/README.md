@@ -5,6 +5,13 @@ Provides the JAVA API/SPI for the [Serverless Workflow Specification](../../spec
 Allows you to parse Workflow types from JSON/YAML sources, as well as programmatically build your workflows using 
 the provided builder API.
 
+The SDK focus is to allow to quickly go from the workflow definition (JSON or YAML) to instances 
+of Workflow type, as well as to provide a builder API to easily create a workflow programmatically.
+
+Future versions will also include validation functionality.
+
+This is **not** a workflow runtime implementation.
+
 ### Status
 
 This SDK is considered work in progress. We intend to release versions which match the future releases 
