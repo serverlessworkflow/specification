@@ -1,5 +1,4 @@
-![CI Status](https://github.com/cncf/wg-serverless-workflow/workflows/Verify%20the%20JAVA%20SDK/badge.svg)
-
+![Verify JAVA SDK](https://github.com/cncf/wg-serverless-workflow/workflows/Verify%20JAVA%20SDK/badge.svg)
 # Serverless Workflow Specification JAVA SDK
 
 Provides the JAVA API/SPI for the [Serverless Workflow Specification](../../specification/README.md)
