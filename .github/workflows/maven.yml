@@ -28,7 +28,7 @@ jobs:
       with:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/sdk/java/pom.xml') }}
-      restore-keys: ${{ runner.os }}-m2
+        restore-keys: ${{ runner.os }}-m2
     - name: Verify with Maven
       run: |
         mvn -B  -f sdk/java/pom.xml clean install verify
