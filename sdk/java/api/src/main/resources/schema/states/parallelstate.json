@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "javaType": "io.cncf.serverlessworkflow.api.states.ParallelState",
+  "javaInterfaces": [
+    "io.cncf.serverlessworkflow.api.interfaces.State"
+  ],
+  "description": "Consists of a number of states that are executed in parallel",
+  "extends": {
+    "$ref": "defaultstate.json"
+  },
+  "properties": {
+    "branches": {
+      "type": "array",
+      "description": "Branch Definitions",
+      "items": {
+        "type": "object",
+        "$ref": "../branches/branch.json"
+      }
+    }
+  },
+  "required": [
+    "branches"
+  ]
+}

@@ -30,8 +30,8 @@ The following documents are available:
 
 In addition to the documentation mentioned above, there is also a set of SDKs being developed and are part of the specification:
 
-- [Go](https://github.com/cncf/wg-serverless-workflow/tree/master/sdk/go)
-- Java - coming soon
+- [Go](sdk/go/)
+- [Java](sdk/java/)
 
 Being an open source community the Serverless Workflow team is open for new members as well open to their contributions. 
 In order to ensure that an SDK is going to be supported and maintained the Serverless Workflow community would like to ensure that:
