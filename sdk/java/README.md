@@ -1,4 +1,4 @@
-![Build Status](https://github.com/cncf/wg-serverless-workflow/workflows/Build%20the%20JAVA%20SDK/badge.svg)
+![CI Status](https://github.com/cncf/wg-serverless-workflow/workflows/Verify%20the%20JAVA%20SDK/badge.svg)
 
 # Serverless Workflow Specification JAVA SDK
 
