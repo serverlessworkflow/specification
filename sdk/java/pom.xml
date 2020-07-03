@@ -170,6 +170,7 @@
                         <argLine>
                             --illegal-access=permit
                         </argLine>
+                        <useSystemClassLoader>false</useSystemClassLoader>
                     </configuration>
                 </plugin>
                 <plugin>
