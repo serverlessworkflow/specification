@@ -22,6 +22,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MarkupToWorkflowTest {
 
@@ -40,9 +41,13 @@ public class MarkupToWorkflowTest {
             "/examples/sendcloudevent.json", "/examples/sendcloudevent.yml",
             "/examples/solvemathproblems.json", "/examples/solvemathproblems.yml"
     })
-    public void testSpecExamplesParsing(String workflowLocation) throws Exception {
-        Workflow workflow = WorkflowTestUtils.toWorkflow(WorkflowTestUtils.readWorkflowFile(workflowLocation));
+    public void testSpecExamplesParsing(String workflowLocation)  {
+        Workflow workflow = Workflow.fromSource(WorkflowTestUtils.readWorkflowFile(workflowLocation));
 
         assertNotNull(workflow);
+        assertNotNull(workflow.getId());
+        assertNotNull(workflow.getName());
+        assertNotNull(workflow.getStates());
+        assertTrue(workflow.getStates().size() > 0);
     }
 }

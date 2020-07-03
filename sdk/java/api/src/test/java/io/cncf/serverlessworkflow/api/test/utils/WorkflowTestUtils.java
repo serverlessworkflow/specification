@@ -36,46 +36,6 @@ public class WorkflowTestUtils {
     private static JsonObjectMapper jsonObjectMapper = new JsonObjectMapper();
     private static YamlObjectMapper yamlObjectMapper = new YamlObjectMapper();
 
-    private static Logger logger = LoggerFactory.getLogger(WorkflowTestUtils.class);
-
-    public static String toJson(Workflow workflow) {
-        try {
-            return jsonObjectMapper.writeValueAsString(workflow);
-        } catch (JsonProcessingException e) {
-            logger.error("Error mapping to json: " + e.getMessage());
-            return null;
-        }
-    }
-
-    public static String toYaml(Workflow workflow) {
-        try {
-            String jsonString = jsonObjectMapper.writeValueAsString(workflow);
-            JsonNode jsonNode = jsonObjectMapper.readTree(jsonString);
-            YAMLFactory yamlFactory = new YAMLFactory()
-                    .disable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                    .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-            return new YAMLMapper(yamlFactory).writeValueAsString(jsonNode);
-        } catch (Exception e) {
-            logger.error("Error mapping to yaml: " + e.getMessage());
-            return null;
-        }
-    }
-
-    public static Workflow toWorkflow(String markup) {
-        // try it as json markup first, if fails try yaml
-        try {
-            return jsonObjectMapper.readValue(markup,
-                    Workflow.class);
-        } catch (Exception e) {
-            try {
-                return yamlObjectMapper.readValue(markup,
-                        Workflow.class);
-            } catch (Exception ee) {
-                throw new IllegalArgumentException("Could not convert markup to Workflow: " + ee.getMessage());
-            }
-        }
-    }
-
     public static final Path resourceDirectory = Paths.get("src",
             "test",
             "resources");

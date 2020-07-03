@@ -3,6 +3,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Serverless Workflow is a vendor-neutral specification for defining the model of workflows responsible for orchestrating event-driven serverless applications.",
   "type": "object",
+  "extendsJavaClass": "io.cncf.serverlessworkflow.api.workflow.BaseWorkflow",
   "javaType": "io.cncf.serverlessworkflow.api.Workflow",
   "javaInterfaces": [
     "java.io.Serializable"

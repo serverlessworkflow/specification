@@ -53,8 +53,8 @@ public class WorkflowToMarkupTest {
         State state = workflow.getStates().get(0);
         assertTrue(state instanceof DelayState);
 
-        assertNotNull(WorkflowTestUtils.toJson(workflow));
-        assertNotNull(WorkflowTestUtils.toYaml(workflow));
+        assertNotNull(Workflow.toJson(workflow));
+        assertNotNull(Workflow.toYaml(workflow));
     }
 
     @Test
@@ -84,8 +84,8 @@ public class WorkflowToMarkupTest {
         assertEquals(1, workflow.getFunctions().size());
         assertEquals("testFunction", workflow.getFunctions().get(0).getName());
 
-        assertNotNull(WorkflowTestUtils.toJson(workflow));
-        assertNotNull(WorkflowTestUtils.toYaml(workflow));
+        assertNotNull(Workflow.toJson(workflow));
+        assertNotNull(Workflow.toYaml(workflow));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class WorkflowToMarkupTest {
         assertEquals(1, workflow.getEvents().size());
         assertEquals("testEvent", workflow.getEvents().get(0).getName());
 
-        assertNotNull(WorkflowTestUtils.toJson(workflow));
-        assertNotNull(WorkflowTestUtils.toYaml(workflow));
+        assertNotNull(Workflow.toJson(workflow));
+        assertNotNull(Workflow.toYaml(workflow));
     }
 }
