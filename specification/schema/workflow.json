@@ -119,7 +119,7 @@
           "$ref": "#/definitions/expression"
         },
         "produceEvent": {
-          "description": "Reference one of the defined events by name and set its data",
+          "description": "Reference one of the defined 'produced' events by name and set its data",
           "$ref": "#/definitions/produceevent"
         },
         "nextState": {
@@ -1564,7 +1564,7 @@
           "description": "Kind of end definition"
         },
         "produceEvent": {
-          "description": "If end kind is event, select one of the defined events by name and set its data",
+          "description": "If end kind is event, select one of the defined 'produced' events by name and set its data",
           "$ref": "#/definitions/produceevent"
         }
       },

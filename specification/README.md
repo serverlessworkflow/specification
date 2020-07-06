@@ -268,9 +268,10 @@ Since function definitions are reusable, their data input parameters are defined
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique event name | string | yes |
-| source | CloudEvent source | string | yes |
+| source | CloudEvent source | string | yes if kind is set to "consumed", otherwise no |
 | type | CloudEvent type | string | yes |
 | correlationToken | Context attribute name of the CloudEvent which value is to be used for event correlation | string | no |
+| kind | Defines the events as either being consumed or produced by the workflow. Default is consumed. | enum | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -289,7 +290,8 @@ Since function definitions are reusable, their data input parameters are defined
    "name": "ApplicationSubmitted",
    "type": "org.application.submit",
    "source": "applicationssource",
-   "correlationToken": "applicantId"
+   "correlationToken": "applicantId",
+   "kind": "consumed"
 }
 ```
 
@@ -301,6 +303,7 @@ name: ApplicationSubmitted
 type: org.application.submit
 source: applicationssource
 correlationToken: applicantId
+kind: consumed
 ```
 
 </td>
@@ -310,16 +313,23 @@ correlationToken: applicantId
 </details>
 
 Defines events that can be consumed or produced during workflow execution.
-Consumed events can trigger actions to be executed. Events can also be produced during workflow
-execution to be consumed by clients.
 
-As serverless workflow definitions are vendor neutral, so should be the events definitions that they consume and produce.
-As such event format within serverless workflows uses the [CloudEvents](https://github.com/cloudevents/spec) specification to describe events.
+Consumed events can trigger creations of workflow instances, or continue execution of existing workflow instances.
+Workflows can produce events during their execution. These events can be then consumed by clients (or other workflows).
 
-To support use case where serverless workflows need to perform actions across multiple types
+Events defined must conform to the [CloudEvents](https://github.com/cloudevents/spec) specification. 
+This is to assure the consistency and portability of consumed or produced events.
+
+The event definition "kind" property defines if this event is consumed or produced. The default is consumed. 
+If the event is produced, implementations must provide the value of the event source when producing the CloudEvent.
+In this case (when "kind" is set to "produced") the "source" property of the event definition is not a required 
+property. Otherwise ("kind" is set to "consumed") the "source" property must be defined.
+
+To support use case where workflows need to perform actions across multiple types
 of events, users can specify a correlation token to correlate these events.
-The "correlationToken" must specify a context attribute in the event which contains a business key to be
-used for event correlation. An event "context attribute" can be defined as any event attribute except the event payload (the event "data" attribute).
+The "correlationToken" property value must be the name of a context attribute in the event. This context attribute contains a business key to be
+used for event correlation. 
+An event "context attribute" can be defined as any event attribute except the event payload (the event "data" attribute).
 
 For example let's say we have two CloudEvent which set their correlation via the "patientId" context attribute:
 
@@ -2625,15 +2635,15 @@ data: "$.provisionedOrders"
 
 </details>
 
-Defines the CloudEvent to produce when workflow execution completes or during a workflow transition. 
+Defines the CloudEvent to be produced when workflow execution completes or during a workflow transition. 
 The "eventRef" property must match the name of
-one of the defined events in the [events](#Event-Definition) definition. From this the event type can be determined.
+one of the defined 'produced' events in the [events](#Event-Definition) definition.
+
 The data property defines a JSONPath expression which selects elements of the states data output to be placed into the
 data section of the produced CloudEvent.
 
 Being able to produce an event when workflow execution completes or during state transition
 allows for event-based orchestration communication.
-
 For example, completion of an orchestration workflow can notify other orchestration workflows to decide if they need to act upon
  the produced event. This can create very dynamic orchestration scenarios.
 
@@ -2658,7 +2668,8 @@ So the options for next state transitions are:
 - Use a combination of name and id properties
 
 Events can be produced during state transitions. The "produceEvent" property allows you
-to reference one of the defined workflow events and select the state data to be sent as the event payload.
+to reference one of the defined 'produced' events in the workflow [events definitions](#Event-Definition).
+It also allows you to select part of states data to be sent as the event payload.
 
 #### Restricting Transitions based on state output
 
