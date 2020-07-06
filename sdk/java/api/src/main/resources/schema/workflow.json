@@ -42,10 +42,6 @@
     "metadata": {
       "$ref": "metadata/metadata.json"
     },
-    "expressionLanguage": {
-      "type": "string",
-      "description": "Default expression language to be used throughout the workflow definition"
-    },
     "events": {
       "type": "array",
       "description": "Workflow event definitions. Defines events that can be consumed or produced",

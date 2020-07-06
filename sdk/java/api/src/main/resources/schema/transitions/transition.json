@@ -3,8 +3,8 @@
   "javaType": "io.serverlessworkflow.api.transitions.Transition",
   "properties": {
     "expression": {
-      "description": "Boolean expression evaluated against state's data output. Must evaluate to true for the transition to be valid.",
-      "$ref": "../expression/expression.json"
+      "type": "string",
+      "description": "Common Expression Language (CEL) expression. Must evaluate to true for the transition to be valid"
     },
     "produceEvent": {
       "description": "Reference one of the defined events by name and set its data",

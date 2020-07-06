@@ -3,13 +3,16 @@
   "javaType": "io.serverlessworkflow.api.error.Error",
   "properties": {
     "expression": {
-      "$ref": "../expression/expression.json"
+      "type": "string",
+      "description": "Common Expression Language (CEL) expression. Should be evaluated against error data. Must evaluate to true."
     },
     "errorDataFilter": {
-      "$ref": "../filters/errordatafilter.json"
+      "$ref": "../filters/errordatafilter.json",
+      "description": "Error data filter definition "
     },
     "transition": {
-      "$ref": "../transitions/transition.json"
+      "$ref": "../transitions/transition.json",
+      "description": "Next transition of the workflow when 'expression' is true"
     }
   },
   "required": [

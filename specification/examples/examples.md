@@ -1051,28 +1051,19 @@ The data output of the workflow contains the information of the exception caught
     ],
     "onError": [
        {
-         "expression": {
-            "language": "spel",
-            "body": "name eq 'MissingOrderIdException'"
-         },
+         "expression": "$.name == 'MissingOrderIdException'",
          "transition": {
            "nextState": "MissingId"
          }
        },
        {
-         "expression": {
-           "language": "spel",
-           "body": "name eq 'MissingOrderItemException'"
-         },
+         "expression": "$.name == 'MissingOrderItemException'",
          "transition": {
            "nextState": "MissingItem"
          }
        },
        {
-        "expression": {
-          "language": "spel",
-          "body": "name eq 'MissingOrderQuantityException'"
-        },
+        "expression": "$.name == 'MissingOrderQuantityException'",
         "transition": {
           "nextState": "MissingQuantity"
         }
@@ -1144,19 +1135,13 @@ states:
       parameters:
         order: "$.order"
   onError:
-  - expression:
-      language: spel
-      body: name eq 'MissingOrderIdException'
+  - expression: "$.name == 'MissingOrderIdException'"
     transition:
       nextState: MissingId
-  - expression:
-      language: spel
-      body: name eq 'MissingOrderItemException'
+  - expression: "$.name == 'MissingOrderItemException'"
     transition:
       nextState: MissingItem
-  - expression:
-      language: spel
-      body: name eq 'MissingOrderQuantityException'
+  - expression: "$.name == 'MissingOrderQuantityException'"
     transition:
       nextState: MissingQuantity
   stateDataFilter:
@@ -1267,10 +1252,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       ],
       "onError": [
       {
-        "expression": {
-            "language": "spel",
-            "body": "$.exception != null"
-        },
+        "expression": "$.exception != null",
         "errorDataFilter": {
           "dataOutputPath": "$.exception"
         },
@@ -1422,9 +1404,7 @@ states:
     actionDataFilter:
       dataResultsPath: "$.jobuid"
   onError:
-  - expression:
-      language: spel
-      body: "$.exception != null"
+  - expression: "$.exception != null"
     errorDataFilter:
       dataOutputPath: "$.exception"
     transition:
