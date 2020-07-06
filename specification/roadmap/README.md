@@ -61,3 +61,4 @@ _Status description:_
 | ✔️| Allow to define events as produced or consumed | [spec doc](../README.md) |
 | ✔️| Add "triggered" start definition | [spec doc](../README.md) |
 | ✔️| Update scheduled start definition - adding cron def | [spec doc](../README.md) |
+| ✔️| Set single expression language (CEL) | [spec doc](../README.md) |
