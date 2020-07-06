@@ -57,3 +57,4 @@ _Status description:_
 | ✔️| Change uppercase property and enum types to lowercase | [spec doc](../README.md) |
 | ✔️| Add Parallel State Exception Handling section | [spec doc](../README.md) |
 | ✔️| Add Go SDK | [sdk doc](../../sdk/go/README.md) |
+| ✔️| Add Java SDK | [sdk doc](../../sdk/java/README.md) |
