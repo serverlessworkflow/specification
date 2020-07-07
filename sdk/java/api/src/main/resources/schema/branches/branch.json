@@ -7,6 +7,14 @@
       "type": "string",
       "description": "Branch name"
     },
+    "actions": {
+      "type": "array",
+      "description": "Actions to be executed in this branch",
+      "items": {
+        "type": "object",
+        "$ref": "../actions/action.json"
+      }
+    },
     "states": {
       "type": "array",
       "description": "State Definitions",
@@ -14,16 +22,20 @@
         "type": "object",
         "existingJavaType": "io.cncf.serverlessworkflow.api.interfaces.State"
       }
-    },
-    "waitForCompletion": {
-      "type": "boolean",
-      "default": false,
-      "description": "Flow must wait for this branch to finish before continuing"
     }
   },
-  "required": [
-    "name",
-    "states",
-    "waitForCompletion"
+  "oneOf": [
+    {
+      "required": [
+        "name",
+        "states"
+      ]
+    },
+    {
+      "required": [
+        "name",
+        "actions"
+      ]
+    }
   ]
 }

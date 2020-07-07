@@ -23,7 +23,6 @@ import io.cncf.serverlessworkflow.api.functions.Function;
 import io.cncf.serverlessworkflow.api.interfaces.State;
 import io.cncf.serverlessworkflow.api.start.Start;
 import io.cncf.serverlessworkflow.api.states.DelayState;
-import io.cncf.serverlessworkflow.api.test.utils.WorkflowTestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
