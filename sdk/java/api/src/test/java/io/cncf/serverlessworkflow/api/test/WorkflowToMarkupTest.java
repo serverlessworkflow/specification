@@ -93,7 +93,8 @@ public class WorkflowToMarkupTest {
 
         Workflow workflow = new Workflow().withId("test-workflow").withName("test-workflow-name").withVersion("1.0")
                 .withEvents(Arrays.asList(
-                        new EventDefinition().withName("testEvent").withSource("testSource").withType("testType"))
+                        new EventDefinition().withName("testEvent").withSource("testSource").withType("testType")
+                        .withKind(EventDefinition.Kind.PRODUCED))
                 )
                 .withFunctions(Arrays.asList(
                         new Function().withName("testFunction").withResource("testResource").withType("testType"))
@@ -120,6 +121,7 @@ public class WorkflowToMarkupTest {
         assertNotNull(workflow.getEvents());
         assertEquals(1, workflow.getEvents().size());
         assertEquals("testEvent", workflow.getEvents().get(0).getName());
+        assertEquals(EventDefinition.Kind.PRODUCED, workflow.getEvents().get(0).getKind());
 
         assertNotNull(Workflow.toJson(workflow));
         assertNotNull(Workflow.toYaml(workflow));

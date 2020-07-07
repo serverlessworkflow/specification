@@ -18,6 +18,7 @@ package io.cncf.serverlessworkflow.api.mapper;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.cncf.serverlessworkflow.api.deserializers.*;
+import io.cncf.serverlessworkflow.api.events.EventDefinition;
 import io.cncf.serverlessworkflow.api.events.EventsActions;
 import io.cncf.serverlessworkflow.api.interfaces.Extension;
 import io.cncf.serverlessworkflow.api.interfaces.State;
@@ -75,7 +76,9 @@ public class WorkflowModule extends SimpleModule {
                 new DefaultStateTypeDeserializer(workflowPropertySource));
         addDeserializer(DataCondition.Operator.class,
                 new DataConditionOperatorDeserializer(workflowPropertySource));
+        addDeserializer(EventDefinition.Kind.class, new EventDefinitionKindDeserializer(workflowPropertySource));
         addDeserializer(Extension.class, extensionDeserializer);
+
     }
 
     public ExtensionSerializer getExtensionSerializer() {
