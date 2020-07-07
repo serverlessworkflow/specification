@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.start.Start",
+  "javaType": "io.serverlessworkflow.api.start.Start",
   "description": "State start definition",
   "properties": {
     "kind": {

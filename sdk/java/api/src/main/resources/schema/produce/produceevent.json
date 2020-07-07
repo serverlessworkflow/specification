@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.produce.ProduceEvent",
+  "javaType": "io.serverlessworkflow.api.produce.ProduceEvent",
   "properties": {
     "eventRef": {
       "type": "string",

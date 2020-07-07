@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.end.End",
+  "javaType": "io.serverlessworkflow.api.end.End",
   "description": "State end definition",
   "properties": {
     "kind": {

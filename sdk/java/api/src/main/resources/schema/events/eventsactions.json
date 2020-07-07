@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.events.EventsActions",
+  "javaType": "io.serverlessworkflow.api.events.EventsActions",
   "description": "Actions to be performed on Events arrival",
   "properties": {
     "eventRefs": {

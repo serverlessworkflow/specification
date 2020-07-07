@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.events.EventDefinition",
+  "javaType": "io.serverlessworkflow.api.events.EventDefinition",
   "properties": {
     "name": {
       "type": "string",

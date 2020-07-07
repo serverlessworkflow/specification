@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.expression.Expression",
+  "javaType": "io.serverlessworkflow.api.expression.Expression",
   "properties": {
     "language": {
       "type": "string",

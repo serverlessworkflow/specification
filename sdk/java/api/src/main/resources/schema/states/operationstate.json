@@ -1,8 +1,8 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.states.OperationState",
+  "javaType": "io.serverlessworkflow.api.states.OperationState",
   "javaInterfaces": [
-    "io.cncf.serverlessworkflow.api.interfaces.State"
+    "io.serverlessworkflow.api.interfaces.State"
   ],
   "description": "This state allows one or more functions to run in sequence or in parallel without waiting for any event.",
   "extends": {

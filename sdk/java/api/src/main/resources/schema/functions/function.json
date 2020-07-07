@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.functions.Function",
+  "javaType": "io.serverlessworkflow.api.functions.Function",
   "properties": {
     "name": {
       "type": "string",

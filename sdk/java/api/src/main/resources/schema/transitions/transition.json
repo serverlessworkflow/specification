@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.transitions.Transition",
+  "javaType": "io.serverlessworkflow.api.transitions.Transition",
   "properties": {
     "expression": {
       "description": "Boolean expression evaluated against state's data output. Must evaluate to true for the transition to be valid.",

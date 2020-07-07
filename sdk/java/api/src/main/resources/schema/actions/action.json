@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.actions.Action",
+  "javaType": "io.serverlessworkflow.api.actions.Action",
   "description": "Action Definition",
   "properties": {
     "name": {
