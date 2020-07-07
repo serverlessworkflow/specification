@@ -1461,7 +1461,7 @@ end:
 </details>
 
 Parallel state defines a collection of branches which are to be executed in parallel.
-Branches contain one or more states. Each branch must define one [starting state](#Start-Definition) as well as 
+Branches contain one or more states or actions. If a branch uses states for control flow logic execution, it must define one [starting state](#Start-Definition) as well as 
 include at least one [end state](#End-Definition).
 
 The "completionType" enum specifies the different ways of completing branch execution:
@@ -1477,7 +1477,8 @@ Exceptions may occur during execution of branches of the Parallel state, this is
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Branch name | string | yes |
-| [states](#State-Definition) | States to be executed in this branch | array | yes |
+| [actions](#Action-Definition) | Actions to be executed in this branch | array | yes if states are not defined |
+| [states](#State-Definition) | States to be executed in this branch | array | yes if actions are not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1531,6 +1532,9 @@ states:
 </details>
 
 Each branch receives the same copy of the Parallel state's data input.
+
+A branch can define either states or actions to be executed.
+
 States within each branch are only allowed to transition to states defined in the same branch.
 Transitions to other branches or workflow states are not allowed.
 States outside a parallel state cannot transition to a states declared within branches.
@@ -2018,7 +2022,8 @@ This allows you to test if your workflow behaves properly for cases when there a
 | inputParameter | JSONPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with an unique element of the inputCollection array | string | yes |
 | max | Specifies how upper bound on how many iterations may run in parallel | integer | no |
 | timeDelay | Amount of time (ISO 8601 format) to wait between each iteration | string | no |
-| [states](#State-Definition) | States to be executed for each of the elements of inputCollection | array | yes |
+| [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if states are not defined |
+| [states](#State-Definition) | States to be executed for each of the elements of inputCollection | array | yes if actions are not defined |
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
 | [retry](#workflow-retrying) | States retry definitions | array | no |
 | [onError](#Workflow-Error-Handling) | States error handling definitions | array | no |
@@ -2125,13 +2130,15 @@ end:
 
 </details>
 
-The ForEach state can be used to execute a defined set of states for each element of an array (defined in the states data input).
-While the [Parallel state](#Parallel-State) performs multiple branches of states using the
-same data input, the ForEach state performs the defined steps for multiple entries of an array in the states data input.
+ForEach states can be used to execute a defined set of states or actions for each element of an array (defined in the states data input).
+While the [Parallel state](#Parallel-State) performs multiple branches of states or actions using the
+same data input, the ForEach state performs the defined steps or actions for multiple entries of an array in the states data input.
 
 Note that each iteration of the ForEach state should be executed in parallel.
 You can use the "max" property to set the upper bound on how many iterations may run in parallel. The default
 of the "max" property is zero, which places no limit on number of parallel executions.
+
+You can chose to define either states or actions to be executed, not both. 
 
 States defined in the "states" property of the ForEach state can only transition to each other and
 cannot transition to states outside of this state.
@@ -2139,7 +2146,7 @@ Similarly other workflow states cannot transition to one of the states defined w
 
 States defined in the "states" property must contain at least one state which is an end state (has the end property defined).
 
-Let's take a look at a simple ForEach state example through which we can explain this state:
+Let's take a look at a simple ForEach state example:
 
 In this example the data input to our ForEach state is an array of orders:
 
@@ -2324,6 +2331,75 @@ Once iterations over the completed orders complete, workflow execution finishes 
 
 So in this example, our ForEach state will send two confirmation emails, one for each of the completed orders
 defined in the orders array of its data input.
+
+The same example can be defined using "actions" instead of "states" definitions. This may be useful in cases where you do need to express
+each iteration with control flow logic (states) but only need one or more actions to be performed for each iteration.
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "functions": [
+  {
+    "name": "sendConfirmationFunction",
+    "resource": "functionResourse"
+  }
+  ],
+  "states": [
+  {
+   "name":"SendConfirmationForEachCompletedhOrder",
+   "type":"foreach",
+   "inputCollection": "$.orders[?(@.completed == true)]",
+   "inputParameter": "$.completedorder",
+    "actions":[  
+      {  
+       "functionRef": {
+         "refName": "sendConfirmationFunction",
+         "parameters": {
+           "orderNumber": "$.completedorder.orderNumber",
+           "email": "$.completedorder.email"
+         }
+       }
+    }],
+ "end": {
+    "kind": "default"
+ }
+}
+]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+functions:
+- name: sendConfirmationFunction
+  resource: functionResourse
+states:
+- name: SendConfirmationForEachCompletedhOrder
+  type: foreach
+  inputCollection: "$.orders[?(@.completed == true)]"
+  inputParameter: "$.completedorder"
+  actions:
+  - functionRef:
+      refName: sendConfirmationFunction
+      parameters:
+        orderNumber: "$.completedorder.orderNumber"
+        email: "$.completedorder.email"
+  end:
+    kind: default
+```
+
+</td>
+</tr>
+</table>
 
 #### Callback State
 

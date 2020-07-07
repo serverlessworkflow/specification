@@ -264,9 +264,17 @@
           "type": "string",
           "description": "Branch name"
         },
+        "actions": {
+          "type": "array",
+          "description": "Actions to be executed in this branch",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/action"
+          }
+        },
         "states": {
           "type": "array",
-          "description": "State Definitions",
+          "description": "States to be executed in this branch",
           "items": {
             "anyOf": [
               {
@@ -305,9 +313,19 @@
           }
         }
       },
-      "required": [
-        "name",
-        "states"
+      "oneOf": [
+        {
+          "required": [
+            "name",
+            "states"
+          ]
+        },
+        {
+          "required": [
+            "name",
+            "actions"
+          ]
+        }
       ]
     },
     "delaystate": {
@@ -1237,6 +1255,14 @@
           "type": "string",
           "description": "Amount of time (ISO 8601 format) to wait between each iteration "
         },
+        "actions": {
+          "type": "array",
+          "description": "Actions to be executed for each of the elements of inputCollection",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/action"
+          }
+        },
         "states": {
           "type": "array",
           "description": "States to be executed for each of the elements of inputCollection",
@@ -1354,6 +1380,48 @@
             "inputCollection",
             "inputParameter",
             "states",
+            "transition"
+          ]
+        },
+        {
+          "required": [
+            "name",
+            "type",
+            "inputCollection",
+            "inputParameter",
+            "actions",
+            "end"
+          ]
+        },
+        {
+          "required": [
+            "name",
+            "type",
+            "inputCollection",
+            "inputParameter",
+            "actions",
+            "transition"
+          ]
+        },
+        {
+          "required": [
+            "start",
+            "name",
+            "type",
+            "inputCollection",
+            "inputParameter",
+            "actions",
+            "end"
+          ]
+        },
+        {
+          "required": [
+            "start",
+            "name",
+            "type",
+            "inputCollection",
+            "inputParameter",
+            "actions",
             "transition"
           ]
         }
