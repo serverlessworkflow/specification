@@ -39,6 +39,7 @@
         <version.compiler.plugin>3.8.1</version.compiler.plugin>
         <version.surefire.plugin>2.22.0</version.surefire.plugin>
         <version.failsafe.plugin>2.22.0</version.failsafe.plugin>
+        <version.deploy.plugin>2.8.2</version.deploy.plugin>
 
         <version.org.slf4j>1.7.25</version.org.slf4j>
         <version.com.fasterxml.jackson>2.10.3</version.com.fasterxml.jackson>
@@ -124,6 +125,13 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${version.deploy.plugin}</version>
+                    <configuration>
+                        <retryFailedDeploymentCount>10</retryFailedDeploymentCount>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${version.enforcer.plugin}</version>
@@ -181,6 +189,19 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <pluginRepositories>
         <pluginRepository>
