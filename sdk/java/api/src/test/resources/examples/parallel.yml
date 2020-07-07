@@ -8,6 +8,7 @@ states:
     type: parallel
     start:
       kind: default
+    completionType: and
     branches:
       - name: Branch1
         states:
@@ -18,7 +19,6 @@ states:
             timeDelay: PT15S
             end:
               kind: default
-        waitForCompletion: false
       - name: Branch2
         states:
           - name: LongDelay
@@ -28,6 +28,5 @@ states:
             timeDelay: PT2M
             end:
               kind: default
-        waitForCompletion: false
     end:
       kind: default

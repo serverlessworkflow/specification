@@ -26,6 +26,7 @@ import io.cncf.serverlessworkflow.api.interfaces.WorkflowPropertySource;
 import io.cncf.serverlessworkflow.api.serializers.*;
 import io.cncf.serverlessworkflow.api.states.DefaultState;
 import io.cncf.serverlessworkflow.api.states.OperationState;
+import io.cncf.serverlessworkflow.api.states.ParallelState;
 import io.cncf.serverlessworkflow.api.switchconditions.DataCondition;
 
 public class WorkflowModule extends SimpleModule {
@@ -77,6 +78,7 @@ public class WorkflowModule extends SimpleModule {
         addDeserializer(DataCondition.Operator.class,
                 new DataConditionOperatorDeserializer(workflowPropertySource));
         addDeserializer(EventDefinition.Kind.class, new EventDefinitionKindDeserializer(workflowPropertySource));
+        addDeserializer(ParallelState.CompletionType.class, new ParallelStateCompletionTypeDeserializer(workflowPropertySource));
         addDeserializer(Extension.class, extensionDeserializer);
 
     }

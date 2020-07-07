@@ -10,6 +10,7 @@
       "start": {
         "kind": "default"
       },
+      "completionType": "and",
       "branches": [
         {
           "name": "Branch1",
@@ -25,8 +26,7 @@
                 "kind": "default"
               }
             }
-          ],
-          "waitForCompletion": false
+          ]
         },
         {
           "name": "Branch2",
@@ -42,8 +42,7 @@
                 "kind": "default"
               }
             }
-          ],
-          "waitForCompletion": false
+          ]
         }
       ],
       "end": {

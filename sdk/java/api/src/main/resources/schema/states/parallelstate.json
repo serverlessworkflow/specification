@@ -16,6 +16,18 @@
         "type": "object",
         "$ref": "../branches/branch.json"
       }
+    },
+    "completionType": {
+      "type" : "string",
+      "enum": ["and", "xor", "n_of_m"],
+      "description": "Option types on how to complete branch execution.",
+      "default": "and"
+    },
+    "n": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Used when completionType is set to 'n_of_m' to specify the 'N' value"
     }
   },
   "required": [
