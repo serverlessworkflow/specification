@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.filters.EventDataFilter",
+  "javaType": "io.serverlessworkflow.api.filters.EventDataFilter",
   "properties": {
     "dataOutputPath": {
       "type": "string",

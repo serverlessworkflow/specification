@@ -1,8 +1,8 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.states.CallbackState",
+  "javaType": "io.serverlessworkflow.api.states.CallbackState",
   "javaInterfaces": [
-    "io.cncf.serverlessworkflow.api.interfaces.State"
+    "io.serverlessworkflow.api.interfaces.State"
   ],
   "description": "This state is used to wait for events from event sources and then transitioning to a next state",
   "extends": {

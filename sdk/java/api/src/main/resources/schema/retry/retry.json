@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.retry.Retry",
+  "javaType": "io.serverlessworkflow.api.retry.Retry",
   "description": "Retry Definition",
   "properties": {
     "expression": {

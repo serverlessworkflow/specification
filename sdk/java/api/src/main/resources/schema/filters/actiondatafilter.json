@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.filters.ActionDataFilter",
+  "javaType": "io.serverlessworkflow.api.filters.ActionDataFilter",
   "properties": {
     "dataInputPath": {
       "type": "string",

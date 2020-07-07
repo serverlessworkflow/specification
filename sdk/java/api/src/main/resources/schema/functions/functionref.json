@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.functions.FunctionRef",
+  "javaType": "io.serverlessworkflow.api.functions.FunctionRef",
   "properties": {
     "refName": {
       "type": "string",

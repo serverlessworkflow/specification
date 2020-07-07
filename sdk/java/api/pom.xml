@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.cncf</groupId>
+        <groupId>io.serverlessworkflow</groupId>
         <artifactId>serverlessworkflow-parent</artifactId>
         <version>0.2-SNAPSHOT</version>
     </parent>
@@ -76,7 +76,7 @@
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
                 <configuration>
                     <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
-                    <targetPackage>io.cncf.serverlessworkflow.api.types</targetPackage>
+                    <targetPackage>io.serverlessworkflow.api.types</targetPackage>
                     <outputDirectory>${project.build.directory}/generated-sources/src/main/java</outputDirectory>
                     <includeJsr303Annotations>true</includeJsr303Annotations>
                     <generateBuilders>true</generateBuilders>

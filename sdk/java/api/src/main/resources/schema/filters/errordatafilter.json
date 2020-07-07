@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.filters.ErrorDataFilter",
+  "javaType": "io.serverlessworkflow.api.filters.ErrorDataFilter",
   "properties": {
     "dataOutputPath": {
       "type": "string",

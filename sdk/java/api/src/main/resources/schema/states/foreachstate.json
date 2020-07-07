@@ -1,8 +1,8 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.states.ForEachState",
+  "javaType": "io.serverlessworkflow.api.states.ForEachState",
   "javaInterfaces": [
-    "io.cncf.serverlessworkflow.api.interfaces.State"
+    "io.serverlessworkflow.api.interfaces.State"
   ],
   "description": "Execute a set of defined states for each element of the data input array",
   "extends": {
@@ -44,7 +44,7 @@
       "description": "States to be executed for each of the elements of inputCollection",
       "items": {
         "type": "object",
-        "existingJavaType": "io.cncf.serverlessworkflow.api.interfaces.State"
+        "existingJavaType": "io.serverlessworkflow.api.interfaces.State"
       }
     }
   },

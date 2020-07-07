@@ -1,8 +1,8 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.switchconditions.DataCondition",
+  "javaType": "io.serverlessworkflow.api.switchconditions.DataCondition",
   "javaInterfaces": [
-    "io.cncf.serverlessworkflow.api.interfaces.SwitchCondition"
+    "io.serverlessworkflow.api.interfaces.SwitchCondition"
   ],
   "description": "Switch state data based condition",
   "properties": {

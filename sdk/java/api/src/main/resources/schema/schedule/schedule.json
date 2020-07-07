@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "javaType": "io.cncf.serverlessworkflow.api.schedule.Schedule",
+  "javaType": "io.serverlessworkflow.api.schedule.Schedule",
   "description": "Start state schedule definition",
   "properties": {
     "interval": {

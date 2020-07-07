@@ -38,7 +38,7 @@ Then to use it in your project pom.xml add:
 
 ```xml
 <dependency>
-    <groupId>io.cncf</groupId>
+    <groupId>io.serverlessworkflow</groupId>
     <artifactId>serverlessworkflow-api</artifactId>
     <version>0.2-SNAPSHOT</version>
 </dependency>
@@ -48,7 +48,7 @@ Then to use it in your project pom.xml add:
 
 ```xml
 <dependency>
-    <groupId>io.cncf</groupId>
+    <groupId>io.serverlessworkflow</groupId>
     <artifactId>serverlessworkflow-spi</artifactId>
     <version>0.2-SNAPSHOT</version>
 </dependency>
