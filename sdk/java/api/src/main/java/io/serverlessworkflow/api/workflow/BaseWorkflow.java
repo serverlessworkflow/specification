@@ -11,13 +11,15 @@ import io.serverlessworkflow.api.mapper.YamlObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Base Workflow provides some extra functionality for the Workflow types
+ */
 public class BaseWorkflow {
 
     private static JsonObjectMapper jsonObjectMapper = new JsonObjectMapper();
     private static YamlObjectMapper yamlObjectMapper = new YamlObjectMapper();
 
     private static Logger logger = LoggerFactory.getLogger(BaseWorkflow.class);
-
 
     public static Workflow fromSource(String source) {
         // try it as json markup first, if fails try yaml

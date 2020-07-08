@@ -1,4 +1,5 @@
 ![Verify JAVA SDK](https://github.com/cncf/wg-serverless-workflow/workflows/Verify%20JAVA%20SDK/badge.svg)
+![Deploy JAVA SDK](https://github.com/cncf/wg-serverless-workflow/workflows/Deploy%20JAVA%20SDK/badge.svg)
 
 # Serverless Workflow Specification JAVA SDK
 
@@ -51,6 +52,45 @@ Then to use it in your project pom.xml add:
     <groupId>io.serverlessworkflow</groupId>
     <artifactId>serverlessworkflow-spi</artifactId>
     <version>0.2-SNAPSHOT</version>
+</dependency>
+```
+
+#### Get dependencies from Nexus
+
+Our SNAPSHOT versions are published to the Sonatype repositories.
+Make sure you enable snapshots in your Maven settings.xml 
+or you can specify in your pom.xml repositories section:
+
+```xml
+<repository>
+    <id>oss.sonatype.org-snapshot</id>
+    <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+    <releases>
+        <enabled>false</enabled>
+    </releases>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+```
+
+And use the dependencies:
+
+```xml
+<dependency>
+  <groupId>io.serverlessworkflow</groupId>
+  <artifactId>serverlessworkflow-api</artifactId>
+  <version>0.2-SNAPSHOT</version>
+</dependency>
+```
+
+and
+
+```xml
+<dependency>
+  <groupId>io.serverlessworkflow</groupId>
+  <artifactId>serverlessworkflow-spi</artifactId>
+  <version>0.2-SNAPSHOT</version>
 </dependency>
 ```
 
