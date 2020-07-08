@@ -41,8 +41,8 @@ jobs:
         with:
           java-version: 1.8
           server-id: ossrh
-          server-username: ${{ secrets.OSSRH_USERNAME }}
-          server-password: ${{ secrets.OSSRH_PASSWORD }}
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
       - name: Publish package
         run: mvn -B -f sdk/java/pom.xml deploy
         env:
