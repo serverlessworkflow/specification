@@ -13,7 +13,7 @@
       "description": "Kind of Start definition"
     },
     "schedule": {
-      "description": "If kind is SCHEDULED, define when the starting state is or becomes active",
+      "description": "If kind is 'scheduled', define when the time/repeating intervals at which workflow instances can/should be started",
       "$ref": "../schedule/schedule.json"
     }
   },
