@@ -23,6 +23,7 @@ import io.serverlessworkflow.api.events.EventsActions;
 import io.serverlessworkflow.api.interfaces.Extension;
 import io.serverlessworkflow.api.interfaces.State;
 import io.serverlessworkflow.api.interfaces.WorkflowPropertySource;
+import io.serverlessworkflow.api.schedule.Schedule;
 import io.serverlessworkflow.api.serializers.*;
 import io.serverlessworkflow.api.states.DefaultState;
 import io.serverlessworkflow.api.states.OperationState;
@@ -79,6 +80,7 @@ public class WorkflowModule extends SimpleModule {
                 new DataConditionOperatorDeserializer(workflowPropertySource));
         addDeserializer(EventDefinition.Kind.class, new EventDefinitionKindDeserializer(workflowPropertySource));
         addDeserializer(ParallelState.CompletionType.class, new ParallelStateCompletionTypeDeserializer(workflowPropertySource));
+        addDeserializer(Schedule.DirectInvoke.class, new ScheduleDirectInvokeDeserializer(workflowPropertySource));
         addDeserializer(Extension.class, extensionDeserializer);
 
     }
