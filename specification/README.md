@@ -2508,7 +2508,7 @@ If the defined callback event has not been received during this time period, the
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | kind | End kind ("default", "scheduled") | enum | yes |
-| [schedule](#Schedule-Definition) | If kind is "scheduled", define when the starting state is or becomes active | object | yes only if kind is "scheduled" |
+| [schedule](#Schedule-Definition) | If kind is "scheduled", define time/repeating intervals at which workflow instances can/should be started | object | yes only if kind is "scheduled" |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2523,10 +2523,10 @@ If the defined callback event has not been received during this time period, the
 
 ```json
 {
-      "kind": "scheduled",
-      "schedule": {
-        "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
-      }
+  "kind": "scheduled",
+  "schedule": {
+    "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+  }
 }
 ```
 
@@ -2545,31 +2545,62 @@ schedule:
 
 </details>
 
-Any state can declare to be the start state of the workflow, meaning that when a workflow intance is created it will be the initial
+Any state can declare to be the start state of the workflow, meaning that when a workflow instance is created it will be the initial
 state to be executed. A workflow definition can declare one workflow start state.
 
 The start definition provides a "kind" parameter which describes the starting options:
 
 - **default** - The start state is always "active" and there are no restrictions imposed on its execution.
-- **scheduled** -  The start state is only "active" as described in the schedule definition. Workflow instance creation can only be performed for this workflow
-as described by the provided schedule.
+- **scheduled** - Scheduled start states have two different choices. You can define time-based intervals during which workflow instances are **allowed**
+to be created, or cron-based repeating times at which a workflow instance **should** be created. 
 
-Defining a schedule for the start definition allows you to model workflows which are only "active" during certain time intervals. For example let's say
-we have a workflow that orchestrates an online auction and should be valid only from when the auction starts until it ends. Before the auction starts or after
-it is completed, new submissions are allowed and thus no new workflow instances should be created.
+Defining a schedule for the start definition allows you to set time intervals during which workflow instances can be created, or 
+periodic times at which workflow instance should be created.  
 
-There are two cases to discuss when dealing with scheduled start states:
+One use case for the interval-based schedule is let's say
+we have a workflow that orchestrates an online auction and should be "available" only from when the auction starts until it ends. 
+Customer bids should only be allowed during this time interval. Bids made before or after the defined time interval should not be allowed.
+
+There are two cases to discuss when dealing with interval-based scheduled starts:
 
 1. **Starting States in [Parallel](#Parallel-State) state [branches](#parallel-state-branch)**: if a state in a parallel state branch defines a scheduled start state which is not "active" at the time the branch is executed, the parent workflow should not wait until it becomes active and just complete execution of the branch.
 2. **Starting states in [SubFlow](#SubFlow-State) states**: if a state in a workflow definition (referenced by SubFlow state) defines a scheduled start state that is not "active" at the time the SubFlow state is executed, the parent workflow should not wait until it becomes active and simply complete execution of the SubFlow state.
 
-For more information about the schedule definition see the next section.
+You can also define a cron-based scheduled starts which allow to define periodically started workflow instances based on a [cron](http://crontab.org/) definition.
+Cron-based scheduled starts can handle absolute time intervals (not calculated in respect to some particular point in time).
+One use case for cron-based scheduled starts is let's say we have a workflow which performs data batch processing which has to be done periodically. 
+In this case we could use a cron definition
+
+``` text
+0 0/5 * * * ?
+```
+
+to define that this workflow should be triggered every 5 minutes, starting at full hour. 
+
+Here are some more examples of cron expressions and their meanings:
+
+``` text
+* * * * *   - Trigger workflow instance at the top of every minute
+0 * * * *   - Trigger workflow instance at the top of every hour
+0 */2 * * * - Trigger workflow instance every 2 hours
+0 9 8 * *   - Trigger workflow instance at 9:00:00AM on the eighth day of every month
+```
+
+[See here](http://crontab.org/) to get more information on defining cron expressions.
+
+One thing to discuss when dealing with cron-based scheduled stars is when the starting state of the workflow is an [Event](#Event-State).
+Event states define that workflow instances are triggered by existence of the defined event(s). 
+Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service which issues 
+the needed events at the defined times to trigger workflow instance creation.
 
 #### Schedule Definition
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| interval | Time interval describing when the workflow starting state is active. (ISO 8601 time interval format). | string | yes |
+| interval | Time interval describing when the workflow starting state is active. (ISO 8601 time interval format). | string | yes if cron not defined |
+| cron | Repeating interval (cron expression) describing when the workflow starting state should be triggered | string | yes if interval not defined |
+| directInvoke | Define if workflow instances can be created outside of the defined interval/cron | enum | yes |
+| timezone | Timezone name (for example "America/Los_Angeles") used to evaluate the cron expression against. Not used for interval property as timezone can be specified there directly. If not specified, should default to local machine timezone | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2584,7 +2615,8 @@ For more information about the schedule definition see the next section.
 
 ```json
 {
-   "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+   "cron": "0 0/15 * * * ?",
+   "directInvoke": "allow"
 }
 ```
 
@@ -2592,7 +2624,8 @@ For more information about the schedule definition see the next section.
 <td valign="top">
 
 ```yaml
-interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
+cron: 0 0/15 * * * ?
+directInvoke: allow
 ```
 
 </td>
@@ -2618,6 +2651,18 @@ which waits to consume event "X", meaning that the workflow instance should be c
 a specific interval, the "waiting" for event "X" should only be started when the starting state becomes active.
 
 Once a workflow instance is created, the start state schedule can be ignored for that particular workflow instance. States should from then on rely on their timeout properties for example to restrict the waiting time of incoming events, function executions, etc.  
+
+The cron property uses a [cron expression](http://crontab.org/) 
+to describe a repeating interval upon which the state becomes active and a new workflow instance is created.
+
+The timezone is used to define a time zone name to evaluate the cron expression against. If not specified it should default to the local
+machine time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezone names.
+
+Note that when the starting state of the workflow is an [Event](#Event-State) 
+defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service which issues 
+the needed events at the defined times to trigger workflow instance creation.
+
+The directInvoke property defines if workflow instances are allowed to be created outside of the defined interval or cron expression.
 
 #### End Definition
 
