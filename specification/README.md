@@ -2,12 +2,12 @@
 
 ## Abstract
 
-Serverless Workflow is a vendor-neutral specification for defining the model of
-workflows responsible for orchestrating event-driven serverless applications.
+Serverless Workflow is a vendor-neutral specification which defines a declarative model for
+Workflows responsible for orchestrating Event-driven, Serverless applications.
 
 ## License
 
-Serverless Workflow specification is free and open-source, operating under the
+Serverless Workflow specification operates under the
 [Apache License version 2.0](../LICENSE).
 
 ## Status of this document
@@ -48,39 +48,39 @@ Some of the many benefits using workflows in serverless applications include:
 thus allowing clear focus on business requirements in functions.
 - Greatly reduce the amount of code developers have to write, maintain, and test.
 - Reduce the amount of time and effort to make changes/updates in large serverless applications.
-- Allow for definition of reusable and clearly defined workflow orchestration patterns.
+- Allow for declarative and reusable markup to defined service orchestration.
 
 Many different workflow implementations (both proprietary and open-source) exist today, each with it's own set of features
 and capabilities. When picking a current implementations, it is very difficult to later on switch to a different one
 without investing a lot of time, and effort.
 
-Serverless Workflow is a CNCF specification that defines the model for workflows
-responsible for orchestrating event-driven serverless applications.
+Serverless Workflow is a CNCF specification that defines a declarative model for workflows
+responsible for orchestrating event-driven, serverless applications.
 
 Main goals of the specification include:
 
-- Facilitate Serverless Workflow portability across different vendor platforms
+- Facilitate portability across different vendor platforms
 - Be completely vendor neutral
-- Support both stateless and stateful Serverless Workflow orchestration
-- Define a light-weight and powerful Serverless Workflow model
+- Support both stateless and stateful orchestration
+- Define a declarative workflow model
 
-Workflows defined using the serverless workflow specification can be used to:
+Workflows defined using the Serverless Workflow specification can be used to:
 
-- **Orchestrate serverless application logic**: serverless applications are typically event-driven and can be
+- **Orchestrate Serverless application logic**: Serverless applications are typically event-driven and can be
 very hard to manage. Serverless Workflow groups the application events and functions into a coherent unit and
 simplifies orchestration of the app logic.
-- **Define and coordinate application control flow**: allow the users to define the execution/operation
-control flow and how/which functions are to be invoked on arrival of events.
-- **Define and manage application data flow**: allows the users to define how data is passed and filtered from incoming events to states,
-from states to functions, from one function to another function, and from one state to another state.
+- **Define and coordinate application Control Flow**: Allow users to define the execution/operation
+control flow to clearly define how/which functions are to be invoked on arrival of events.
+- **Define and manage application Data Flow**: Allows users to define how data is passed and filtered from incoming events to states,
+from states to functions, from one function to another, and from one state to another.
 
 ## Workflow Format
 
-The Serverless workflow format is defined with [JSON](https://www.json.org/json-en.html) or [YAML](https://yaml.org/).
-Structure of serverless workflows is described via [JSON Schema](https://json-schema.org/).
+The specification workflow model can be defined via [JSON](https://www.json.org/json-en.html) or [YAML](https://yaml.org/).
+Workflow model is defined via a set of  [JSON Schemas](https://json-schema.org/) which an be found [here](schema).
 
-Serverless Workflow definitions are considered specification-compliant if they conform to the 
-[workflow schema](schema/workflow.json).
+Serverless Workflow models are considered compliant to the spec if they conform to the 
+[workflow schemas](schema).
 
 Note that this schema reflects the current status of the specification as is updated alongside this document.
 
@@ -123,24 +123,19 @@ on many different runtimes and thus on many different cloud/container platforms.
 
 ## Specification Details
 
-Following sections provide detailed descriptions of the Serverless Workflow Model. For each part of the model we provide:
+Following sections provide detailed descriptions of the Serverless Workflow model. For each part of the model we provide:
 
 - Parameter description in table format.
-- [JSON Schema](https://json-schema.org/) definition.
+- Example definition in both [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats.
 
 ### Workflow Model
 
-Serverless Workflow can be viewed as a collection of [states](#State-Definition) and [transitions](#Transitions) between states.
-Individual states can make control flow decisions based on their data inputs, perform different actions, as well
-as pass their data to other states.
+Serverless Workflow model can be viewed as: 
+* Set of [functions](#Function-Definition) (services) which need to be called during workflow execution. 
+* Set of [events](#Event-Definition) that need to be consumed to start workflow instances or trigger functions, or produced during workflow execution.
+* Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the control flow logic, manage data, and can reference defined functions and events.
 
-States can wait on the arrival events to perform their actions. When states
-complete their tasks, they can transition to other states or stop workflow execution.
-See the [Transitions](#Transitions) section for more details on workflow progression.
-
-A Serverless Workflow can be naturally implemented as a workflow engine.
-This specification does not mandate a specific implementation decision in this regard.
-Implementation compliance is based on the workflow definition language.
+The model defines a declarative language that can be used to define small or complex workflow orchestrations.
 
 ### Workflow Definition
 
