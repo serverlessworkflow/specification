@@ -62,5 +62,5 @@ _Status description:_
 | ✔️| Add "triggered" start definition | [spec doc](../README.md) |
 | ✔️| Update scheduled start definition - adding cron def | [spec doc](../README.md) |
 | ✔️| Set single expression language (CEL) | [spec doc](../README.md) |
-| ✔️| Add ability to reference trigger and result events in function definitions | [spec doc](../README.md) |
+| ✔️| Add ability to reference trigger and result events in actions | [spec doc](../README.md) |
 | ✔️| Expand event correlation capabilities | [spec doc](../README.md) |

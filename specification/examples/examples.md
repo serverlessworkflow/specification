@@ -17,7 +17,7 @@
 - [Perform Customer Credit Check (Callback state)](#Perform-Customer-Credit-Check-Example)
 - [Handle Car Auction Bids (Scheduled start Event state)](#Handle-Car-Auction-Bids-Example)
 - [Check Inbox Periodically (Cron-based Workflow start)](#Check-Inbox-Periodically)
-- [Event-based service invocation (Invoke function via event)](#Event-Based-Service-Invocation)
+- [Event-based service invocation (Event triggered actions)](#Event-Based-Service-Invocation)
 
 ### Hello World Example
 
@@ -2663,13 +2663,6 @@ For this example we assume that the workflow instance is started given the follo
     "id": "VetAppointmentWorkflow",
     "description": "Vet service call via events",
     "version": "1.0",
-    "functions": [
-        {
-            "name": "VetAppointmentService",
-            "triggerEventRef": "MakeVetAppointment",
-            "resultEventRef": "VetAppointmentInfo"
-        }
-    ],
     "events": [
         {
             "name": "MakeVetAppointment",
@@ -2692,11 +2685,10 @@ For this example we assume that the workflow instance is started given the follo
             "actions": [
                 {
                     "name": "MakeAppointmentAction",
-                    "functionRef": {
-                        "refName": "VetAppointmentService",
-                        "parameters": {
-                            "patient": "$.patientInfo"
-                        }
+                    "eventRef": {
+                       "triggerEventRef": "MakeVetAppointment",
+                       "data": "$.patientInfo",
+                       "resultEventRef":  "VetAppointmentInfo"
                     },
                     "actionDataFilter": {
                         "dataResultsPath": "$.appointmentInfo"
@@ -2719,10 +2711,6 @@ For this example we assume that the workflow instance is started given the follo
 id: VetAppointmentWorkflow
 description: Vet service call via events
 version: '1.0'
-functions:
-- name: VetAppointmentService
-  triggerEventRef: MakeVetAppointment
-  resultEventRef: VetAppointmentInfo
 events:
 - name: MakeVetAppointment
   source: VetServiceSoure
@@ -2737,10 +2725,10 @@ states:
     kind: default
   actions:
   - name: MakeAppointmentAction
-    functionRef:
-      refName: VetAppointmentService
-      parameters:
-        patient: "$.patientInfo"
+    eventRef:
+      triggerEventRef: MakeVetAppointment
+      data: "$.patientInfo"
+      resultEventRef: VetAppointmentInfo
     actionDataFilter:
       dataResultsPath: "$.appointmentInfo"
     timeout: PT15M

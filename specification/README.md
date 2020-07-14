@@ -223,9 +223,7 @@ Following figure describes the main workflow definition blocks.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| resource | Function resource (URI) | string | yes if 'triggerEventRef' and 'resultEventRef' are not defined |
-| triggerEventRef | Reference to the unique name of a 'produced' event definition | string | yes if 'resource' is not defined |
-| resultEventRef | Reference to the unique name of a 'consumed' event definition | string | yes if 'resource' is not defined |
+| resource | Function resource (URI) | string | yes |
 | type | Function type | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
@@ -270,17 +268,10 @@ metadata:
 
 Function definitions allows you to define invocation information of services that need to be invoked during 
 workflow execution. 
+
 They can be referenced by name in [actions](#Action-Definition) defined in [Event](#Event-State), [Operation](#Operation-State), or [Callback](#Callback-State) workflow states.
 
-There are two possible ways to define service invocation information:
-
-* Via the 'resource' property which defines the exposed URI of the service that allows its invocation via REST for example.
-The results of the service execution in this case are assumed to be present in the REST call response.
-* Via the 'triggerEventRef' and 'resultEventRef' properties. In this scenario the defined function is invoked by the referenced 
-trigger event and its results can be obtained in the payload body of the referenced result event. Note that since there can be 
-many workflow instances invoking the same function, event correlation on the workflow instance id for example must be established
-so that the result event can be correlated to the needed workflow instance. Note that for event-triggered function definitions
-the workflow runtime must generate the trigger event including the associated correlation.
+The 'resource' property defines the exposed URI of the service that allows its invocation via REST for example.
 
 The type parameter allows implementations to give more information regarding the function to the readers. 
 It should not affect workflow execution or service invocation. 
@@ -839,8 +830,9 @@ instance in case it is an end state without performing any actions.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique action name | string | no |
-| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes |
-| timeout | Time period to wait for function execution to complete (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | no |
+| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if 'eventRef'is not used |
+| [eventRef](#EventRef-Definition) | References a reusable function definition | object | yes if 'functionRef' is not used |
+| timeout | Time period to wait for function execution to complete or the resultEventRef to be consumed (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | no |
 | [actionDataFilter](#action-data-filter) | Action data filter definition | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -885,11 +877,21 @@ timeout: PT15M
 
 </details>
 
-Actions reference a reusable function definition to be invoked when this action is executed.
+Actions specify invocations of services during workflow execution.
+Service invocation can be done in two different ways:
 
-The "timeout" property defines the amount of time to wait for function execution to complete. It
-is described in ISO 8601 format, so for example "PT2M" would mean the maximum time for the function to complete
+* Reference [functions definitions](#Function-Definition) by its unique name using the 'functionRef' property.
+* Reference a 'produced' and 'consumed' [event definitions](#Event-Definition) via the 'eventRef' property. 
+In this scenario a service or a set of services we want to invoke
+are not exposed via a specific resource URI for example, but can only be invoked via events. 
+The [eventRef](#EventRef-Definition) defines the 
+referenced 'produced' event via its 'triggerEventRef' property and a 'consumed' event via its 'resultEventRef' property.
+
+The "timeout" property defines the amount of time to wait for function execution to complete or the consumed event referenced by the 
+'resultEventRef' to become available.
+It is described in ISO 8601 format, so for example "PT2M" would mean the maximum time for the function to complete
 its execution is two minutes. 
+
 If the set timeout period is exceeded, the state should handle this via its [retry and onError definitions](#workflow-retrying).
 In the case they are not defined, the state should proceed with transitioning to the next state, or ending 
 the workflow execution in case it is an end state. 
@@ -938,6 +940,60 @@ parameters:
 
 Used by actions to reference a defined serverless function by its unique name. Parameters are values passed to the
 function. They can include either static values or reference the states data input.
+
+#### EventRef Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| [triggerEventRef](#Event-Definition) | Reference to the unique name of a 'produced' event definition | string | yes |
+| [resultEventRef](#Event-Definitions) | Reference to the unique name of a 'consumed' event definition | string | yes |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the produced event. If object type, a custom object to become the data (payload) of trigger/produced event. | string or object | no |
+| contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+   "eventRef": {
+      "triggerEventRef": "MakeVetAppointment",
+      "data": "$.patientInfo",
+      "resultEventRef":  "VetAppointmentInfo"
+   }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+eventRef:
+  triggerEventRef: MakeVetAppointment
+  data: "$.patientInfo"
+  resultEventRef: VetAppointmentInfo
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+References a 'produced' and 'consumed' [event definitions](#Event-Definition) via the 'triggerEventRef' and 'resultEventRef' properties.
+
+The 'data' property can have two types, object or string. If of string type, it is an expression that can select parts of state data
+to be used as the trigger/produced event payload. If object type, you can defined a custom object to be the event payload.
+
+The 'contextAttributes' property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+to the trigger/produced event. 
 
 #### Error Definition
 

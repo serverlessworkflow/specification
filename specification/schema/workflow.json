@@ -195,6 +195,10 @@
           "description": "References a reusable function definition",
           "$ref": "#/definitions/functionref"
         },
+        "eventRef": {
+          "description": "References a 'trigger' and 'result' reusable event definitions",
+          "$ref": "#/definitions/eventref"
+        },
         "timeout": {
           "type": "string",
           "description": "Time period to wait for function execution to complete"
@@ -203,8 +207,17 @@
           "$ref": "#/definitions/actiondatafilter"
         }
       },
-      "required": [
-        "functionRef"
+      "oneOf": [
+        {
+          "required": [
+            "functionRef"
+          ]
+        },
+        {
+          "required": [
+            "eventRef"
+          ]
+        }
       ]
     },
     "retry": {
@@ -249,6 +262,35 @@
       },
       "required": [
         "refName"
+      ]
+    },
+    "eventref": {
+      "type": "object",
+      "description": "Event References",
+      "properties": {
+        "triggerEventRef": {
+          "type": "string",
+          "description": "Reference to the unique name of a 'produced' event definition"
+        },
+        "resultEventRef": {
+          "type": "string",
+          "description": "Reference to the unique name of a 'consumed' event definition"
+        },
+        "data": {
+          "type": ["string", "object"],
+          "description": "If String, expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the data of produced event."
+        },
+        "contextAttributes": {
+          "type": "object",
+          "description": "Add additional extension context attributes to the produced event",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "triggerEventRef",
+        "resultEventRef"
       ]
     },
     "branch": {

@@ -24,14 +24,6 @@
           "type": "string",
           "description": "Function resource (URI)"
         },
-        "triggerEventRef": {
-          "type": "string",
-          "description": "Reference to the unique name of a 'produced' event definition"
-        },
-        "resultEventRef": {
-          "type": "string",
-          "description": "Reference to the unique name of a 'consumed' event definition"
-        },
         "type": {
           "type": "string",
           "description": "Function type"
@@ -43,21 +35,6 @@
       "required": [
         "name",
         "resource"
-      ],
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "resource"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "triggerEventRef",
-            "resultEventRef"
-          ]
-        }
       ]
     }
   }
