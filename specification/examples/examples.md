@@ -2661,6 +2661,7 @@ For this example we assume that the workflow instance is started given the follo
 ```json
 {
     "id": "VetAppointmentWorkflow",
+    "name": "Vet Appointment Workflow",
     "description": "Vet service call via events",
     "version": "1.0",
     "events": [
@@ -2709,6 +2710,7 @@ For this example we assume that the workflow instance is started given the follo
 
 ```yaml
 id: VetAppointmentWorkflow
+name: Vet Appointment Workflow
 description: Vet service call via events
 version: '1.0'
 events:

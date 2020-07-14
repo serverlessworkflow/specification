@@ -11,6 +11,10 @@
       "description": "References a reusable function definition to be invoked",
       "$ref": "../functions/functionref.json"
     },
+    "eventRef": {
+      "description": "References a 'trigger' and 'result' reusable event definitions",
+      "$ref": "../events/eventref.json"
+    },
     "timeout": {
       "type": "string",
       "description": "Time period to wait for function execution to complete"
@@ -19,7 +23,16 @@
       "$ref": "../filters/actiondatafilter.json"
     }
   },
-  "required": [
-    "functionRef"
+  "oneOf": [
+    {
+      "required": [
+        "functionRef"
+      ]
+    },
+    {
+      "required": [
+        "eventRef"
+      ]
+    }
   ]
 }

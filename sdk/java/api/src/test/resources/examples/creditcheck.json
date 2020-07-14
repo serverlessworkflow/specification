@@ -19,7 +19,11 @@
       "name": "CreditCheckCompletedEvent",
       "type": "creditCheckCompleteType",
       "source": "creditCheckSource",
-      "correlationToken": "customerId"
+      "correlation": [
+        {
+          "contextAttributeName": "customerId"
+        }
+      ]
     }
   ],
   "states": [
