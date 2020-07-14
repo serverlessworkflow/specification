@@ -4,7 +4,7 @@
 
 - [Hello World](#Hello-World-Example)
 - [Greeting](#Greeting-Example)
-- [Event-based greeting](#Event-Based-Greeting-Example)
+- [Event-based greeting (Event State)](#Event-Based-Greeting-Example)
 - [Solving Math Problems (ForEach state)](#Solving-Math-Problems-Example)
 - [Parallel Execution](#Parallel-Execution-Example)
 - [Event Based Transitions (Event-based Switch)](#Event-Based-Transitions-Example)
@@ -17,6 +17,7 @@
 - [Perform Customer Credit Check (Callback state)](#Perform-Customer-Credit-Check-Example)
 - [Handle Car Auction Bids (Scheduled start Event state)](#Handle-Car-Auction-Bids-Example)
 - [Check Inbox Periodically (Cron-based Workflow start)](#Check-Inbox-Periodically)
+- [Event-based service invocation (Invoke function via event)](#Event-Based-Service-Invocation)
 
 ### Hello World Example
 
@@ -1730,19 +1731,31 @@ have the matching patient id.
     "name": "HighBodyTemperature",
     "type": "org.monitor.highBodyTemp",
     "source": "monitoringSource",
-    "correlationToken": "patientId"
+    "correlation": [
+      { 
+        "contextAttributeName": "patientId"
+      } 
+    ]
 },
 {
     "name": "HighBloodPressure",
     "type": "org.monitor.highBloodPressure",
     "source": "monitoringSource",
-    "correlationToken": "patientId"
+    "correlation": [
+      { 
+        "contextAttributeName": "patientId"
+      } 
+    ]
 },
 {
     "name": "HighRespirationRate",
     "type": "org.monitor.highRespirationRate",
     "source": "monitoringSource",
-    "correlationToken": "patientId"
+    "correlation": [
+      { 
+        "contextAttributeName": "patientId"
+      } 
+    ]
 }
 ],
 "functions": [
@@ -1822,15 +1835,18 @@ events:
 - name: HighBodyTemperature
   type: org.monitor.highBodyTemp
   source: monitoringSource
-  correlationToken: patientId
+  correlation:
+  - contextAttributeName: patientId
 - name: HighBloodPressure
   type: org.monitor.highBloodPressure
   source: monitoringSource
-  correlationToken: patientId
+  correlation:
+  - contextAttributeName: patientId
 - name: HighRespirationRate
   type: org.monitor.highRespirationRate
   source: monitoringSource
-  correlationToken: patientId
+  correlation:
+  - contextAttributeName: patientId
 functions:
 - name: callPulmonologist
   type: function
@@ -1917,19 +1933,31 @@ when all three of these events happened (in no particular order).
     "name": "ApplicationSubmitted",
     "type": "org.application.submitted",
     "source": "applicationsource",
-    "correlationToken": "applicantId"
+    "correlation": [
+    { 
+      "contextAttributeName": "applicantId"
+    } 
+   ]
 },
 {
     "name": "SATScoresReceived",
     "type": "org.application.satscores",
     "source": "applicationsource",
-    "correlationToken": "applicantId"
+    "correlation": [
+      { 
+      "contextAttributeName": "applicantId"
+      } 
+    ]
 },
 {
     "name": "RecommendationLetterReceived",
     "type": "org.application.recommendationLetter",
     "source": "applicationsource",
-    "correlationToken": "applicantId"
+    "correlation": [
+      { 
+      "contextAttributeName": "applicantId"
+      } 
+    ]
 }
 ],
 "functions": [
@@ -1985,15 +2013,18 @@ events:
 - name: ApplicationSubmitted
   type: org.application.submitted
   source: applicationsource
-  correlationToken: applicantId
+  correlation:
+  - contextAttributeName: applicantId
 - name: SATScoresReceived
   type: org.application.satscores
   source: applicationsource
-  correlationToken: applicantId
+  correlation:
+  - contextAttributeName: applicantId
 - name: RecommendationLetterReceived
   type: org.application.recommendationLetter
   source: applicationsource
-  correlationToken: applicantId
+  correlation:
+  - contextAttributeName: applicantId
 functions:
 - name: finalizeApplicationFunction
   type: function
@@ -2129,7 +2160,11 @@ And for denied credit check, for example:
             "name": "CreditCheckCompletedEvent",
             "type": "creditCheckCompleteType",
             "source": "creditCheckSource",
-            "correlationToken": "customerId"
+            "correlation": [
+              { 
+                "contextAttributeName": "customerId"
+              } 
+           ]
         }
     ],
     "states": [
@@ -2226,7 +2261,8 @@ events:
 - name: CreditCheckCompletedEvent
   type: creditCheckCompleteType
   source: creditCheckSource
-  correlationToken: customerId
+  correlation:
+  - contextAttributeName: customerId
 states:
 - name: CheckCredit
   type: callback
@@ -2579,4 +2615,145 @@ states:
 
 <p align="center">
 <img src="../media/examples/example-periodicalexec.png" height="400px" alt="Check Inbox Periodically Example"/>
+</p>
+
+
+### Event Based Service Invocation
+
+#### Description
+
+In this example we want to make a Veterinary appointment for our dog Mia. The vet service can be invoked only
+via an event, and its completion results with the appointment day and time is returned via an event as well. 
+
+This shows a common scenario especially inside container environments where some services may not be exposed via
+a resource URI, but only accessible by submitting an event to the underlying container events manager.
+
+For this example we assume that that payload of the Vet service response event includes an "appointment"
+object which contains our appointment info.
+
+This info is then filtered to become the workflow data output. It could also be used to for example send us an 
+appointment email, a text message reminder, etc.
+
+For this example we assume that the workflow instance is started given the following workflow data input:
+
+```json
+    {
+      "patientInfo": {
+        "name": "Mia",
+        "breed": "German Shepherd",
+        "age": 5,
+        "reason": "Bee sting",
+        "patientId": "Mia1"
+      }   
+    }
+```
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+    "id": "VetAppointmentWorkflow",
+    "description": "Vet service call via events",
+    "version": "1.0",
+    "functions": [
+        {
+            "name": "VetAppointmentService",
+            "triggerEventRef": "MakeVetAppointment",
+            "resultEventRef": "VetAppointmentInfo"
+        }
+    ],
+    "events": [
+        {
+            "name": "MakeVetAppointment",
+            "source": "VetServiceSoure",
+            "kind": "produced"
+        },
+        {
+            "name": "VetAppointmentInfo",
+            "source": "VetServiceSource",
+            "kind": "consumed"
+        }
+    ],
+    "states": [
+        {
+            "name": "MakeVetAppointmentState",
+            "type": "operation",
+            "start": {
+                "kind": "default"
+            },
+            "actions": [
+                {
+                    "name": "MakeAppointmentAction",
+                    "functionRef": {
+                        "refName": "VetAppointmentService",
+                        "parameters": {
+                            "patient": "$.patientInfo"
+                        }
+                    },
+                    "actionDataFilter": {
+                        "dataResultsPath": "$.appointmentInfo"
+                    },
+                    "timeout": "PT15M"
+                }
+            ],
+            "end": {
+                "kind": "default"
+            }
+        }
+    ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: VetAppointmentWorkflow
+description: Vet service call via events
+version: '1.0'
+functions:
+- name: VetAppointmentService
+  triggerEventRef: MakeVetAppointment
+  resultEventRef: VetAppointmentInfo
+events:
+- name: MakeVetAppointment
+  source: VetServiceSoure
+  kind: produced
+- name: VetAppointmentInfo
+  source: VetServiceSource
+  kind: consumed
+states:
+- name: MakeVetAppointmentState
+  type: operation
+  start:
+    kind: default
+  actions:
+  - name: MakeAppointmentAction
+    functionRef:
+      refName: VetAppointmentService
+      parameters:
+        patient: "$.patientInfo"
+    actionDataFilter:
+      dataResultsPath: "$.appointmentInfo"
+    timeout: PT15M
+  end:
+    kind: default
+```
+
+</td>
+</tr>
+</table>
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-vetappointment.png" height="400px" alt="Vet Appointment Example"/>
 </p>

@@ -114,7 +114,7 @@
           "description": "Common Expression Language (CEL) expression. Must evaluate to true for the transition to be valid"
         },
         "produceEvent": {
-          "description": "Reference one of the defined 'produced' events by name and set its data",
+          "description": "Reference one of the defined 'produced' events by name and set its payload and context attributes",
           "$ref": "#/definitions/produceevent"
         },
         "nextState": {
@@ -1670,7 +1670,14 @@
         },
         "data": {
           "type": ["string", "object"],
-          "description": "If String, JSONPath expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the data of produced event."
+          "description": "If String, expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the data of produced event."
+        },
+        "contextAttributes": {
+          "type": "object",
+          "description": "Add additional event extension context attributes",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "required": [

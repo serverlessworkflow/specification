@@ -223,7 +223,9 @@ Following figure describes the main workflow definition blocks.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| resource | Function resource (URI) | string | yes |
+| resource | Function resource (URI) | string | yes if 'triggerEventRef' and 'resultEventRef' are not defined |
+| triggerEventRef | Reference to the unique name of a 'produced' event definition | string | yes if 'resource' is not defined |
+| resultEventRef | Reference to the unique name of a 'consumed' event definition | string | yes if 'resource' is not defined |
 | type | Function type | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
@@ -266,11 +268,25 @@ metadata:
 
 </details>
 
-Allows you to define a reusable function definition. It can be referenced in [actions](#Action-Definition) defined in [Event](#Event-State), [Operation](#Operation-State), or [Callback](#Callback-State) workflow states. Each function definition must have an unique name.
-The "resource" parameter of a function evaluates to execution of an existing serverless function.
-Implementations can use the "type" parameter to define communication information such as protocols.
+Function definitions allows you to define invocation information of services that need to be invoked during 
+workflow execution. 
+They can be referenced by name in [actions](#Action-Definition) defined in [Event](#Event-State), [Operation](#Operation-State), or [Callback](#Callback-State) workflow states.
 
-Since function definitions are reusable, their data input parameters are defined within [actions](#Action-Definition) that reference them.
+There are two possible ways to define service invocation information:
+
+* Via the 'resource' property which defines the exposed URI of the service that allows its invocation via REST for example.
+The results of the service execution in this case are assumed to be present in the REST call response.
+* Via the 'triggerEventRef' and 'resultEventRef' properties. In this scenario the defined function is invoked by the referenced 
+trigger event and its results can be obtained in the payload body of the referenced result event. Note that since there can be 
+many workflow instances invoking the same function, event correlation on the workflow instance id for example must be established
+so that the result event can be correlated to the needed workflow instance. Note that for event-triggered function definitions
+the workflow runtime must generate the trigger event including the associated correlation.
+
+The type parameter allows implementations to give more information regarding the function to the readers. 
+It should not affect workflow execution or service invocation. 
+
+Function definitions themselves do not define data input parameters as they are reusable definitions. Parameters can be 
+defined via the 'parameters' property of [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
 
 #### Event Definition
 
@@ -279,8 +295,8 @@ Since function definitions are reusable, their data input parameters are defined
 | name | Unique event name | string | yes |
 | source | CloudEvent source | string | yes if kind is set to "consumed", otherwise no |
 | type | CloudEvent type | string | yes |
-| correlationToken | Context attribute name of the CloudEvent which value is to be used for event correlation | string | no |
-| kind | Defines the events as either being consumed or produced by the workflow. Default is consumed. | enum | no |
+| kind | Defines the event is either 'consumed' or 'produced' by the workflow. Default is 'consumed' | enum | no |
+| [correlation](#Correlation-Definition) | Define event correlation rules for this event. Only used for consumed events | array | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -296,11 +312,15 @@ Since function definitions are reusable, their data input parameters are defined
 
 ```json
 {  
-   "name": "ApplicationSubmitted",
-   "type": "org.application.submit",
+   "name": "ApplicantInfo",
+   "type": "org.application.info",
    "source": "applicationssource",
-   "correlationToken": "applicantId",
-   "kind": "consumed"
+   "kind": "consumed",
+   "correlation": [
+    { 
+      "contextAttributeName": "applicantId"
+    } 
+   ]
 }
 ```
 
@@ -308,11 +328,12 @@ Since function definitions are reusable, their data input parameters are defined
 <td valign="top">
 
 ```yaml
-name: ApplicationSubmitted
-type: org.application.submit
+name: ApplicantInfo
+type: org.application.info
 source: applicationssource
-correlationToken: applicantId
 kind: consumed
+correlation:
+- contextAttributeName: applicantId
 ```
 
 </td>
@@ -321,26 +342,40 @@ kind: consumed
 
 </details>
 
-Defines events that can be consumed or produced during workflow execution.
+Used to define events and their correlations. These events can be either consumed or produced during workflow execution.
 
-Consumed events can trigger creations of workflow instances, or continue execution of existing workflow instances.
-Workflows can produce events during their execution. These events can be then consumed by clients (or other workflows).
+The Serverless Workflow specification mandates that all events conform to the [CloudEvents](https://github.com/cloudevents/spec) specification. 
+This is to assure consistency and portability of the events format used.
 
-Events defined must conform to the [CloudEvents](https://github.com/cloudevents/spec) specification. 
-This is to assure the consistency and portability of consumed or produced events.
+The 'name' property defines an unique name of the event (for the workflow definition). This event name can be 
+then referenced within [function](#Function-Definition) and [state](#State-Definition) definitions.
 
-The event definition "kind" property defines if this event is consumed or produced. The default is consumed. 
-If the event is produced, implementations must provide the value of the event source when producing the CloudEvent.
-In this case (when "kind" is set to "produced") the "source" property of the event definition is not a required 
-property. Otherwise ("kind" is set to "consumed") the "source" property must be defined.
+The 'source' property matches this event definition with the [source](https://github.com/cloudevents/spec/blob/master/spec.md#source-1)
+property of the CloudEvent required attributes.
 
-To support use case where workflows need to perform actions across multiple types
-of events, users can specify a correlation token to correlate these events.
-The "correlationToken" property value must be the name of a context attribute in the event. This context attribute contains a business key to be
-used for event correlation. 
-An event "context attribute" can be defined as any event attribute except the event payload (the event "data" attribute).
+The 'type' property matches this event definition with the [type](https://github.com/cloudevents/spec/blob/master/spec.md#type) property of the 
+CloudEvent required attributes.
 
-For example let's say we have two CloudEvent which set their correlation via the "patientId" context attribute:
+The 'kind' property defines this event as either 'consumed' or 'produced'. In terms of the workflow this means it is either an event 
+that triggers workflow instance creation, or continuation of workflow instance execution (consumed), or an event 
+that the workflow instance creates during its execution (produced).
+The default value (if not specified) of the 'kind' property is 'consumed'. 
+Note that for 'produced' event definitions, implementations must provide the value of the CloudEvent source attribute. 
+In this case (when "kind" is set to "produced") the "source" property of the event definition is not a required.
+Otherwise ("kind" is set to "consumed") the 'source' property must be defined in the event definition.
+
+
+Event correlation plays a big role in large event-driven applications. Correlating one or more events with a particular workflow instance
+can be done by defining the event correlation rules within the 'correlation' property. 
+This property is an array of [correlation](#Correlation-Definition) definitions.
+The CloudEvents specification allows users to add [Extension Context Attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+and the correlation definitions can use these attributes to define clear matching event correlation rules.
+Extension context attributes are not part of the event payload, so they are serialized the same way as other standard required attributes.
+This means that the event payload does not have to be inspected by implementations in order to read and evaluate the defined correlation rules.
+
+
+Let's take a look at an example. Here we have two events which have an extension context attribute called 'patientId' (as well as 'department' which 
+will be used in further examples below):
 
 ```json
 {
@@ -351,6 +386,7 @@ For example let's say we have two CloudEvent which set their correlation via the
     "id" : "A234-1234-1234",
     "time" : "2020-01-05T17:31:00Z",
     "patientId" : "PID-12345",
+    "department": "UrgentCare",
     "data" : {
       "value": "80bpm"
     }
@@ -368,35 +404,156 @@ and
     "id" : "B234-1234-1234",
     "time" : "2020-02-05T17:31:00Z",
     "patientId" : "PID-12345",
+    "department": "UrgentCare",
     "data" : {
       "value": "110/70"
     }
 }
 ```
 
-If we then correlate these two events with event definitions:
+We can then define a correlation rule, through which all consumed events with the 'hospitalMonitorSystem', and the 'com.hospital.patient.heartRateMonitor'
+type that have the **same** value of the 'patientId' property to be related to the created workflow instance:
 
 ```json
 {
 "events": [
  {
   "name": "HeartRateReadingEvent",
-  "type": "com.hospital.patient.heartRateMonitor",
   "source": "hospitalMonitorSystem",
-  "correlationToken": "patientId"
+  "type": "com.hospital.patient.heartRateMonitor",
+  "kind": "consumed",
+  "correlation": [
+    { 
+      "contextAttributeName": "patientId"
+    }
+  ]
+ }
+]
+}
+```
+
+If a workflow instance is created (via Event state for example) by consuming a 'HeartRateReadingEvent' event, all other consumed events
+with from the defined source and with the defined type that have the same patientId as the event that triggered the workflow instance
+should then also be associated with the same instance.
+
+You can also correlate multiple events together. In the following example we assume that the workflow consumes two different event types
+and we want to make sure that both are correlated as in for this example, must have the same patientId: 
+
+
+```json
+{
+"events": [
+ {
+  "name": "HeartRateReadingEvent",
+  "source": "hospitalMonitorSystem",
+  "type": "com.hospital.patient.heartRateMonitor",
+  "kind": "consumed",
+  "correlation": [
+    { 
+      "contextAttributeName": "patientId"
+    }
+  ]
  },
  {
    "name": "BloodPressureReadingEvent",
-   "type": "com.hospital.patient.bloodPressureMonitor",
    "source": "hospitalMonitorSystem",
-   "correlationToken": "patientId"
+   "type": "com.hospital.patient.bloodPressureMonitor",
+   "kind": "consumed",
+   "correlation": [
+       { 
+         "contextAttributeName": "patientId"
+       }
+     ]
   }
 ]
 }
 ```
 
-Workflow implementations can use this token to map events to particular workflow instances, or use it
-to correlate multiple events that are needed to start a workflow instance.
+Event correlation can be based on equality (values of the defined 'contextAttributeName' must be equal), but it can also be based
+on comparing it to custom defined value (string, or expression), for example:
+
+```json
+{
+"events": [
+ {
+  "name": "HeartRateReadingEvent",
+  "source": "hospitalMonitorSystem",
+  "type": "com.hospital.patient.heartRateMonitor",
+  "kind": "consumed",
+  "correlation": [
+    { 
+      "contextAttributeName": "patientId"
+    },
+    {
+      "contextAttributeName": "department",
+      "contextAttributeValue" : "UrgentCare"
+    }
+  ]
+ }
+]
+}
+```
+
+In this example we have two correlation rules defined, one is on the 'patientId' CloudEvent context attribute, meaning again that 
+all consumed event from this source and type must have the same patientId to be considered, and the second rule
+which says that these events must all have a context attribute named 'department' with the value of 'UrgentCare'.
+
+This allows you to write orchestration workflows that are specifically targeted to patients that are in the hospital urgent care unit 
+for example.
+
+
+#### Correlation Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| contextAttributeName | CloudEvent Extension Context Attribute name | string | yes |
+| contextAttributeValue | CloudEvent Extension Context Attribute name | string  | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{  
+   "correlation": [
+       { 
+         "contextAttributeName": "patientId"
+       },
+       {
+         "contextAttributeName": "department",
+         "contextAttributeValue" : "UrgentCare"
+       }
+     ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+correlation:
+- contextAttributeName: patientId
+- contextAttributeName: department
+  contextAttributeValue: UrgentCare
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Used to define event correlation rules. Only usable for 'consumed' event definitions.
+
+The 'contextAttributeName' parameters defines the name of the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes).
+The 'contextAttributeValue' parameters defines the value of the defined the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes).
 
 #### State Definition
 
@@ -558,11 +715,11 @@ If the event state in this case is a starting state, any of the defined events w
 If the event state in this case is a starting state, occurrence of all defined events would start a new
  workflow instance.
   
-In order to consider only events that are related to each other, we need to set the "correlationToken" property in the workflow
- [events definitions](#Event-Definition). This token points to a context attribute of the events that defines the
- token to be used for event correlation.
+In order to consider only events that are related to each other, we need to set the 'correlation' property in the workflow
+ [events definitions](#Event-Definition). This allows us to set up event correlation rules against the events 
+ extension context attributes.
 
-The timeout property defines the time duration from the invocation of the event state. If the defined events
+The 'timeout' property defines the time duration from the invocation of the event state. If the defined events
 have not been received during this time, the state should transition to the next state or end workflow execution (if it is an end state).
 
 #### <a name="eventstate-eventactions"></a> Event State: Event Actions
@@ -620,11 +777,11 @@ actions:
 
 Event actions reference one or more events in the workflow [events definitions](#Event-Definition).
 Both the source and type of incoming events must match the ones defined in the references events in order for
-the event to be considered. In case of multiple events the event definition "correlationToken" context attribute
-value must also match between events. If a correlation token is not defined, all events that match the other attributes
-can be considered.
+the event to be considered. 
 
-The actions array defined a list of actions to be performed.
+You can set event correlation rules via the 'correlation' property. See more info on event correlation [here](#Correlation-Definition).
+
+The actions array property defines a list of actions to be performed.
 
 #### <a name="eventstate-timeout"></a> Event State: Timeout
 
@@ -741,7 +898,7 @@ the workflow execution in case it is an end state.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| refName | Name of the referenced function | string | yes |
+| refName | Name of the referenced [function](#Function-Definition) | string | yes |
 | parameters | Parameters to be passed to the referenced function | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2433,7 +2590,7 @@ of the manual decision by the called service.
 
 Note that the called decision services is responsible for emitting the callback CloudEvent indicating the completion of the
 decision and including the decision results as part of the event payload. This event must be correlated to the
-workflow instance using the callback events context attribute defined in the correlationToken parameter of the
+workflow instance using the callback events context attribute defined in the 'correlation' parameter of the
 referenced [Event Definition](#Event-Definition).
 
 Once the completion (callback) event is received, the callback state completes its execution and transitions to the next
@@ -2664,7 +2821,8 @@ are completed. If a terminate end is reached inside a ForEach, Parallel, or SubF
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | eventRef | Reference to a defined unique event name in the [events](#Event-Definition) definition | string | yes |
-| data | If String, JSONPath expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the payload of produced event. | string or object | no |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the produced event. If object type, a custom object to become the data (payload) of produced event. | string or object | no |
+| contextAttributes | Add additional event extension context attributes | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2680,8 +2838,11 @@ are completed. If a terminate end is reached inside a ForEach, Parallel, or SubF
 ```json
 {
     "eventRef": "provisioningCompleteEvent",
-    "data": "$.provisionedOrders"
-}
+    "data": "$.provisionedOrders",
+    "contextAttributes": [{
+         "buyerId": "$.buyerId"
+     }]
+ }
 ```
 
 </td>
@@ -2690,6 +2851,8 @@ are completed. If a terminate end is reached inside a ForEach, Parallel, or SubF
 ```yaml
 eventRef: provisioningCompleteEvent
 data: "$.provisionedOrders"
+contextAttributes:
+- buyerId: "$.buyerId"
 ```
 
 </td>
@@ -2698,17 +2861,21 @@ data: "$.provisionedOrders"
 
 </details>
 
-Defines the CloudEvent to be produced when workflow execution completes or during a workflow transition. 
+Defines the event (CloudEvent format) to be produced when workflow execution completes or during a workflow [transitions](#Transitions). 
 The "eventRef" property must match the name of
 one of the defined 'produced' events in the [events](#Event-Definition) definition.
 
-The data property defines a JSONPath expression which selects elements of the states data output to be placed into the
-data section of the produced CloudEvent.
+The 'data' property can have two types, object or string. If of string type, it is an expression that can select parts of state data
+to be used as the event payload. If object type, you can defined a custom object to be the event payload.
+
+The 'contextAttributes' property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+to the generated event. 
 
 Being able to produce an event when workflow execution completes or during state transition
 allows for event-based orchestration communication.
 For example, completion of an orchestration workflow can notify other orchestration workflows to decide if they need to act upon
- the produced event. This can create very dynamic orchestration scenarios.
+the produced event, or notify monitoring services of the current state of workflow execution, etc. 
+It can be used to create very dynamic orchestration scenarios.
 
 #### Transitions
 
