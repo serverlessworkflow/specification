@@ -89,11 +89,6 @@ public class WorkflowSerializer extends StdSerializer<Workflow> {
                     workflow.getMetadata());
         }
 
-        if (workflow.getExpressionLanguage() != null && !workflow.getExpressionLanguage().isEmpty()) {
-            gen.writeObjectField("expressionLanguage",
-                    workflow.getExpressionLanguage());
-        }
-
         if (workflow.getEvents() != null && !workflow.getEvents().isEmpty()) {
             gen.writeArrayFieldStart("events");
             for (EventDefinition eventDefinition : workflow.getEvents()) {

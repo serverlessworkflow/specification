@@ -4,7 +4,8 @@
   "description": "Retry Definition",
   "properties": {
     "expression": {
-      "$ref": "../expression/expression.json"
+      "type": "string",
+      "description": "Common Expression Language (CEL) expression. Should be evaluated against state data. Must evaluate to true for retry to execute"
     },
     "interval": {
       "type": "string",

@@ -137,6 +137,21 @@ Serverless Workflow model can be viewed as:
 
 The model defines a declarative language that can be used to define small or complex workflow orchestrations.
 
+### Workflow Expressions
+
+Different parts of the workflow definition such as [transitions](#Transition-Definition), [retries](#Retry-Definition), [errors](#Error-Definition), 
+etc include 'expression' parameters
+which define expressions that have to be evaluated against state or error data.
+
+Many different expression langauges exist and runtimes implementations may decided to implement some which may not 
+be available under other runtimes. As mentioned one of the main goals of this specification is portability. As such
+we feel that defining a single expression language to be used is very important, even if it lowers possible adoption 
+because it enhances the portability of the spec. 
+
+After looking at many different expression languages we decided to make the [Common Expression Language (CEL)](https://opensource.google/projects/cel)
+the expression language of choice for the Serverless Workflow specification. Using CEL should be part of 
+the conformance to the specification. You can find the CEL language definitions information [here](https://github.com/google/cel-spec/blob/master/doc/langdef.md).
+
 ### Workflow Definition
 
 | Parameter | Description | Type | Required |
@@ -146,7 +161,6 @@ The model defines a declarative language that can be used to define small or com
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
 | schemaVersion | Workflow schema version | string | no |
-| expressionLanguage | Default expression language to be used throughout the workflow definition | string | no |
 | [dataInputSchema](#Workflow-Data-Input) | URI to JSON Schema that workflow data input adheres to | string | no |
 | [dataOutputSchema](#Workflow-data-output) | URI to JSON Schema that workflow data output adheres to | string | no |
 | [events](#Event-Definition) | Workflow event definitions. Defines events that can be consumed or produced | array | no |
@@ -557,7 +571,7 @@ have not been received during this time, the state should transition to the next
 | --- | --- | --- | --- |
 | eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
 | actionMode | Specifies how actions are to be performed (in sequence of parallel) | string | no |
-| [actions](#Action-Definition) | Actions to be performed if expression matches | array | yes |
+| [actions](#Action-Definition) | Actions to be performed | array | yes |
 | [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -775,9 +789,9 @@ see the [Workflow Error Handling section](#Workflow-Error-Handling).
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [expression](#Expression-Definition) | Boolean expression which consists of one or more Error operands and the Boolean operators | string | yes |
+| expression | Common Expression Language (CEL) expression. Should be evaluated against error data. Must evaluate to true. | string | yes |
 | [errorDataFilter](#error-data-filter) | Error data filter definition | object | yes |
-| [transition](#Transitions) | Next transition of the workflow when expression matches | object | yes |
+| [transition](#Transitions) | Next transition of the workflow when 'expression' is true | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -792,10 +806,7 @@ see the [Workflow Error Handling section](#Workflow-Error-Handling).
 
 ```json
 {
-   "expression": {
-       "language": "spel",
-       "body": "$.exception != null"
-   },
+   "expression": "$.exception != null",
    "errorDataFilter": {
      "dataOutputPath": "$.exception"
    },
@@ -809,9 +820,7 @@ see the [Workflow Error Handling section](#Workflow-Error-Handling).
 <td valign="top">
 
 ```yaml
-expression:
-  language: spel
-  body: "$.exception != null"
+expression: "$.exception != null"
 errorDataFilter:
   dataOutputPath: "$.exception"
 transition:
@@ -824,58 +833,11 @@ transition:
 
 </details>
 
-#### Expression Definition
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| language | Expression language. For example 'spel', 'jexl', 'cel', etc| string | no |
-| body | Expression body, for example "(event1 or event2) and event3" | string | yes |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-   "language": "spel",
-   "body": "$.exception != null"
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-language: spel
-body: "$.exception != null"
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-Serverless workflow does not limit implementors to use any expression language they choose to
-evaluate expressions with.
-Expressions define "language" parameter to be used
- for evaluation, and a "body" parameter which defines the actual expression.
-
-Note that top-level workflow "expressionLanguage" property can be set to define the default
-expression language used for all defined expressions.
-
 #### Retry Definition
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [expression](#Expression-Definition) | Expression that matches against states data output | string | yes |
+| expression | Common Expression Language (CEL) expression. Should be evaluated against state data. Must evaluate to true for retry to execute. | string | yes |
 | interval | Interval value for retry (ISO 8601 repeatable format). For example: "R5/PT15M" (Starting from now repeat 5 times with 15 minute intervals)| string | no |
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
 | maxAttempts | Maximum number of retry attempts (1 by default). Value of 0 means no retries are performed | integer | no |
@@ -893,10 +855,7 @@ expression language used for all defined expressions.
 
 ```json
 {
-   "expression": {
-     "language": "spel",
-     "body": "$.error.name eq 'FunctionError'"
-   },
+   "expression": "$.error.name == 'FunctionError'",
    "interval": "PT2M",
    "maxAttempts": 3
 }
@@ -906,9 +865,7 @@ expression language used for all defined expressions.
 <td valign="top">
 
 ```yaml
-expression:
-  language: spel
-  body: "$.error.name eq 'FunctionError'"
+expression: "$.error.name == 'FunctionError'"
 interval: PT2M
 maxAttempts: 3
 ```
@@ -919,8 +876,9 @@ maxAttempts: 3
 
 </details>
 
-Defines the state retry policy. The "expression" parameter is en expression definition which can be evaluated against state data.
+Defines the state retry policy. The "expression" parameter is en [Common Expression Language (CEL)](https://opensource.google/projects/cel) expression which can be evaluated against state data.
 This assures that both execution errors as well as actions error results can be used during evaluation.
+The expression must evaluate to true for the retry definition to execute.
 
 The interval parameter specifies the retry interval (in ISO 8601 repeatable format). For example: "R5/PT15M" would mean repeat 5 times with 1 minute intervals before each retry.
 
@@ -946,7 +904,7 @@ For more information reference the [Workflow Error Handling - Retrying](#workflo
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [expression](#Expression-Definition) | Boolean expression evaluated against state's data output. Must evaluate to true for the transition to be valid | object | no |
+| expression | Common Expression Language (CEL) expression. Must evaluate to true for the transition to be valid | string | no |
 | [produceEvent](#ProduceEvent-Definition) | Event to be produced when this transition happens | object | no |
 | [nextState](#Transitions) | State to transition to next | string | yes |
 
@@ -963,10 +921,7 @@ For more information reference the [Workflow Error Handling - Retrying](#workflo
 
 ```json
 {
-   "expression": {
-      "language": "spel",
-      "body": "$.result ne null"
-   },
+   "expression": "$.result != null",
    "produceEvent": {
        "eventRef": "produceResultEvent",
        "data": "$.result"
@@ -979,9 +934,7 @@ For more information reference the [Workflow Error Handling - Retrying](#workflo
 <td valign="top">
 
 ```yaml
-expression:
-  language: spel
-  body: "$.result ne null"
+expression: "$.result != null"
 produceEvent:
   eventRef: produceResultEvent
   data: "$.result"
@@ -1590,10 +1543,7 @@ Parallel state and can be handled with the Parallel states "onError" definition,
       ],
       "onError": [
         {
-          "expression": {
-            "language": "spel",
-            "body": "$.error ne null"
-          },
+          "expression": "$.error != null",
           "transition": {
             "nextState": "exceptionHandlingState"
           }
@@ -1664,10 +1614,7 @@ In this case the exceptions can be handled by the states and they will not be pr
               ],
               "onError": [
                 {
-                  "expression": {
-                    "language": "spel",
-                    "body": "$.error ne null"
-                  },
+                  "expression": "$.error != null",
                   "transition": {
                     "nextState": "errorHandlingBranchState"
                   }
@@ -2717,7 +2664,7 @@ are completed. If a terminate end is reached inside a ForEach, Parallel, or SubF
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | eventRef | Reference to a defined unique event name in the [events](#Event-Definition) definition | string | yes |
-| data | If String, JSONPath expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the data of produced event. | string or object | no |
+| data | If String, JSONPath expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the payload of produced event. | string or object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2792,10 +2739,8 @@ It also allows you to select part of states data to be sent as the event payload
 In addition to specifying the "nextState" property a transition also defines a boolean expression which must
 evaluate to true for the transition to happen. Having this data-based restriction capabilities can help
  stop transitions within workflow execution that can have serious and harmful business impacts.
-
-State Transitions have access to the states data output. Expressions
-are evaluated against the states output data to make sure that this transition only happens
-if the expression evaluates to true.
+The expression is a [Common Expression Language (CEL)](https://opensource.google/projects/cel) expression and is evaluated 
+against state data output.
 
 Here is an example of a restricted transition which only allows transition to the "highRiskState" if the
 output of the state to transition from includes an user with the title "MANAGER".
@@ -2837,10 +2782,7 @@ output of the state to transition from includes an user with the title "MANAGER"
     ],
     "transition": {
       "nextState":"highRiskState",
-      "expression": {
-         "language": "spel",
-         "body": "#jsonPath(stateOutputData,'$..user.title') eq 'MANAGER'"
-      }
+      "expression": "$.user.title == 'MANAGER'"
     }
   },
   {  
@@ -2882,9 +2824,7 @@ states:
       refName: doLowRistOperationFunction
   transition:
     nextState: highRiskState
-    expression:
-      language: spel
-      body: "#jsonPath(stateOutputData,'$..user.title') eq 'MANAGER'"
+    expression: "$.user.title == 'MANAGER'"
 - name: highRiskState
   type: operation
   end:
@@ -3516,19 +3456,13 @@ Let's take a look an an example "onError" definition inside a state:
 {
 "onError": [
   {
-    "expression": {
-      "language": "spel",
-      "body": "name eq 'FunctionExecutionError'"
-    },
+    "expression": "$.name == 'FunctionExecutionError",
     "transition": {
       "nextState": "afterFunctionErrorState"
     }
   },
   {
-    "expression": {
-      "language": "spel",
-      "body": "name ne 'FunctionExecutionError'"
-    },
+    "expression": "$.name != 'FunctionExecutionError'",
     "transition": {
       "nextState": "afterAnyOtherErrorState"
     }
@@ -3542,14 +3476,10 @@ Let's take a look an an example "onError" definition inside a state:
 
 ```yaml
 onError:
-- expression:
-    language: spel
-    body: name eq 'FunctionExecutionError'
+- expression: "$.name == 'FunctionExecutionError"
   transition:
     nextState: afterFunctionErrorState
-- expression:
-    language: spel
-    body: name ne 'FunctionExecutionError'
+- expression: "$.name != 'FunctionExecutionError'"
   transition:
     nextState: afterAnyOtherErrorState
 ```
@@ -3583,18 +3513,12 @@ Let's take a look at a retry definition:
 {
 "retry": [
   {
-    "expression": {
-      "language": "spel",
-      "body": "$.error.name eq 'FunctionExecutionError'"
-    },
+    "expression": "$.error.name == 'FunctionExecutionError'",
     "maxAttempts": 3,
     "interval": "PT2M"
   },
   {
-    "expression": {
-      "language": "spel",
-      "body": "$.error.name ne 'FunctionExecutionError'"
-    },
+    "expression": "$.error.name != 'FunctionExecutionError'",
     "maxAttempts": 0
   }
 ]
@@ -3606,14 +3530,10 @@ Let's take a look at a retry definition:
 
 ```yaml
 retry:
-- expression:
-    language: spel
-    body: $.error.name eq 'FunctionExecutionError'
+- expression: "$.error.name == 'FunctionExecutionError'"
   maxAttempts: 3
   interval: PT2M
-- expression:
-    language: spel
-    body: $.error.name ne 'FunctionExecutionError'
+- expression: "$.error.name != 'FunctionExecutionError'"
   maxAttempts: 0
 ```
 
@@ -3640,37 +3560,25 @@ You can combine retry and onError definitions to define powerful error handling 
 {
 "retry": [
   {
-    "expression": {
-      "language": "spel",
-      "body": "$.error.name eq 'FunctionExecutionError'"
-    },
+    "expression": "$.error.name == 'FunctionExecutionError'",
     "maxAttempts": 3,
     "interval": "PT2M"
   },
   {
-    "expression": {
-      "language": "spel",
-      "body": "$.error.name ne 'FunctionExecutionError'"
-    },
+    "expression": "$.error.name != 'FunctionExecutionError'",
     "maxAttempts": 2,
     "interval": "PT1M"
   }
 ],
 "onError": [
   {
-    "expression": {
-      "language": "spel",
-      "body": "name eq 'FunctionExecutionError'"
-    },
+    "expression": "$.name == 'FunctionExecutionError'",
     "transition": {
       "nextState": "afterFunctionErrorState"
     }
   },
   {
-    "expression": {
-      "language": "spel",
-      "body": "name ne 'FunctionExecutionError'"
-    },
+    "expression": "$.name != 'FunctionExecutionError'",
     "transition": {
       "nextState": "afterAnyOtherErrorState"
     }
@@ -3684,25 +3592,17 @@ You can combine retry and onError definitions to define powerful error handling 
 
 ```yaml
 retry:
-- expression:
-    language: spel
-    body: name eq 'FunctionExecutionError'
+- expression: "$.error.name == 'FunctionExecutionError'"
   maxAttempts: 3
   interval: PT2M
-- expression:
-    language: spel
-    body: name ne 'FunctionExecutionError'
+- expression: "$.error.name != 'FunctionExecutionError'"
   maxAttempts: 2
   interval: PT1M
 onError:
-- expression:
-    language: spel
-    body: name eq 'FunctionExecutionError'
+- expression: "$.name == 'FunctionExecutionError'"
   transition:
     nextState: afterFunctionErrorState
-- expression:
-    language: spel
-    body: name ne 'FunctionExecutionError'
+- expression: "$.name != 'FunctionExecutionError'"
   transition:
     nextState: afterAnyOtherErrorState
 ```
