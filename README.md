@@ -2,8 +2,11 @@
 <img src="specification/media/sw-logo.png" alt="Serverless Workflow Specification"/>
 </p>
 
-Serverless Workflow Specification defines the model for Workflows
-responsible for orchestrating event-driven, serverless applications.
+**A specification for defining declarative workflow models
+for orchestrating Event-driven, Serverless applications.**
+
+Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
+Cloud Native Sandbox level project on July 14, 2020.
 
 Main goals of the specification include:
 

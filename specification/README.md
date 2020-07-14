@@ -2,8 +2,8 @@
 
 ## Abstract
 
-Serverless Workflow is a vendor-neutral specification which defines a declarative model for
-Workflows responsible for orchestrating Event-driven, Serverless applications.
+A specification for defining declarative workflow models
+for orchestrating Event-driven, Serverless applications.
 
 ## License
 
