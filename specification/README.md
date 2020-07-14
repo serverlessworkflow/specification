@@ -3,7 +3,7 @@
 ## Abstract
 
 A specification for defining declarative workflow models
-for orchestrating Event-driven, Serverless applications.
+that orchestrate Event-driven, Serverless applications.
 
 ## License
 
