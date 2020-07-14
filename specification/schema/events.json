@@ -6,7 +6,7 @@
   "definitions": {
     "events": {
       "type": "array",
-      "description": "Workflow event definitions. Defines events that can be consumed or produced",
+      "description": "Workflow CloudEvent definitions. Defines CloudEvents that can be consumed or produced",
       "items": {
         "type": "object",
         "$ref": "#/definitions/eventdef"
@@ -29,14 +29,22 @@
           "description": "CloudEvent type"
         },
         "kind": {
-          "type" : "string",
-          "enum": ["consumed", "produced"],
-          "description": "Defines the events as either being consumed or produced by the workflow. Default is consumed",
+          "type": "string",
+          "enum": [
+            "consumed",
+            "produced"
+          ],
+          "description": "Defines the CloudEvent as either 'consumed' or 'produced' by the workflow. Default is 'consumed'",
           "default": "consumed"
         },
-        "correlationToken": {
-          "type": "string",
-          "description": "Context attribute name of the CloudEvent which value is to be used for event correlation"
+        "correlation": {
+          "type": "array",
+          "description": "CloudEvent correlation definitions",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/correlationDef"
+          }
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata",
@@ -63,6 +71,25 @@
           "type"
         ]
       }
+    },
+    "correlationDef": {
+      "type": "object",
+      "description": "CloudEvent correlation definition",
+      "properties": {
+        "contextAttributeName": {
+          "type": "string",
+          "description": "CloudEvent Extension Context Attribute name",
+          "minLength": 1
+        },
+        "contextAttributeValue": {
+          "type": "string",
+          "description": "CloudEvent Extension Context Attribute value",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "contextAttributeName"
+      ]
     }
   }
 }
