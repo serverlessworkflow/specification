@@ -831,7 +831,7 @@ instance in case it is an end state without performing any actions.
 | --- | --- | --- | --- |
 | name | Unique action name | string | no |
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if 'eventRef'is not used |
-| [eventRef](#EventRef-Definition) | References a reusable function definition | object | yes if 'functionRef' is not used |
+| [eventRef](#EventRef-Definition) | References a 'trigger' and 'result' reusable event definitions | object | yes if 'functionRef' is not used |
 | timeout | Time period to wait for function execution to complete or the resultEventRef to be consumed (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | no |
 | [actionDataFilter](#action-data-filter) | Action data filter definition | object | no |
 

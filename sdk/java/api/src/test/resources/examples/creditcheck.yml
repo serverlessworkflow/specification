@@ -13,7 +13,8 @@ events:
   - name: CreditCheckCompletedEvent
     type: creditCheckCompleteType
     source: creditCheckSource
-    correlationToken: customerId
+    correlation:
+      - contextAttributeName: customerId
 states:
   - name: CheckCredit
     type: callback

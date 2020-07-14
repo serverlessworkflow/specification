@@ -15,9 +15,14 @@
       "type": "string",
       "description": "CloudEvent type"
     },
-    "correlationToken": {
-      "type": "string",
-      "description": "Context attribute name of the CloudEvent which value is to be used for event correlation"
+    "correlation": {
+      "type": "array",
+      "description": "CloudEvent correlation definitions",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "$ref": "../correlation/correlationdef.json"
+      }
     },
     "kind": {
       "type" : "string",

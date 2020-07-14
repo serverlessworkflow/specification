@@ -6,15 +6,18 @@ events:
   - name: ApplicationSubmitted
     type: org.application.submitted
     source: applicationsource
-    correlationToken: applicantId
+    correlation:
+      - contextAttributeName: applicantId
   - name: SATScoresReceived
     type: org.application.satscores
     source: applicationsource
-    correlationToken: applicantId
+    correlation:
+      - contextAttributeName: applicantId
   - name: RecommendationLetterReceived
     type: org.application.recommendationLetter
     source: applicationsource
-    correlationToken: applicantId
+    correlation:
+      - contextAttributeName: applicantId
 functions:
   - name: finalizeApplicationFunction
     type: function

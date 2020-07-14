@@ -6,15 +6,18 @@ events:
   - name: HighBodyTemperature
     type: org.monitor.highBodyTemp
     source: monitoringSource
-    correlationToken: patientId
+    correlation:
+      - contextAttributeName: patientId
   - name: HighBloodPressure
     type: org.monitor.highBloodPressure
     source: monitoringSource
-    correlationToken: patientId
+    correlation:
+      - contextAttributeName: patientId
   - name: HighRespirationRate
     type: org.monitor.highRespirationRate
     source: monitoringSource
-    correlationToken: patientId
+    correlation:
+      - contextAttributeName: patientId
 functions:
   - name: callPulmonologist
     type: function
