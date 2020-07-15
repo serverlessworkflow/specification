@@ -40,6 +40,7 @@ If you are participating insome way, please add your information via pull reques
 
 * **Nokia**
   * Manuel Stein
+  * Istemi Ekin Akkus
 
 * **IBM**
   * Doug Davis
