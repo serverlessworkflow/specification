@@ -3,7 +3,7 @@
 ## Abstract
 
 A specification for defining declarative workflow models
-that orchestrate Event-driven, Serverless applications.
+that orchestrate event-driven, serverless applications.
 
 ## License
 
@@ -48,10 +48,10 @@ Some of the many benefits using workflows in serverless applications include:
 thus allowing clear focus on business requirements in functions.
 - Greatly reduce the amount of code developers have to write, maintain, and test.
 - Reduce the amount of time and effort to make changes/updates in large serverless applications.
-- Allow for declarative and reusable markup to defined service orchestration.
+- Allow for declarative and reusable markup to define service orchestration.
 
-Many different workflow implementations (both proprietary and open-source) exist today, each with it's own set of features
-and capabilities. When picking a current implementations, it is very difficult to later on switch to a different one
+Many different workflow implementations (both proprietary and open-source) exist today, each with its own set of features
+and capabilities. When picking a current implementation, it is very difficult later on to switch to a different one
 without investing a lot of time, and effort.
 
 Serverless Workflow is a CNCF specification that defines a declarative model for workflows
@@ -60,7 +60,7 @@ responsible for orchestrating event-driven, serverless applications.
 Main goals of the specification include:
 
 - Facilitate portability across different vendor platforms
-- Be completely vendor neutral
+- Be completely vendor-neutral
 - Support both stateless and stateful orchestration
 - Define a declarative workflow model
 
@@ -68,28 +68,28 @@ Workflows defined using the Serverless Workflow specification can be used to:
 
 - **Orchestrate Serverless application logic**: Serverless applications are typically event-driven and can be
 very hard to manage. Serverless Workflow groups the application events and functions into a coherent unit and
-simplifies orchestration of the app logic.
-- **Define and coordinate application Control Flow**: Allow users to define the execution/operation
+simplifies orchestration of the application logic.
+- **Define and coordinate application Control Flow**: Serverless Workflow allows users to define the execution/operation
 control flow to clearly define how/which functions are to be invoked on arrival of events.
-- **Define and manage application Data Flow**: Allows users to define how data is passed and filtered from incoming events to states,
+- **Define and manage application Data Flow**: Serverless Workflow allows users to define how data is passed and filtered from incoming events to states,
 from states to functions, from one function to another, and from one state to another.
 
 ## Workflow Format
 
 The specification workflow model can be defined via [JSON](https://www.json.org/json-en.html) or [YAML](https://yaml.org/).
-Workflow model is defined via a set of  [JSON Schemas](https://json-schema.org/) which an be found [here](schema).
+The workflow model is defined via a set of [JSON Schemas](https://json-schema.org/) which can be found [here](schema).
 
-Serverless Workflow models are considered compliant to the spec if they conform to the 
-[workflow schemas](schema).
+Serverless Workflow models are considered compliant to the specification if they conform to the 
+[workflow schema](schema).
 
-Note that this schema reflects the current status of the specification as is updated alongside this document.
+Note that this schema reflects the current status of the specification and is updated alongside this document.
 
 ## Functional Scope
 
 Serverless Workflow allows users to:
 
 1. Define and orchestrate steps/states involved in a serverless application.
-2. Define which functions are executed in each step.
+2. Define which functions are executed at each step.
 3. Define which event or combination of events trigger function execution.
 4. Define function execution behavior (sequential, parallel, etc).
 5. Specify manual decision steps during workflow execution.
@@ -97,7 +97,7 @@ Serverless Workflow allows users to:
 7. Define error conditions with retries.
 8. Correlate trigger events with workflow instances.
 
-Following diagram illustrates functional flow that involves states, events and functions. It shows that
+Following diagram illustrates a functional flow that involves states, events and functions. It shows that
 incoming events can trigger function invocations during workflow execution.
 
 <p align="center">
@@ -108,14 +108,14 @@ incoming events can trigger function invocations during workflow execution.
 
 At the core of the Serverless Workflow specification is its [JSON Schema](schema/workflow.json).
 This schema defines the workflow model. It can also be used for generation of many different artifacts
-such as APIs, and SPIs. We plan to provide these in the near future, and hope to expand them 
-to many different languages. This speficiation also strives to soon provide a TCK with a set of tests which 
-implementations can use to test conformance to the specification.
+such as APIs and SPIs. We plan to provide these in the near future, and hope to expand them 
+to many different languages. This specification also strives to provide a TCK with a set of tests soon, whose 
+implementations can be used to test conformance to the specification.
 
 The specification relies on runtime implementations to adopt the markup and provide execution semantics.
-With all this in place the overall goal of the Serverless Workflow Specification is to provide 
+With all this in place, the overall goal of the Serverless Workflow Specification is to provide 
 a JSON/YAML based markup which can be used to model serverless orchestration workflows that are executable
-on many different runtimes and thus on many different cloud/container platforms.
+with many different runtimes and thus on many different cloud/container platforms.
 
 <p align="center">
 <img src="media/spec/spec-goals.png" height="400px" alt="Serverless Workflow Specification Goals"/>
@@ -123,7 +123,7 @@ on many different runtimes and thus on many different cloud/container platforms.
 
 ## Specification Details
 
-Following sections provide detailed descriptions of the Serverless Workflow model. For each part of the model we provide:
+The following sections provide detailed descriptions of the Serverless Workflow model. For each part of the model we provide:
 
 - Parameter description in table format.
 - Example definition in both [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats.
@@ -131,7 +131,7 @@ Following sections provide detailed descriptions of the Serverless Workflow mode
 ### Workflow Model
 
 Serverless Workflow model can be viewed as: 
-* Set of [functions](#Function-Definition) (services) which need to be called during workflow execution. 
+* Set of [functions](#Function-Definition) (services) that need to be called during workflow execution. 
 * Set of [events](#Event-Definition) that need to be consumed to start workflow instances or trigger functions, or produced during workflow execution.
 * Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the control flow logic, manage data, and can reference defined functions and events.
 
@@ -140,15 +140,15 @@ The model defines a declarative language that can be used to define small or com
 ### Workflow Expressions
 
 Different parts of the workflow definition such as [transitions](#Transition-Definition), [retries](#Retry-Definition), [errors](#Error-Definition), 
-etc include 'expression' parameters
-which define expressions that have to be evaluated against state or error data.
+etc include 'expression' parameters. 
+These parameters define expressions that have to be evaluated against state or error data.
 
-Many different expression langauges exist and runtimes implementations may decided to implement some which may not 
-be available under other runtimes. As mentioned one of the main goals of this specification is portability. As such
+Many different expression langauges exist and runtime implementations may decide to implement some that may not 
+be available under other runtimes. As mentioned above, one of the main goals of this specification is portability. As such,
 we feel that defining a single expression language to be used is very important, even if it lowers possible adoption 
-because it enhances the portability of the spec. 
+because it enhances the portability of the specification. 
 
-After looking at many different expression languages we decided to make the [Common Expression Language (CEL)](https://opensource.google/projects/cel)
+After looking at many different expression languages, we decided to make the [Common Expression Language (CEL)](https://opensource.google/projects/cel)
 the expression language of choice for the Serverless Workflow specification. Using CEL should be part of 
 the conformance to the specification. You can find the CEL language definitions information [here](https://github.com/google/cel-spec/blob/master/doc/langdef.md).
 
