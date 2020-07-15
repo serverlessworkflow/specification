@@ -1091,7 +1091,7 @@ maxAttempts: 3
 
 Defines the state retry policy. The "expression" parameter is a [Common Expression Language (CEL)](https://opensource.google/projects/cel) expression that can be evaluated against state data.
 This assures that both execution errors as well as actions error results can be used during evaluation.
-The expression must evaluate to `true` for the retry definition to execute.
+The expression must evaluate to true for the retry definition to execute.
 
 The "interval" parameter specifies the retry interval (in ISO 8601 repeatable format). For example, "R5/PT1M" would mean repeat 5 times with 1 minute intervals before each retry.
 
@@ -1388,7 +1388,7 @@ transition:
 </details>
 
 Switch state data conditions specify a data-based condition statement, which causes a transition to another 
-workflow state if evaluated to `true`.
+workflow state if evaluated to true.
 The "path" property of the condition defines a JSONPath expression (e.g., "$.person.name"), which selects
 parts of the state data input.
 The "value" property defines the matching value of this condition (e.g., "John", or "10", or "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b").
@@ -1940,8 +1940,8 @@ The "waitForCompletion" property defines if the SubFlow state should wait until 
 is completed or not.
 
 Each sub-workflow receives the same copy of the SubFlow state's data input.
-If the "waitForCompletion" property is set to `true`, sub-workflows have the ability to edit the parent's workflow data.
-If the "waitForCompletion" property is set to `false`, data access to the parent workflow should not be allowed.
+If the "waitForCompletion" property is set to true, sub-workflows have the ability to edit the parent's workflow data.
+If the "waitForCompletion" property is set to false, data access to the parent workflow should not be allowed.
 
 Sub-workflows inherit all the [function](#Function-Definition) and [event](#Event-Definition) definitions of their parent workflow.
 
@@ -2420,7 +2420,7 @@ This ForEach state will first look at its "inputCollection" path to determine wh
 to iterate over.
 In this case it will be the "orders" array, which contains orders information. The states "inputCollection" property
 then further filters this array, only selecting elements of the orders array which have the completed property
-set to `true`.
+set to true.
 
 For each of the completed order the state will then execute the defined set of states in parallel.
 
@@ -2718,12 +2718,12 @@ Customer bids should only be allowed during this time interval. Bids made before
 
 There are two cases to discuss when dealing with interval-based scheduled starts:
 
-1. **Starting States in [Parallel](#Parallel-State) state [branches](#parallel-state-branch)**: if a state in a parallel state branch defines a scheduled start state which is not "active" at the time the branch is executed, the parent workflow should not wait until it becomes active and just complete execution of the branch.
-2. **Starting states in [SubFlow](#SubFlow-State) states**: if a state in a workflow definition (referenced by SubFlow state) defines a scheduled start state that is not "active" at the time the SubFlow state is executed, the parent workflow should not wait until it becomes active and simply complete execution of the SubFlow state.
+1. **Starting States in [Parallel](#Parallel-State) state [branches](#parallel-state-branch)**: if a state in a parallel state branch defines a scheduled start state that is not "active" at the time the branch is executed, the parent workflow should not wait until it becomes active, and just complete the execution of the branch.
+2. **Starting states in [SubFlow](#SubFlow-State) states**: if a state in a workflow definition (referenced by SubFlow state) defines a scheduled start state that is not "active" at the time the SubFlow state is executed, the parent workflow should not wait until it becomes active, and just complete the execution of the SubFlow state.
 
-You can also define a cron-based scheduled starts which allow to define periodically started workflow instances based on a [cron](http://crontab.org/) definition.
-Cron-based scheduled starts can handle absolute time intervals (not calculated in respect to some particular point in time).
-One use case for cron-based scheduled starts is let's say we have a workflow which performs data batch processing which has to be done periodically. 
+You can also define cron-based scheduled starts, which allow to define periodically started workflow instances based on a [cron](http://crontab.org/) definition.
+Cron-based scheduled starts can handle absolute time intervals (i.e., not calculated in respect to some particular point in time).
+One use case for cron-based scheduled starts is a workflow that performs periodical data batch processing. 
 In this case we could use a cron definition
 
 ``` text
@@ -2743,19 +2743,19 @@ Here are some more examples of cron expressions and their meanings:
 
 [See here](http://crontab.org/) to get more information on defining cron expressions.
 
-One thing to discuss when dealing with cron-based scheduled stars is when the starting state of the workflow is an [Event](#Event-State).
-Event states define that workflow instances are triggered by existence of the defined event(s). 
-Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service which issues 
+One thing to discuss when dealing with cron-based scheduled starts is when the starting state of the workflow is an [Event](#Event-State).
+Event states define that workflow instances are triggered by the existence of the defined event(s). 
+Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
 
 #### Schedule Definition
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| interval | Time interval describing when the workflow starting state is active. (ISO 8601 time interval format). | string | yes if cron not defined |
-| cron | Repeating interval (cron expression) describing when the workflow starting state should be triggered | string | yes if interval not defined |
+| interval | Time interval describing when the workflow starting state is active. (ISO 8601 time interval format). | string | yes if 'cron' not defined |
+| cron | Repeating interval (cron expression) describing when the workflow starting state should be triggered | string | yes if 'interval' not defined |
 | directInvoke | Define if workflow instances can be created outside of the defined interval/cron | enum | yes |
-| timezone | Timezone name (for example "America/Los_Angeles") used to evaluate the cron expression against. Not used for interval property as timezone can be specified there directly. If not specified, should default to local machine timezone | string | no |
+| timezone | Timezone name (for example "America/Los_Angeles") used to evaluate the cron expression against. Not used for 'interval' property as timezone can be specified there directly. If not specified, should default to local machine timezone | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2793,31 +2793,31 @@ The interval property uses the ISO 8601 time interval format to describe when th
 There is a number of ways to express the time interval:
 
 1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning this start state is active
-from March 20th 2020 at 1PM UTC, to May 11th 2021 at 3:30pm UTC.
-2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning this start state is ative
-from March 20th 2020 at 1pm UTC and is valid for 1 year, 2 months, 10 days 2 hours and 30 minutes.
+from March 20th 2020 at 1PM UTC until May 11th 2021 at 3:30pm UTC.
+2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning this start state is active
+from March 20th 2020 at 1pm UTC and will stay active for 1 year, 2 months, 10 days 2 hours and 30 minutes.
 3. **Duration** + **End**: Defines the duration and an end, for example: "P1Y2M10DT2H30M/2020-05-11T15:30:00Z", meaning that this start state is active for
 1 year, 2 months, 10 days 2 hours and 30 minutes, or until May 11th 2020 at 3:30PM UTC, whichever comes first.
 4. **Duration**: Defines the duration only, for example: ""P1Y2M10DT2H30M"", meaning this start state is active for 1 year, 2 months, 10 days 2 hours and 30 minutes.
 Implementations have to provide the context in this case on when the duration should start to be counted, as it may be the workflow deployment time or the first time this workflow instance is created, for example.
 
 A case to consider here is when an [Event](#Event-State) state is also a workflow start state and the schedule definition is defined. Let's say we have a starting exclusive [Event](#Event-State) state
-which waits to consume event "X", meaning that the workflow instance should be created when event "X" occurs. If we also in the start schedule definition define
-a specific interval, the "waiting" for event "X" should only be started when the starting state becomes active.
+that waits to consume event "X", meaning that the workflow instance should be created when event "X" occurs. If we also define
+a specific interval in the start schedule definition, the "waiting" for event "X" should only be started when the starting state becomes active.
 
-Once a workflow instance is created, the start state schedule can be ignored for that particular workflow instance. States should from then on rely on their timeout properties for example to restrict the waiting time of incoming events, function executions, etc.  
+Once a workflow instance is created, the start state schedule can be ignored for that particular workflow instance. States should from then on rely on their timeout properties, for example, to restrict the waiting time of incoming events, function executions, etc.  
 
-The cron property uses a [cron expression](http://crontab.org/) 
+The "cron" property uses a [cron expression](http://crontab.org/) 
 to describe a repeating interval upon which the state becomes active and a new workflow instance is created.
 
-The timezone is used to define a time zone name to evaluate the cron expression against. If not specified it should default to the local
+The "timezone" property is used to define a time zone name to evaluate the cron expression against. If not specified, it should default to the local
 machine time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezone names.
 
 Note that when the starting state of the workflow is an [Event](#Event-State) 
-defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service which issues 
+defining cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
 
-The directInvoke property defines if workflow instances are allowed to be created outside of the defined interval or cron expression.
+The "directInvoke" property defines if workflow instances are allowed to be created outside of the defined interval or cron expression.
 
 #### End Definition
 
@@ -2867,10 +2867,10 @@ Any state with the exception of the [Switch](#Switch-State) state can declare to
 
 The end definitions provides different ways to complete workflow execution, which is set by the "kind" property:
 
-- **default** - Default workflow execution completion, no other special behavior
+- **default** - Default workflow execution completion; no other special behavior.
 - **terminate** - Completes all execution flows in the given workflow instance. All activities/actions being executed
 are completed. If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the entire workflow instance is terminated.
-- **event** - Workflow executions completes, and a Cloud Event is produced according to the [produceEvent](#ProduceEvent-Definition) definition.
+- **event** - Workflow executions completes, and a CloudEvent is produced according to the [produceEvent](#ProduceEvent-Definition) definition.
 
 #### ProduceEvent Definition
 
@@ -2922,7 +2922,7 @@ The "eventRef" property must match the name of
 one of the defined 'produced' events in the [events](#Event-Definition) definition.
 
 The "data" property can have two types, object or string. If of string type, it is an expression that can select parts of state data
-to be used as the event payload. If object type, you can defined a custom object to be the event payload.
+to be used as the event payload. If of object type, you can define a custom object to be the event payload.
 
 The "contextAttributes" property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the generated event. 
@@ -2942,9 +2942,9 @@ state to transition to next.
 To define a transition, set the "nextState" property in your transition definitions.
 
 Implementers can choose to use the states "name" string property
-for determining the transition, however we realize that in most cases this is not an
+for determining the transition; however, we realize that in most cases this is not an
 optimal solution that can lead to ambiguity. This is why each state also include an "id"
-property. Implementers can choose their own id generation strategy to populate the id property
+property. Implementers can choose their own id generation strategy to populate the "id" property
 for each of the states and use it as the unique state identifier that is to be used as the "nextState" value.
 
 So the options for next state transitions are:
@@ -3062,7 +3062,7 @@ states:
 </tr>
 </table>
 
-Implementers should decide how to handle data-base transitions which return false (do not proceed).
+Implementers should decide how to handle data-based transitions that return false (do not proceed).
 The default should be that if this happens workflow execution should halt and a detailed message
  on why the transition failed should be provided.
 
@@ -3124,7 +3124,7 @@ further orchestration decisions. Results data from function invocations is merge
 
 #### Information Passing Between States
 
-States in Serverless workflow can receive data (data input) as well as produce a data result (data output). The states data input is
+States in a serverless workflow can receive data (data input) as well as produce a data result (data output). The states data input is
 typically the previous states data output.
 When a state completes its tasks, its data output is passed to the data input of the state it transitions to.
 
@@ -3248,10 +3248,10 @@ The state data output then would include only the fruits data.
 <img src="media/spec/state-data-filter-example1.png" height="400px" alt="State Data Filter Example"/>
 </p>
 
-For our second example lets say that we are interested in only vegetable that are "veggie like".
+For our second example let's say that we are interested in only vegetable that are "veggie like".
 Here we have two ways of filtering our data, depending on if actions within our state need access to all vegetables, or
 only the ones that are "veggie like".
-The first way would be to use both dataInputPath, and dataOutputPath:
+The first way would be to use both "dataInputPath", and "dataOutputPath":
 
 ```json
 {
@@ -3268,7 +3268,7 @@ The first way would be to use both dataInputPath, and dataOutputPath:
 ```
 
 The states data input filter selects all the vegetables from the main data input. Once all actions have performed, before the state transition
-or workflow execution completion (if this is an end state), the dataOutputPath of the state filter selects only the vegetables which are "veggie like".
+or workflow execution completion (if this is an end state), the "dataOutputPath" of the state filter selects only the vegetables which are "veggie like".
 
 <p align="center">
 <img src="media/spec/state-data-filter-example2.png" height="400px" alt="State Data Filter Example"/>
@@ -3332,7 +3332,7 @@ dataResultsPath: "$.payload.greeting"
 This is useful if you want to restrict the data to be passed as parameters to serverless functions during action executions.
 
 Actions can define [functions](#Function-Definition). The results data of these functions is considered the output of the action which is then after completion
-merged back into the state data. You can filter the results of actions with the dataResultsPath parameter, to only select
+merged back into the state data. You can filter the results of actions with the "dataResultsPath" parameter, to only select
 parts of the action results that need to be merged back into the state data.
 
 To give an example, let's say we have an action which returns a list of breads and we want to add this list our fruits and vegetables data:
@@ -3379,7 +3379,7 @@ dataOutputPath: "$.data.results"
 
 CloudEvents can be consumed by [Event states](#Event-State) and trigger one or more [actions](#Action-Definition) to be performed. CloudEvents
 can include data which needs to be merged with the state data before associated actions are executed.
-You can filter the event data with the dataOutputPath parameter, selecting only the portion of the event data
+You can filter the event data with the "dataOutputPath" parameter, selecting only the portion of the event data
 that you need to be merged with the state data.
 
 Here is an example using an event filter:
