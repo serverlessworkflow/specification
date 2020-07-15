@@ -140,7 +140,7 @@ The model defines a declarative language that can be used to define small or com
 ### Workflow Expressions
 
 Different parts of the workflow definition such as [transitions](#Transition-Definition), [retries](#Retry-Definition), [errors](#Error-Definition), 
-etc include 'expression' parameters. 
+etc include "expression" parameters. 
 These parameters define expressions that have to be evaluated against state or error data.
 
 Many different expression langauges exist and runtime implementations may decide to implement some that may not 
@@ -271,13 +271,13 @@ workflow execution.
 
 They can be referenced by name in [actions](#Action-Definition) defined in [Event](#Event-State), [Operation](#Operation-State), or [Callback](#Callback-State) workflow states.
 
-The 'resource' property defines the exposed URI of the service that allows its invocation (e.g., via REST).
+The "resource" property defines the exposed URI of the service that allows its invocation (e.g., via REST).
 
 The type parameter allows implementations to give more information regarding the function to the readers. 
 It should not affect workflow execution or service invocation. 
 
 Function definitions themselves do not define data input parameters as they are reusable definitions. Parameters can be 
-defined via the 'parameters' property of [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
+defined via the "parameters" property of [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
 
 #### Event Definition
 
@@ -338,26 +338,26 @@ Used to define events and their correlations. These events can be either consume
 The Serverless Workflow specification mandates that all events conform to the [CloudEvents](https://github.com/cloudevents/spec) specification. 
 This is to assure consistency and portability of the events format used.
 
-The 'name' property defines the name of the event that is unique inside the workflow definition. This event name can be 
+The "name" property defines the name of the event that is unique inside the workflow definition. This event name can be 
 then referenced within [function](#Function-Definition) and [state](#State-Definition) definitions.
 
-The 'source' property matches this event definition with the [source](https://github.com/cloudevents/spec/blob/master/spec.md#source-1)
+The "source" property matches this event definition with the [source](https://github.com/cloudevents/spec/blob/master/spec.md#source-1)
 property of the CloudEvent required attributes.
 
-The 'type' property matches this event definition with the [type](https://github.com/cloudevents/spec/blob/master/spec.md#type) property of the 
+The "type" property matches this event definition with the [type](https://github.com/cloudevents/spec/blob/master/spec.md#type) property of the 
 CloudEvent required attributes.
 
-The 'kind' property defines this event as either 'consumed' or 'produced'. In terms of the workflow, this means it is either an event 
+The "kind" property defines this event as either 'consumed' or 'produced'. In terms of the workflow, this means it is either an event 
 that triggers workflow instance creation, or continuation of workflow instance execution (consumed), or an event 
 that the workflow instance creates during its execution (produced).
-The default value (if not specified) of the 'kind' property is 'consumed'. 
+The default value (if not specified) of the "kind" property is 'consumed'. 
 Note that for 'produced' event definitions, implementations must provide the value of the CloudEvent source attribute. 
-In this case (i.e., when the 'kind' property is set to 'produced'), the 'source' property of the event definition is not required.
-Otherwise (i.e., when the 'kind' property is set to 'consumed'), the 'source' property must be defined in the event definition.
+In this case (i.e., when the "kind" property is set to 'produced'), the "source" property of the event definition is not required.
+Otherwise (i.e., when the "kind" property is set to 'consumed'), the "source" property must be defined in the event definition.
 
 
 Event correlation plays a big role in large event-driven applications. Correlating one or more events with a particular workflow instance
-can be done by defining the event correlation rules within the 'correlation' property. 
+can be done by defining the event correlation rules within the "correlation" property. 
 This property is an array of [correlation](#Correlation-Definition) definitions.
 The CloudEvents specification allows users to add [Extension Context Attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 and the correlation definitions can use these attributes to define clear matching event correlation rules.
@@ -365,7 +365,7 @@ Extension context attributes are not part of the event payload, so they are seri
 This means that the event payload does not have to be inspected by implementations in order to read and evaluate the defined correlation rules.
 
 
-Let's take a look at an example. Here we have two events that have an extension context attribute called 'patientId' (as well as 'department', which 
+Let's take a look at an example. Here we have two events that have an extension context attribute called "patientId" (as well as "department", which 
 will be used in further examples below):
 
 ```json
@@ -402,8 +402,8 @@ and
 }
 ```
 
-We can then define a correlation rule, through which all consumed events with the 'hospitalMonitorSystem', and the 'com.hospital.patient.heartRateMonitor'
-type that have the **same** value of the 'patientId' property to be correlated to the created workflow instance:
+We can then define a correlation rule, through which all consumed events with the "hospitalMonitorSystem", and the "com.hospital.patient.heartRateMonitor"
+type that have the **same** value of the "patientId" property to be correlated to the created workflow instance:
 
 ```json
 {
@@ -423,12 +423,12 @@ type that have the **same** value of the 'patientId' property to be correlated t
 }
 ```
 
-If a workflow instance is created (e.g., via Event state) by consuming a 'HeartRateReadingEvent' event, all other consumed events
-from the defined source and with the defined type that have the same 'patientId' as the event that triggered the workflow instance
+If a workflow instance is created (e.g., via Event state) by consuming a "HeartRateReadingEvent" event, all other consumed events
+from the defined source and with the defined type that have the same "patientId" as the event that triggered the workflow instance
 should then also be associated with the same instance.
 
 You can also correlate multiple events together. In the following example, we assume that the workflow consumes two different event types
-and we want to make sure that both are correlated, as in the above example, with the same 'patientId': 
+and we want to make sure that both are correlated, as in the above example, with the same "patientId": 
 
 
 ```json
@@ -460,7 +460,7 @@ and we want to make sure that both are correlated, as in the above example, with
 }
 ```
 
-Event correlation can be based on equality (values of the defined 'contextAttributeName' must be equal), but it can also be based
+Event correlation can be based on equality (values of the defined "contextAttributeName" must be equal), but it can also be based
 on comparing it to custom defined values (string, or expression). For example:
 
 ```json
@@ -485,9 +485,9 @@ on comparing it to custom defined values (string, or expression). For example:
 }
 ```
 
-In this example, we have two correlation rules defined: The first one is on the 'patientId' CloudEvent context attribute, meaning again that 
-all consumed events from this source and type must have the same 'patientId' to be considered. The second rule
-says that these events must all have a context attribute named 'department' with the value of 'UrgentCare'.
+In this example, we have two correlation rules defined: The first one is on the "patientId" CloudEvent context attribute, meaning again that 
+all consumed events from this source and type must have the same "patientId" to be considered. The second rule
+says that these events must all have a context attribute named "department" with the value of "UrgentCare".
 
 This allows developers to write orchestration workflows that are specifically targeted to patients that are in the hospital urgent care unit, 
 for example.
@@ -543,8 +543,8 @@ correlation:
 
 Used to define event correlation rules. Only usable for 'consumed' event definitions.
 
-The 'contextAttributeName' parameters defines the name of the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes).
-The 'contextAttributeValue' parameters defines the value of the defined the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes).
+The "contextAttributeName" parameters defines the name of the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes).
+The "contextAttributeValue" parameters defines the value of the defined the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes).
 
 #### State Definition
 
@@ -688,10 +688,10 @@ Event states await one or more events and perform actions when they are received
 If defined as the workflow starting state, the event state definition controls when the workflow
 instances should be created.
 
-The 'exclusive' property determines if the state should wait for any of the defined events in the eventsActions array, or 
+The "exclusive" property determines if the state should wait for any of the defined events in the eventsActions array, or 
 if all defined events must be present for their associated actions to be performed.
 
-Following two figures illustrate the 'exclusive' property:
+Following two figures illustrate the "exclusive" property:
 
 <p align="center">
 <img src="media/spec/event-state-exclusive-true.png" height="300px" alt="Event state with exclusive set to true"/>
@@ -706,11 +706,11 @@ If the event state in this case is a starting state, the occurence of *any* of t
 If the event state in this case is a starting state, the occurrence of *all* defined events would start a new
  workflow instance.
   
-In order to consider only events that are related to each other, we need to set the 'correlation' property in the workflow
+In order to consider only events that are related to each other, we need to set the "correlation" property in the workflow
  [events definitions](#Event-Definition). This allows us to set up event correlation rules against the events 
  extension context attributes.
 
-The 'timeout' property defines the time duration from the invocation of the event state. If the defined events
+The "timeout" property defines the time duration from the invocation of the event state. If the defined events
 have not been received during this time, the state should transition to the next state or end the workflow execution (i.e., if it is an end state).
 
 #### <a name="eventstate-eventactions"></a> Event State: Event Actions
@@ -770,7 +770,7 @@ Event actions reference one or more events in the workflow [events definitions](
 Both the source and type of incoming events must match the ones defined in the references events in order for
 the event to be considered. 
 
-You can set event correlation rules via the 'correlation' property. See more info on event correlation [here](#Correlation-Definition).
+You can set event correlation rules via the "correlation" property. See more info on event correlation [here](#Correlation-Definition).
 
 The actions array property defines a list of actions to be performed.
 
@@ -830,7 +830,7 @@ instance in case it is an end state without performing any actions.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique action name | string | no |
-| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if 'eventRef'is not used |
+| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if 'eventRef' is not used |
 | [eventRef](#EventRef-Definition) | References a 'trigger' and 'result' reusable event definitions | object | yes if 'functionRef' is not used |
 | timeout | Time period to wait for function execution to complete or the resultEventRef to be consumed (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | no |
 | [actionDataFilter](#action-data-filter) | Action data filter definition | object | no |
@@ -880,19 +880,19 @@ timeout: PT15M
 Actions specify invocations of services during workflow execution.
 Service invocation can be done in two different ways:
 
-* Reference [functions definitions](#Function-Definition) by its unique name using the 'functionRef' property.
-* Reference a 'produced' and 'consumed' [event definitions](#Event-Definition) via the 'eventRef' property. 
+* Reference [functions definitions](#Function-Definition) by its unique name using the "functionRef" property.
+* Reference a 'produced' and 'consumed' [event definitions](#Event-Definition) via the "eventRef" property. 
 In this scenario a service or a set of services we want to invoke
 are not exposed via a specific resource URI for example, but can only be invoked via events. 
 The [eventRef](#EventRef-Definition) defines the 
-referenced 'produced' event via its 'triggerEventRef' property and a 'consumed' event via its 'resultEventRef' property.
+referenced 'produced' event via its "triggerEventRef" property and a 'consumed' event via its "resultEventRef" property.
 
-The 'timeout' property defines the amount of time to wait for function execution to complete or the consumed event referenced by the 
-'resultEventRef' to become available.
+The "timeout" property defines the amount of time to wait for function execution to complete or the consumed event referenced by the 
+"resultEventRef" to become available.
 It is described in ISO 8601 format, so for example "PT2M" would mean the maximum time for the function to complete
 its execution is two minutes. 
 
-If the set timeout period is exceeded, the state should handle this via its [retry and onError definitions](#workflow-retrying).
+If the set timeout period is exceeded, the state should handle this via its ["retry" and "onError" definitions](#workflow-retrying).
 In the case they are not defined, the state should proceed with transitioning to the next state, or ending 
 the workflow execution in case it is an end state. 
 
@@ -987,12 +987,12 @@ eventRef:
 
 </details>
 
-References a 'produced' and 'consumed' [event definitions](#Event-Definition) via the 'triggerEventRef' and 'resultEventRef' properties, respectively.
+References a 'produced' and 'consumed' [event definitions](#Event-Definition) via the "triggerEventRef" and "resultEventRef" properties, respectively.
 
-The 'data' property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
+The "data" property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
 to be used as the trigger/produced event payload. If it is of object type, you can define a custom object to be the event payload.
 
-The 'contextAttributes' property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+The "contextAttributes" property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the trigger/produced event. 
 
 #### Error Definition
@@ -1089,13 +1089,13 @@ maxAttempts: 3
 
 </details>
 
-Defines the state retry policy. The 'expression' parameter is a [Common Expression Language (CEL)](https://opensource.google/projects/cel) expression that can be evaluated against state data.
+Defines the state retry policy. The "expression" parameter is a [Common Expression Language (CEL)](https://opensource.google/projects/cel) expression that can be evaluated against state data.
 This assures that both execution errors as well as actions error results can be used during evaluation.
 The expression must evaluate to `true` for the retry definition to execute.
 
-The 'interval' parameter specifies the retry interval (in ISO 8601 repeatable format). For example, "R5/PT1M" would mean repeat 5 times with 1 minute intervals before each retry.
+The "interval" parameter specifies the retry interval (in ISO 8601 repeatable format). For example, "R5/PT1M" would mean repeat 5 times with 1 minute intervals before each retry.
 
-The 'multiplier' parameter specifies the value by which the interval time is increased for each of the retry attempts.
+The "multiplier" parameter specifies the value by which the interval time is increased for each of the retry attempts.
 To explain this better, let's say we have:
 
 ```json
@@ -1329,12 +1329,12 @@ There are two types of conditions for switch states:
 These are exclusive, meaning that a switch state can define one or the other condition type, but not both.
 
 In case of data-based conditions definition, switch state controls workflow transitions based on the states data.
-If no defined conditions can be matched, the state transitions based on the defined 'default' transition property.
+If no defined conditions can be matched, the state transitions based on the defined "default" transition property.
 
 For the case of event-based conditions, switch state acts as a workflow wait state, waiting for one of the defined 
 events to arrive, making a transition depending on that event definition.
-If events defined in event-based conditions do not arrive before the state's 'eventTimeout' property expires, 
-the state transitions based on the defined 'default' transition property.
+If events defined in event-based conditions do not arrive before the state's "eventTimeout" property expires, 
+the state transitions based on the defined "default" transition property.
 
 Switch states cannot be workflow ending states.
 
@@ -1389,11 +1389,11 @@ transition:
 
 Switch state data conditions specify a data-based condition statement, which causes a transition to another 
 workflow state if evaluated to `true`.
-The 'path' property of the condition defines a JSONPath expression (e.g., "$.person.name"), which selects
+The "path" property of the condition defines a JSONPath expression (e.g., "$.person.name"), which selects
 parts of the state data input.
-The 'value' property defines the matching value of this condition (e.g., "John", or "10", or "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b").
-The 'operator' property defines how the path should be matched with the defined value. If the operator
-is "Custom", the information about the custom operator must be defined via the condition definition's 'metadata' property.
+The "value" property defines the matching value of this condition (e.g., "John", or "10", or "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b").
+The "operator" property defines how the path should be matched with the defined value. If the operator
+is "Custom", the information about the custom operator must be defined via the condition definition's "metadata" property.
 Note that in this case you may run into vendor-specific implementations of the condition, which may not be portable. 
 Therefore, use of one of the operators other than "Custom" are if possible preferred.
 
@@ -1443,9 +1443,9 @@ transition:
 
 Switch state event conditions specify events, which the switch state must wait for. Each condition
 can reference one workflow-defined event. Upon arrival of this event, the associated transition is taken.
-The 'eventRef' property references a name of one of the defined workflow events. 
-The 'transition' property defines the workflow transition to be taken when the referenced event arrives.
-the 'eventDataFilter' defines the event data filter to be used to filter event data before the transition is made.
+The "eventRef" property references a name of one of the defined workflow events. 
+The "transition" property defines the workflow transition to be taken when the referenced event arrives.
+the "eventDataFilter" defines the event data filter to be used to filter event data before the transition is made.
 
 #### Delay State
 
@@ -1502,7 +1502,7 @@ transition:
 
 </details>
 
-Delay state waits for a certain amount of time before transitioning to a next state. The amount of delay is specified by the 'timeDelay' property in ISO 8601 format.
+Delay state waits for a certain amount of time before transitioning to a next state. The amount of delay is specified by the "timeDelay" property in ISO 8601 format.
 
 #### Parallel State
 
@@ -1625,11 +1625,11 @@ Parallel state defines a collection of branches that are to be executed in paral
 Branches contain one or more states or actions. If a branch uses states for control flow logic execution, it must define one [starting state](#Start-Definition) as well as 
 include at least one [end state](#End-Definition).
 
-The 'completionType' enum specifies the different ways of completing branch execution:
+The "completionType" enum specifies the different ways of completing branch execution:
 * and: All branches must complete execution before state can perform its transition
 * xor: State can transition when one of the branches completes execution
 * n_of_m: State can transition once `n` number of branches have completed execution. In this case you should also
-specify the 'n' property to define this number.
+specify the "n" property to define this number.
 
 Exceptions may occur during execution of branches of the Parallel state, this is described in detail in [this section](#parallel-state-exceptions).
 
@@ -1709,7 +1709,7 @@ to the Parallel state.
 Exceptions can be handled in the following ways:
 
 * Don't handle exceptions inside states of branches: in this case, exceptions should be propagated to the 
-Parallel state and can be handled with the Parallel states 'onError' definition. For example:
+Parallel state and can be handled with the Parallel states "onError" definition. For example:
 
 ```json
 {
@@ -1786,7 +1786,7 @@ that is propagated to the Parallel state and handled with its "onError" definiti
 For the sake of the example we left the "actions" array of the "exceptionHandlingState" empty. In a real scenario,
 it would include actions needed to be executed.
 
-* Handle exceptions inside branch states: States inside branches can define their own 'onError' definition.
+* Handle exceptions inside branch states: States inside branches can define their own "onError" definition.
 In this case the exceptions can be handled by the states and they will not be propagated to the Parallel state.
 
 ```json
@@ -1936,12 +1936,12 @@ in each branch, you could separate the branch states into individual sub-workflo
 as a single state in each.
 
 Sub-workflows must have a defined start and end states.
-The 'waitForCompletion' property defines if the SubFlow state should wait until execution of the sub-workflow
+The "waitForCompletion" property defines if the SubFlow state should wait until execution of the sub-workflow
 is completed or not.
 
 Each sub-workflow receives the same copy of the SubFlow state's data input.
-If the 'waitForCompletion' property is set to `true`, sub-workflows have the ability to edit the parent's workflow data.
-If the 'waitForCompletion' property is set to `false`, data access to the parent workflow should not be allowed.
+If the "waitForCompletion" property is set to `true`, sub-workflows have the ability to edit the parent's workflow data.
+If the "waitForCompletion" property is set to `false`, data access to the parent workflow should not be allowed.
 
 Sub-workflows inherit all the [function](#Function-Definition) and [event](#Event-Definition) definitions of their parent workflow.
 
@@ -2012,7 +2012,7 @@ Inject state can be used to inject static data into state data input. Inject sta
 It is very useful for debugging, for example, as you can test/simulate workflow execution with pre-set data that would typically
 be dynamic in nature (e.g., function calls, events).
 
-The inject state 'data' property allows you to statically define a JSON object which gets added to the states data input.
+The inject state "data" property allows you to statically define a JSON object which gets added to the states data input.
 You can use the filter property to control the states data output to the transition state.
 
 Here is a typical example of how to use the inject state to add static data into its states data input, which then is passed
@@ -2416,9 +2416,9 @@ states:
 </tr>
 </table>
 
-This ForEach state will first look at its 'inputCollection' path to determine which array in the states data input
+This ForEach state will first look at its "inputCollection" path to determine which array in the states data input
 to iterate over.
-In this case it will be the "orders" array, which contains orders information. The states 'inputCollection' property
+In this case it will be the "orders" array, which contains orders information. The states "inputCollection" property
 then further filters this array, only selecting elements of the orders array which have the completed property
 set to `true`.
 
@@ -2482,12 +2482,12 @@ and:
 }
 ```
 
-Once iterations over the completed orders complete, workflow execution finishes as our ForEach state is an end state (i.e., has the 'end' property defined).
+Once iterations over the completed orders complete, workflow execution finishes as our ForEach state is an end state (i.e., has the "end" property defined).
 
 So in this example, our ForEach state will send two confirmation emails: one for each of the completed orders
 defined in the "orders" array of its data input.
 
-The same example can be defined using 'actions' instead of 'states' definitions. This may be useful in cases where you do need to express
+The same example can be defined using "actions" instead of "states" definitions. This may be useful in cases where you do need to express
 each iteration with control flow logic (states) but only need one or more actions to be performed for each iteration.
 
 <table>
@@ -2641,20 +2641,20 @@ in a serverless workflow can be executed automatically, some decisions must invo
 The Callback state allows you to explicitly model manual decision steps during workflow execution.
 
 The action property defines a function call that triggers an external activity/service. Once the action executes,
-the callback state will wait for a CloudEvent (defined via the 'eventRef' property), which indicates the completion
+the callback state will wait for a CloudEvent (defined via the "eventRef" property), which indicates the completion
 of the manual decision by the called service.
 
 Note that the called decision service is responsible for emitting the callback CloudEvent indicating the completion of the
 decision and including the decision results as part of the event payload. This event must be correlated to the
-workflow instance using the callback events context attribute defined in the 'correlation' parameter of the
+workflow instance using the callback events context attribute defined in the "correlation" parameter of the
 referenced [Event Definition](#Event-Definition).
 
 Once the completion (callback) event is received, the Callback state completes its execution and transitions to the next
 defined workflow state or completes workflow execution in case it is an end state.
 
-The callback event payload is merged with the Callback state data and can be filtered via the 'eventDataFilter' definition.
+The callback event payload is merged with the Callback state data and can be filtered via the "eventDataFilter" definition.
 
-The Callback state 'timeout' parameter defines a time period from the action execution until the callback event should be received.
+The Callback state "timeout" parameter defines a time period from the action execution until the callback event should be received.
 
 If the defined callback event has not been received during this time period, the state should transition to the next state or end workflow execution if it is an end state.
 
@@ -2703,7 +2703,7 @@ schedule:
 Any state can declare to be the start state of the workflow, meaning that when a workflow instance is created it will be the initial
 state to be executed. A workflow definition can declare one workflow start state.
 
-The start definition provides a 'kind' parameter, which describes the starting options:
+The start definition provides a "kind" parameter, which describes the starting options:
 
 - **default** - The start state is always "active" and there are no restrictions imposed on its execution.
 - **scheduled** - Scheduled start states have two different choices. You can define time-based intervals during which workflow instances are **allowed**
@@ -2921,10 +2921,10 @@ Defines the event (CloudEvent format) to be produced when workflow execution com
 The "eventRef" property must match the name of
 one of the defined 'produced' events in the [events](#Event-Definition) definition.
 
-The 'data' property can have two types, object or string. If of string type, it is an expression that can select parts of state data
+The "data" property can have two types, object or string. If of string type, it is an expression that can select parts of state data
 to be used as the event payload. If object type, you can defined a custom object to be the event payload.
 
-The 'contextAttributes' property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+The "contextAttributes" property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the generated event. 
 
 Being able to produce an event when workflow execution completes or during state transition
@@ -3427,7 +3427,7 @@ dataOutputPath: "$.exception"
 
 </details>
 
-States can define [error handling](#Workflow-Error-Handling) with the onError property. The runtime error contains data
+States can define [error handling](#Workflow-Error-Handling) with the "onError" property. The runtime error contains data
 which is merged with the states data. You can use the error data filter to select portion of the error data to be merged
 with the states data.
 
@@ -3557,7 +3557,7 @@ The event state **stateDataFilter** is invoked to filter this data input. Its "d
 }
 ```
 
-**(2) CloudEvent of type "customer-arrival-type" is consumed**: First the eventDataFilter is triggered. Its "dataInputPath"
+**(2) CloudEvent of type "customer-arrival-type" is consumed**: First the "eventDataFilter" is triggered. Its "dataInputPath"
 expression selects the "customer" object from the events data and places it into the state data.
 
 At this point our event state data contains:
@@ -3615,7 +3615,7 @@ states data under the "finalCustomerGreeting" object. So at this point our event
 ```
 
 Since our event state has performed all actions it is ready to either transition to the next state or end workflow execution if it is an end state.
-Before this happens though, the 'stateDataFilter' is again invoked to filter this states data, specifically the 'dataOutputPath' expression
+Before this happens though, the "stateDataFilter" is again invoked to filter this states data, specifically the "dataOutputPath" expression
 selects only the "finalCustomerGreeting" object to make it the data output of the state.
 
 Because our event state is also an end state, its data output becomes the final [workflow data output](#Workflow-data-output). Namely:
@@ -3624,19 +3624,19 @@ Because our event state is also an end state, its data output becomes the final 
 "Hola John Michaels!"
 ```
 
-Note that in case of multiple actions with each containing an 'actionDataFilter', you must be careful for their results
+Note that in case of multiple actions with each containing an "actionDataFilter", you must be careful for their results
 not to overwrite each other after actions complete and their results are added to the state data.
 Also note that in case of parallel execution of actions, the results of only those that complete before the state
 transitions to the next one or ends workflow execution (end state) can be considered to be added to the state data.
 
 #### Workflow data output
 
-Once a workflow instance reaches an end state (where the 'end' parameter is defined) and the workflow finishes its execution
+Once a workflow instance reaches an end state (where the "end" parameter is defined) and the workflow finishes its execution
 the data output of that result state becomes the workflow data output. This output can be logged or indexed depending on the
 implementation details.
 
 In order to define the structure of expected workflow data output you can use the workflow
-'dataOutputSchema' property. This property allows you to link to a [JSON Schema](https://json-schema.org/) definition
+"dataOutputSchema" property. This property allows you to link to a [JSON Schema](https://json-schema.org/) definition
 that describes the expected workflow data output. This can be used for documentation purposes or implementations may
 decide to strictly enforce it.
 
@@ -3661,11 +3661,11 @@ Here is an example of such error object:
 }
 ```
 
-Each state can explicitly catch runtime errors via its 'onError' property. This property includes one or more
+Each state can explicitly catch runtime errors via its "onError" property. This property includes one or more
 definitions matching the error object properties and defining a transition to a workflow state representing the
 workflow execution flow in case of that particular error.
 
-Let's take a look an an example 'onError' definition inside a state:
+Let's take a look an an example "onError" definition inside a state:
 
 <table>
 <tr>
@@ -3679,7 +3679,7 @@ Let's take a look an an example 'onError' definition inside a state:
 {
 "onError": [
   {
-    "expression": "$.name == 'FunctionExecutionError",
+    "expression": "$.name == 'FunctionExecutionError'",
     "transition": {
       "nextState": "afterFunctionErrorState"
     }
@@ -3699,7 +3699,7 @@ Let's take a look an an example 'onError' definition inside a state:
 
 ```yaml
 onError:
-- expression: "$.name == 'FunctionExecutionError"
+- expression: "$.name == 'FunctionExecutionError'"
   transition:
     nextState: afterFunctionErrorState
 - expression: "$.name != 'FunctionExecutionError'"
