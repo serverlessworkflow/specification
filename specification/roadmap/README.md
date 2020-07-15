@@ -56,8 +56,8 @@ _Status description:_
 | ✔️| Update produceEvent data property | [spec doc](../README.md) |
 | ✔️| Change uppercase property and enum types to lowercase | [spec doc](../README.md) |
 | ✔️| Add Parallel State Exception Handling section | [spec doc](../README.md) |
-| ✔️| Add Go SDK | [sdk doc](../../sdk/go/README.md) |
-| ✔️| Add Java SDK | [sdk doc](../../sdk/java/README.md) |
+| ✔️| Add Go SDK | [sdk repo](https://github.com/serverlessworkflow/sdk-go) |
+| ✔️| Add Java SDK | [sdk repo](https://github.com/serverlessworkflow/sdk-java) |
 | ✔️| Allow to define events as produced or consumed | [spec doc](../README.md) |
 | ✔️| Add "triggered" start definition | [spec doc](../README.md) |
 | ✔️| Update scheduled start definition - adding cron def | [spec doc](../README.md) |
