@@ -8,7 +8,6 @@
 - [ ] Roadmap
 - [ ] Use Cases
 - [ ] Community
-- [ ] Website
 - [ ] TCK
 - [ ] Other
 
