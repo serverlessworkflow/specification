@@ -12,15 +12,15 @@ well as the guidelines we follow for how our documents are formatted.
 ## Reporting an Issue
 
 To report an issue, or to suggest an idea for a change that you haven't had time
-to write-up yet, open an [issue](https://github.com/cncf/wg-serverless-workflow/issues). It
+to write-up yet, open an [issue](https://github.com/serverlessworkflow/specification/issues). It
 is best to check our existing
-[issues](https://github.com/cncf/wg-serverless-workflow/issues) first to see if a similar
+[issues](https://github.com/serverlessworkflow/specification/issues) first to see if a similar
 one has already been opened and discussed.
 
 ## Suggesting a Change
 
 To suggest a change to this repository, submit a
-[pull request](https://github.com/cncf/wg-serverless-workflow/pulls)(PR) with the complete
+[pull request](https://github.com/serverlessworkflow/specification/pulls) (PR) with the complete
 set of changes you'd like to see. See the
 [Spec Formatting Conventions](#spec-formatting-conventions) section for the
 guidelines we follow for how documents are formatted.

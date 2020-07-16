@@ -45,22 +45,22 @@ _Status description:_
 | 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) | |
 | 🚩 | Decide on state/task/stage/step naming convention | [issue link](https://github.com/cncf/wg-serverless/issues/127) |
 | ✏️ | Finish specification primer document | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) |
-| ✔ | Update Switch State | [spec doc](../README.md) |
-| ✔ | Rename Relay to Inject state | [spec doc](../README.md) |
-| ✔️| Update waitForCompletion property of Parallel State | [spec doc](../README.md) |
-| ✔️| Add timeout property to actions | [spec doc](../README.md) |
+| ✔ | Update Switch State | [spec doc](../specification.md) |
+| ✔ | Rename Relay to Inject state | [spec doc](../specification.md) |
+| ✔️| Update waitForCompletion property of Parallel State | [spec doc](../specification.md) |
+| ✔️| Add timeout property to actions | [spec doc](../specification.md) |
 | ✔️| Add examples comparing Argo workflow and spec markups | [examples doc](../examples/examples-argo.md) |
-| ✔️| Add ability to produce events during state transitions | [spec doc](../README.md) |
-| ✔️| Add event-based condition capabilities to Switch State | [spec doc](../README.md) |
+| ✔️| Add ability to produce events during state transitions | [spec doc](../specification.md) |
+| ✔️| Add event-based condition capabilities to Switch State | [spec doc](../specification.md) |
 | ✔️| Add examples comparing Brigade workflow and spec markups | [examples doc](../examples/examples-brigade.md) |
-| ✔️| Update produceEvent data property | [spec doc](../README.md) |
-| ✔️| Change uppercase property and enum types to lowercase | [spec doc](../README.md) |
-| ✔️| Add Parallel State Exception Handling section | [spec doc](../README.md) |
+| ✔️| Update produceEvent data property | [spec doc](../specification.md) |
+| ✔️| Change uppercase property and enum types to lowercase | [spec doc](../specification.md) |
+| ✔️| Add Parallel State Exception Handling section | [spec doc](../specification.md) |
 | ✔️| Add Go SDK | [sdk repo](https://github.com/serverlessworkflow/sdk-go) |
 | ✔️| Add Java SDK | [sdk repo](https://github.com/serverlessworkflow/sdk-java) |
-| ✔️| Allow to define events as produced or consumed | [spec doc](../README.md) |
-| ✔️| Add "triggered" start definition | [spec doc](../README.md) |
-| ✔️| Update scheduled start definition - adding cron def | [spec doc](../README.md) |
-| ✔️| Set single expression language (CEL) | [spec doc](../README.md) |
-| ✔️| Add ability to reference trigger and result events in actions | [spec doc](../README.md) |
-| ✔️| Expand event correlation capabilities | [spec doc](../README.md) |
+| ✔️| Allow to define events as produced or consumed | [spec doc](../specification.md) |
+| ✔️| Add "triggered" start definition | [spec doc](../specification.md) |
+| ✔️| Update scheduled start definition - adding cron def | [spec doc](../specification.md) |
+| ✔️| Set single expression language (CEL) | [spec doc](../specification.md) |
+| ✔️| Add ability to reference trigger and result events in actions | [spec doc](../specification.md) |
+| ✔️| Expand event correlation capabilities | [spec doc](../specification.md) |
