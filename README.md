@@ -1,5 +1,5 @@
 <p align="center">
-<img src="specification/media/sw-logo.png" alt="Serverless Workflow Specification"/>
+<img src="media/sw-logo.png" alt="Serverless Workflow Specification"/>
 </p>
 
 A specification for defining declarative workflow models
