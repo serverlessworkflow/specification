@@ -3,7 +3,7 @@
 </p>
 
 A specification for defining declarative workflow models
-that orchestrate Event-driven, Serverless applications.
+that orchestrate event-driven, serverless applications.
 
 Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
 Cloud Native Sandbox level project on July 14, 2020.
@@ -77,9 +77,10 @@ See our full project Code of Conduct information [here](code-of-conduct.md).
 
 ## Meeting time
 
-See the [CNCF public events calendar](https://www.cncf.io/community/calendar/).
+* [CNCF public events calendar](https://www.cncf.io/community/calendar/)
+* [Serverless Workflow meeting calendar](https://serverlessworkflow.github.io/#meetcal)
 
-The Serverless Workflow sub-group meets on the first Monday every month
+The Serverless Workflow sub-group meets biweekly, every second Monday
 at 10AM PT (USA Pacific).
 
 Join from PC, Mac, Linux, iOS or Android: https://zoom.us/my/cncfserverlesswg
