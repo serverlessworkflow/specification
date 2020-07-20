@@ -108,10 +108,10 @@ incoming events can trigger function invocations during workflow execution.
 
 At the core of the Serverless Workflow specification is described via its [JSON Schema](schema/workflow.json).
 This schema defines the workflow model. It can also be used for generation of many different artifacts
-such as APIs and SPIs and SDKs. Currently the specification provides SDKs for Go and Java and we hope to 
-expand this list in the future. 
+such as APIs and SPIs and SDKs. Currently the specification provides SDKs for [Go](https://github.com/serverlessworkflow/sdk-go) 
+and [Java](https://github.com/serverlessworkflow/sdk-java) and and we hope to expand this list in the future. 
 
-We also strives to provide a Technology Compatibility Kit (TCK) which provides a suite of tests usec for
+We also strive to provide a Technology Compatibility Kit (TCK) which provides a suite of tests used for
 testing specification conformance.
 
 The specification relies on runtime implementations to adopt the workflow definitions and provide execution semantics.
@@ -164,7 +164,7 @@ Note that different data filters play a big role as to which parts of the state 
 [State Information Filtering](#State-Information-Filtering) section for more information.
 
 All expressions must follow the [JsonPath](https://github.com/json-path/JsonPath) format and can be evaluated with a JsonPath expression evaluator. 
-JSONPath expressions can traverse the workflow JSON data. 
+JsonPath expressions can traverse the workflow JSON data. 
 
 All expressions are written inside double braces:
 
@@ -207,7 +207,7 @@ We can use an expression inside a string type parameter, for example:
 }
 ```
 
-would set the value of "paramName" to "Hello John Doe".
+would set the value of 'paramName' to 'Hello John Doe'.
 
 Expressions can also be used to select a portion of the JSON data, this is in particularly useful for data filters. For example:
 
@@ -243,7 +243,7 @@ The expression should evaluate to true, if the result contains a subset of the J
 }
 ```
 
-would set the value if "isAdult" to true, as the expression returns a non-empty subset of the JSON data. Similarly 
+would set the value if 'isAdult' to true, as the expression returns a non-empty subset of the JSON data. Similarly 
 
 ```json
 {
@@ -251,7 +251,7 @@ would set the value if "isAdult" to true, as the expression returns a non-empty 
 }
 ```
 
-would return false as the result of the JSONPath expression is empty.
+would return false as the result of the JsonPath expression is empty.
 
 JsonPath also includes a limited set of built-in functions that can be used inside expressions. For example the expression
 
@@ -261,10 +261,10 @@ JsonPath also includes a limited set of built-in functions that can be used insi
 }
 ```
 
-would set the value of 'phoneNums' to "2".
+would set the value of 'phoneNums' to '2'.
 
 As previously mentioned, expressions are evaluated against the subset of data that can see. For example 
-the "parameters" param of the [functionRef definition](#FunctionRef-Definition) can evaluate expressions 
+the 'parameters' param of the [functionRef definition](#FunctionRef-Definition) can evaluate expressions 
 only against the data that is available to the [action](#Action-Definition) it belongs to.
 One thing to note here are the top-level [workflow definition](#Workflow-Definition) parameters. Expressions defined
 in them can only be evaluated against the initial [workflow data input](#Workflow-Data-Input) JSON.
@@ -286,7 +286,7 @@ we can then define a workflow definition:
 }
 ```
 
-which would set the workflow version to "1.0.0".
+which would set the workflow version to '1.0.0'.
 
 ### Workflow Definition
 
@@ -1479,7 +1479,7 @@ Switch states cannot be workflow ending states.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| path | JSONPath expression that selects elements of state data | string | yes |
+| path | JsonPath expression that selects elements of state data | string | yes |
 | value | Matching value | string | yes |
 | operator | Condition operator | string | yes |
 | [transition](#Transitions) | Next transition of the workflow if condition is matched | object | yes |
@@ -1526,7 +1526,7 @@ transition:
 
 Switch state data conditions specify a data-based condition statement, which causes a transition to another 
 workflow state if evaluated to true.
-The "path" property of the condition defines a JSONPath expression (e.g., "{{ $.person.name }}"), which selects
+The "path" property of the condition defines a JsonPath expression (e.g., "{{ $.person.name }}"), which selects
 parts of the state data input.
 The "value" property defines the matching value of this condition (e.g., "John", or "10", or "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b").
 The "operator" property defines how the path should be matched with the defined value. If the operator
@@ -2309,9 +2309,9 @@ This allows you to test if your workflow behaves properly for cases when there a
 | id | Unique state id | string | no |
 | name | State name | string | yes |
 | type | State type | string | yes |
-| inputCollection | JSONPath expression selecting an JSON array element of the states data input | string | yes |
-| outputCollection | JSONPath expression specifying where in the states data output to place the final data output of each iteration of the executed states | string | no |
-| inputParameter | JSONPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with an unique element of the inputCollection array | string | yes |
+| inputCollection | JsonPath expression selecting an JSON array element of the states data input | string | yes |
+| outputCollection | JsonPath expression specifying where in the states data output to place the final data output of each iteration of the executed states | string | no |
+| inputParameter | JsonPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with an unique element of the inputCollection array | string | yes |
 | max | Specifies how upper bound on how many iterations may run in parallel | integer | no |
 | timeDelay | Amount of time (ISO 8601 format) to wait between each iteration | string | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if states are not defined |
@@ -3272,7 +3272,7 @@ decide to strictly enforce it.
 #### State Information Filtering
 
 States can access and manipulate data via data filters. Since all data during workflow execution is described
-in [JSON](https://tools.ietf.org/html/rfc7159) format, data filters use [JSONPath](https://github.com/json-path/JsonPath) queries
+in [JSON](https://tools.ietf.org/html/rfc7159) format, data filters use [JsonPath](https://github.com/json-path/JsonPath) queries
 to do data manipulation/selection.
 
 There are several types of data filters defined:
@@ -3290,8 +3290,8 @@ actions they perform.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataInputPath | JSONPath definition that selects parts of the states data input | string | no |
-| dataOutputPath | JSONPath definition that selects parts of the states data output | string | no |
+| dataInputPath | JsonPath definition that selects parts of the states data input | string | no |
+| dataOutputPath | JsonPath definition that selects parts of the states data output | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3420,8 +3420,8 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataInputPath | JSONPath definition that selects parts of the states data input to be the action data | string | no |
-| dataResultsPath | JSONPath definition that selects parts of the actions data result, to be merged with the states data | string | no |
+| dataInputPath | JsonPath definition that selects parts of the states data input to be the action data | string | no |
+| dataResultsPath | JsonPath definition that selects parts of the actions data result, to be merged with the states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3472,7 +3472,7 @@ To give an example, let's say we have an action which returns a list of breads a
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataOutputPath | JSONPath definition that selects parts of the event data, to be merged with the states data | string | no |
+| dataOutputPath | JsonPath definition that selects parts of the event data, to be merged with the states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3522,7 +3522,7 @@ an event filter.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataOutputPath | JSONPath definition that selects parts of the error data, to be merged with the states data | string | no |
+| dataOutputPath | JsonPath definition that selects parts of the error data, to be merged with the states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
