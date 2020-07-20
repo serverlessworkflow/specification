@@ -881,17 +881,13 @@ If the applicants age is over 18 we start the application (subflow state). Other
          },
          "dataConditions": [
             {
-              "path": "{{ $.applicant.age }}",
-              "value": "18",
-              "operator": "greaterthanorequals",
+              "condition": "{{ $.applicants[?(@.age >= 18)] }}",
               "transition": {
                 "nextState": "StartApplication"
               }
             },
             {
-              "path": "{{ $.applicant.age }}",
-              "value": "18",
-              "operator": "lessthan",
+              "condition": "{{ $.applicants[?(@.age < 18)] }}",
               "transition": {
                 "nextState": "RejectApplication"
               }
@@ -948,14 +944,10 @@ states:
   start:
     kind: default
   dataConditions:
-  - path: "{{ $.applicant.age }}"
-    value: '18'
-    operator: greaterthanorequals
+  - condition: "{{ $.applicants[?(@.age >= 18)] }}"
     transition:
       nextState: StartApplication
-  - path: "{{ $.applicant.age }}"
-    value: '18'
-    operator: lessthan
+  - condition: "{{ $.applicants[?(@.age < 18)] }}"
     transition:
       nextState: RejectApplication
   default:
@@ -1315,17 +1307,13 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
     "type":"switch",
     "dataConditions": [
       {
-        "path": "{{ $.jobstatus }}",
-        "value": "SUCCEEDED",
-        "operator": "equals",
+        "condition": "{{ $[?(@.jobstatus == 'SUCCEEDED')] }}",
         "transition": {
           "nextState": "JobSucceeded"
         }
       },
       {
-        "path": "{{ $.jobstatus }}",
-        "value": "FAILED",
-        "operator": "equals",
+        "condition": "{{ $[?(@.jobstatus == 'FAILED')] }}",
         "transition": {
           "nextState": "JobFailed"
         }
@@ -1442,14 +1430,10 @@ states:
 - name: DetermineCompletion
   type: switch
   dataConditions:
-  - path: "{{ $.jobstatus }}"
-    value: SUCCEEDED
-    operator: equals
+  - condition: "{{ $[?(@.jobstatus == 'SUCCEEDED')] }}"
     transition:
       nextState: JobSucceeded
-  - path: "{{ $.jobstatus }}"
-    value: FAILED
-    operator: equals
+  - condition: "{{ $[?(@.jobstatus == 'FAILED')] }}"
     transition:
       nextState: JobFailed
   default:
@@ -2194,17 +2178,13 @@ And for denied credit check, for example:
             "type": "switch",
             "dataConditions": [
                 {
-                    "path": "{{ $.creditCheck.decision }}",
-                    "value": "Approved",
-                    "operator": "equals",
+                    "condition": "{{ $.creditCheck[?(@.decision == 'Approved')] }}",
                     "transition": {
                         "nextState": "StartApplication"
                     }
                 },
                 {
-                    "path": "{{ $.creditCheck.decision }}",
-                    "value": "Denied",
-                    "operator": "equals",
+                    "condition": "{{ $.creditCheck[?(@.decision == 'Denied')] }}",
                     "transition": {
                         "nextState": "RejectApplication"
                     }
@@ -2281,14 +2261,10 @@ states:
 - name: EvaluateDecision
   type: switch
   dataConditions:
-  - path: "{{ $.creditCheck.decision }}"
-    value: Approved
-    operator: equals
+  - condition: "{{ $.creditCheck[?(@.decision == 'Approved')] }}"
     transition:
       nextState: StartApplication
-  - path: "{{ $.creditCheck.decision }}"
-    value: Denied
-    operator: equals
+  - condition: "{{ $.creditCheck[?(@.decision == 'Denied')] }}"
     transition:
       nextState: RejectApplication
   default:

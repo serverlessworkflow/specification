@@ -1030,18 +1030,9 @@
       "type": "object",
       "description": "Switch state data based condition",
       "properties": {
-        "path": {
+        "condition": {
           "type": "string",
-          "description": "JsonPath expression that selects elements of state data"
-        },
-        "value": {
-          "type": "string",
-          "description": "Matching value"
-        },
-        "operator": {
-          "type" : "string",
-          "enum": ["exists", "notexists", "null", "notnull", "equals", "notequals", "lessthan", "lessthanorequals", "greaterthan", "greaterthanorequals", "matches", "notmatches", "custom"],
-          "description": "Condition operator"
+          "description": "JsonPath expression evaluated against state data. True if results are not empty"
         },
         "transition": {
           "description": "Next transition of the workflow if there is valid matches",
@@ -1051,7 +1042,7 @@
       "metadata": {
         "$ref": "common.json#/definitions/metadata"
       },
-      "required": ["path", "value", "operator", "transition"]
+      "required": ["condition", "transition"]
     },
     "subflowstate": {
       "type": "object",
