@@ -1468,8 +1468,8 @@ These are exclusive, meaning that a switch state can define one or the other con
 In case of data-based conditions definition, switch state controls workflow transitions based on the states data.
 If no defined conditions can be matched, the state transitions based on the defined "default" transition property.
 
-For event-based conditions, switch states acts as a workflow wait states, waiting for one of the defined 
-events to arrive and making a transition depending on the event definition.
+For event-based conditions, a switch state acts as a workflow wait state. It halts workflow execution 
+until one of the referenced events arrive, then making a transition depending on that event definition.
 If events defined in event-based conditions do not arrive before the states "eventTimeout" property expires, 
  state transitions are based on the defined "default" transition property.
 
@@ -1520,7 +1520,7 @@ transition:
 
 Switch state data conditions specify a data-based condition statement, which causes a transition to another 
 workflow state if evaluated to true.
-The 'condition' property of the condition defines a JsonPath expression (e.g., '$.applicants[?(@.age >= 18)]'), which selects
+The `condition` property of the condition defines a JsonPath expression (e.g., `$.applicants[?(@.age >= 18)]`), which selects
 parts of the state data input. The condition is evaluated as "true" if it results a non-empty result.
 
 #### <a name="switch-state-eventconditions"></a>Switch State: Event Conditions
