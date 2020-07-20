@@ -1189,7 +1189,7 @@ transition:
 | expression | JsonPath expression. Should be evaluated against state data. True if the expression result is not empty. | string | yes |
 | interval | Interval value for retry (ISO 8601 repeatable format). For example: "R5/PT15M" (Starting from now repeat 5 times with 15 minute intervals)| string | no |
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
-| maxAttempts | Maximum number of retry attempts (1 by default). Value of 0 means no retries are performed | integer | no |
+| maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or integer | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1639,7 +1639,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | type | State type | string | yes |
 | [branches](#parallel-state-branch) | List of branches for this parallel state| array | yes |
 | completionType | Option types on how to complete branch execution. | enum | no |
-| n | Used when branchCompletionType is set to 'n_of_m' to specify the 'n' value. | integer | no |
+| n | Used when branchCompletionType is set to 'n_of_m' to specify the 'n' value. | string or integer | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [retry](#workflow-retrying) | States retry definitions | array | no |
 | [onError](#Workflow-Error-Handling) | States error handling definitions | array | no |
@@ -2301,7 +2301,7 @@ This allows you to test if your workflow behaves properly for cases when there a
 | inputCollection | JsonPath expression selecting an JSON array element of the states data input | string | yes |
 | outputCollection | JsonPath expression specifying where in the states data output to place the final data output of each iteration of the executed states | string | no |
 | inputParameter | JsonPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with an unique element of the inputCollection array | string | yes |
-| max | Specifies how upper bound on how many iterations may run in parallel | integer | no |
+| max | Specifies how upper bound on how many iterations may run in parallel | string or integer | no |
 | timeDelay | Amount of time (ISO 8601 format) to wait between each iteration | string | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if states are not defined |
 | [states](#State-Definition) | States to be executed for each of the elements of inputCollection | array | yes if actions are not defined |

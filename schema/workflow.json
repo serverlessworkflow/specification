@@ -237,10 +237,10 @@
           "description": "Multiplier value by which interval increases during each attempt (ISO 8601 time format)"
         },
         "maxAttempts": {
-          "type": "integer",
-          "default": 1,
+          "type": ["integer","string"],
           "minimum": 0,
-          "description": "Maximum number of retry attempts (1 by default). Value of 0 means no retries are performed"
+          "minLength": 0,
+          "description": "Maximum number of retry attempts. Value of 0 means no retries are performed"
         }
       },
       "required": [
@@ -751,9 +751,9 @@
           "default": "and"
         },
         "n": {
-          "type": "integer",
-          "default": 0,
+          "type": ["integer","string"],
           "minimum": 0,
+          "minLength": 0,
           "description": "Used when completionType is set to 'n_of_m' to specify the 'N' value"
         },
         "retry": {
@@ -1274,9 +1274,9 @@
           "description": "JsonPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with a unique element of the inputCollection array"
         },
         "max": {
-          "type": "integer",
-          "default": 0,
+          "type": ["integer","string"],
           "minimum": 0,
+          "minLength": 0,
           "description": "Specifies how upper bound on how many iterations may run in parallel"
         },
         "timeDelay": {
