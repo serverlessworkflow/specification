@@ -22,8 +22,9 @@ This document is a working draft.
 - [Specification Goals](#Specification-Goals)
 - [Specification Details](#Specification-Details)
   - [Workflow Model](#Workflow-Model)
-  - [Workflow Definition](#Workflow-Definition)
   - [Workflow Data](#Workflow-Data)
+  - [Workflow Data Expressions](#Workflow-Data-Expressions)
+  - [Workflow Definition](#Workflow-Definition)
   - [Workflow Error Handling](#Workflow-Error-Handling)
   - [Workflow Metadata](#Workflow-Metadata)
 - [Extending](#Extending)
@@ -77,21 +78,20 @@ from states to functions, from one function to another, and from one state to an
 ## Workflow Format
 
 The specification workflow model can be defined via [JSON](https://www.json.org/json-en.html) or [YAML](https://yaml.org/).
-The workflow model is defined via a set of [JSON Schemas](https://json-schema.org/) which can be found [here](schema).
+The workflow model is defined via the "workflow" [JSON Schemas](https://json-schema.org/) which can be found [here](schema/workflow.json).
 
-Serverless Workflow models are considered compliant to the specification if they conform to the 
-[workflow schema](schema).
+Serverless Workflow models are considered compliant to the specification if they conform to this schema.
 
-Note that this schema reflects the current status of the specification and is updated alongside this document.
+Note that the [workflow schema](schema/workflow.json) reflects the current state of the specification and is updated alongside it.
 
 ## Functional Scope
 
 Serverless Workflow allows users to:
 
 1. Define and orchestrate steps/states involved in a serverless application.
-2. Define which functions are executed at each step.
+2. Define which services are executed at each step.
 3. Define which event or combination of events trigger function execution.
-4. Define function execution behavior (sequential, parallel, etc).
+4. Define service execution behavior (sequential, parallel, event-triggered, etc).
 5. Specify manual decision steps during workflow execution.
 6. Specify information filtering throughout the execution of the serverless workflow.
 7. Define error conditions with retries.
@@ -106,16 +106,19 @@ incoming events can trigger function invocations during workflow execution.
 
 ## Specification Goals
 
-At the core of the Serverless Workflow specification is its [JSON Schema](schema/workflow.json).
+At the core of the Serverless Workflow specification is described via its [JSON Schema](schema/workflow.json).
 This schema defines the workflow model. It can also be used for generation of many different artifacts
-such as APIs and SPIs. We plan to provide these in the near future, and hope to expand them 
-to many different languages. This specification also strives to provide a TCK with a set of tests soon, whose 
-implementations can be used to test conformance to the specification.
+such as APIs and SPIs and SDKs. Currently the specification provides SDKs for [Go](https://github.com/serverlessworkflow/sdk-go) 
+and [Java](https://github.com/serverlessworkflow/sdk-java) and and we hope to expand this list in the future. 
 
-The specification relies on runtime implementations to adopt the markup and provide execution semantics.
+We also strive to provide a Technology Compatibility Kit (TCK) which provides a suite of tests used for
+testing specification conformance.
+
+The specification relies on runtime implementations to adopt the workflow definitions and provide execution semantics.
+
 With all this in place, the overall goal of the Serverless Workflow Specification is to provide 
-a JSON/YAML based markup which can be used to model serverless orchestration workflows that are executable
-with many different runtimes and thus on many different cloud/container platforms.
+a JSON/YAML based workflow definition which can be used to model serverless orchestration workflows executable
+on different runtimes and thus on many different cloud/container platforms.
 
 <p align="center">
 <img src="media/spec/spec-goals.png" height="400px" alt="Serverless Workflow Specification Goals"/>
@@ -123,34 +126,167 @@ with many different runtimes and thus on many different cloud/container platform
 
 ## Specification Details
 
-The following sections provide detailed descriptions of the Serverless Workflow model. For each part of the model we provide:
+The following sections provide detailed descriptions of the Serverless Workflow model. 
+
+For each model definition section we provide:
 
 - Parameter description in table format.
-- Example definition in both [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats.
+- Example definition in both [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats.\
+- Detailed definition explanation with addition examples where needed.
 
 ### Workflow Model
 
-Serverless Workflow model can be viewed as: 
+The Serverless Workflow model can be viewed as: 
+
 * Set of [functions](#Function-Definition) (services) that need to be called during workflow execution. 
-* Set of [events](#Event-Definition) that need to be consumed to start workflow instances or trigger functions, or produced during workflow execution.
-* Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the control flow logic, manage data, and can reference defined functions and events.
+* Set of [events](#Event-Definition) that need to be consumed to start workflow instances or trigger functions, or be produced during workflow execution.
+* Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the workflow control flow logic, manage data, and can reference defined functions and events.
 
-The model defines a declarative language that can be used to define small or complex workflow orchestrations.
+The defined workflow model is a declarative language that can be used to model small or complex orchestrations
+for event-driven, serverless applications.
 
-### Workflow Expressions
+### Workflow Data
 
-Different parts of the workflow definition such as [transitions](#Transition-Definition), [retries](#Retry-Definition), [errors](#Error-Definition), 
-etc include "expression" parameters. 
-These parameters define expressions that have to be evaluated against state or error data.
+Serverless Workflow data is represented in [JSON](https://www.json.org/json-en.html) format.
+Data flow during workflow execution can be divided into:
 
-Many different expression langauges exist and runtime implementations may decide to implement some that may not 
-be available under other runtimes. As mentioned above, one of the main goals of this specification is portability. As such,
-we feel that defining a single expression language to be used is very important, even if it lowers possible adoption 
-because it enhances the portability of the specification. 
+- [Workfow data input](#Workflow-data-input)
+- [Event data](#Event-data)
+- [Action data](#Action-data)
+- [Information passing between states](#Information-passing-Between-States)
+- [State information filtering](#State-information-filtering)
+- [Workflow data output](#Workflow-data-output)
 
-After looking at many different expression languages, we decided to make the [Common Expression Language (CEL)](https://opensource.google/projects/cel)
-the expression language of choice for the Serverless Workflow specification. Using CEL should be part of 
-the conformance to the specification. You can find the CEL language definitions information [here](https://github.com/google/cel-spec/blob/master/doc/langdef.md).
+### Workflow Data Expressions
+
+Workflow model parameters may use expressions to access the JSON data. 
+Note that different data filters play a big role as to which parts of the state data is queried against. Reference the 
+[State Information Filtering](#State-Information-Filtering) section for more information.
+
+All expressions must follow the [JsonPath](https://github.com/json-path/JsonPath) format and can be evaluated with a JsonPath expression evaluator. 
+JsonPath expressions can traverse the workflow JSON data. 
+
+All expressions are written inside double braces:
+
+```text
+{{ expression }}
+```
+
+Expressions should be resolved and the result returned exactly where the expression is written.
+
+To show some expression examples, let's say that we have the following JSON data:
+
+```json
+{
+  "firstName": "John",
+  "lastName" : "Doe",
+  "age"      : 26,
+  "address"  : {
+    "streetAddress": "Naist street",
+    "city"         : "Nara",
+    "postalCode"   : "630-0192"
+  },
+  "phoneNumbers": [
+    {
+      "type"  : "iPhone",
+      "number": "0123-4567-8888"
+    },
+    {
+      "type"  : "home",
+      "number": "0123-4567-8910"
+    }
+  ]
+}
+```
+
+We can use an expression inside a string type parameter, for example:
+
+```json
+{
+    "paramName": "Hello {{ $.firstName }} {{ $.lastName }}"
+}
+```
+
+would set the value of 'paramName' to 'Hello John Doe'.
+
+Expressions can also be used to select a portion of the JSON data, this is in particularly useful for data filters. For example:
+
+```json
+{
+   "stateDataFilter": {
+       "dataOutputPath": "{{ $.phoneNumbers }}"
+   }
+}
+```
+
+Would set the data output of the particular state to:
+
+```json
+[
+   {
+      "type" : "iPhone",
+      "number" : "0123-4567-8888"
+   },
+   {
+      "type" : "home",
+      "number" : "0123-4567-8910"
+   }
+]
+```
+
+Some parameters require an expression to resolve to a boolean (true / false). In this case JsonPath expressions can also be used.
+The expression should evaluate to true, if the result contains a subset of the JSON data, and false if it is empty. For example:
+
+```json
+{
+   "isAdult" : "{{ $.[?(@.age  > 18)] }}"
+}
+```
+
+would set the value if 'isAdult' to true, as the expression returns a non-empty subset of the JSON data. Similarly 
+
+```json
+{
+   "isChild" : "{{ $.[?(@.age  < 18)] }}"
+}
+```
+
+would return false as the result of the JsonPath expression is empty.
+
+JsonPath also includes a limited set of built-in functions that can be used inside expressions. For example the expression
+
+```json
+{
+   "phoneNums" : "{{ $.phoneNumbers.length() }}"
+}
+```
+
+would set the value of 'phoneNums' to '2'.
+
+As previously mentioned, expressions are evaluated against the subset of data that can see. For example 
+the 'parameters' param of the [functionRef definition](#FunctionRef-Definition) can evaluate expressions 
+only against the data that is available to the [action](#Action-Definition) it belongs to.
+One thing to note here are the top-level [workflow definition](#Workflow-Definition) parameters. Expressions defined
+in them can only be evaluated against the initial [workflow data input](#Workflow-Data-Input) JSON.
+For example let's say that we have a workflow data input of:
+
+```json
+{
+   "inputVersion" : "1.0.0"
+}
+```
+
+we can then define a workflow definition:
+
+```json
+{
+   "id": "MySampleWorkflow",
+   "name": "Sample Workflow",
+   "version": "{{ $.inputVersion }}"
+}
+```
+
+which would set the workflow version to '1.0.0'.
 
 ### Workflow Definition
 
@@ -244,7 +380,7 @@ Following figure describes the main workflow definition blocks.
    "resource": "https://hellworldservice.test.com:8443/api/hellofunction",
    "type": "REST",
    "metadata": {
-      "authToken": "$.token"
+      "authToken": "{{ $.token }}"
    }
 }
 ```
@@ -257,7 +393,7 @@ name: HelloWorldFunction
 resource: https://hellworldservice.test.com:8443/api/hellofunction
 type: REST
 metadata:
-  authToken: "$.token"
+  authToken: "{{ $.token }}"
 ```
 
 </td>
@@ -609,7 +745,7 @@ The following is a detailed description of each of the defined states.
             "functionRef": {
                 "refName": "sendTylenolOrder",
                 "parameters": {
-                    "patientid": "$.patientId"
+                    "patientid": "{{ $.patientId }}"
                 }
             }
         }]
@@ -620,7 +756,7 @@ The following is a detailed description of each of the defined states.
             "functionRef": {
                 "refName": "callNurse",
                 "parameters": {
-                    "patientid": "$.patientId"
+                    "patientid": "{{ $.patientId }}"
                 }
             }
         }]
@@ -631,7 +767,7 @@ The following is a detailed description of each of the defined states.
             "functionRef": {
                 "refName": "callPulmonologist",
                 "parameters": {
-                    "patientid": "$.patientId"
+                    "patientid": "{{ $.patientId }}"
                 }
             }
         }]
@@ -659,21 +795,21 @@ eventsActions:
   - functionRef:
       refName: sendTylenolOrder
       parameters:
-        patientid: "$.patientId"
+        patientid: "{{ $.patientId }}"
 - eventRefs:
   - HighBloodPressure
   actions:
   - functionRef:
       refName: callNurse
       parameters:
-        patientid: "$.patientId"
+        patientid: "{{ $.patientId }}"
 - eventRefs:
   - HighRespirationRate
   actions:
   - functionRef:
       refName: callPulmonologist
       parameters:
-        patientid: "$.patientId"
+        patientid: "{{ $.patientId }}"
 end:
   kind: terminate
 ```
@@ -740,7 +876,7 @@ have not been received during this time, the state should transition to the next
         "functionRef": {
             "refName": "sendTylenolOrder",
             "parameters": {
-                "patientid": "$.patientId"
+                "patientid": "{{ $.patientId }}"
             }
         }
     }]
@@ -757,7 +893,7 @@ actions:
 - functionRef:
     refName: sendTylenolOrder
     parameters:
-      patientid: "$.patientId"
+      patientid: "{{ $.patientId }}"
 ```
 
 </td>
@@ -852,7 +988,7 @@ instance in case it is an end state without performing any actions.
     "functionRef": {
         "refName": "finalizeApplicationFunction",
         "parameters": {
-            "student": "$.applicantId"
+            "student": "{{ $.applicantId }}"
         }
     },
     "timeout": "PT15M"
@@ -867,7 +1003,7 @@ name: Finalize Application Action
 functionRef:
   refName: finalizeApplicationFunction
   parameters:
-    student: "$.applicantId"
+    student: "{{ $.applicantId }}"
 timeout: PT15M
 ```
 
@@ -918,7 +1054,7 @@ the workflow execution in case it is an end state.
 {
     "refName": "finalizeApplicationFunction",
     "parameters": {
-        "student": "$.applicantId"
+        "student": "{{ $.applicantId }}"
     }
 }
 ```
@@ -929,7 +1065,7 @@ the workflow execution in case it is an end state.
 ```yaml
 refName: finalizeApplicationFunction
 parameters:
-  student: "$.applicantId"
+  student: "{{ $.applicantId }}"
 ```
 
 </td>
@@ -965,7 +1101,7 @@ function. They can include either static values or reference the states data inp
 {
    "eventRef": {
       "triggerEventRef": "MakeVetAppointment",
-      "data": "$.patientInfo",
+      "data": "{{ $.patientInfo }}",
       "resultEventRef":  "VetAppointmentInfo"
    }
 }
@@ -977,7 +1113,7 @@ function. They can include either static values or reference the states data inp
 ```yaml
 eventRef:
   triggerEventRef: MakeVetAppointment
-  data: "$.patientInfo"
+  data: "{{ $.patientInfo }}"
   resultEventRef: VetAppointmentInfo
 ```
 
@@ -1002,7 +1138,7 @@ see the [Workflow Error Handling section](#Workflow-Error-Handling).
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| expression | Common Expression Language (CEL) expression. Should be evaluated against error data. Must evaluate to true. | string | yes |
+| expression | JsonPath expression. Should be evaluated against error data. True if expression result is not empty | string | yes |
 | [errorDataFilter](#error-data-filter) | Error data filter definition | object | yes |
 | [transition](#Transitions) | Next transition of the workflow when 'expression' is true | object | yes |
 
@@ -1019,9 +1155,9 @@ see the [Workflow Error Handling section](#Workflow-Error-Handling).
 
 ```json
 {
-   "expression": "$.exception != null",
+   "expression": "{{ $.exceptions }}",
    "errorDataFilter": {
-     "dataOutputPath": "$.exception"
+     "dataOutputPath": "{{ $.exceptions[0] }}"
    },
    "transition": {
      "nextState": "SubmitError"
@@ -1033,9 +1169,9 @@ see the [Workflow Error Handling section](#Workflow-Error-Handling).
 <td valign="top">
 
 ```yaml
-expression: "$.exception != null"
+expression: "{{ $.exceptions }}"
 errorDataFilter:
-  dataOutputPath: "$.exception"
+  dataOutputPath: "{{ $.exceptions[0] }}"
 transition:
   nextState: SubmitError
 ```
@@ -1050,7 +1186,7 @@ transition:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| expression | Common Expression Language (CEL) expression. Should be evaluated against state data. Must evaluate to true for retry to execute. | string | yes |
+| expression | JsonPath expression. Should be evaluated against state data. True if the expression result is not empty. | string | yes |
 | interval | Interval value for retry (ISO 8601 repeatable format). For example: "R5/PT15M" (Starting from now repeat 5 times with 15 minute intervals)| string | no |
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
 | maxAttempts | Maximum number of retry attempts (1 by default). Value of 0 means no retries are performed | integer | no |
@@ -1068,7 +1204,7 @@ transition:
 
 ```json
 {
-   "expression": "$.error.name == 'FunctionError'",
+   "expression": "{{ $.errors[?(@.name == 'FunctionError')] }}",
    "interval": "PT2M",
    "maxAttempts": 3
 }
@@ -1078,7 +1214,7 @@ transition:
 <td valign="top">
 
 ```yaml
-expression: "$.error.name == 'FunctionError'"
+expression: "{{ $.errors[?(@.name == 'FunctionError')] }}"
 interval: PT2M
 maxAttempts: 3
 ```
@@ -1089,9 +1225,10 @@ maxAttempts: 3
 
 </details>
 
-Defines the state retry policy. The "expression" parameter is a [Common Expression Language (CEL)](https://opensource.google/projects/cel) expression that can be evaluated against state data.
+Defines the state retry policy. 
+The "expression" parameter is a JsonPath expression that is evaluated against state data.
 This assures that both execution errors as well as actions error results can be used during evaluation.
-The expression must evaluate to true for the retry definition to execute.
+The expression must evaluate return a result in order to be true.
 
 The "interval" parameter specifies the retry interval (in ISO 8601 repeatable format). For example, "R5/PT1M" would mean repeat 5 times with 1 minute intervals before each retry.
 
@@ -1117,7 +1254,7 @@ For more information, refer to the [Workflow Error Handling - Retrying](#workflo
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| expression | Common Expression Language (CEL) expression. Must evaluate to true for the transition to be valid | string | no |
+| expression | JsonPath expression. Must return a result for the transition to be valid | string | no |
 | [produceEvent](#ProduceEvent-Definition) | Event to be produced when this transition happens | object | no |
 | [nextState](#Transitions) | State to transition to next | string | yes |
 
@@ -1134,10 +1271,10 @@ For more information, refer to the [Workflow Error Handling - Retrying](#workflo
 
 ```json
 {
-   "expression": "$.result != null",
+   "expression": "{{ $.result }}",
    "produceEvent": {
        "eventRef": "produceResultEvent",
-       "data": "$.result"
+       "data": "{{ $.result.data }}"
    },
    "nextState": "EvalResultState"
 }
@@ -1147,10 +1284,10 @@ For more information, refer to the [Workflow Error Handling - Retrying](#workflo
 <td valign="top">
 
 ```yaml
-expression: "$.result != null"
+expression: "{{ $.result }}"
 produceEvent:
   eventRef: produceResultEvent
-  data: "$.result"
+  data: "{{ $.result.data }}"
 nextState: EvalResultState
 ```
 
@@ -1203,7 +1340,7 @@ Defines a transition from point A to point B in the serverless workflow. For mor
             "functionRef": {
                 "refName": "sendRejectionEmailFunction",
                 "parameters": {
-                    "applicant": "$.customer"
+                    "applicant": "{{ $.customer }}"
                 }
             }
         }
@@ -1225,7 +1362,7 @@ actions:
 - functionRef:
     refName: sendRejectionEmailFunction
     parameters:
-      applicant: "$.customer"
+      applicant: "{{ $.customer }}"
 end:
   kind: default
 ```
@@ -1342,7 +1479,7 @@ Switch states cannot be workflow ending states.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| path | JSONPath expression that selects elements of state data | string | yes |
+| path | JsonPath expression that selects elements of state data | string | yes |
 | value | Matching value | string | yes |
 | operator | Condition operator | string | yes |
 | [transition](#Transitions) | Next transition of the workflow if condition is matched | object | yes |
@@ -1361,7 +1498,7 @@ Switch states cannot be workflow ending states.
 
 ```json
 {
-      "path": "$.applicant.age",
+      "path": "{{ $.applicant.age }}",
       "value": "18",
       "operator": "greaterthanorequals",
       "transition": {
@@ -1374,7 +1511,7 @@ Switch states cannot be workflow ending states.
 <td valign="top">
 
 ```yaml
-path: "$.applicant.age"
+path: "{{ $.applicant.age }}"
 value: '18'
 operator: greaterthanorequals
 transition:
@@ -1389,7 +1526,7 @@ transition:
 
 Switch state data conditions specify a data-based condition statement, which causes a transition to another 
 workflow state if evaluated to true.
-The "path" property of the condition defines a JSONPath expression (e.g., "$.person.name"), which selects
+The "path" property of the condition defines a JsonPath expression (e.g., "{{ $.person.name }}"), which selects
 parts of the state data input.
 The "value" property defines the matching value of this condition (e.g., "John", or "10", or "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b").
 The "operator" property defines how the path should be matched with the defined value. If the operator
@@ -1756,7 +1893,7 @@ Parallel state and can be handled with the Parallel states "onError" definition.
       ],
       "onError": [
         {
-          "expression": "$.error != null",
+          "expression": "{{ $.errors }}",
           "transition": {
             "nextState": "exceptionHandlingState"
           }
@@ -1771,7 +1908,7 @@ Parallel state and can be handled with the Parallel states "onError" definition.
       "type":"operation",
       "actionMode": "sequential",
       "actions": [
-
+         ...
       ],
       "end": {
         "kind":"default"
@@ -1827,7 +1964,7 @@ In this case the exceptions can be handled by the states and they will not be pr
               ],
               "onError": [
                 {
-                  "expression": "$.error != null",
+                  "expression": "{{ $.errors }}",
                   "transition": {
                     "nextState": "errorHandlingBranchState"
                   }
@@ -2118,7 +2255,7 @@ You can also use the filter property to filter the state data after data is inje
         ]
      },
      "stateDataFilter": {
-        "dataOutputPath": "$.people[?(@.age < 40)]"
+        "dataOutputPath": "{{ $.people[?(@.age < 40)] }}"
      },
      "transition": {
         "nextState": "GreetPersonState"
@@ -2147,7 +2284,7 @@ You can also use the filter property to filter the state data after data is inje
       address: 1234 SomeStreet
       age: 30
   stateDataFilter:
-    dataOutputPath: "$.people[?(@.age < 40)]"
+    dataOutputPath: "{{ $.people[?(@.age < 40)] }}"
   transition:
     nextState: GreetPersonState
 ```
@@ -2172,9 +2309,9 @@ This allows you to test if your workflow behaves properly for cases when there a
 | id | Unique state id | string | no |
 | name | State name | string | yes |
 | type | State type | string | yes |
-| inputCollection | JSONPath expression selecting an JSON array element of the states data input | string | yes |
-| outputCollection | JSONPath expression specifying where in the states data output to place the final data output of each iteration of the executed states | string | no |
-| inputParameter | JSONPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with an unique element of the inputCollection array | string | yes |
+| inputCollection | JsonPath expression selecting an JSON array element of the states data input | string | yes |
+| outputCollection | JsonPath expression specifying where in the states data output to place the final data output of each iteration of the executed states | string | no |
+| inputParameter | JsonPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with an unique element of the inputCollection array | string | yes |
 | max | Specifies how upper bound on how many iterations may run in parallel | integer | no |
 | timeDelay | Amount of time (ISO 8601 format) to wait between each iteration | string | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if states are not defined |
@@ -2207,9 +2344,9 @@ This allows you to test if your workflow behaves properly for cases when there a
     "start": {
        "kind": "default"
     },
-    "inputCollection": "$.orders",
-    "inputParameter": "$.singleorder",
-    "outputCollection": "$.results",
+    "inputCollection": "{{ $.orders }}",
+    "inputParameter": "{{ $.singleorder }}",
+    "outputCollection": "{{ $.results }}",
     "states": [
     {
         "name": "DoProvision",
@@ -2223,7 +2360,7 @@ This allows you to test if your workflow behaves properly for cases when there a
             "functionRef": {
                 "refName": "provisionOrderFunction",
                 "parameters": {
-                    "order": "$.order"
+                    "order": "{{ $.order }}"
                 }
             }
         }
@@ -2234,13 +2371,13 @@ This allows you to test if your workflow behaves properly for cases when there a
     }
     ],
     "stateDataFilter": {
-        "dataOutputPath": "$.provisionedOrders"
+        "dataOutputPath": "{{ $.provisionedOrders }}"
     },
     "end": {
         "kind": "event",
         "produceEvent": {
             "eventRef": "provisioningCompleteEvent",
-            "data": "$.provisionedOrders"
+            "data": "{{ $.provisionedOrders }}"
         }
     }
 }
@@ -2254,9 +2391,9 @@ name: ProvisionOrdersState
 type: foreach
 start:
   kind: default
-inputCollection: "$.orders"
-inputParameter: "$.singleorder"
-outputCollection: "$.results"
+inputCollection: "{{ $.orders }}"
+inputParameter: "{{ $.singleorder }}"
+outputCollection: "{{ $.results }}"
 states:
 - name: DoProvision
   type: operation
@@ -2267,16 +2404,16 @@ states:
   - functionRef:
       refName: provisionOrderFunction
       parameters:
-        order: "$.order"
+        order: "{{ $.order }}"
   end:
     kind: default
 stateDataFilter:
-  dataOutputPath: "$.provisionedOrders"
+  dataOutputPath: "{{ $.provisionedOrders }}"
 end:
   kind: event
   produceEvent:
     eventRef: provisioningCompleteEvent
-    data: "$.provisionedOrders"
+    data: "{{ $.provisionedOrders }}"
 ```
 
 </td>
@@ -2349,8 +2486,8 @@ and the state is defined as:
   {
    "name":"SendConfirmationForEachCompletedhOrder",
    "type":"foreach",
-   "inputCollection": "$.orders[?(@.completed == true)]",
-   "inputParameter": "$.completedorder",
+   "inputCollection": "{{ $.orders[?(@.completed == true)] }}",
+   "inputParameter": "{{ $.completedorder }}",
    "states": [
       {  
       "start": {
@@ -2364,8 +2501,8 @@ and the state is defined as:
        "functionRef": {
          "refName": "sendConfirmationFunction",
          "parameters": {
-           "orderNumber": "$.completedorder.orderNumber",
-           "email": "$.completedorder.email"
+           "orderNumber": "{{ $.completedorder.orderNumber }}",
+           "email": "{{ $.completedorder.email }}"
          }
        }
     }],
@@ -2392,8 +2529,8 @@ functions:
 states:
 - name: SendConfirmationForEachCompletedhOrder
   type: foreach
-  inputCollection: "$.orders[?(@.completed == true)]"
-  inputParameter: "$.completedorder"
+  inputCollection: "{{ $.orders[?(@.completed == true)] }}"
+  inputParameter: "{{ $.completedorder }}"
   states:
   - start:
       kind: default
@@ -2404,8 +2541,8 @@ states:
     - functionRef:
         refName: sendConfirmationFunction
         parameters:
-          orderNumber: "$.completedorder.orderNumber"
-          email: "$.completedorder.email"
+          orderNumber: "{{ $.completedorder.orderNumber }}"
+          email: "{{ $.completedorder.email }}"
     end:
       kind: default
   end:
@@ -2510,15 +2647,15 @@ each iteration with control flow logic (states) but only need one or more action
   {
    "name":"SendConfirmationForEachCompletedhOrder",
    "type":"foreach",
-   "inputCollection": "$.orders[?(@.completed == true)]",
-   "inputParameter": "$.completedorder",
+   "inputCollection": "{{ $.orders[?(@.completed == true)] }}",
+   "inputParameter": "{{ $.completedorder }}",
     "actions":[  
       {  
        "functionRef": {
          "refName": "sendConfirmationFunction",
          "parameters": {
-           "orderNumber": "$.completedorder.orderNumber",
-           "email": "$.completedorder.email"
+           "orderNumber": "{{ $.completedorder.orderNumber }}",
+           "email": "{{ $.completedorder.email }}"
          }
        }
     }],
@@ -2540,14 +2677,14 @@ functions:
 states:
 - name: SendConfirmationForEachCompletedhOrder
   type: foreach
-  inputCollection: "$.orders[?(@.completed == true)]"
-  inputParameter: "$.completedorder"
+  inputCollection: "{{ $.orders[?(@.completed == true)] }}"
+  inputParameter: "{{ $.completedorder }}"
   actions:
   - functionRef:
       refName: sendConfirmationFunction
       parameters:
-        orderNumber: "$.completedorder.orderNumber"
-        email: "$.completedorder.email"
+        orderNumber: "{{ $.completedorder.orderNumber }}"
+        email: "{{ $.completedorder.email }}"
   end:
     kind: default
 ```
@@ -2599,7 +2736,7 @@ states:
             "functionRef": {
                 "refName": "callCreditCheckMicroservice",
                 "parameters": {
-                    "customer": "$.customer"
+                    "customer": "{{ $.customer }}"
                 }
             }
         },
@@ -2623,7 +2760,7 @@ action:
   functionRef:
     refName: callCreditCheckMicroservice
     parameters:
-      customer: "$.customer"
+      customer: "{{ $.customer }}"
 eventRef: CreditCheckCompletedEvent
 timeout: PT15M
 transition:
@@ -2842,7 +2979,7 @@ The "directInvoke" property defines if workflow instances are allowed to be crea
     "kind": "event",
     "produceEvent": {
         "eventRef": "provisioningCompleteEvent",
-        "data": "$.provisionedOrders"
+        "data": "{{ $.provisionedOrders }}"
     }
 }
 ```
@@ -2854,7 +2991,7 @@ The "directInvoke" property defines if workflow instances are allowed to be crea
 kind: event
 produceEvent:
   eventRef: provisioningCompleteEvent
-  data: "$.provisionedOrders"
+  data: "{{ $.provisionedOrders }}"
 ```
 
 </td>
@@ -2894,9 +3031,9 @@ are completed. If a terminate end is reached inside a ForEach, Parallel, or SubF
 ```json
 {
     "eventRef": "provisioningCompleteEvent",
-    "data": "$.provisionedOrders",
+    "data": "{{ $.provisionedOrders }}",
     "contextAttributes": [{
-         "buyerId": "$.buyerId"
+         "buyerId": "{{ $.buyerId }}"
      }]
  }
 ```
@@ -2906,9 +3043,9 @@ are completed. If a terminate end is reached inside a ForEach, Parallel, or SubF
 
 ```yaml
 eventRef: provisioningCompleteEvent
-data: "$.provisionedOrders"
+data: "{{ $.provisionedOrders }}"
 contextAttributes:
-- buyerId: "$.buyerId"
+- buyerId: "{{ $.buyerId }}"
 ```
 
 </td>
@@ -2962,8 +3099,9 @@ It also allows you to select part of states data to be sent as the event payload
 In addition to specifying the "nextState" property a transition also defines a boolean expression which must
 evaluate to true for the transition to happen. Having this data-based restriction capabilities can help
  stop transitions within workflow execution that can have serious and harmful business impacts.
-The expression is a [Common Expression Language (CEL)](https://opensource.google/projects/cel) expression and is evaluated 
-against state data output.
+
+The expression parameter is a JsonPath expression and is evaluated 
+against state data output. It evaluates to true if the expression returns non empty results.
 
 Here is an example of a restricted transition which only allows transition to the "highRiskState" if the
 output of the state to transition from includes an user with the title "MANAGER".
@@ -3005,7 +3143,7 @@ output of the state to transition from includes an user with the title "MANAGER"
     ],
     "transition": {
       "nextState":"highRiskState",
-      "expression": "$.user.title == 'MANAGER'"
+      "expression": "{{ $.users[?(@.title == 'MANAGER')] }}"
     }
   },
   {  
@@ -3047,7 +3185,7 @@ states:
       refName: doLowRistOperationFunction
   transition:
     nextState: highRiskState
-    expression: "$.user.title == 'MANAGER'"
+    expression: "{{ $.users[?(@.title == 'MANAGER')] }}"
 - name: highRiskState
   type: operation
   end:
@@ -3065,18 +3203,6 @@ states:
 Implementers should decide how to handle data-based transitions that return false (do not proceed).
 The default should be that if this happens workflow execution should halt and a detailed message
  on why the transition failed should be provided.
-
-### Workflow Data
-
-Serverless Workflow data is represented in [JSON](https://www.json.org/json-en.html) format.
-Flow of data during workflow execution can be divided into:
-
-- [Workfow data input](#Workflow-data-input)
-- [Event data](#Event-data)
-- [Action data](#Action-data)
-- [Information passing between states](#Information-passing-Between-States)
-- [State information filtering](#State-information-filtering)
-- [Workflow data output](#Workflow-data-output)
 
 #### Workflow Data Input
 
@@ -3115,8 +3241,9 @@ Similarly for Callback states, the callback event data is merged with the data i
 
 #### Action Data
 
-[Event](#Event-State), [Callback](#Callback-State), and [Operation](#Operation-State) states can execute [actions](#Action-Definition). Actions can invoke different services (functions). Functions can return results that may be needed to make
-further orchestration decisions. Results data from function invocations is merged with the state data.
+[Event](#Event-State), [Callback](#Callback-State), and [Operation](#Operation-State) states can execute [actions](#Action-Definition). 
+Actions can invoke different services (functions). Functions can return results that may be needed to make
+further orchestration decisions. Function results are merged with the state data.
 
 <p align="center">
 <img src="media/spec/actionsdatamerged.png" height="350px" alt="Actions data merged with state data"/>
@@ -3145,7 +3272,7 @@ decide to strictly enforce it.
 #### State Information Filtering
 
 States can access and manipulate data via data filters. Since all data during workflow execution is described
-in [JSON](https://tools.ietf.org/html/rfc7159) format, data filters use [JSONPath](https://github.com/json-path/JsonPath) queries
+in [JSON](https://tools.ietf.org/html/rfc7159) format, data filters use [JsonPath](https://github.com/json-path/JsonPath) queries
 to do data manipulation/selection.
 
 There are several types of data filters defined:
@@ -3163,8 +3290,8 @@ actions they perform.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataInputPath | JSONPath definition that selects parts of the states data input | string | no |
-| dataOutputPath | JSONPath definition that selects parts of the states data output | string | no |
+| dataInputPath | JsonPath definition that selects parts of the states data input | string | no |
+| dataOutputPath | JsonPath definition that selects parts of the states data output | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3179,8 +3306,8 @@ actions they perform.
 
 ```json
 {
-    "dataInputPath": "$.orders",
-    "dataOutputPath": "$.provisionedOrders"
+    "dataInputPath": "{{ $.orders }}",
+    "dataOutputPath": "{{ $.provisionedOrders }}"
 }
 ```
 
@@ -3188,8 +3315,8 @@ actions they perform.
 <td valign="top">
 
 ```yaml
-dataInputPath: "$.orders"
-dataOutputPath: "$.provisionedOrders"
+dataInputPath: "{{ $.orders }}"
+dataOutputPath: "{{ $.provisionedOrders }}"
 ```
 
 </td>
@@ -3234,7 +3361,7 @@ we can define a state filter:
   "name": "FruitsOnlyState",
   "type": "inject",
   "stateDataFilter": {
-    "dataInputPath": "$.fruits"
+    "dataInputPath": "{{ $.fruits }}"
   },
   "transition": {
      "nextState": "someNextState"
@@ -3258,8 +3385,8 @@ The first way would be to use both "dataInputPath", and "dataOutputPath":
   "name": "VegetablesOnlyState",
   "type": "inject",
   "stateDataFilter": {
-    "dataInputPath": "$.vegetables",
-    "dataOutputPath": "$.[?(@.veggieLike)]"
+    "dataInputPath": "{{ $.vegetables }}",
+    "dataOutputPath": "{{ $.[?(@.veggieLike)] }}"
   },
   "transition": {
      "nextState": "someNextState"
@@ -3281,7 +3408,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
   "name": "VegetablesOnlyState",
   "type": "inject",
   "stateDataFilter": {
-    "dataInputPath": "$.vegetables.[?(@.veggieLike)]"
+    "dataInputPath": "{{ $.vegetables.[?(@.veggieLike)] }}"
   },
   "transition": {
      "nextState": "someNextState"
@@ -3293,8 +3420,8 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataInputPath | JSONPath definition that selects parts of the states data input to be the action data | string | no |
-| dataResultsPath | JSONPath definition that selects parts of the actions data result, to be merged with the states data | string | no |
+| dataInputPath | JsonPath definition that selects parts of the states data input to be the action data | string | no |
+| dataResultsPath | JsonPath definition that selects parts of the actions data result, to be merged with the states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3309,8 +3436,8 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 
 ```json
 {
-  "dataInputPath": "$.language", 
-  "dataResultsPath": "$.payload.greeting"
+  "dataInputPath": "{{ $.language }}", 
+  "dataResultsPath": "{{ $.payload.greeting }}"
 }
 ```
 
@@ -3318,8 +3445,8 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 <td valign="top">
 
 ```yaml
-dataInputPath: "$.language"
-dataResultsPath: "$.payload.greeting"
+dataInputPath: "{{ $.language }} "
+dataResultsPath: "{{ $.payload.greeting }}"
 ```
 
 </td>
@@ -3345,7 +3472,7 @@ To give an example, let's say we have an action which returns a list of breads a
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataOutputPath | JSONPath definition that selects parts of the event data, to be merged with the states data | string | no |
+| dataOutputPath | JsonPath definition that selects parts of the event data, to be merged with the states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3360,7 +3487,7 @@ To give an example, let's say we have an action which returns a list of breads a
 
 ```json
 {
-    "dataOutputPath": "$.data.results"
+    "dataOutputPath": "{{ $.data.results }}"
 }
 ```
 
@@ -3368,7 +3495,7 @@ To give an example, let's say we have an action which returns a list of breads a
 <td valign="top">
 
 ```yaml
-dataOutputPath: "$.data.results"
+dataOutputPath: "{{ $.data.results }}"
 ```
 
 </td>
@@ -3395,7 +3522,7 @@ an event filter.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataOutputPath | JSONPath definition that selects parts of the error data, to be merged with the states data | string | no |
+| dataOutputPath | JsonPath definition that selects parts of the error data, to be merged with the states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3410,7 +3537,7 @@ an event filter.
 
 ```json
 {
-  "dataOutputPath": "$.exception"
+  "dataOutputPath": "{{ $.exception }}"
 }
 ```
 
@@ -3418,7 +3545,7 @@ an event filter.
 <td valign="top">
 
 ```yaml
-dataOutputPath: "$.exception"
+dataOutputPath: "{{ $.exception }}"
 ```
 
 </td>
@@ -3467,27 +3594,27 @@ and then lets us know how to greet this customer in different languages. We coul
             "eventsActions": [{
                 "eventRefs": ["CustomerArrivesEvent"],
                 "eventDataFilter": {
-                    "dataInputPath": "$.customer"
+                    "dataInputPath": "{{ $.customer }}"
                 },
                 "actions":[
                     {
                         "functionRef": {
                             "refName": "greetingFunction",
                             "parameters": {
-                                "greeting": "$.languageGreetings.spanish",
-                                "customerName": "$.customer.name"
+                                "greeting": "{{ $.languageGreetings.spanish }} ",
+                                "customerName": "{{ $.customer.name }} "
                             }
                         },
                         "actionDataFilter": {
-                            "dataInputPath": "$.",
-                            "dataResultsPath": "$.finalCustomerGreeting"
+                            "dataInputPath": " {{ $ }}",
+                            "dataResultsPath": "{{ $.finalCustomerGreeting }}"
                         }
                     }
                 ]
             }],
             "stateDataFilter": {
-                "dataInputPath": "$.hello",
-                "dataOutputPath": "$.finalCustomerGreeting"
+                "dataInputPath": "{{ $.hello }} ",
+                "dataOutputPath": "{{ $.finalCustomerGreeting }}"
             },
             "end": {
               "kind": "default"
@@ -3679,13 +3806,13 @@ Let's take a look an an example "onError" definition inside a state:
 {
 "onError": [
   {
-    "expression": "$.name == 'FunctionExecutionError'",
+    "expression": "{{ $.errors[?(@.name == 'FunctionExecutionError')] }}",
     "transition": {
       "nextState": "afterFunctionErrorState"
     }
   },
   {
-    "expression": "$.name != 'FunctionExecutionError'",
+    "expression": "{{ $.errors[?(@.name != 'FunctionExecutionError')] }}",
     "transition": {
       "nextState": "afterAnyOtherErrorState"
     }
@@ -3699,10 +3826,10 @@ Let's take a look an an example "onError" definition inside a state:
 
 ```yaml
 onError:
-- expression: "$.name == 'FunctionExecutionError'"
+- expression: "{{ $.errors[?(@.name == 'FunctionExecutionError')] }}"
   transition:
     nextState: afterFunctionErrorState
-- expression: "$.name != 'FunctionExecutionError'"
+- expression: "{{ $.errors[?(@.name != 'FunctionExecutionError')] }}"
   transition:
     nextState: afterAnyOtherErrorState
 ```
@@ -3736,12 +3863,12 @@ Let's take a look at a retry definition:
 {
 "retry": [
   {
-    "expression": "$.error.name == 'FunctionExecutionError'",
+    "expression": "{{ $.errors[?(@.name == 'FunctionExecutionError')] }}",
     "maxAttempts": 3,
     "interval": "PT2M"
   },
   {
-    "expression": "$.error.name != 'FunctionExecutionError'",
+    "expression": "{{ $.errors[?(@.name != 'FunctionExecutionError')] }}",
     "maxAttempts": 0
   }
 ]
@@ -3753,10 +3880,10 @@ Let's take a look at a retry definition:
 
 ```yaml
 retry:
-- expression: "$.error.name == 'FunctionExecutionError'"
+- expression: "{{ $.errors[?(@.name == 'FunctionExecutionError')] }}"
   maxAttempts: 3
   interval: PT2M
-- expression: "$.error.name != 'FunctionExecutionError'"
+- expression: "{{ $.errors[?(@.name != 'FunctionExecutionError')] }}"
   maxAttempts: 0
 ```
 
@@ -3783,25 +3910,25 @@ You can combine retry and onError definitions to define powerful error handling 
 {
 "retry": [
   {
-    "expression": "$.error.name == 'FunctionExecutionError'",
+    "expression": "{{ $.errors[?(@.name == 'FunctionExecutionError')] }}",
     "maxAttempts": 3,
     "interval": "PT2M"
   },
   {
-    "expression": "$.error.name != 'FunctionExecutionError'",
+    "expression": "{{ $.errors[?(@.name != 'FunctionExecutionError')] }}",
     "maxAttempts": 2,
     "interval": "PT1M"
   }
 ],
 "onError": [
   {
-    "expression": "$.name == 'FunctionExecutionError'",
+    "expression": "{{ $.errors[?(@.name == 'FunctionExecutionError')] }}'",
     "transition": {
       "nextState": "afterFunctionErrorState"
     }
   },
   {
-    "expression": "$.name != 'FunctionExecutionError'",
+    "expression": "{{ $.errors[?(@.name != 'FunctionExecutionError')] }}",
     "transition": {
       "nextState": "afterAnyOtherErrorState"
     }
@@ -3815,17 +3942,17 @@ You can combine retry and onError definitions to define powerful error handling 
 
 ```yaml
 retry:
-- expression: "$.error.name == 'FunctionExecutionError'"
+- expression: "{{ $.errors[?(@.name == 'FunctionExecutionError')] }}"
   maxAttempts: 3
   interval: PT2M
-- expression: "$.error.name != 'FunctionExecutionError'"
+- expression: "{{ $.errors[?(@.name != 'FunctionExecutionError')] }}"
   maxAttempts: 2
   interval: PT1M
 onError:
-- expression: "$.name == 'FunctionExecutionError'"
+- expression: "{{ $.errors[?(@.name == 'FunctionExecutionError')] }}"
   transition:
     nextState: afterFunctionErrorState
-- expression: "$.name != 'FunctionExecutionError'"
+- expression: "{{ $.errors[?(@.name != 'FunctionExecutionError')] }}"
   transition:
     nextState: afterAnyOtherErrorState
 ```

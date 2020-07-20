@@ -181,7 +181,7 @@ states:
   onError:
   - expression:
       language: spel
-      body: "$.exception != null"
+      body: "{{ $.exceptions[0] }}"
     transition:
       nextState: HandleErrorState
   end:
@@ -414,7 +414,7 @@ states:
   - eventRefs:
     - execEvent
     eventDataFilter:
-      dataOutputPath: "$.event"
+      dataOutputPath: "{{ $.event }}"
     actions:
     - name: eventInfoAction
       functionRef:
@@ -495,18 +495,18 @@ states:
   - eventRefs:
     - execEvent
     eventDataFilter:
-      dataOutputPath: "$.event"
+      dataOutputPath: "{{ $.event }}"
     actions:
     - name: helloAction
       actionDataFilter:
-        dataResultsPath: "$.helloResult"
+        dataResultsPath: "{{ $.helloResult }}"
       functionRef:
         refName: greetingFunction
         parameters:
           message: hello
     - name: worldAction
       actionDataFilter:
-        dataResultsPath: "$.worldResults"
+        dataResultsPath: "{{ $.worldResults }}"
       functionRef:
         refName: greetingAction
         parameters:
@@ -515,8 +515,8 @@ states:
       functionRef:
         refName: storeToFileFunction
         parameters:
-          destination: "$.event.destination"
-          value: "$.helloResult $.worldResults"
+          destination: "{{ $.event.destination }}"
+          value: "{{ $.helloResult }} {{ $.worldResults }}"
   end:
     kind: DEFAULT
 
@@ -585,7 +585,7 @@ states:
     - execEvent
     actions: []
     eventDataFilter:
-      dataOutputPath: "$.execEvent"
+      dataOutputPath: "{{ $.execEvent }}"
   transition:
     nextState: NextEventState
     produceEvent:
@@ -593,17 +593,17 @@ states:
       data:
         type: next
         provider: exec-handler
-        buildID: "$.execEvent.data.buildID"
-        workerID: "$.execEvent.data.workerID"
+        buildID: "{{ $.execEvent.data.buildID }}"
+        workerID: "{{ $.execEvent.data.workerID }}"
         cause:
-          event: "$.execEvent"
+          event: "{{ $.execEvent }}"
 - name: NextEventState
   type: EVENT
   eventsActions:
   - eventRefs:
     - nextEvent
     eventDataFilter:
-      dataOutputPath: "$.nextEvent"
+      dataOutputPath: "{{ $.nextEvent }}"
     actions:
     - name: consoleLogAction
       functionRef:

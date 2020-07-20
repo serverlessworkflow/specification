@@ -111,7 +111,7 @@
       "properties": {
         "expression": {
           "type": "string",
-          "description": "Common Expression Language (CEL) expression. Must evaluate to true for the transition to be valid"
+          "description": "JsonPath expression. Evaluates to true if returns non-empty result"
         },
         "produceEvent": {
           "description": "Reference one of the defined 'produced' events by name and set its payload and context attributes",
@@ -132,7 +132,7 @@
       "properties": {
         "expression": {
           "type": "string",
-          "description": "Common Expression Language (CEL) expression. Should be evaluated against error data. Must evaluate to true."
+          "description": "JsonPath expression. Evaluated against error data. Is true if returns non empty result"
         },
         "errorDataFilter": {
           "$ref": "#/definitions/errordatafilter"
@@ -226,7 +226,7 @@
       "properties": {
         "expression": {
           "type": "string",
-          "description": "Common Expression Language (CEL) expression. Should be evaluated against state data. Must evaluate to true for retry to execute."
+          "description": "JsonPath expression. Evaluated against state data. Is true if returns non empty data"
         },
         "interval": {
           "type": "string",
@@ -1032,7 +1032,7 @@
       "properties": {
         "path": {
           "type": "string",
-          "description": "JSONPath expression that selects elements of state data"
+          "description": "JsonPath expression that selects elements of state data"
         },
         "value": {
           "type": "string",
@@ -1272,15 +1272,15 @@
         },
         "inputCollection": {
           "type": "string",
-          "description": "JSONPath expression selecting a JSON array element of the states data input"
+          "description": "JsonPath expression selecting a JSON array element of the states data input"
         },
         "outputCollection": {
           "type": "string",
-          "description": "JSONPath expression specifying where in the states data output to place the final data output of each iteration of the executed states"
+          "description": "JsonPath expression specifying where in the states data output to place the final data output of each iteration of the executed states"
         },
         "inputParameter": {
           "type": "string",
-          "description": "JSONPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with a unique element of the inputCollection array"
+          "description": "JsonPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with a unique element of the inputCollection array"
         },
         "max": {
           "type": "integer",
@@ -1731,11 +1731,11 @@
       "properties": {
         "dataInputPath": {
           "type": "string",
-          "description": "JSONPath definition that selects parts of the states data input"
+          "description": "JsonPath definition that selects parts of the states data input"
         },
         "dataOutputPath": {
           "type": "string",
-          "description": "JSONPath definition that selects parts of the states data output"
+          "description": "JsonPath definition that selects parts of the states data output"
         }
       },
       "required": []
@@ -1745,7 +1745,7 @@
       "properties": {
         "dataOutputPath": {
           "type": "string",
-          "description": "JSONPath definition that selects parts of the event data, to be merged with the states data"
+          "description": "JsonPath definition that selects parts of the event data, to be merged with the states data"
         }
       },
       "required": []
@@ -1755,11 +1755,11 @@
       "properties": {
         "dataInputPath": {
           "type": "string",
-          "description": "JSONPath definition that selects parts of the states data input to be the action data"
+          "description": "JsonPath definition that selects parts of the states data input to be the action data"
         },
         "dataResultsPath": {
           "type": "string",
-          "description": "JSONPath definition that selects parts of the actions data result, to be merged with the states data"
+          "description": "JsonPath definition that selects parts of the actions data result, to be merged with the states data"
         }
       },
       "required": []
@@ -1769,7 +1769,7 @@
       "properties": {
         "dataOutputPath": {
           "type": "string",
-          "description": "JSONPath definition that selects parts of the error data, to be merged with the states data"
+          "description": "JsonPath definition that selects parts of the error data, to be merged with the states data"
         }
       },
       "required": []
