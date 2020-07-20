@@ -1383,7 +1383,7 @@ Once all actions have been performed, a transition to another state can occur.
 | id | Unique state id | string | no |
 | name | State name | string | yes |
 | type | State type | string | yes |
-| [dataConditions](#switch-state-dataconditions) or [eventConditions](#switch-state-eventconditions)| Defined if the Switch state evaluates conditions and transitions based on state data, or arrival of events. | array | yes (one) |
+| [dataConditions](#switch-state-dataconditions) or [eventConditions](#switch-state-eventconditions) | Defined if the Switch state evaluates conditions and transitions based on state data, or arrival of events. | array | yes (one) |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onError](#Workflow-Error-Handling) | States error handling definitions | array | no |
 | eventTimeout | If eventConditions is used, defines the time period to wait for events (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | yes only if eventConditions is defined |
@@ -1460,18 +1460,18 @@ default:
 
 Switch states can be viewed as workflow gateways: they can direct transitions of a workflow based on certain conditions.
 There are two types of conditions for switch states:
-* Data-based conditions
-* Event-based conditions
+* [Data-based conditions](#switch-state-dataconditions)
+* [Event-based conditions](#switch-state-eventconditions)
 
 These are exclusive, meaning that a switch state can define one or the other condition type, but not both.
 
 In case of data-based conditions definition, switch state controls workflow transitions based on the states data.
 If no defined conditions can be matched, the state transitions based on the defined "default" transition property.
 
-For the case of event-based conditions, switch state acts as a workflow wait state, waiting for one of the defined 
-events to arrive, making a transition depending on that event definition.
-If events defined in event-based conditions do not arrive before the state's "eventTimeout" property expires, 
-the state transitions based on the defined "default" transition property.
+For event-based conditions, switch states acts as a workflow wait states, waiting for one of the defined 
+events to arrive and making a transition depending on the event definition.
+If events defined in event-based conditions do not arrive before the states "eventTimeout" property expires, 
+ state transitions are based on the defined "default" transition property.
 
 Switch states cannot be workflow ending states.
 
@@ -1479,9 +1479,7 @@ Switch states cannot be workflow ending states.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| path | JsonPath expression that selects elements of state data | string | yes |
-| value | Matching value | string | yes |
-| operator | Condition operator | string | yes |
+| condition | JsonPath expression evaluated against state data. True if results are not empty | string | yes |
 | [transition](#Transitions) | Next transition of the workflow if condition is matched | object | yes |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -1498,9 +1496,7 @@ Switch states cannot be workflow ending states.
 
 ```json
 {
-      "path": "{{ $.applicant.age }}",
-      "value": "18",
-      "operator": "greaterthanorequals",
+      "condition": "{{ $.applicants[?(@.age >= 18)] }}",
       "transition": {
         "nextState": "StartApplication"
       }
@@ -1511,9 +1507,7 @@ Switch states cannot be workflow ending states.
 <td valign="top">
 
 ```yaml
-path: "{{ $.applicant.age }}"
-value: '18'
-operator: greaterthanorequals
+condition: "{{ $.applicants[?(@.age >= 18)] }}"
 transition:
   nextState: StartApplication
 ```
@@ -1526,13 +1520,8 @@ transition:
 
 Switch state data conditions specify a data-based condition statement, which causes a transition to another 
 workflow state if evaluated to true.
-The "path" property of the condition defines a JsonPath expression (e.g., "{{ $.person.name }}"), which selects
-parts of the state data input.
-The "value" property defines the matching value of this condition (e.g., "John", or "10", or "\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b").
-The "operator" property defines how the path should be matched with the defined value. If the operator
-is "Custom", the information about the custom operator must be defined via the condition definition's "metadata" property.
-Note that in this case you may run into vendor-specific implementations of the condition, which may not be portable. 
-Therefore, use of one of the operators other than "Custom" are if possible preferred.
+The 'condition' property of the condition defines a JsonPath expression (e.g., '$.applicants[?(@.age >= 18)]'), which selects
+parts of the state data input. The condition is evaluated as "true" if it results a non-empty result.
 
 #### <a name="switch-state-eventconditions"></a>Switch State: Event Conditions
 

@@ -664,14 +664,10 @@ states:
 - name: show-flip-results
   type: switch
   dataConditions:
-  - path: "{{ $.flip.result }}"
-    value: heads
-    operator: equals
+  - condition: "{{ $.flip[?(@.result == 'heads')] }}"
     transition:
       nextState: show-results-heads
-  - path: "{{ $.flip.result }}"
-    value: tails
-    operator: equals
+  - condition: "{{ $.flip[?(@.result == 'tails')] }}"
     transition:
       nextState: show-results-tails
 - name: show-results-heads
@@ -855,14 +851,10 @@ states:
 - name: flip-coin-check
   type: switch
   dataConditions:
-  - path: "{{ $.steps.flip-coin.outputs.result }}"
-    value: tails
-    operator: equals
+  - condition: "{{ $.steps.flip-coin.outputs[?(@.result == 'tails')] }}"
     transition:
       nextState: flip-coin-state
-  - path: "{{ $.steps.flip-coin.outputs.result }}"
-    value: heads
-    operator: equals
+  - condition: "{{ $.steps.flip-coin.outputs[?(@.result == 'heads')] }}"
     transition:
       nextState: heads-state
 - name: heads-state
@@ -997,14 +989,10 @@ states:
 - name: emo-state
   type: switch
   dataConditions:
-  - path: "{{ $.exit-code }}"
-    value: '1'
-    operator: equals
+  - condition: "{{ $[?(@.exit_code == '1')] }}"
     transition:
       nextState: celebrate-state
-  - path: "{{ $.exit-code }}"
-    value: '1'
-    operator: notequals
+  - condition: "{{ $[?(@.exit_code != '1')] }}"
     transition:
       nextState: cry-state
 - name: celebrate-state
