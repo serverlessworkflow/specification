@@ -15,9 +15,6 @@ Main goals of the specification include:
 - Support both stateless and stateful Serverless Workflow orchestration
 - Define a light-weight and powerful Serverless Workflow model
 
-Serverless Workflow is hosted by the [Cloud Native Computing Foundation's](https://cncf.io/) (CNCF) [Serverless Working Group](https://github.com/cncf/wg-serverless). 
-It was proposed as a Cloud Native sandbox level project on [March 3, 2020](https://github.com/cncf/toc/pull/376).
-
 ## Serverless Workflow Documents
 
 The following documents are available:
