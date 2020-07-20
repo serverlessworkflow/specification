@@ -76,7 +76,7 @@ value of the "result" property. Since it is an end state, it's data output becom
         "result": " World!"
      },
      "stateDataFilter": {
-       "dataOutputPath": "$.result"
+       "dataOutputPath": "{{ $.result }}"
      },
      "end": {
        "kind": "default"
@@ -108,7 +108,7 @@ states:
   data:
     result: " World!"
   stateDataFilter:
-    dataOutputPath: "$.result"
+    dataOutputPath: "{{ $.result }}"
   end:
     kind: default
 ```
@@ -138,12 +138,13 @@ The workflow data input is assumed to be the name of the person to greet:
 }
 ```
 
-The results of the action is assumed to be the full greeting for the provided persons name:
+The results of the action is assumed to be the greeting for the provided persons name:
 
 ```json
 {
   "payload": {
-    "greeting": "Welcome to Serverless Workflow, John!"
+    "greeting": "Welcome to Serverless Workflow",
+    "name": "John"
   }
 }
 ```
@@ -191,16 +192,16 @@ becomes the workflow data output (as it is an end state):
            "functionRef": {
               "refName": "greetingFunction",
               "parameters": {
-                "name": "$.greet.name"
+                "name": "{{ $.greet.name }}"
               }
            },
            "actionDataFilter": {
-              "dataResultsPath": "$.payload.greeting"
+              "dataResultsPath": "{{ $.payload }}"
            }
         }
      ],
      "stateDataFilter": {
-        "dataOutputPath": "$.greeting"
+        "dataOutputPath": "{{ $.payload.greeting }}, {{ $payload.name }}!"
      },
      "end": {
        "kind": "default"
@@ -231,11 +232,11 @@ states:
   - functionRef:
       refName: greetingFunction
       parameters:
-        name: "$.greet.name"
+        name: "{{ $.greet.name }}"
     actionDataFilter:
-      dataResultsPath: "$.payload.greeting"
+      dataResultsPath: "{{ $.payload }}"
   stateDataFilter:
-    dataOutputPath: "$.greeting"
+    dataOutputPath: "{{ $.payload.greeting }}, {{ $payload.name }}!"
   end:
     kind: default
 ```
@@ -288,7 +289,7 @@ Note that in the workflow definition you can see two filters defined. The event 
 ```json
 {
   "eventDataFilter": {
-    "dataOutputPath": "$.data.greet"
+    "dataOutputPath": "{{ $.data.greet }} "
   }
 }
 ```
@@ -301,7 +302,7 @@ The second, a state data filter, which is defined on the event state itself:
 ```json
 {
   "stateDataFilter": {
-     "dataOutputPath": "$.payload.greeting"
+     "dataOutputPath": "{{ $.payload.greeting }}"
   }
 }
 ```
@@ -351,21 +352,21 @@ filters what is selected to be the state data output which then becomes the work
      "eventsActions": [{
          "eventRefs": ["GreetingEvent"],
          "eventDataFilter": {
-            "inputPath": "$.data.greet"
+            "inputPath": "{{ $.data.greet }}"
          },
          "actions":[  
             {  
                "functionRef": {
                   "refName": "greetingFunction",
                   "parameters": {
-                    "name": "$.greet.name"
+                    "name": "{{ $.greet.name }}"
                   }
                }
             }
          ]
      }],
      "stateDataFilter": {
-        "dataOutputPath": "$.payload.greeting"
+        "dataOutputPath": "{{ $.payload.greeting }}"
      },
      "end": {
        "kind": "default"
@@ -399,14 +400,14 @@ states:
   - eventRefs:
     - GreetingEvent
     eventDataFilter:
-      inputPath: "$.data.greet"
+      inputPath: "{{ $.data.greet }}"
     actions:
     - functionRef:
         refName: greetingFunction
         parameters:
-          name: "$.greet.name"
+          name: "{{ $.greet.name }}"
   stateDataFilter:
-    dataOutputPath: "$.payload.greeting"
+    dataOutputPath: "{{ $.payload.greeting }}"
   end:
     kind: default
 ```
@@ -471,9 +472,9 @@ result of the workflow execution.
   "kind": "default"
 },
  "type":"foreach",
- "inputCollection": "$.expressions",
- "inputParameter": "$.singleexpression",
- "outputCollection": "$.results",
+ "inputCollection": "{{ $.expressions }}",
+ "inputParameter": "{{ $.singleexpression }}",
+ "outputCollection": "{{ $.results }}",
  "states": [
 {  
     "name":"GetResults",
@@ -487,7 +488,7 @@ result of the workflow execution.
           "functionRef": {
              "refName": "solveMathExpressionFunction",
              "parameters": {
-               "expression": "$.singleexpression"
+               "expression": "{{ $.singleexpression }}"
              }
           }
        }
@@ -498,7 +499,7 @@ result of the workflow execution.
 }
  ],
  "stateDataFilter": {
-    "dataOutputPath": "$.results"
+    "dataOutputPath": "{{ $.results }}"
  },
  "end": {
    "kind": "default"
@@ -524,9 +525,9 @@ states:
   start:
     kind: default
   type: foreach
-  inputCollection: "$.expressions"
-  inputParameter: "$.singleexpression"
-  outputCollection: "$.results"
+  inputCollection: "{{ $.expressions }}"
+  inputParameter: "{{ $.singleexpression }}"
+  outputCollection: "{{ $.results }}"
   states:
   - name: GetResults
     type: operation
@@ -537,11 +538,11 @@ states:
     - functionRef:
         refName: solveMathExpressionFunction
         parameters:
-          expression: "$.singleexpression"
+          expression: "{{ $.singleexpression }}"
     end:
       kind: default
   stateDataFilter:
-    dataOutputPath: "$.results"
+    dataOutputPath: "{{ $.results }}"
   end:
     kind: default
 ```
@@ -880,7 +881,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
          },
          "dataConditions": [
             {
-              "path": "$.applicant.age",
+              "path": "{{ $.applicant.age }}",
               "value": "18",
               "operator": "greaterthanorequals",
               "transition": {
@@ -888,7 +889,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
               }
             },
             {
-              "path": "$.applicant.age",
+              "path": "{{ $.applicant.age }}",
               "value": "18",
               "operator": "lessthan",
               "transition": {
@@ -917,7 +918,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
               "functionRef": {
                  "refName": "sendRejectionEmailFunction",
                  "parameters": {
-                   "applicant": "$.applicant"
+                   "applicant": "{{ $.applicant }}"
                  }
               }
            }
@@ -947,12 +948,12 @@ states:
   start:
     kind: default
   dataConditions:
-  - path: "$.applicant.age"
+  - path: "{{ $.applicant.age }}"
     value: '18'
     operator: greaterthanorequals
     transition:
       nextState: StartApplication
-  - path: "$.applicant.age"
+  - path: "{{ $.applicant.age }}"
     value: '18'
     operator: lessthan
     transition:
@@ -971,7 +972,7 @@ states:
   - functionRef:
       refName: sendRejectionEmailFunction
       parameters:
-        applicant: "$.applicant"
+        applicant: "{{ $.applicant }}"
   end:
     kind: default
 ```
@@ -1045,33 +1046,33 @@ The data output of the workflow contains the information of the exception caught
           "functionRef": {
              "refName": "provisionOrderFunction",
              "parameters": {
-               "order": "$.order"
+               "order": "{{ $.order }}"
              }
           }
        }
     ],
     "onError": [
        {
-         "expression": "$.name == 'MissingOrderIdException'",
+         "expression": "{{ $.exceptions[?(@.name == 'MissingOrderIdException')] }}",
          "transition": {
            "nextState": "MissingId"
          }
        },
        {
-         "expression": "$.name == 'MissingOrderItemException'",
+         "expression": "{{ $.exceptions[?(@.name == 'MissingOrderItemException')] }}",
          "transition": {
            "nextState": "MissingItem"
          }
        },
        {
-        "expression": "$.name == 'MissingOrderQuantityException'",
+        "expression": "{{ $.exceptions[?(@.name == 'MissingOrderQuantityException')] }}",
         "transition": {
           "nextState": "MissingQuantity"
         }
        }
     ],
     "stateDataFilter": {
-       "dataOutputPath": "$.exception"
+       "dataOutputPath": "{{ $.exceptions }}"
     },
     "transition": {
        "nextState":"ApplyOrder"
@@ -1134,19 +1135,19 @@ states:
   - functionRef:
       refName: provisionOrderFunction
       parameters:
-        order: "$.order"
+        order: "{{ $.order }}"
   onError:
-  - expression: "$.name == 'MissingOrderIdException'"
+  - expression: "{{ $.exceptions[?(@.name == 'MissingOrderIdException')] }}"
     transition:
       nextState: MissingId
-  - expression: "$.name == 'MissingOrderItemException'"
+  - expression: "{{ $.exceptions[?(@.name == 'MissingOrderItemException')] }}"
     transition:
       nextState: MissingItem
-  - expression: "$.name == 'MissingOrderQuantityException'"
+  - expression: "{{ $.exceptions[?(@.name == 'MissingOrderQuantityException')] }}"
     transition:
       nextState: MissingQuantity
   stateDataFilter:
-    dataOutputPath: "$.exception"
+    dataOutputPath: "{{ $.exceptions }}"
   transition:
     nextState: ApplyOrder
 - name: MissingId
@@ -1243,19 +1244,19 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
           "functionRef": {
             "refName": "submitJob",
             "parameters": {
-              "name": "$.job.name"
+              "name": "{{ $.job.name }}"
             }
           },
           "actionDataFilter": {
-            "dataResultsPath": "$.jobuid"
+            "dataResultsPath": "{{ $.jobuid }}"
           }
       }
       ],
       "onError": [
       {
-        "expression": "$.exception != null",
+        "expression": "{{ $.exceptions[0] }}",
         "errorDataFilter": {
-          "dataOutputPath": "$.exception"
+          "dataOutputPath": "{{ $.exception }}"
         },
         "transition": {
           "nextState": "SubmitError"
@@ -1263,7 +1264,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       }
       ],
       "stateDataFilter": {
-          "dataOutputPath": "$.jobuid"
+          "dataOutputPath": "{{ $.jobuid }}"
       },
       "transition": {
           "nextState":"WaitForCompletion"
@@ -1294,16 +1295,16 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
         "functionRef": {
             "refName": "checkJobStatus",
             "parameters": {
-              "name": "$.jobuid"
+              "name": "{{ $.jobuid }}"
             }
           },
           "actionDataFilter": {
-          "dataResultsPath": "$.jobstatus"
+          "dataResultsPath": "{{ $.jobstatus }}"
           }
       }
       ],
       "stateDataFilter": {
-          "dataOutputPath": "$.jobstatus"
+          "dataOutputPath": "{{ $.jobstatus }}"
       },
       "transition": {
           "nextState":"DetermineCompletion"
@@ -1314,7 +1315,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
     "type":"switch",
     "dataConditions": [
       {
-        "path": "$.jobstatus",
+        "path": "{{ $.jobstatus }}",
         "value": "SUCCEEDED",
         "operator": "equals",
         "transition": {
@@ -1322,7 +1323,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
         }
       },
       {
-        "path": "$.jobstatus",
+        "path": "{{ $.jobstatus }}",
         "value": "FAILED",
         "operator": "equals",
         "transition": {
@@ -1343,7 +1344,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
         "functionRef": {
             "refName": "reportJobSuceeded",
             "parameters": {
-              "name": "$.jobuid"
+              "name": "{{ $.jobuid }}"
             }
         }
       }
@@ -1361,7 +1362,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
         "functionRef": {
           "refName": "reportJobFailed",
           "parameters": {
-            "name": "$.jobuid"
+            "name": "{{ $.jobuid }}"
           }
         }
     }
@@ -1401,17 +1402,17 @@ states:
   - functionRef:
       refName: submitJob
       parameters:
-        name: "$.job.name"
+        name: "{{ $.job.name }}"
     actionDataFilter:
-      dataResultsPath: "$.jobuid"
+      dataResultsPath: "{{ $.jobuid }}"
   onError:
-  - expression: "$.exception != null"
+  - expression: "{{ $.exceptions[0] }}"
     errorDataFilter:
-      dataOutputPath: "$.exception"
+      dataOutputPath: "{{ $.exception }}"
     transition:
       nextState: SubmitError
   stateDataFilter:
-    dataOutputPath: "$.jobuid"
+    dataOutputPath: "{{ $.jobuid }}"
   transition:
     nextState: WaitForCompletion
 - name: SubmitError
@@ -1431,22 +1432,22 @@ states:
   - functionRef:
       refName: checkJobStatus
       parameters:
-        name: "$.jobuid"
+        name: "{{ $.jobuid }}"
     actionDataFilter:
-      dataResultsPath: "$.jobstatus"
+      dataResultsPath: "{{ $.jobstatus }}"
   stateDataFilter:
-    dataOutputPath: "$.jobstatus"
+    dataOutputPath: "{{ $.jobstatus }}"
   transition:
     nextState: DetermineCompletion
 - name: DetermineCompletion
   type: switch
   dataConditions:
-  - path: "$.jobstatus"
+  - path: "{{ $.jobstatus }}"
     value: SUCCEEDED
     operator: equals
     transition:
       nextState: JobSucceeded
-  - path: "$.jobstatus"
+  - path: "{{ $.jobstatus }}"
     value: FAILED
     operator: equals
     transition:
@@ -1460,7 +1461,7 @@ states:
   - functionRef:
       refName: reportJobSuceeded
       parameters:
-        name: "$.jobuid"
+        name: "{{ $.jobuid }}"
   end:
     kind: default
 - name: JobFailed
@@ -1470,7 +1471,7 @@ states:
   - functionRef:
       refName: reportJobFailed
       parameters:
-        name: "$.jobuid"
+        name: "{{ $.jobuid }}"
   end:
     kind: default
 ```
@@ -1584,9 +1585,9 @@ CloudEvent upon completion of the workflow could look like:
     "start": {
        "kind": "default"
     },
-    "inputCollection": "$.orders",
-    "inputParameter": "$.singleorder",
-    "outputCollection": "$.results",
+    "inputCollection": "{{ $.orders }}",
+    "inputParameter": "{{ $.singleorder }}",
+    "outputCollection": "{{ $.results }}",
     "states": [
     {
         "name": "DoProvision",
@@ -1600,7 +1601,7 @@ CloudEvent upon completion of the workflow could look like:
             "functionRef": {
                 "refName": "provisionOrderFunction",
                 "parameters": {
-                    "order": "$.order"
+                    "order": "{{ $.order }}"
                 }
             }
         }
@@ -1611,13 +1612,13 @@ CloudEvent upon completion of the workflow could look like:
     }
     ],
     "stateDataFilter": {
-        "dataOutputPath": "$.provisionedOrders"
+        "dataOutputPath": "{{ $.provisionedOrders }}"
     },
     "end": {
         "kind": "event",
         "produceEvent": {
             "eventRef": "provisioningCompleteEvent",
-            "data": "$.provisionedOrders"
+            "data": "{{ $.provisionedOrders }}"
         }
     }
 }
@@ -1644,9 +1645,9 @@ states:
   type: foreach
   start:
     kind: default
-  inputCollection: "$.orders"
-  inputParameter: "$.singleorder"
-  outputCollection: "$.results"
+  inputCollection: "{{ $.orders }}"
+  inputParameter: "{{ $.singleorder }}"
+  outputCollection: "{{ $.results }}"
   states:
   - name: DoProvision
     type: operation
@@ -1657,16 +1658,16 @@ states:
     - functionRef:
         refName: provisionOrderFunction
         parameters:
-          order: "$.order"
+          order: "{{ $.order }}"
     end:
       kind: default
   stateDataFilter:
-    dataOutputPath: "$.provisionedOrders"
+    dataOutputPath: "{{ $.provisionedOrders }}"
   end:
     kind: event
     produceEvent:
       eventRef: provisioningCompleteEvent
-      data: "$.provisionedOrders"
+      data: "{{ $.provisionedOrders }}"
 ```
 
 </td>
@@ -1789,7 +1790,7 @@ have the matching patient id.
             "functionRef": {
                 "refName": "sendTylenolOrder",
                 "parameters": {
-                    "patientid": "$.patientId"
+                    "patientid": "{{ $.patientId }}"
                 }
             }
         }]
@@ -1800,7 +1801,7 @@ have the matching patient id.
             "functionRef": {
                 "refName": "callNurse",
                 "parameters": {
-                    "patientid": "$.patientId"
+                    "patientid": "{{ $.patientId }}"
                 }
             }
         }]
@@ -1811,7 +1812,7 @@ have the matching patient id.
             "functionRef": {
                 "refName": "callPulmonologist",
                 "parameters": {
-                    "patientid": "$.patientId"
+                    "patientid": "{{ $.patientId }}"
                 }
             }
         }]
@@ -1870,21 +1871,21 @@ states:
     - functionRef:
         refName: sendTylenolOrder
         parameters:
-          patientid: "$.patientId"
+          patientid: "{{ $.patientId }}"
   - eventRefs:
     - HighBloodPressure
     actions:
     - functionRef:
         refName: callNurse
         parameters:
-          patientid: "$.patientId"
+          patientid: "{{ $.patientId }}"
   - eventRefs:
     - HighRespirationRate
     actions:
     - functionRef:
         refName: callPulmonologist
         parameters:
-          patientid: "$.patientId"
+          patientid: "{{ $.patientId }}"
   end:
     kind: terminate
 ```
@@ -1987,7 +1988,7 @@ when all three of these events happened (in no particular order).
                     "functionRef": {
                         "refName": "finalizeApplicationFunction",
                         "parameters": {
-                            "student": "$.applicantId"
+                            "student": "{{ $.applicantId }}"
                         }
                     }
                 }
@@ -2044,7 +2045,7 @@ states:
     - functionRef:
         refName: finalizeApplicationFunction
         parameters:
-          student: "$.applicantId"
+          student: "{{ $.applicantId }}"
   end:
     kind: terminate
 ```
@@ -2178,7 +2179,7 @@ And for denied credit check, for example:
                 "functionRef": {
                     "refName": "callCreditCheckMicroservice",
                     "parameters": {
-                        "customer": "$.customer"
+                        "customer": "{{ $.customer }}"
                     }
                 }
             },
@@ -2193,7 +2194,7 @@ And for denied credit check, for example:
             "type": "switch",
             "dataConditions": [
                 {
-                    "path": "$.creditCheck.decision",
+                    "path": "{{ $.creditCheck.decision }}",
                     "value": "Approved",
                     "operator": "equals",
                     "transition": {
@@ -2201,7 +2202,7 @@ And for denied credit check, for example:
                     }
                 },
                 {
-                    "path": "$.creditCheck.decision",
+                    "path": "{{ $.creditCheck.decision }}",
                     "value": "Denied",
                     "operator": "equals",
                     "transition": {
@@ -2230,7 +2231,7 @@ And for denied credit check, for example:
                     "functionRef": {
                         "refName": "sendRejectionEmailFunction",
                         "parameters": {
-                            "applicant": "$.customer"
+                            "applicant": "{{ $.customer }}"
                         }
                     }
                 }
@@ -2272,7 +2273,7 @@ states:
     functionRef:
       refName: callCreditCheckMicroservice
       parameters:
-        customer: "$.customer"
+        customer: "{{ $.customer }}"
   eventRef: CreditCheckCompletedEvent
   timeout: PT15M
   transition:
@@ -2280,12 +2281,12 @@ states:
 - name: EvaluateDecision
   type: switch
   dataConditions:
-  - path: "$.creditCheck.decision"
+  - path: "{{ $.creditCheck.decision }}"
     value: Approved
     operator: equals
     transition:
       nextState: StartApplication
-  - path: "$.creditCheck.decision"
+  - path: "{{ $.creditCheck.decision }}"
     value: Denied
     operator: equals
     transition:
@@ -2304,7 +2305,7 @@ states:
   - functionRef:
       refName: sendRejectionEmailFunction
       parameters:
-        applicant: "$.customer"
+        applicant: "{{ $.customer }}"
   end:
     kind: default
 ```
@@ -2399,7 +2400,7 @@ Bidding is done via an online application and bids are received as events are as
                     "functionRef": {
                         "refName": "StoreBidFunction",
                         "parameters": {
-                            "bid": "$.bid"
+                            "bid": "{{ $.bid }}"
                         }
                     }
                 }]
@@ -2444,7 +2445,7 @@ states:
     - functionRef:
         refName: StoreBidFunction
         parameters:
-          bid: "$.bid"
+          bid: "{{ $.bid }}"
   end:
     kind: terminate
 ```
@@ -2541,8 +2542,8 @@ state which calls the "sendTextFunction" function.
     {
         "name": "SendTextForHighPrioriry",
         "type": "foreach",
-        "inputCollection": "$.message",
-        "inputParameter": "$.singlemessage",
+        "inputCollection": "{{ $.message }}",
+        "inputParameter": "{{ $.singlemessage }}",
         "states": [
             {
                 "name": "SendTextMessageForHighPriority",
@@ -2593,8 +2594,8 @@ states:
       nextState: SendTextForHighPrioriry
   - name: SendTextForHighPrioriry
     type: foreach
-    inputCollection: "$.message"
-    inputParameter: "$.singlemessage"
+    inputCollection: "{{ $.message }}"
+    inputParameter: "{{ $.singlemessage }}"
     states:
       - name: SendTextMessageForHighPriority
         type: subflow
@@ -2688,11 +2689,11 @@ For this example we assume that the workflow instance is started given the follo
                     "name": "MakeAppointmentAction",
                     "eventRef": {
                        "triggerEventRef": "MakeVetAppointment",
-                       "data": "$.patientInfo",
+                       "data": "{{ $.patientInfo }}",
                        "resultEventRef":  "VetAppointmentInfo"
                     },
                     "actionDataFilter": {
-                        "dataResultsPath": "$.appointmentInfo"
+                        "dataResultsPath": "{{ $.appointmentInfo }}"
                     },
                     "timeout": "PT15M"
                 }
@@ -2729,10 +2730,10 @@ states:
   - name: MakeAppointmentAction
     eventRef:
       triggerEventRef: MakeVetAppointment
-      data: "$.patientInfo"
+      data: "{{ $.patientInfo }}"
       resultEventRef: VetAppointmentInfo
     actionDataFilter:
-      dataResultsPath: "$.appointmentInfo"
+      dataResultsPath: "{{ $.appointmentInfo }}"
     timeout: PT15M
   end:
     kind: default

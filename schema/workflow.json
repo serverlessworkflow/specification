@@ -111,7 +111,7 @@
       "properties": {
         "expression": {
           "type": "string",
-          "description": "Common Expression Language (CEL) expression. Must evaluate to true for the transition to be valid"
+          "description": "JsonPath expression. Evaluates to true if returns non-empty result"
         },
         "produceEvent": {
           "description": "Reference one of the defined 'produced' events by name and set its payload and context attributes",
@@ -132,7 +132,7 @@
       "properties": {
         "expression": {
           "type": "string",
-          "description": "Common Expression Language (CEL) expression. Should be evaluated against error data. Must evaluate to true."
+          "description": "JsonPath expression. Evaluated against error data. Is true if returns non empty result"
         },
         "errorDataFilter": {
           "$ref": "#/definitions/errordatafilter"
@@ -226,7 +226,7 @@
       "properties": {
         "expression": {
           "type": "string",
-          "description": "Common Expression Language (CEL) expression. Should be evaluated against state data. Must evaluate to true for retry to execute."
+          "description": "JsonPath expression. Evaluated against state data. Is true if returns non empty data"
         },
         "interval": {
           "type": "string",

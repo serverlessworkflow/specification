@@ -92,7 +92,7 @@ states:
   - functionRef:
       refName: whalesayimage
       parameters:
-        message: "$.message"
+        message: "{{ $.message }}"
   end:
     kind: default
 ```
@@ -464,7 +464,7 @@ states:
   - functionRef:
       refName: gen-random-int-bash
     actionDataFilter:
-      dataResultsPath: "$.results"
+      dataResultsPath: "{{ $.results }}"
   transition:
     nextState: print-message
 - name: print-message
@@ -473,7 +473,7 @@ states:
   - functionRef:
       refName: printmessagefunc
       parameters:
-        message: "$.results"
+        message: "{{ $.results }}"
   end:
     kind: default
 ```
@@ -550,8 +550,8 @@ states:
     nextState: printgreetings
 - name: printgreetings
   type: foreach
-  inputCollection: "$.greetings"
-  inputParameter: "$.greeting"
+  inputCollection: "{{ $.greetings }}"
+  inputParameter: "{{ $.greeting }}"
   states:
   - name: foreach-print
     type: operation
@@ -562,7 +562,7 @@ states:
       functionRef:
         refName: whalesay
         parameters:
-          message: "$.greeting"
+          message: "{{ $.greeting }}"
     end:
       kind: default
   end:
@@ -658,18 +658,18 @@ states:
   - functionRef:
       refName: flip-coin-function
     actionDataFilter:
-      dataResultsPath: "$.flip.result"
+      dataResultsPath: "{{ $.flip.result }}"
   transition:
     nextState: show-flip-results
 - name: show-flip-results
   type: switch
   dataConditions:
-  - path: "$.flip.result"
+  - path: "{{ $.flip.result }}"
     value: heads
     operator: equals
     transition:
       nextState: show-results-heads
-  - path: "$.flip.result"
+  - path: "{{ $.flip.result }}"
     value: tails
     operator: equals
     transition:
@@ -759,9 +759,7 @@ states:
         args:
         - import random; import sys; exit_code = random.choice([0, 1, 1]); sys.exit(exit_code)
   retry:
-  - expression:
-      language: spel
-      body: "$.exit_code == 1"
+  - expression: "{{ $.[?(@.exitcode == '1')] }}"
     maxAttempts: 10
     multiplier: PT2M
     interval: PT1M
@@ -851,18 +849,18 @@ states:
   - functionRef:
       refName: flip-coin-function
     actionDataFilter:
-      dataResultsPath: "$.steps.flip-coin.outputs.result"
+      dataResultsPath: "{{ $.steps.flip-coin.outputs.result }}" 
   transition:
     nextState: flip-coin-check
 - name: flip-coin-check
   type: switch
   dataConditions:
-  - path: "$.steps.flip-coin.outputs.result"
+  - path: "{{ $.steps.flip-coin.outputs.result }}"
     value: tails
     operator: equals
     transition:
       nextState: flip-coin-state
-  - path: "$.steps.flip-coin.outputs.result"
+  - path: "{{ $.steps.flip-coin.outputs.result }}"
     value: heads
     operator: equals
     transition:
@@ -982,11 +980,9 @@ states:
       parameters:
         args: echo intentional failure; exit 1
   onError:
-  - expression:
-      language: spel
-      body: "$.error != null"
+  - expression: "{{ $.errors[0] }}"
     errorDataFilter:
-      dataOutputPath: "$.exit-code"
+      dataOutputPath: "{{ $.exit-code }}"
   transition:
     nextState: send-email-state
 - name: send-email-state
@@ -1001,12 +997,12 @@ states:
 - name: emo-state
   type: switch
   dataConditions:
-  - path: "$.exit-code"
+  - path: "{{ $.exit-code }}"
     value: '1'
     operator: equals
     transition:
       nextState: celebrate-state
-  - path: "$.exit-code"
+  - path: "{{ $.exit-code }}"
     value: '1'
     operator: notequals
     transition:

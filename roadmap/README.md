@@ -61,6 +61,6 @@ _Status description:_
 | ✔️| Allow to define events as produced or consumed | [spec doc](../specification.md) |
 | ✔️| Add "triggered" start definition | [spec doc](../specification.md) |
 | ✔️| Update scheduled start definition - adding cron def | [spec doc](../specification.md) |
-| ✔️| Set single expression language (CEL) | [spec doc](../specification.md) |
 | ✔️| Add ability to reference trigger and result events in actions | [spec doc](../specification.md) |
 | ✔️| Expand event correlation capabilities | [spec doc](../specification.md) |
+| ✔️| Only use JsonPath expressions ( remove need for expression languages other than JsonPath) | [spec doc](../specification.md) |
