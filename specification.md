@@ -131,7 +131,7 @@ The following sections provide detailed descriptions of the Serverless Workflow 
 For each model definition section we provide:
 
 - Parameter description in table format.
-- Example definition in both [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats.\
+- Example definition in both [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats.
 - Detailed definition explanation with addition examples where needed.
 
 ### Workflow Model
