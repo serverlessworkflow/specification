@@ -39,6 +39,8 @@ Portability as well as productivity that can be achieved from workflow orchestra
 Serverless Workflow specification focuses on defining `vendor-neutral`, `platform-independent`, and
 `declarative` workflow model which can be used across multiple cloud/container platforms. 
 
+For more information on the history, development and design rationale behind the specification, see the [Serverless Workflow Wiki](https://github.com/serverlessworkflow/specification/wiki).
+
 ## Specification Goals
 
 The specification provides a workflow [JSON Schema](https://json-schema.org/) (found [here](#schema/workflow.json)).
