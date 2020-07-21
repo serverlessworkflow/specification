@@ -27,6 +27,7 @@ excluded_files:
 # Any typos we should ignore?
 excluded_words:
   - typoci
+  - runtimes
 
 # Would you like filenames to also be spellchecked?
 spellcheck_filenames: false

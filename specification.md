@@ -33,7 +33,7 @@ Workflows have become a key component for orchestration and execution management
 
 The lack of a common way to define and model workflows means that developers must constantly re-learn 
 how to write them. This also limits the potential for common libraries, tooling and 
-infrastructure to aid modelling and execution of workflows across different cloud/container platforms.
+infrastructure to aid modeling and execution of workflows across different cloud/container platforms.
 Portability as well as productivity that can be achieved from workflow orchestration is hindered overall.
 
 Serverless Workflow specification focuses on defining `vendor-neutral`, `platform-independent`, and
