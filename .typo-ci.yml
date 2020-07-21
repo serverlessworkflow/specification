@@ -19,6 +19,7 @@ excluded_files:
   - "media/**/*."
   - "schema/**/*"
   - ".gitignore"
+  - ".typo-ci.yml"
   - ".markdownlint.yaml"
   - "Makefile"
   - "OWNERS"
