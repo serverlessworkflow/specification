@@ -36,8 +36,10 @@ how to write them. This also limits the potential for common libraries, tooling 
 infrastructure to aid modeling and execution of workflows across different cloud/container platforms.
 Portability as well as productivity that can be achieved from workflow orchestration is hindered overall.
 
-Serverless Workflow specification focuses on defining `vendor-neutral`, `platform-independent`, and
+Serverless Workflow specification focuses on defining a `vendor-neutral`, `platform-independent`, and
 `declarative` workflow model which can be used across multiple cloud/container platforms. 
+This allows users to move their workflow definitions from one cloud/container platform to another and 
+expect the exact same, defined, execution steps to be performed on each. 
 
 For more information on the history, development and design rationale behind the specification, see the [Serverless Workflow Wiki](https://github.com/serverlessworkflow/specification/wiki).
 
