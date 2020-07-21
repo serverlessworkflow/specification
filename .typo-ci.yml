@@ -1,0 +1,31 @@
+---
+
+# What language dictionaries should it use? Currently Typo CI supports:
+# de
+# en
+# en_GB
+# es
+# fr
+# it
+# pt
+# pt_BR
+dictionaries:
+  - en
+
+# Any files/folders we should ignore?
+excluded_files:
+  - ".github/**/*"
+  - ".vscode/**/*"
+  - "media/**/*."
+  - "schema/**/*"
+  - ".gitignore"
+  - ".markdownlint.yaml"
+  - "Makefile"
+  - "OWNERS"
+  
+# Any typos we should ignore?
+excluded_words:
+  - typoci
+
+# Would you like filenames to also be spellchecked?
+spellcheck_filenames: false
