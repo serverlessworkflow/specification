@@ -5,6 +5,10 @@ As a CNCF member project, we abide by the [CNCF Code of Conduct](https://github.
 For specific guidance on practical contribution steps for any Serverless Workflow sub-project please
 see our [contributing guide](CONTRIBUTING.md).
 
+You can contact the project maintainers at any time by sending an email to the 
+[Serverless Workflow Specification Maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
+ mailing list.
+
 ## Maintainership
 
 Main responsibilities of maintainers include:
