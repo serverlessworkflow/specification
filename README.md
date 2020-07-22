@@ -54,9 +54,10 @@ As a CNCF member project, we abide by the [CNCF Code of Conduct](https://github.
   
 ## Communication
 
-- Email: [cncf-wg-serverless](mailto:cncf-wg-serverless@lists.cncf.io)
-- Subscription: [https://lists.cncf.io/g/cncf-wg-serverless](https://lists.cncf.io/g/cncf-wg-serverless)
-- Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) #serverless-workflow
+- Serverless WG Email: [cncf-wg-serverless](mailto:cncf-wg-serverless@lists.cncf.io)
+- Serverless WG Subscription: [https://lists.cncf.io/g/cncf-wg-serverless](https://lists.cncf.io/g/cncf-wg-serverless)
+- Project Maintainers Email: [cncf-serverlessws-maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
+- Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) -  #serverless-workflow
 
 ## Code of Conduct
 
@@ -72,10 +73,11 @@ religion, or nationality.
 
 See our full project Code of Conduct information [here](code-of-conduct.md).
 
+Workflow Template
+
 ## Meeting time
 
 * [CNCF public events calendar](https://www.cncf.io/community/calendar/)
-* [Serverless Workflow meeting calendar](https://serverlessworkflow.github.io/#meetcal)
 
 The Serverless Workflow sub-group meets biweekly, every second Monday
 at 10AM PT (USA Pacific).
