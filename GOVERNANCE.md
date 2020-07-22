@@ -100,7 +100,7 @@ If the maintainer wants to remain a maintainer, but is unable to perform the
 required duties they can be removed with a vote of at least 66% of
 the current maintainers. An e-mail is sent to the
 mailing list, inviting maintainers of the project to vote. The voting period is
-fourteen business days. Issues related to a maintainer's performance should be
+fourteen business days. Issues related to a maintainers performance should be
 discussed with them among the other maintainers so that they are not surprised
 by a pull request removing them.
 
@@ -109,7 +109,7 @@ by a pull request removing them.
 Serverless Workflow is an open-source project with an open design philosophy. This means
 that the repository is the source of truth for EVERY aspect of the project,
 including its philosophy, design, road map, and APIs. *If it's part of the
-project, it's in the repo. If it's in the repo, it's part of the project.*
+project, it's in the repository. If it's in the repository, it's part of the project.*
 
 As a result, all decisions can be expressed as changes to the repository. An
 implementation change is a change to the source code. An API change is a change
