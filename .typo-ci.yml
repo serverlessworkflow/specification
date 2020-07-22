@@ -28,6 +28,8 @@ excluded_files:
 excluded_words:
   - typoci
   - runtimes
+  - cncf-wg-serverless
+  - cncf-serverlessws-maintainers
 
 # Would you like filenames to also be spellchecked?
 spellcheck_filenames: false
