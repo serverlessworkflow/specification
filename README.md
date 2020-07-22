@@ -73,8 +73,6 @@ religion, or nationality.
 
 See our full project Code of Conduct information [here](code-of-conduct.md).
 
-Workflow Template
-
 ## Meeting time
 
 * [CNCF public events calendar](https://www.cncf.io/community/calendar/)
