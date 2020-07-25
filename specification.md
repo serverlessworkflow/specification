@@ -20,7 +20,7 @@ This document is a working draft.
   - [Workflow Definition](#Workflow-Definition)
   - [Workflow Error Handling](#Workflow-Error-Handling)
   - [Workflow Metadata](#Workflow-Metadata)
-- [Extending](#Extending)
+- [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
 - [Examples](#Examples)
 - [References](#References)
@@ -237,7 +237,6 @@ which would set the workflow version to `1.0.0`.
 | [events](#Event-Definition) | Workflow event definitions. Defines events that can be consumed or produced | array | no |
 | [functions](#Function-Definition) | Workflow function definitions | array | no |
 | [states](#State-Definition) | Workflow states | array | yes |
-| [extensions](#Extending) | Workflow custom extensions | array | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3938,18 +3937,23 @@ Some other examples of information that could be recorded in metadata are:
 - Build, release, or image information such as timestamps, release ids, git branches, PR numbers, etc.
 - Logging, monitoring, analytics, or audit repository information.
 - Labels used for organizing/indexing purposes, such as "release" "stable", "track", "daily", etc.
+ 
+## Extensions
 
-## Extending
+The workflow extension mechanism allows you to enhance your model definitions with additional information useful for 
+things like analytics, logging, simulation, debugging, tracing, etc.
 
-Serverless Workflows are built with extensibility in mind. The extension mechanism allows
-users and implementers to extend the standard workflow elements with additional ones. This can be used,
-for example, to satisfy some unique requirements and remain being compliant with the workflow specification.
+Model extensions do no influence control flow logic (workflow execution semantics). 
+They enhance it with extra information that can be consumed by runtime systems or tooling and 
+evaluated with the end goal being overall workflow improvements in terms of time, cost, efficiency, etc.
 
-The extension mechanism can be used to define custom workflow elements. It is targeted to
-solving custom requirements that go beyond the core of the workflow specification, for example,
-logging, simulation, debugging, tracing, etc.
+Serverless Workflow specification provides extensions which can be found [here](extensions/README.md).
 
-You can find more info and examples of element extensions [here](extending/README.md).
+Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification,
+and for the community to contribute their extension to the specification so they can grow alongside it.
+
+If you have an idea for a new workflow extension, or would like to enhance an existing one, 
+please open an `New Extension Request` issue in this repository.
 
 ## Use Cases
 

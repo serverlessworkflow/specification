@@ -64,3 +64,5 @@ _Status description:_
 | ✔️| Add ability to reference trigger and result events in actions | [spec doc](../specification.md) |
 | ✔️| Expand event correlation capabilities | [spec doc](../specification.md) |
 | ✔️| Only use JsonPath expressions ( remove need for expression languages other than JsonPath) | [spec doc](../specification.md) |
+| ✔️| Update workflow extensions | [spec doc](../specification.md) |
+| ✔️| Add Workflow KPIs extension | [spec doc](../specification.md) |
