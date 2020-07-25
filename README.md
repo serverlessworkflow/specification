@@ -8,16 +8,19 @@ that orchestrate event-driven, serverless applications.
 Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
 Cloud Native Sandbox level project on July 14, 2020.
 
-Main goals of the specification include:
+## Table of Contents
 
-- Facilitate Serverless Workflow portability across different vendor platforms
-- Be completely vendor neutral
-- Support both stateless and stateful Serverless Workflow orchestration
-- Define a light-weight and powerful Serverless Workflow model
+- [Releases](#Releases)
+- [SDKs](#SDKs)
+- [Community](#Community)
+    - [Communication](#Communication)
+    - [Code of Conduct](#Code-of-Conduct)
+    - [Meetings](#Community-Meetings)
+    - [Meeting Minutes](#Meeting-Minutes)
+- [Repository Structure](#Repository-Structure)
 
-## Serverless Workflow Documents
 
-The following documents are available:
+## Releases
 
 || Latest Release | Working Draft |
 | :--- | :--- | :--- |
@@ -47,19 +50,18 @@ Support for release candidates is not required, but strongly encouraged.
 We have an growing community working together to build a dynamic serverless workflow
 ecosystem. Community contributions are welcome and much needed to foster specification growth.
 
-To learn about current community efforts and how to contribute
-reference the [Serverless Workflow Community doc](community/README.md).
+To learn more about the specification community reference the community docs.
 
-As a CNCF member project, we abide by the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md).
+To learn how to contribute to the specification reference the ['how to contribute'](contributing.md) doc.
   
-## Communication
+### Communication
 
 - Serverless WG Email: [cncf-wg-serverless](mailto:cncf-wg-serverless@lists.cncf.io)
 - Serverless WG Subscription: [https://lists.cncf.io/g/cncf-wg-serverless](https://lists.cncf.io/g/cncf-wg-serverless)
 - Project Maintainers Email: [cncf-serverlessws-maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
 - Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) -  #serverless-workflow
 
-## Code of Conduct
+### Code of Conduct
 
 As contributors and maintainers of this project, and in the interest of fostering
 an open and welcoming community, we pledge to respect all people who contribute
@@ -73,7 +75,7 @@ religion, or nationality.
 
 See our full project Code of Conduct information [here](code-of-conduct.md).
 
-## Meeting time
+### Meetings
 
 * [CNCF public events calendar](https://www.cncf.io/community/calendar/)
 
@@ -102,7 +104,7 @@ NOTE: Please use \*6 to mute/un-mute your phone during the call.
 World Time Zone Converter:
 http://www.thetimezoneconverter.com/?t=9:00%20am&tz=San%20Francisco&
 
-## Meeting Minutes
+### Meeting Minutes
 
 The minutes from our calls are available
 [here](https://docs.google.com/document/d/1xwcsWQmMiRN24a7o7oy9MstzMroAup31oOkM5Dru1jQ/edit#).
@@ -111,3 +113,24 @@ Periodically, the group may have in-person meetings that coincide with a major
 conference. Please see the
 [meeting minutes](https://docs.google.com/document/d/1xwcsWQmMiRN24a7o7oy9MstzMroAup31oOkM5Dru1jQ/edit#)
 for any future plans.
+
+## Repository Structure
+
+Here is the outline of the repository to help navigate the specification
+documents:
+
+| File/folder | Description | 
+| --- | --- | 
+| [specification.md](specification.md) | The main specification document | 
+| [OWNERS](OWNERS) | Defines the current specification maintainers and approvers | 
+| [LICENSE](LICENSE) | Specification License doc | 
+| [contributing.md](contributing.md) | Documentation on how to contribute to the spec | 
+| [code-of-conduct.md](code-of-conduct.md) | Defines the spec Code of Conduct | 
+| [usecases](usecases/README.md) | Specification Use Cases | 
+| [schema](schema) | Contains all specification JSON Schemas | 
+| [roadmap](roadmap/README.md) | Specification Roadmap |
+| [references](references/README.md) | References used for specification docs |
+| [media](media) | Includes all images used in spec docs |
+| [extending](extending/README.md) | Information on extending the workflow model |
+| [examples](examples) | Specification examples |
+| [community](community) | Contains info on the spec community |
