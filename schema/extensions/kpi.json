@@ -1,0 +1,282 @@
+{
+  "$id": "https://serverlessworkflow.org/extensions/kpi.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Serverless Workflow specification - KPIs Extension Schema",
+  "type": "object",
+  "definitions": {
+    "kpi": {
+      "type": "object",
+      "description": "Serverless Workflow KPI Extension",
+      "properties": {
+        "extensionid": {
+          "type": "string",
+          "default": "workflow-kpi-extension",
+          "description": "Extension unique identifier"
+        },
+        "workflowid": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Workflow definition unique identifier (workflow id property)"
+        },
+        "currency": {
+          "type": "string",
+          "default": "USD",
+          "description": "Unit for all cost-based KPI parameters. Default 'USD'"
+        },
+        "events": {
+          "type": "array",
+          "description": "Events KPIs",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/eventskpi"
+          }
+        },
+        "functions": {
+          "type": "array",
+          "description": "Functions KPIs",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/functionskpi"
+          }
+        },
+        "states": {
+          "type": "array",
+          "description": "States KPIs",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/stateskpi"
+          }
+        },
+        "workflow": {
+          "description": "Workflow KPIs",
+          "$ref": "#/definitions/workflowkpi"
+        }
+      },
+      "required": [
+        "extensionid",
+        "workflowid"
+      ]
+    },
+    "eventskpi": {
+      "type": "object",
+      "properties": {
+        "for": {
+          "type": "string",
+          "description": "References an unique event name in the defined workflow events"
+        },
+        "per": {
+          "description": "Define the kpi thresholds in terms of time and/or num of workflow instances",
+          "$ref": "#/definitions/thresholds"
+        },
+        "maxConsumed": {
+          "type": "string",
+          "description": "If event kind is 'consumed', the max amount of times this event is consumed"
+        },
+        "minConsumed": {
+          "type": "string",
+          "description": "If event kind is 'consumed', the min amount of times this event is consumed"
+        },
+        "avgConsumed": {
+          "type": "string",
+          "description": "If event kind is 'consumed', the avg amount of times this event is consumed"
+        },
+        "maxProduced": {
+          "type": "string",
+          "description": "If event kind is 'produced', the max amount of times this event is produced"
+        },
+        "minProduced": {
+          "type": "string",
+          "description": "If event kind is 'produced', the min amount times this event is produced"
+        },
+        "avgProduced": {
+          "type": "string",
+          "description": "If event kind is 'produced', the avg amount of times this event is produced"
+        }
+      },
+      "required": [
+        "for",
+        "per"
+      ]
+    },
+    "functionskpi": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "for": {
+              "type": "string",
+              "description": "References an unique function name in the defined workflow functions"
+            },
+            "per": {
+              "description": "Define the kpi thresholds in terms of time and/or num of workflow instances",
+              "$ref": "#/definitions/thresholds"
+            },
+            "maxErrors": {
+              "type": "string",
+              "description": "Max number of errors during function invocation"
+            },
+            "maxRetry": {
+              "type": "string",
+              "description": "Max number of retries done for this function invocation"
+            },
+            "maxTimeout": {
+              "type": "string",
+              "description": "Max number of times the function timeout time was reached"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/invocationkpis"
+        },
+        {
+          "$ref": "#/definitions/costkpis"
+        }
+      ],
+      "required": [
+        "for",
+        "per"
+      ]
+    },
+    "stateskpi": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "for": {
+              "type": "string",
+              "description": "References an unique state name in the defined workflow events"
+            },
+            "per": {
+              "description": "Define the kpi thresholds in terms of time and/or num of workflow instances",
+              "$ref": "#/definitions/thresholds"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/execkpis"
+        },
+        {
+          "$ref": "#/definitions/durationkpis"
+        },
+        {
+          "$ref": "#/definitions/costkpis"
+        }
+      ],
+      "required": [
+        "for",
+        "per"
+      ]
+    },
+    "workflowkpi": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "per": {
+              "description": "Define the kpi thresholds in terms of time and/or num of workflow instances",
+              "$ref": "#/definitions/thresholds"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/invocationkpis"
+        },
+        {
+          "$ref": "#/definitions/durationkpis"
+        },
+        {
+          "$ref": "#/definitions/costkpis"
+        }
+      ],
+      "required": [
+        "per"
+      ]
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "type": "string",
+          "default": "PT1D",
+          "description": "ISO_8601 time. 1 day default"
+        },
+        "instances": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Number of workflow instances"
+        }
+      },
+      "required": [
+      ]
+    },
+    "costkpis": {
+      "type": "object",
+      "properties": {
+        "maxCost": {
+          "type": "string",
+          "description": "Max cost"
+        },
+        "minCost": {
+          "type": "string",
+          "description": "Min cost"
+        },
+        "avgCost": {
+          "type": "string",
+          "description": "Avg cost"
+        }
+      }
+    },
+    "invocationkpis": {
+      "type": "object",
+      "properties": {
+        "maxInvoked": {
+          "type": "string",
+          "description": "Max number of invocation times"
+        },
+        "minInvoked": {
+          "type": "string",
+          "description": "Min number of invocation times"
+        },
+        "avgInvoked": {
+          "type": "string",
+          "description": "Avg number of invocation times"
+        }
+      }
+    },
+    "durationkpis": {
+      "type": "object",
+      "properties": {
+        "maxDuration": {
+          "type": "string",
+          "description": "ISO 8601. Max duration"
+        },
+        "minDuration": {
+          "type": "string",
+          "description": "ISO 8601. Min duration"
+        },
+        "avgDuration": {
+          "type": "string",
+          "description": "ISO 8601. Avg duration"
+        }
+      }
+    },
+    "execkpis": {
+      "type": "object",
+      "properties": {
+        "maxExec": {
+          "type": "string",
+          "description": "Max exec number"
+        },
+        "minExec": {
+          "type": "string",
+          "description": "Min exec numbe"
+        },
+        "avgExec": {
+          "type": "string",
+          "description": "Avg exec number"
+        }
+      }
+    }
+  }
+}

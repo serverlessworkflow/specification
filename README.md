@@ -131,6 +131,6 @@ documents:
 | [roadmap](roadmap/README.md) | Specification Roadmap |
 | [references](references/README.md) | References used for specification docs |
 | [media](media) | Includes all images used in spec docs |
-| [extending](extending/README.md) | Information on extending the workflow model |
+| [extensions](extensions/README.md) | Information on spec extensions |
 | [examples](examples) | Specification examples |
 | [community](community) | Contains info on the spec community |

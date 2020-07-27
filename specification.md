@@ -20,7 +20,7 @@ This document is a working draft.
   - [Workflow Definition](#Workflow-Definition)
   - [Workflow Error Handling](#Workflow-Error-Handling)
   - [Workflow Metadata](#Workflow-Metadata)
-- [Extending](#Extending)
+- [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
 - [Examples](#Examples)
 - [References](#References)
@@ -45,20 +45,30 @@ For more information on the history, development and design rationale behind the
 
 ## Specification Goals
 
-The specification provides a workflow [JSON Schema](https://json-schema.org/) (found [here](#schema/workflow.json)).
-It defines the structure of the workflow model. This allows workflow models to be defined in both
+The specification provides a [Workflow JSON Schema](schema/workflow.json)
+which defines the structure of the workflow model. This allows workflow models to be defined in both
 [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats, and both formats are considered specification compliant
 if they validate against the defined schema.
 
-In addition, the specification provides a Software Development Kit (SDK) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
-and plans to add them for more languages in the future.
+The specification also provides Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
+and we plan to add them for more languages in the future.
 
-We are also working on a Technology Compatibility Kit (TCK) which will provides a suite of tests used for testing specification conformance.
+In addition the specification provides a set of [Workflow Extensions](extensions/README.md) which 
+allow users to define additional non-execution-related workflow information that can be used to improve
+workflow performance. Some example extension for workflows include Key Performance Indicators (KPIs), 
+Simulation, Tracing, etc 
+
+We are also working on a Technology Compatibility Kit (TCK) which will provides a suite of tests 
+which can be used by runtime implementations to test their specification conformance.
 
 The specification relies on runtime implementations to adopt the defined workflow model and provide execution semantics.
 
+<p align="center">
+<img src="media/spec/spec-overview.png" height="400px" alt="Serverless Workflow Specification Overview"/>
+</p>
+
 With all this in place the specification goals focus on portability and vendor-neutrality. Using the workflow model
-defined by the specification should allow users to orchestrate event-driven microservices
+defined by the specification allows users to orchestrate event-driven microservices
 on may different runtimes and cloud/container platforms.
 
 <p align="center">
@@ -237,7 +247,6 @@ which would set the workflow version to `1.0.0`.
 | [events](#Event-Definition) | Workflow event definitions. Defines events that can be consumed or produced | array | no |
 | [functions](#Function-Definition) | Workflow function definitions | array | no |
 | [states](#State-Definition) | Workflow states | array | yes |
-| [extensions](#Extending) | Workflow custom extensions | array | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3938,18 +3947,23 @@ Some other examples of information that could be recorded in metadata are:
 - Build, release, or image information such as timestamps, release ids, git branches, PR numbers, etc.
 - Logging, monitoring, analytics, or audit repository information.
 - Labels used for organizing/indexing purposes, such as "release" "stable", "track", "daily", etc.
+ 
+## Extensions
 
-## Extending
+The workflow extension mechanism allows you to enhance your model definitions with additional information useful for 
+things like analytics, logging, simulation, debugging, tracing, etc.
 
-Serverless Workflows are built with extensibility in mind. The extension mechanism allows
-users and implementers to extend the standard workflow elements with additional ones. This can be used,
-for example, to satisfy some unique requirements and remain being compliant with the workflow specification.
+Model extensions do no influence control flow logic (workflow execution semantics). 
+They enhance it with extra information that can be consumed by runtime systems or tooling and 
+evaluated with the end goal being overall workflow improvements in terms of time, cost, efficiency, etc.
 
-The extension mechanism can be used to define custom workflow elements. It is targeted to
-solving custom requirements that go beyond the core of the workflow specification, for example,
-logging, simulation, debugging, tracing, etc.
+Serverless Workflow specification provides extensions which can be found [here](extensions/README.md).
 
-You can find more info and examples of element extensions [here](extending/README.md).
+Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification,
+and for the community to contribute their extension to the specification so they can grow alongside it.
+
+If you have an idea for a new workflow extension, or would like to enhance an existing one, 
+please open an `New Extension Request` issue in this repository.
 
 ## Use Cases
 

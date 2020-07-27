@@ -3,8 +3,10 @@
 **Please specify parts this PR updates:**
 
 - [ ] Specification
-- [ ] Examples
 - [ ] Schema
+- [ ] Examples
+- [ ] Usecases
+- [ ] Extensions
 - [ ] Roadmap
 - [ ] Use Cases
 - [ ] Community
