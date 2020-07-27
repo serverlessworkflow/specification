@@ -45,20 +45,30 @@ For more information on the history, development and design rationale behind the
 
 ## Specification Goals
 
-The specification provides a workflow [JSON Schema](https://json-schema.org/) (found [here](#schema/workflow.json)).
-It defines the structure of the workflow model. This allows workflow models to be defined in both
+The specification provides a [Workflow JSON Schema](schema/workflow.json)
+which defines the structure of the workflow model. This allows workflow models to be defined in both
 [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats, and both formats are considered specification compliant
 if they validate against the defined schema.
 
-In addition, the specification provides a Software Development Kit (SDK) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
-and plans to add them for more languages in the future.
+The specification also provides Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
+and we plan to add them for more languages in the future.
 
-We are also working on a Technology Compatibility Kit (TCK) which will provides a suite of tests used for testing specification conformance.
+In addition the specification provides a set of [Workflow Extensions](extensions/README.md) which 
+allow users to define additional non-execution-related workflow information that can be used to improve
+workflow performance. Some example extension for workflows include Key Performance Indicators (KPIs), 
+Simulation, Tracing, etc 
+
+We are also working on a Technology Compatibility Kit (TCK) which will provides a suite of tests 
+which can be used by runtime implementations to test their specification conformance.
 
 The specification relies on runtime implementations to adopt the defined workflow model and provide execution semantics.
 
+<p align="center">
+<img src="media/spec/spec-overview.png" height="400px" alt="Serverless Workflow Specification Overview"/>
+</p>
+
 With all this in place the specification goals focus on portability and vendor-neutrality. Using the workflow model
-defined by the specification should allow users to orchestrate event-driven microservices
+defined by the specification allows users to orchestrate event-driven microservices
 on may different runtimes and cloud/container platforms.
 
 <p align="center">
