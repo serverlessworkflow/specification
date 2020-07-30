@@ -1,8 +1,8 @@
-owners:
-- tsurdilo
-- manuelstein
-
-approvers:
-- ricardozanini
-- singhkays
-- falko
+# See the GOVERNANCE.md document for the definition of the roles and responsibilities
+maintainers:
+  - tsurdilo
+  - manuelstein
+reviewers:
+  - ricardozanini
+  - singhkays
+  - falko
