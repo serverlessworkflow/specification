@@ -124,6 +124,8 @@ documents:
 | [specification.md](specification.md) | The main specification document | 
 | [OWNERS](OWNERS) | Defines the current specification maintainers and approvers | 
 | [LICENSE](LICENSE) | Specification License doc | 
+| [MAINTAINERS.md](MAINTAINERS.md) | Project Maintainers Info | 
+| [GOVERNANCE.md](GOVERNANCE.md) | Project Governance Info | 
 | [contributing.md](contributing.md) | Documentation on how to contribute to the spec | 
 | [code-of-conduct.md](code-of-conduct.md) | Defines the spec Code of Conduct | 
 | [usecases](usecases/README.md) | Specification Use Cases | 
