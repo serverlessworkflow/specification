@@ -2480,6 +2480,7 @@ state which calls the "sendTextFunction" function.
 ```json
 {
 "id": "checkInbox",
+"name": "Check Inbox Workflow",
 "description": "Periodically Check Inbox",
 "version": "1.0",
 "functions": [
@@ -2546,7 +2547,7 @@ state which calls the "sendTextFunction" function.
 
 ```yaml
 id: checkInbox
-name: Periodically Check Inbox Workflow
+name: Check Inbox Workflow
 description: Periodically Check Inbox
 version: '1.0'
 functions:

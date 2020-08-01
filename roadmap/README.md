@@ -66,3 +66,4 @@ _Status description:_
 | ✔️| Only use JsonPath expressions ( remove need for expression languages other than JsonPath) | [spec doc](../specification.md) |
 | ✔️| Update workflow extensions | [spec doc](../specification.md) |
 | ✔️| Add Workflow KPIs extension | [spec doc](../specification.md) |
+| ✔️| Add Workflow Validation to Java SDK | [sdk repo](https://github.com/serverlessworkflow/sdk-java) |
