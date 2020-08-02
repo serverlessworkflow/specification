@@ -47,19 +47,19 @@ For more information on the history, development and design rationale behind the
 
 The specification provides a [Workflow JSON Schema](schema/workflow.json)
 which defines the structure of the workflow model. This allows workflow models to be defined in both
-[JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats, and both formats are considered specification compliant
+[JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats. Both are considered specification compliant
 if they validate against the defined schema.
 
 The specification also provides Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
 and we plan to add them for more languages in the future.
 
-In addition the specification provides a set of [Workflow Extensions](extensions/README.md) which 
-allow users to define additional non-execution-related workflow information that can be used to improve
-workflow performance. Some example extension for workflows include Key Performance Indicators (KPIs), 
-Simulation, Tracing, etc 
+In addition, the specification provides a set of [Workflow Extensions](extensions/README.md) which 
+allow users to define additional, non-execution-related workflow information. This information can be used to improve
+workflow performance. 
+Some example workflow extensions include Key Performance Indicators (KPIs), Simulation, Tracing, etc 
 
-We are also working on a Technology Compatibility Kit (TCK) which will provides a suite of tests 
-which can be used by runtime implementations to test their specification conformance.
+We are also working on a Technology Compatibility Kit (TCK) to be used as a specification conformance
+tool for runtime implementations.
 
 The specification relies on runtime implementations to adopt the defined workflow model and provide execution semantics.
 
@@ -77,15 +77,16 @@ on may different runtimes and cloud/container platforms.
 
 ## Specification Details
 
-Following sections provide a detailed description of all parts of the workflow model. 
+Following sections provide a detailed descriptions of all parts of the workflow model. 
 
 ### Workflow Model
 
-The Serverless Workflow model can be viewed as: 
+The Serverless Workflow model is composed of: 
 
-* Set of [functions](#Function-Definition) (services) that need to be called during workflow execution. 
-* Set of [events](#Event-Definition) that need to be consumed to start workflow instances or trigger functions, or be produced during workflow execution.
-* Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the workflow control flow logic, manage data, and can reference defined functions and events.
+* Set of [functions](#Function-Definition) (services) that need to be `invoked` during workflow execution. 
+* Set of [events](#Event-Definition) that need to be `consumed` to start workflow instances or trigger functions, or be `produced` during workflow execution.
+* Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the workflow `control flow logic`, manage workflow data, and can reference defined functions and events. 
+Transitions connect workflow states.
 
 The defined workflow model is a declarative language that can be used to model small or complex orchestrations
 for event-driven, serverless applications.
