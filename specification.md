@@ -84,13 +84,13 @@ Following sections provide a detailed descriptions of all parts of the workflow 
 The Serverless Workflow model is composed of: 
 
 * Set of [functions](#Function-Definition) (services) that need to be `invoked` during workflow execution. 
-* Set of [events](#Event-Definition) that need to be `consumed` to start workflow instances or trigger functions, or be `produced` during workflow execution.
+* Set of [events](#Event-Definition) that need to be `consumed` to start workflow instances, trigger functions, or be `produced` during workflow execution.
 * Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the workflow `control flow logic`, manage workflow data, and can reference defined functions and events. 
 Transitions connect workflow states.
 
 The defined workflow model is a declarative language that can be used to model small or complex orchestrations
 for event-driven, serverless applications.
-
+to start workflow instances or trigger functions,
 ### Workflow Data
 
 Serverless Workflow data is represented in [JSON](https://www.json.org/json-en.html) format.
