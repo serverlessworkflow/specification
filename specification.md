@@ -91,6 +91,7 @@ Transitions connect workflow states.
 The defined workflow model is a declarative language that can be used to model small or complex orchestrations
 for event-driven, serverless applications.
 to start workflow instances or trigger functions,
+
 ### Workflow Data
 
 Serverless Workflow data is represented in [JSON](https://www.json.org/json-en.html) format.
@@ -100,17 +101,17 @@ Data flow during workflow execution can be divided into:
 - [Event data](#Event-data)
 - [Action data](#Action-data)
 - [Information passing between states](#Information-passing-Between-States)
-- [State information filtering](#State-information-filtering)
+- [State Data filtering](#State-data-filtering)
 - [Workflow data output](#Workflow-data-output)
 
 ### Workflow Data Expressions
 
 Workflow model parameters may use expressions to access the JSON data. 
 Note that different data filters play a big role as to which parts of the state data is queried against. Reference the 
-[State Information Filtering](#State-Information-Filtering) section for more information.
+[State Data Filtering](#State-Data-Filtering) section for more information.
 
 All expressions must follow the [JsonPath](https://github.com/json-path/JsonPath) format and can be evaluated with a JsonPath expression evaluator. 
-JsonPath expressions can traverse the workflow JSON data. 
+JsonPath expressions can select and extract the workflow JSON data. 
 
 All expressions are written inside double braces:
 
@@ -3164,28 +3165,32 @@ decide to strictly enforce it.
 
 [Event states](#Event-State) wait for arrival of defined CloudEvents, and when consumed perform a number of defined actions.
 CloudEvents can contain data which is needed to make further orchestration decisions. Data from consumed CloudEvents
-is merged with the data input of the Event state, so it can be used inside defined actions
+can be merged with the data of the Event state, so it can be used inside defined actions
 or be passed as data output to transition states.
 
 <p align="center">
 <img src="media/spec/eventdatamerged.png" height="350px" alt="Event data merged with state data input"/>
 </p>
 
-Similarly for Callback states, the callback event data is merged with the data input of the Callback state.
+Similarly for Callback states, the callback event data is merged with the data of the Callback state.
+
+Merging of this data case be controlled via [data filters](#State-Information-Filtering).
 
 #### Action Data
 
 [Event](#Event-State), [Callback](#Callback-State), and [Operation](#Operation-State) states can execute [actions](#Action-Definition). 
 Actions can invoke different services (functions). Functions can return results that may be needed to make
-further orchestration decisions. Function results are merged with the state data.
+further orchestration decisions. Function results can be  merged with the state data.
 
 <p align="center">
 <img src="media/spec/actionsdatamerged.png" height="350px" alt="Actions data merged with state data"/>
 </p>
 
+Merging of this data case be controlled via [data filters](#State-Information-Filtering).
+
 #### Information Passing Between States
 
-States in a serverless workflow can receive data (data input) as well as produce a data result (data output). The states data input is
+States in a workflow can receive data (data input) as well as produce a data result (data output). The states data input is
 typically the previous states data output.
 When a state completes its tasks, its data output is passed to the data input of the state it transitions to.
 
@@ -3203,29 +3208,28 @@ In order to define the structure of expected state data input and output you can
 that describes the expected workflow data input/output. This can be used for documentation purposes or implementations may
 decide to strictly enforce it.
 
-#### State Information Filtering
+#### State Data Filtering
 
-States can access and manipulate data via data filters. Since all data during workflow execution is described
-in [JSON](https://tools.ietf.org/html/rfc7159) format, data filters use [JsonPath](https://github.com/json-path/JsonPath) queries
-to do data manipulation/selection.
+Data filters allow you to select and extract specific data that is useful and needed during workflow execution.
+Filters use [JsonPath](https://github.com/json-path/JsonPath) expressions for extracting portions of state's data
+input and output, actions data and results, event data, as well as error data.
 
-There are several types of data filters defined:
+There are several types of data filters:
 
 - [State Data Filter](#state-data-filter)
 - [Action Data Filter](#action-data-filter)
 - [Event Data Filter](#event-data-filter)
 - [Error Data Filter](#error-data-filter)
 
-All states can define state and error data filters. States which can consume events ([Event states](#Event-State), [Callback states](#Callback-State)) can define event data filters, and states
-that can perform actions ([Event states](#Event-State), [Operation states](#Operation-State)) can define action data filters for each of the
-actions they perform.
+All states can define state and error data filters. States which can consume events can define event data filters, and states
+that can perform actions can define action data filters for each of the actions they perform.
 
-#### <a name="state-data-filter"></a> State information filtering - State Data Filter
+#### <a name="state-data-filter"></a> State data filtering - State Data Filter
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataInputPath | JsonPath definition that selects parts of the states data input | string | no |
-| dataOutputPath | JsonPath definition that selects parts of the states data output | string | no |
+| dataInputPath | JsonPath expression to filter the states data input | string | no |
+| dataOutputPath | JsonPath expression that filters the states data output | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3259,17 +3263,18 @@ dataOutputPath: "{{ $.provisionedOrders }}"
 
 </details>
 
-State data filters defines the states data input and data output filtering.
+State data filters can be used to filter the states data input and output.
 
-The state data filters inputPath is applied when the workflow transitions to the current state and it receives its data input.
+The state data filters `dataInputPath` expression is applied when the workflow transitions to the current state and it receives its data input.
 It filters this data input selecting parts of it (only the selected data is considered part of the states data during its execution).
-If inputPath is not defined, or it does not select any parts of the states data input, the states data input is not filtered.
+If `dataInputPath` is not defined, or it does not select any parts of the states data input, the states data input is not filtered.
 
-The state data filter outputPath is applied right before the state transitions to the next state defined. It filters the states data
-output to be passed as data input to the transitioning state. If outputPath is not defined, or it does not
-select any parts of the states data output, the states data output is not filtered.
+The state data filter `dataOutputPath` is applied right before the state transitions to the next state defined. It filters the states data
+output to be passed as data input to the transitioning state. If the current state is the workflow end state, the filtered states data
+output becomes the workflow data output.
+If `dataOutputPath` is not defined, or it does not select any parts of the states data output, the states data output is not filtered.
 
-Let's take a look at some examples of state filters. For our example the data input to our state is as follows:
+Let's take a look at some examples of state filters. For our examples the data input to our state is as follows:
 
 ```json
 {
@@ -3350,12 +3355,12 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 }
 ```
 
-#### <a name="action-data-filter"></a> State information filtering - Action Data Filter
+#### <a name="action-data-filter"></a> State data filtering - Action Data Filter
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataInputPath | JsonPath definition that selects parts of the states data input to be the action data | string | no |
-| dataResultsPath | JsonPath definition that selects parts of the actions data result, to be merged with the states data | string | no |
+| dataInputPath | JsonPath expression that filters states data that can be used by the state action | string | no |
+| dataResultsPath | JsonPath expression that filters the actions data result, to be added to or merged with the states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3389,24 +3394,52 @@ dataResultsPath: "{{ $.payload.greeting }}"
 
 </details>
 
-[Actions](#Action-Definition) have access to the state data. They can filter this data using an action data filter (dataInputPath) before executing any functions.
-This is useful if you want to restrict the data to be passed as parameters to serverless functions during action executions.
+[Actions](#Action-Definition) have access to the state data. 
+They can filter this data using an action data filter 'dataInputPath' expression before invoking functions.
+This is useful if you want to restrict the data that can be passed as parameters to functions during action invocation.
 
-Actions can define [functions](#Function-Definition). The results data of these functions is considered the output of the action which is then after completion
-merged back into the state data. You can filter the results of actions with the `dataResultsPath` property, to only select
-parts of the action results that need to be merged back into the state data.
+Actions can reference [functions](#Function-Definition) that need to be invoked. 
+The results of these functions are considered the output of the action which needs to be added to or merged with the states data. 
+You can filter the results of actions with the `dataResultsPath` property, to only select
+parts of the action results that need to go into the states data.
 
-To give an example, let's say we have an action which returns a list of breads and we want to add this list our fruits and vegetables data:
+To give an example, let's say we have an action which returns a list of breads and pasta types.
+For our workflow, we are only interested into breads and not the pasta.
 
-<p align="center">
-<img src="media/spec/action-data-filter-example1.png" height="450px" alt="Action Data Filter Example"/>
-</p>
+Action results:
 
-#### <a name="event-data-filter"></a> State information filtering - Event Data Filter
+```json
+{
+  "breads": ["baguette", "brioche", "rye"],
+  "pasta": [ "penne",  "spaghetti", "ravioli"]
+}
+```
+
+We can use an action data filter to filter only the breads data:
+
+```json
+{
+"actions":[  
+    {  
+       "functionRef": {
+          "refName": "breadAndPastaTypesFunction"
+       },
+       "actionDataFilter": {
+          "dataResultsPath": "{{ $.breads }}"
+       }
+    }
+ ]
+}
+```
+
+With this action data filter in place only the bread types returned by the function invocation will be added to or merged
+with the state data.
+
+#### <a name="event-data-filter"></a> State data filtering - Event Data Filter
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataOutputPath | JsonPath definition that selects parts of the event data, to be merged with the states data | string | no |
+| dataOutputPath | JsonPath expression that filters of the event data, to be added to or merged with states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3438,10 +3471,8 @@ dataOutputPath: "{{ $.data.results }}"
 
 </details>
 
-CloudEvents can be consumed by [Event states](#Event-State) and trigger one or more [actions](#Action-Definition) to be performed. CloudEvents
-can include data which needs to be merged with the state data before associated actions are executed.
-You can filter the event data with the `dataOutputPath` property, selecting only the portion of the event data
-that you need to be merged with the state data.
+Allows event data to be filtered and added to or merged with the state data. All events have to be in the CloudEvents format
+and event data filters can filter both context attributes and the event payload (data) using the `dataOutputPath` property.
 
 Here is an example using an event filter:
 
@@ -3449,14 +3480,11 @@ Here is an example using an event filter:
 <img src="media/spec/event-data-filter-example1.png" height="400px" alt="Event Data Filter Example"/>
 </p>
 
-Similarly the consumed callback CloudEvent in [Callback states](#Callback-State) can be filtered using
-an event filter.
-
-#### <a name="error-data-filter"></a> State information filtering - Error Data Filter
+#### <a name="error-data-filter"></a> State data filtering - Error Data Filter
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| dataOutputPath | JsonPath definition that selects parts of the error data, to be merged with the states data | string | no |
+| dataOutputPath | JsonPath expression filters error data, to be added to or merged with states data | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3489,7 +3517,7 @@ dataOutputPath: "{{ $.exception }}"
 </details>
 
 States can define [error handling](#Workflow-Error-Handling) with the `onError` property. The runtime error contains data
-which is merged with the states data. You can use the error data filter to select portion of the error data to be merged
+which is merged with the states data. You can use the error data filter to filter what error data is to be added to or merged
 with the states data.
 
 Here is an example using an error filter:
@@ -3498,7 +3526,7 @@ Here is an example using an error filter:
 <img src="media/spec/error-data-filter-example1.png" height="400px" alt="Error Data Filter Example"/>
 </p>
 
-#### <a name="error-data-filter"></a> State information filtering - Using multiple filters
+#### <a name="error-data-filter"></a> State data filtering - Using multiple filters
 
 As [Event states](#Event-State) can take advantage of all defined data filters, it is probably the best way to
 show how we can combine them all to filter state data.
@@ -3508,7 +3536,9 @@ and then lets us know how to greet this customer in different languages. We coul
 
 ```json
 {
+    "id": "GreetCustomersWorkflow",
     "name": "Greet Customers when they arrive",
+    "version": "1.0",
     "events": [{
         "name": "CustomerArrivesEvent",
         "type": "customer-arrival-type",
@@ -3540,7 +3570,6 @@ and then lets us know how to greet this customer in different languages. We coul
                             }
                         },
                         "actionDataFilter": {
-                            "dataInputPath": " {{ $ }}",
                             "dataResultsPath": "{{ $.finalCustomerGreeting }}"
                         }
                     }
@@ -3559,7 +3588,7 @@ and then lets us know how to greet this customer in different languages. We coul
 ```
 
 The example workflow contains an event state which consumes CloudEvents of type "customer-arrival-type", and then
-calls the "greetingFunction" serverless function passing in the greeting in Spanish and the name of the customer to greet.
+calls the "greetingFunction" function passing in the greeting in Spanish and the name of the customer to greet.
 
 The workflow data input when starting workflow execution is assumed to include greetings in different languages:
 
@@ -3645,12 +3674,14 @@ the entire state data as the data available to functions that should be executed
 specifies that results of all functions executed in this action should be placed back to the state data as part
 of a new "finalCustomerGreeting" object.
 
-The action then calls the "greetingFunction" serverless function passing in as parameters the spanish greeting and the name of the customer that arrived.
+The action then calls the "greetingFunction" function passing in as parameters the spanish greeting and the name of the customer that arrived.
 
 We assume that for this example "greetingFunction" returns:
 
-```text
-"Hola John Michaels!"
+```json
+{
+   "finalCustomerGreeting": "Hola John Michaels!"
+}
 ```
 
 which then becomes the result of the action.
@@ -3681,8 +3712,10 @@ selects only the "finalCustomerGreeting" object to make it the data output of th
 
 Because our event state is also an end state, its data output becomes the final [workflow data output](#Workflow-data-output). Namely:
 
-```text
-"Hola John Michaels!"
+```json
+{
+   "finalCustomerGreeting": "Hola John Michaels!"
+}
 ```
 
 Note that in case of multiple actions with each containing an "actionDataFilter", you must be careful for their results

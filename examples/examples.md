@@ -23,20 +23,15 @@
 
 #### Description
 
-This example uses two inject states. The "Hello" state statically injects the following JSON into its data input:
+In this simple example we use an [Inject State](../specification.md#Inject-State) to inject 
+`Hello World` in the states data (as the value of the 'result' property).
+After the state execution completes, since it is an end state, its data output becomes the workflow
+data output, which is:
 
 ```json
 {
-  "result": "Hello"
+  "result": "Hello World"
 }
-```
-
-which then becomes the data input of the transition "World" state.
-The "World" state merges its data input with it's injected JSON and uses a filter to set its data output to the
-value of the "result" property. Since it is an end state, it's data output becomes the workflow data output:
-
-```text
-"Hello World!"
 ```
 
 #### Workflow Definition
@@ -54,32 +49,19 @@ value of the "result" property. Since it is an end state, it's data output becom
 "id": "helloworld",
 "version": "1.0",
 "name": "Hello World Workflow",
-"description": "Static Hello World",
+"description": "Inject Hello World",
 "states":[  
   {  
-     "name":"Hello",
+     "name":"Hello State",
      "type":"inject",
      "start": {
        "kind": "default"
      },
      "data": {
-        "result": "Hello"
-     },
-     "transition": {
-       "nextState": "World"
-     }
-  },
-  {  
-     "name":"World",
-     "type":"inject",
-     "data": {
-        "result": " World!"
-     },
-     "stateDataFilter": {
-       "dataOutputPath": "{{ $.result }}"
+        "result": "Hello World!"
      },
      "end": {
-       "kind": "default"
+        "kind": "default"
      }
   }
 ]
@@ -93,22 +75,14 @@ value of the "result" property. Since it is an end state, it's data output becom
 id: helloworld
 version: '1.0'
 name: Hello World Workflow
-description: Static Hello World
+description: Inject Hello World
 states:
-- name: Hello
+- name: Hello State
   type: inject
   start:
     kind: default
   data:
-    result: Hello
-  transition:
-    nextState: World
-- name: World
-  type: inject
-  data:
-    result: " World!"
-  stateDataFilter:
-    dataOutputPath: "{{ $.result }}"
+    result: Hello World!
   end:
     kind: default
 ```
@@ -132,7 +106,7 @@ The workflow data input is assumed to be the name of the person to greet:
 
 ```json
 {
-  "greet": {
+  "person": {
     "name": "John"
   }
 }
@@ -142,20 +116,11 @@ The results of the action is assumed to be the greeting for the provided persons
 
 ```json
 {
-  "payload": {
-    "greeting": "Welcome to Serverless Workflow",
-    "name": "John"
-  }
+   "greeting":  "Welcome to Serverless Workflow, John!"
 }
 ```
 
-The states action data filter selects the greeting object from the function return to be placed into the state data.
-Then the states state data filter selects only the greeting object to be returned as its data output, which
-becomes the workflow data output (as it is an end state):
-
-```text
-   "Welcome to Serverless Workflow, John!"
-```
+Which is added to the states data and becomes the workflow data output.
 
 #### Workflow Definition
 
@@ -186,23 +151,19 @@ becomes the workflow data output (as it is an end state):
      "start": {
        "kind": "default"
      },
-     "actionMode":"sequential",
      "actions":[  
         {  
            "functionRef": {
               "refName": "greetingFunction",
               "parameters": {
-                "name": "{{ $.greet.name }}"
+                "name": "{{ $.person.name }}"
               }
            },
            "actionDataFilter": {
-              "dataResultsPath": "{{ $.payload }}"
+              "dataResultsPath": "{{ $.greeting }}"
            }
         }
      ],
-     "stateDataFilter": {
-        "dataOutputPath": "{{ $.payload.greeting }}, {{ $payload.name }}!"
-     },
      "end": {
        "kind": "default"
      }
@@ -227,16 +188,13 @@ states:
   type: operation
   start:
     kind: default
-  actionMode: sequential
   actions:
   - functionRef:
       refName: greetingFunction
       parameters:
-        name: "{{ $.greet.name }}"
+        name: "{{ $.person.name }}"
     actionDataFilter:
-      dataResultsPath: "{{ $.payload }}"
-  stateDataFilter:
-    dataOutputPath: "{{ $.payload.greeting }}, {{ $payload.name }}!"
+      dataResultsPath: "{{ $.greeting }}"
   end:
     kind: default
 ```
