@@ -4,7 +4,7 @@
 [<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://cloud-native.slack.com/messages/serverless-workflow) 
 
 <p align="center">
-<img src="media/sw-logo-round.png" width="800px" alt="Serverless Workflow Specification"/>
+<img src="media/sw-logo-round.png" width="400px" alt="Serverless Workflow Specification"/>
 </p>
 
 A specification for defining declarative workflow models
