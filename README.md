@@ -1,3 +1,9 @@
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-green.svg?style=flat)](https://github.com/serverlessworkflow/specification/issues)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![Check Markdown links](https://github.com/serverlessworkflow/specification/workflows/Check%20Markdown%20links/badge.svg)
+[<img src="http://img.shields.io/badge/slack-@serverless--workflow-red?style=social&logo=slack">](https://cloud-native.slack.com/messages/serverless-workflow) 
+[<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://cloud-native.slack.com/messages/serverless-workflow) 
+
 <p align="center">
 <img src="media/sw-logo.png" alt="Serverless Workflow Specification"/>
 </p>
