@@ -302,52 +302,16 @@
             "$ref": "#/definitions/action"
           }
         },
-        "states": {
-          "type": "array",
-          "description": "States to be executed in this branch",
-          "items": {
-            "anyOf": [
-              {
-                "title": "Delay State",
-                "$ref": "#/definitions/delaystate"
-              },
-              {
-                "title": "Event State",
-                "$ref": "#/definitions/eventstate"
-              },
-              {
-                "title": "Operation State",
-                "$ref": "#/definitions/operationstate"
-              },
-              {
-                "title": "Switch State",
-                "$ref": "#/definitions/switchstate"
-              },
-              {
-                "title": "SubFlow State",
-                "$ref": "#/definitions/subflowstate"
-              },
-              {
-                "title": "Inject State",
-                "$ref": "#/definitions/injectstate"
-              },
-              {
-                "title": "ForEach State",
-                "$ref": "#/definitions/foreachstate"
-              },
-              {
-                "title": "Callback State",
-                "$ref": "#/definitions/callbackstate"
-              }
-            ]
-          }
+        "workflowId": {
+          "type": "string",
+          "description": "Unique Id of a workflow to be executed in this branch"
         }
       },
       "oneOf": [
         {
           "required": [
             "name",
-            "states"
+            "workflowId"
           ]
         },
         {

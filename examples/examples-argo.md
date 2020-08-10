@@ -187,34 +187,19 @@ states:
   completionType: and
   branches:
   - name: hello2a-branch
-    states:
-    - name: hello2a
-      type: operation
-      start:
-        kind: default
-      actions:
-      - functionRef:
-          refName: whalesayimage
-          parameters:
-            message: hello2a
-      end:
-        kind: default
+    actions:
+    - functionRef:
+        refName: whalesayimage
+        parameters:
+          message: hello2a
   - name: hello2b-branch
-    states:
-    - name: hello2b
-      type: operation
-      start:
-        kind: default
-      actions:
-      - functionRef:
-          refName: whalesayimage
-          parameters:
-            message: hello2b
-      end:
-        kind: default
+    actions:
+    - functionRef:
+        refName: whalesayimage
+        parameters:
+          message: hello2b
   end:
     kind: default
-
 ```
 
 </td>
@@ -307,31 +292,17 @@ states:
   completionType: and
   branches:
   - name: B-branch
-    states:
-    - name: B
-      type: operation
-      start:
-        kind: default
-      actions:
-      - functionRef:
-          refName: echo
-          parameters:
-            message: B
-      end:
-        kind: default
+    actions:
+    - functionRef:
+        refName: echo
+        parameters:
+          message: B
   - name: C-branch
-    states:
-    - name: C
-      type: operation
-      start:
-        kind: default
-      actions:
-      - functionRef:
-          refName: echo
-          parameters:
-            message: C
-      end:
-        kind: default
+    actions:
+    - functionRef:
+        refName: echo
+        parameters:
+          message: C
   transition:
     nextState: D
 - name: D

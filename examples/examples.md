@@ -520,44 +520,20 @@ to finish execution before it can transition (end workflow execution in this cas
 "description": "Executes two branches in parallel",
 "states":[  
   {  
-     "name":"ParallelExec",
-     "type":"parallel",
+     "name": "ParallelExec",
+     "type": "parallel",
      "start": {
        "kind": "default"
      },
      "completionType": "and",
      "branches": [
         {
-          "name": "Branch1",
-          "states": [
-            {
-                "name":"ShortDelay",
-                 "type":"delay",
-                 "start": {
-                    "kind": "default"
-                },
-                 "timeDelay": "PT15S",
-                 "end": {
-                   "kind": "default"
-                 }
-            }
-          ]
+          "name": "ShortDelayBranch",
+          "workflowId": "shortdelayworkflowid"
         },
         {
-          "name": "Branch2",
-          "states": [
-             {
-                 "name":"LongDelay",
-                  "type":"delay",
-                  "start": {
-                     "kind": "default"
-                  },
-                  "timeDelay": "PT2M",
-                  "end": {
-                    "kind": "default"
-                  }
-             }
-          ]
+          "name": "LongDelayBranch",
+          "workflowId": "longdelayworkflowid"
         }
      ],
      "end": {
@@ -581,26 +557,12 @@ states:
   type: parallel
   start:
     kind: default
-  branches:
   completionType: and
-  - name: Branch1
-    states:
-    - name: ShortDelay
-      type: delay
-      start:
-        kind: default
-      timeDelay: PT15S
-      end:
-        kind: default
-  - name: Branch2
-    states:
-    - name: LongDelay
-      type: delay
-      start:
-        kind: default
-      timeDelay: PT2M
-      end:
-        kind: default
+  branches:
+  - name: ShortDelayBranch
+    workflowId: shortdelayworkflowid
+  - name: LongDelayBranch
+    workflowId: longdelayworkflowid
   end:
     kind: default
 ```
@@ -609,13 +571,15 @@ states:
 </tr>
 </table>
 
+We assume that the two referenced workflows, namely `shortdelayworkflowid` and `longdelayworkflowid` both include a single delay state,
+with the `shortdelayworkflowid` workflow delay state defining its `timeDelay` property to be shorter than that of the `longdelayworkflowid` workflows
+delay state.
+
 #### Workflow Diagram
 
 <p align="center">
 <img src="../media/examples/example-parallel.png" height="500px" alt="Parallel Example"/>
 </p>
-
-
 
 ### Event Based Transitions Example
 

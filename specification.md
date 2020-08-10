@@ -1608,7 +1608,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
 <td valign="top">
 
 ```json
-  {  
+ {  
      "name":"ParallelExec",
      "type":"parallel",
      "start": {
@@ -1618,34 +1618,28 @@ Delay state waits for a certain amount of time before transitioning to a next st
      "branches": [
         {
           "name": "Branch1",
-          "states": [
+          "actions": [
             {
-                "name":"ShortDelay",
-                 "type":"delay",
-                 "start": {
-                    "kind": "default"
-                },
-                 "timeDelay": "PT15S",
-                 "end": {
-                   "kind": "default"
-                 }
+                "functionRef": {
+                    "refName": "functionNameOne",
+                    "parameters": {
+                        "order": "{{ $.someParam }}"
+                    }
+                }
             }
-          ]
+        ]
         },
         {
           "name": "Branch2",
-          "states": [
-             {
-                 "name":"LongDelay",
-                  "type":"delay",
-                  "start": {
-                     "kind": "default"
-                  },
-                  "timeDelay": "PT2M",
-                  "end": {
-                    "kind": "default"
+          "actions": [
+              {
+                  "functionRef": {
+                      "refName": "functionNameTwo",
+                      "parameters": {
+                          "order": "{{ $.someParam }}"
+                      }
                   }
-             }
+              }
           ]
         }
      ],
@@ -1666,23 +1660,17 @@ start:
 completionType: and
 branches:
 - name: Branch1
-  states:
-  - name: ShortDelay
-    type: delay
-    start:
-      kind: default
-    timeDelay: PT15S
-    end:
-      kind: default
+  actions:
+  - functionRef:
+      refName: functionNameOne
+      parameters:
+        order: "{{ $.someParam }}"
 - name: Branch2
-  states:
-  - name: LongDelay
-    type: delay
-    start:
-      kind: default
-    timeDelay: PT2M
-    end:
-      kind: default
+  actions:
+  - functionRef:
+      refName: functionNameTwo
+      parameters:
+        order: "{{ $.someParam }}"
 end:
   kind: default
 ```
@@ -1693,9 +1681,9 @@ end:
 
 </details>
 
-Parallel state defines a collection of branches that are to be executed in parallel.
-Branches contain one or more states or actions. If a branch uses states for control flow logic execution, it must define one [starting state](#Start-Definition) as well as 
-include at least one [end state](#End-Definition).
+Parallel state defines a collection of `branches` that are executed in parallel.
+
+Branches contain set of actions that need to be performed or a reference to another workflow that needs to be executed. 
 
 The "completionType" enum specifies the different ways of completing branch execution:
 * and: All branches must complete execution before state can perform its transition
@@ -1710,8 +1698,8 @@ Exceptions may occur during execution of branches of the Parallel state, this is
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Branch name | string | yes |
-| [actions](#Action-Definition) | Actions to be executed in this branch | array | yes if states are not defined |
-| [states](#State-Definition) | States to be executed in this branch | array | yes if actions are not defined |
+| [actions](#Action-Definition) | Actions to be executed in this branch | array | yes if workflowId is not defined |
+| workflowId | Unique Id of a workflow to be executed in this branch | string | yes if actions is not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1727,18 +1715,23 @@ Exceptions may occur during execution of branches of the Parallel state, this is
 ```json
 {
       "name": "Branch1",
-      "states": [
-        {
-            "name":"ShortDelay",
-             "type":"delay",
-             "start": {
-                "kind": "default"
-            },
-             "timeDelay": "PT15S",
-             "end": {
-               "kind": "default"
-             }
-        }
+      "actions": [
+          {
+              "functionRef": {
+                  "refName": "functionNameOne",
+                  "parameters": {
+                      "order": "{{ $.someParam }}"
+                  }
+              }
+          },
+          {
+              "functionRef": {
+                  "refName": "functionNameTwo",
+                  "parameters": {
+                      "order": "{{ $.someParamTwo }}"
+                  }
+              }
+          }
       ]
 }
 ```
@@ -1748,14 +1741,15 @@ Exceptions may occur during execution of branches of the Parallel state, this is
 
 ```yaml
 name: Branch1
-states:
-- name: ShortDelay
-  type: delay
-  start:
-    kind: default
-  timeDelay: PT15S
-  end:
-    kind: default
+actions:
+- functionRef:
+    refName: functionNameOne
+    parameters:
+      order: "{{ $.someParam }}"
+- functionRef:
+    refName: functionNameTwo
+    parameters:
+      order: "{{ $.someParamTwo }}"
 ```
 
 </td>
@@ -1766,176 +1760,26 @@ states:
 
 Each branch receives the same copy of the Parallel state's data input.
 
-A branch can define either states or actions to be executed.
-
-States within each branch are only allowed to transition to states defined in the same branch.
-Transitions to other branches or workflow states are not allowed.
-States outside a parallel state cannot transition to a state declared within branches.
+A branch can define either actions or a workflow id of the workflow that needs to be executed.
+The workflow id defined cannot be the same id of the workflow there the branch is defined.
 
 #### <a name="parallel-state-exceptions"></a>Parallel State: Handling Exceptions
 
-Exceptions that occur during execution of Parallel state branch execution.
-By default, exceptions that are not handled within states of branches stop branch execution and are propagated 
+Exceptions can occur during execution of Parallel state branches.
+
+By default, exceptions that are not handled within branches stop branch execution and are propagated 
 to the Parallel state.
 
-Exceptions can be handled in the following ways:
+If the parallel states branch defines actions, all exceptions are propagated to the parallel state 
+and can be handled with the parallel states `onError` definition.
 
-* Don't handle exceptions inside states of branches: in this case, exceptions should be propagated to the 
-Parallel state and can be handled with the Parallel states "onError" definition. For example:
+If the parallel states defines a `workflowId`, exceptions that occur during execution of the called workflow
+can chose to handle exceptions on their own. All unhandled exceptions from the called workflow
+execution however are propagated back to the parallel state and can be handled with the parallel states
+`onError` definition.
 
-```json
-{
-  "id": "exceptionInParallelState",
-  "name": "Exception In Parallel State",
-  "version": "1.0",
-  "functions": [
-    {
-      "name": "throwsExceptionFunction",
-      "resource": "throwExceptionFunctionResource"
-    }
-  ],
-  "states": [
-    {
-      "name": "parallelState",
-      "type":"parallel",
-      "start": {
-        "kind":"default"
-      },
-      "completionType": "and",
-      "branches": [
-        {
-          "name": "invokeExceptionFunctionBranch",
-          "states": [
-            {
-              "name": "exceptionOperation",
-              "type":"operation",
-              "start": {
-                "kind":"default"
-              },
-              "actions": [
-                {
-                  "functionRef": {
-                    "refName": "throwsExceptionFunction"
-                  }
-                }
-              ],
-              "end": {
-                "kind":"default"
-              }
-            }
-          ]
-        }
-      ],
-      "onError": [
-        {
-          "expression": "{{ $.errors }}",
-          "transition": {
-            "nextState": "exceptionHandlingState"
-          }
-        }
-      ],
-      "end": {
-        "kind": "default"
-      }
-    },
-    {
-      "name": "exceptionHandlingState",
-      "type":"operation",
-      "actionMode": "sequential",
-      "actions": [
-         ...
-      ],
-      "end": {
-        "kind":"default"
-      }
-    }
-  ]
-}
-```
+The same rules should apply for any timeout exception.
 
-In this example, our Parallel state branch the "throwsExceptionFunction" function execution throws an exception 
-that is propagated to the Parallel state and handled with its "onError" definition.
-For the sake of the example we left the "actions" array of the "exceptionHandlingState" empty. In a real scenario,
-it would include actions needed to be executed.
-
-* Handle exceptions inside branch states: States inside branches can define their own "onError" definition.
-In this case the exceptions can be handled by the states and they will not be propagated to the Parallel state.
-
-```json
-{
-  "id": "errorInParallelState",
-  "name": "Error In Parallel State",
-  "version": "1.0",
-  "functions": [
-    {
-      "name": "ThrowsErrorFunction",
-      "resource": "throwErrorFunctionResource"
-    }
-  ],
-  "states": [
-    {
-      "name": "parallelState",
-      "type":"parallel",
-      "start": {
-        "kind":"default"
-      },
-      "completionType": "and",
-      "branches": [
-        {
-          "name": "invokeFunctionBranch",
-          "states": [
-            {
-              "name": "exceptionOperation",
-              "type":"operation",
-              "start": {
-                "kind":"default"
-              },
-              "actions": [
-                {
-                  "functionRef": {
-                    "refName": "ThrowsErrorFunction"
-                  }
-                }
-              ],
-              "onError": [
-                {
-                  "expression": "{{ $.errors }}",
-                  "transition": {
-                    "nextState": "errorHandlingBranchState"
-                  }
-                }
-              ],
-              "end": {
-                "kind":"default"
-              }
-            },
-            {
-              "name": "errorHandlingBranchState",
-              "type":"operation",
-              "actionMode": "sequential",
-              "actions": [
-        
-              ],
-              "end": {
-                "kind":"default"
-              }
-            }
-          ]
-        }
-      ],
-      "end": {
-        "kind": "default"
-      }
-    }
-  ]
-}
-```
-
-In this example the branches "exceptionOperation" state handles the thrown exception locally.
-For the sake of the example we left the "actions" array of the "errorHandlingBranchState" empty. In a real scenario
-it would include actions needed to be executed.
-
-Action timeouts follow the same rules as stated above. They can be handled either by the branch states themselves. If not, they are to be propagated to the Parallel state.
 For more information, see the [workflow error handling and retrying section](#workflow-retrying).
 
 #### SubFlow State
@@ -2249,7 +2093,7 @@ This allows you to test if your workflow behaves properly for cases when there a
 | iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
 | max | Specifies how upper bound on how many iterations may run in parallel | string or integer | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if subflowId is not defined |
-| workflowId | Unique Id of a workflow to be executed for each of the elements of inputCollection | boolean | yes if actions is not defined |
+| workflowId | Unique Id of a workflow to be executed for each of the elements of inputCollection | string | yes if actions is not defined |
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
 | [retry](#workflow-retrying) | States retry definitions | array | no |
 | [onError](#Workflow-Error-Handling) | States error handling definitions | array | no |
