@@ -76,10 +76,10 @@ functions:
   type: console
 states:
 - name: GreetingState
-  type: EVENT
+  type: event
   start:
-    kind: DEFAULT
-  eventsActions:
+    kind: default
+  onEvents:
   - eventRefs:
     - execEvent
     actions:
@@ -99,7 +99,7 @@ states:
         parameters:
           log: done
   end:
-    kind: DEFAULT
+    kind: default
 ```
 
 </td>
@@ -156,10 +156,10 @@ functions:
   type: console
 states:
 - name: GreetingState
-  type: EVENT
+  type: event
   start:
-    kind: DEFAULT
-  eventsActions:
+    kind: default
+  onEvents:
   - eventRefs:
     - execEvent
     actions:
@@ -185,9 +185,9 @@ states:
     transition:
       nextState: HandleErrorState
   end:
-    kind: DEFAULT
+    kind: default
 - name: HandleErrorState
-  type: OPERATION
+  type: operation
   actions:
   - name: logErrorAction
     functionRef:
@@ -195,7 +195,7 @@ states:
       parameters:
         log: Caught Exception $.exception
   end:
-    kind: DEFAULT
+    kind: default
 ```
 
 </td>
@@ -243,10 +243,10 @@ functions:
   type: console
 states:
 - name: GreetingState
-  type: EVENT
+  type: event
   start:
-    kind: DEFAULT
-  eventsActions:
+    kind: default
+  onEvents:
   - eventRefs:
     - execEvent
     actions:
@@ -264,7 +264,7 @@ states:
         parameters:
           log: "**** I'm a GitHub 'push' handler"
   end:
-    kind: DEFAULT
+    kind: default
 ```
 
 </td>
@@ -328,10 +328,10 @@ functions:
   type: echo
 states:
 - name: FirstGreetGroup
-  type: EVENT
+  type: event
   start:
-    kind: DEFAULT
-  eventsActions:
+    kind: default
+  onEvents:
   - eventRefs:
     - execEvent
     actions:
@@ -348,7 +348,7 @@ states:
   transition:
     nextState: SecondGreetGroup
 - name: SecondGreetGroup
-  type: OPERATION
+  type: operation
   actions:
   - name: secondHelloAction
     functionRef:
@@ -361,7 +361,7 @@ states:
       parameters:
         message: bye-again
   end:
-    kind: DEFAULT
+    kind: default
 ```
 
 </td>
@@ -407,10 +407,10 @@ functions:
   type: console
 states:
 - name: LogEventData
-  type: EVENT
+  type: event
   start:
-    kind: DEFAULT
-  eventsActions:
+    kind: default
+  onEvents:
   - eventRefs:
     - execEvent
     eventDataFilter:
@@ -427,7 +427,7 @@ states:
         parameters:
           log: ">>> project $event.data.project.name clones the repo at by $.event.data.repo.cloneURL"
   end:
-    kind: DEFAULT
+    kind: default
 
 ```
 
@@ -488,10 +488,10 @@ functions:
   type: filestore
 states:
 - name: ExecActionsAndStoreResults
-  type: EVENT
+  type: event
   start:
-    kind: DEFAULT
-  eventsActions:
+    kind: default
+  onEvents:
   - eventRefs:
     - execEvent
     eventDataFilter:
@@ -518,7 +518,7 @@ states:
           destination: "{{ $.event.destination }}"
           value: "{{ $.helloResult }} {{ $.worldResults }}"
   end:
-    kind: DEFAULT
+    kind: default
 
 ```
 
@@ -531,7 +531,7 @@ states:
 [Brigade Example](https://github.com/brigadecore/brigade/blob/master/docs/content/examples/brigade-19.js)
 
 * Note: Events can be emitted in Serverless Workflow Specification on state transitions. This also shows that yes.
-you can have eventsActions definition without any actions :)
+you can have `onEvents` definition without any actions :)
 <table>
 <tr>
     <th>Brigade</th>
@@ -577,10 +577,10 @@ functions:
   type: console
 states:
 - name: ExecEventState
-  type: EVENT
+  type: event
   start:
-    kind: DEFAULT
-  eventsActions:
+    kind: default
+  onEvents:
   - eventRefs:
     - execEvent
     actions: []
@@ -598,8 +598,8 @@ states:
         cause:
           event: "{{ $.execEvent }}"
 - name: NextEventState
-  type: EVENT
-  eventsActions:
+  type: event
+  onEvents:
   - eventRefs:
     - nextEvent
     eventDataFilter:
@@ -611,7 +611,7 @@ states:
         parameters:
           log: fired $.nextEvent.data.type caused by $.nextEvent.data.cause.event
   end:
-    kind: DEFAULT
+    kind: default
 ```
 
 </td>

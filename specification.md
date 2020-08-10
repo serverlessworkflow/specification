@@ -654,7 +654,7 @@ The following is a detailed description of each of the defined states.
 | name | State name | string | yes |
 | type | State type | string | yes |
 | exclusive | If true consuming one of the defined events causes its associated actions to be performed. If false all of the defined events must be consumed in order for actions to be performed. Default is "true"  | boolean | no |
-| [eventsActions](#eventstate-eventactions) | Define the events to be consumed and one or more actions to be performed | array | yes |
+| [onEvents](#eventstate-onevents) | Define the events to be consumed and one or more actions to be performed | array | yes |
 | [timeout](#eventstate-timeout) | Time period to wait for incoming events (ISO 8601 format). For example: "PT15M" (wait 15 minutes), or "P2DT3H4M" (wait 2 days, 3 hours and 4 minutes)| string | no |
 | [stateDataFilter](#state-data-filter) | State data filter definition| object | no |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
@@ -685,7 +685,7 @@ The following is a detailed description of each of the defined states.
     "kind": "default"
 },
 "exclusive": true,
-"eventsActions": [{
+"onEvents": [{
         "eventRefs": ["HighBodyTemperature"],
         "actions": [{
             "functionRef": {
@@ -734,7 +734,7 @@ type: event
 start:
   kind: default
 exclusive: true
-eventsActions:
+onEvents:
 - eventRefs:
   - HighBodyTemperature
   actions:
@@ -770,7 +770,7 @@ Event states await one or more events and perform actions when they are received
 If defined as the workflow starting state, the event state definition controls when the workflow
 instances should be created.
 
-The `exclusive` property determines if the state should wait for any of the defined events in the eventsActions array, or 
+The `exclusive` property determines if the state should wait for any of the defined events in the `onEvents` array, or 
 if all defined events must be present for their associated actions to be performed.
 
 Following two figures illustrate the `exclusive` property:
@@ -795,7 +795,7 @@ In order to consider only events that are related to each other, we need to set 
 The `timeout` property defines the time duration from the invocation of the event state. If the defined events
 have not been received during this time, the state should transition to the next state or end the workflow execution (i.e., if it is an end state).
 
-#### <a name="eventstate-eventactions"></a> Event State: Event Actions
+#### <a name="eventstate-onevents"></a> Event State: onEvents Definition
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
@@ -879,7 +879,7 @@ between arrival of specified events. To give an example, consider the following:
     "type": "event",
     "exclusive": false,
     "timeout": "PT2M",
-    "eventsActions": [
+    "onEvents": [
         {
             "eventRefs": [
                 "ExampleEvent1",
@@ -2896,7 +2896,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | kind | End kind ("default", "terminate", or "event") | enum | yes |
-| [produceEvent](#ProduceEvent-Definition) | If kind is "event", define what type of event to produce | object | yes only if kind is "EVENT" |
+| [produceEvent](#ProduceEvent-Definition) | If kind is "event", define what type of event to produce | object | yes only if kind is "event" |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3555,7 +3555,7 @@ and then lets us know how to greet this customer in different languages. We coul
             },
             "name": "WaitForCustomerToArrive",
             "type": "event",
-            "eventsActions": [{
+            "onEvents": [{
                 "eventRefs": ["CustomerArrivesEvent"],
                 "eventDataFilter": {
                     "dataInputPath": "{{ $.customer }}"
