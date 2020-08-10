@@ -1228,7 +1228,7 @@
     },
     "foreachstate": {
       "type": "object",
-      "description": "Execute a set of defined states for each element of the data input array",
+      "description": "Execute a set of defined actions or workflows for each element of a data array",
       "properties": {
         "id": {
           "type": "string",
@@ -1256,25 +1256,21 @@
         },
         "inputCollection": {
           "type": "string",
-          "description": "JsonPath expression selecting a JSON array element of the states data input"
+          "description": "JsonPath expression selecting an array element of the states data"
         },
         "outputCollection": {
           "type": "string",
-          "description": "JsonPath expression specifying where in the states data output to place the final data output of each iteration of the executed states"
+          "description": "JsonPath expression specifying an array element of the states data to add the results of each iteration"
         },
-        "inputParameter": {
+        "iterationParam": {
           "type": "string",
-          "description": "JsonPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with a unique element of the inputCollection array"
+          "description": "Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array"
         },
         "max": {
           "type": ["integer","string"],
           "minimum": 0,
           "minLength": 0,
           "description": "Specifies how upper bound on how many iterations may run in parallel"
-        },
-        "timeDelay": {
-          "type": "string",
-          "description": "Amount of time (ISO 8601 format) to wait between each iteration "
         },
         "actions": {
           "type": "array",
@@ -1284,45 +1280,9 @@
             "$ref": "#/definitions/action"
           }
         },
-        "states": {
-          "type": "array",
-          "description": "States to be executed for each of the elements of inputCollection",
-          "items": {
-            "anyOf": [
-              {
-                "title": "Delay State",
-                "$ref": "#/definitions/delaystate"
-              },
-              {
-                "title": "Event State",
-                "$ref": "#/definitions/eventstate"
-              },
-              {
-                "title": "Operation State",
-                "$ref": "#/definitions/operationstate"
-              },
-              {
-                "title": "Switch State",
-                "$ref": "#/definitions/switchstate"
-              },
-              {
-                "title": "SubFlow State",
-                "$ref": "#/definitions/subflowstate"
-              },
-              {
-                "title": "Inject State",
-                "$ref": "#/definitions/injectstate"
-              },
-              {
-                "title": "ForEach State",
-                "$ref": "#/definitions/foreachstate"
-              },
-              {
-                "title": "Callback State",
-                "$ref": "#/definitions/callbackstate"
-              }
-            ]
-          }
+        "workflowId": {
+          "type": "string",
+          "description": "Unique Id of a workflow to be executed for each of the elements of inputCollection"
         },
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
@@ -1368,7 +1328,7 @@
             "type",
             "inputCollection",
             "inputParameter",
-            "states",
+            "workflowId",
             "end"
           ]
         },
@@ -1378,7 +1338,7 @@
             "type",
             "inputCollection",
             "inputParameter",
-            "states",
+            "workflowId",
             "transition"
           ]
         },
@@ -1389,7 +1349,7 @@
             "type",
             "inputCollection",
             "inputParameter",
-            "states",
+            "workflowId",
             "end"
           ]
         },
@@ -1400,7 +1360,7 @@
             "type",
             "inputCollection",
             "inputParameter",
-            "states",
+            "workflowId",
             "transition"
           ]
         },

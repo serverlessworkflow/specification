@@ -384,7 +384,7 @@ states:
 
 #### Description
 
-In this example we show how to iterate over some data input using the ForEach state.
+In this example we show how to iterate over data using the ForEach state.
 The state will iterate over a collection of simple math expressions which are
 passed in as the workflow data input:
 
@@ -431,30 +431,17 @@ result of the workflow execution.
 },
  "type":"foreach",
  "inputCollection": "{{ $.expressions }}",
- "inputParameter": "{{ $.singleexpression }}",
+ "iterationParam": "singleexpression",
  "outputCollection": "{{ $.results }}",
- "states": [
-{  
-    "name":"GetResults",
-    "type":"operation",
-     "start": {
-       "kind": "default"
-    },
-    "actionMode":"sequential",
-    "actions":[  
-       {  
-          "functionRef": {
-             "refName": "solveMathExpressionFunction",
-             "parameters": {
-               "expression": "{{ $.singleexpression }}"
-             }
-          }
-       }
-    ],
-    "end": {
-      "kind": "default"
-    }
-}
+ "actions":[  
+   {  
+      "functionRef": {
+         "refName": "solveMathExpressionFunction",
+         "parameters": {
+           "expression": "{{ $.singleexpression }}"
+         }
+      }
+   }
  ],
  "stateDataFilter": {
     "dataOutputPath": "{{ $.results }}"
@@ -484,21 +471,13 @@ states:
     kind: default
   type: foreach
   inputCollection: "{{ $.expressions }}"
-  inputParameter: "{{ $.singleexpression }}"
+  iterationParam: singleexpression
   outputCollection: "{{ $.results }}"
-  states:
-  - name: GetResults
-    type: operation
-    start:
-      kind: default
-    actionMode: sequential
-    actions:
-    - functionRef:
-        refName: solveMathExpressionFunction
-        parameters:
-          expression: "{{ $.singleexpression }}"
-    end:
-      kind: default
+  actions:
+  - functionRef:
+      refName: solveMathExpressionFunction
+      parameters:
+        expression: "{{ $.singleexpression }}"
   stateDataFilter:
     dataOutputPath: "{{ $.results }}"
   end:
@@ -1433,7 +1412,7 @@ states:
 #### Description
 
 This example shows how we can produce a CloudEvent on completion of a workflow. Let's say we have the following
-workflow data:
+workflow data containing orders that need to be provisioned by our workflow:
 
 ```json
 {
@@ -1455,19 +1434,17 @@ used is assumed to have the following results:
 
 ```json
 {
-  "provisionedOrders": [
-      {
-        "id": "123",
-        "outcome": "SUCCESS"
-      }
-  ]
+   "id": "123",
+   "outcome": "SUCCESS"
 }
 ```
 
 After orders have been provisioned the ForEach states defines the end property which stops workflow execution.
 It defines its end definition to be of type "event" in which case a CloudEvent will be produced which can be consumed
 by other orchestration workflows or other interested consumers. 
+
 Note that we define the event to be produced in the workflows "events" property.
+
 The data attached to the event contains the information on provisioned orders by this workflow. So the produced
 CloudEvent upon completion of the workflow could look like:
 
@@ -1528,34 +1505,18 @@ CloudEvent upon completion of the workflow could look like:
        "kind": "default"
     },
     "inputCollection": "{{ $.orders }}",
-    "inputParameter": "{{ $.singleorder }}",
-    "outputCollection": "{{ $.results }}",
-    "states": [
-    {
-        "name": "DoProvision",
-        "type": "operation",
-        "start": {
-          "kind": "default"
-        },
-        "actionMode": "sequential",
-        "actions": [
+    "iterationParam": "singleorder",
+    "outputCollection": "{{ $.provisionedOrders }}",
+    "actions": [
         {
             "functionRef": {
                 "refName": "provisionOrderFunction",
                 "parameters": {
-                    "order": "{{ $.order }}"
+                    "order": "{{ $.singleorder }}"
                 }
             }
         }
-        ],
-        "end": {
-            "kind": "default"
-        }
-    }
     ],
-    "stateDataFilter": {
-        "dataOutputPath": "{{ $.provisionedOrders }}"
-    },
     "end": {
         "kind": "event",
         "produceEvent": {
@@ -1588,23 +1549,13 @@ states:
   start:
     kind: default
   inputCollection: "{{ $.orders }}"
-  inputParameter: "{{ $.singleorder }}"
-  outputCollection: "{{ $.results }}"
-  states:
-  - name: DoProvision
-    type: operation
-    start:
-      kind: default
-    actionMode: sequential
-    actions:
-    - functionRef:
-        refName: provisionOrderFunction
-        parameters:
-          order: "{{ $.order }}"
-    end:
-      kind: default
-  stateDataFilter:
-    dataOutputPath: "{{ $.provisionedOrders }}"
+  iterationParam: singleorder
+  outputCollection: "{{ $.provisionedOrders }}"
+  actions:
+  - functionRef:
+      refName: provisionOrderFunction
+      parameters:
+        order: "{{ $.singleorder }}"
   end:
     kind: event
     produceEvent:
@@ -2401,11 +2352,11 @@ states:
 In this example we show the use of scheduled cron-based start event property. The example workflow checks the users inbox every 15 minutes 
 and send them a text message when there are important emails.
 
-The results of the inbox service called is expected to be for example
+The results of the inbox service called is expected to be for example:
 
 ```json
 {
-  "messages": [
+    "messages": [
     {
       "title": "Update your health benefits",
       "from": "HR",
@@ -2417,13 +2368,9 @@ The results of the inbox service called is expected to be for example
       "priority": "medium"
     },
     ...
-  ]
+   ]
 }
 ```
-
-For the sake to focus on the period workflow start, we model the "SendTextMessageForHighPriority" state as a SubFlow state. 
-This Subflow state can be made of a Switch state that checks the message priority and if so transitions to an Operation 
-state which calls the "sendTextFunction" function.
 
 #### Workflow Definition
 
@@ -2477,18 +2424,15 @@ state which calls the "sendTextFunction" function.
     {
         "name": "SendTextForHighPrioriry",
         "type": "foreach",
-        "inputCollection": "{{ $.message }}",
-        "inputParameter": "{{ $.singlemessage }}",
-        "states": [
+        "inputCollection": "{{ $.messages }}",
+        "iterationParam": "singlemessage",
+        "actions": [
             {
-                "name": "SendTextMessageForHighPriority",
-                "type": "subflow",
-                "start": {
-                    "kind": "default"
-                },
-                "workflowId": "sendTextMessageForHighPriorityId",
-                "end": {
-                    "kind": "default"
+                "functionRef": {
+                    "refName": "sendTextFunction",
+                    "parameters": {
+                        "message": "{{ $.singlemessage }}"
+                    }
                 }
             }
         ],
@@ -2509,38 +2453,35 @@ name: Check Inbox Workflow
 description: Periodically Check Inbox
 version: '1.0'
 functions:
-  - name: checkInboxFunction
-    resource: inboxFunctionResource
-    type: getNewMessages
-  - name: sendTextFunction
-    resource: sendTextFunctionResource
+- name: checkInboxFunction
+  resource: inboxFunctionResource
+  type: getNewMessages
+- name: sendTextFunction
+  resource: sendTextFunctionResource
 states:
-  - name: CheckInbox
-    type: operation
-    start:
-      kind: scheduled
-      schedule:
-        cron: 0 0/15 * * * ?
-    actionMode: sequential
-    actions:
-      - functionRef:
-          refName: checkInboxFunction
-    transition:
-      nextState: SendTextForHighPrioriry
-  - name: SendTextForHighPrioriry
-    type: foreach
-    inputCollection: "{{ $.message }}"
-    inputParameter: "{{ $.singlemessage }}"
-    states:
-      - name: SendTextMessageForHighPriority
-        type: subflow
-        start:
-          kind: default
-        workflowId: sendTextMessageForHighPriorityId
-        end:
-          kind: default
-    end:
-      kind: default
+- name: CheckInbox
+  type: operation
+  start:
+    kind: scheduled
+    schedule:
+      cron: 0 0/15 * * * ?
+  actionMode: sequential
+  actions:
+  - functionRef:
+      refName: checkInboxFunction
+  transition:
+    nextState: SendTextForHighPrioriry
+- name: SendTextForHighPrioriry
+  type: foreach
+  inputCollection: "{{ $.messages }}"
+  iterationParam: singlemessage
+  actions:
+  - functionRef:
+      refName: sendTextFunction
+      parameters:
+        message: "{{ $.singlemessage }}"
+  end:
+    kind: default
 ```
 
 </td>

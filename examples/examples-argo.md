@@ -551,20 +551,13 @@ states:
 - name: printgreetings
   type: foreach
   inputCollection: "{{ $.greetings }}"
-  inputParameter: "{{ $.greeting }}"
-  states:
-  - name: foreach-print
-    type: operation
-    start:
-      kind: default
-    actions:
-    - name: print-message
-      functionRef:
-        refName: whalesay
-        parameters:
-          message: "{{ $.greeting }}"
-    end:
-      kind: default
+  iterationParam: greeting
+  actions:
+  - name: print-message
+    functionRef:
+      refName: whalesay
+      parameters:
+        message: "{{ $.greeting }}"
   end:
     kind: default
 ```

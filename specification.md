@@ -2244,13 +2244,12 @@ This allows you to test if your workflow behaves properly for cases when there a
 | id | Unique state id | string | no |
 | name | State name | string | yes |
 | type | State type | string | yes |
-| inputCollection | JsonPath expression selecting an JSON array element of the states data input | string | yes |
-| outputCollection | JsonPath expression specifying where in the states data output to place the final data output of each iteration of the executed states | string | no |
-| inputParameter | JsonPath expression specifying a JSON object field of the states data input. For each parallel iteration, this field will get populated with an unique element of the inputCollection array | string | yes |
+| inputCollection | JsonPath expression selecting an array element of the states data | string | yes |
+| outputCollection | JsonPath expression specifying an array element of the states data to add the results of each iteration | string | no |
+| iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
 | max | Specifies how upper bound on how many iterations may run in parallel | string or integer | no |
-| timeDelay | Amount of time (ISO 8601 format) to wait between each iteration | string | no |
-| [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if states are not defined |
-| [states](#State-Definition) | States to be executed for each of the elements of inputCollection | array | yes if actions are not defined |
+| [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if subflowId is not defined |
+| workflowId | Unique Id of a workflow to be executed for each of the elements of inputCollection | boolean | yes if actions is not defined |
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
 | [retry](#workflow-retrying) | States retry definitions | array | no |
 | [onError](#Workflow-Error-Handling) | States error handling definitions | array | no |
@@ -2280,41 +2279,18 @@ This allows you to test if your workflow behaves properly for cases when there a
        "kind": "default"
     },
     "inputCollection": "{{ $.orders }}",
-    "inputParameter": "{{ $.singleorder }}",
-    "outputCollection": "{{ $.results }}",
-    "states": [
-    {
-        "name": "DoProvision",
-        "type": "operation",
-        "start": {
-          "kind": "default"
-        },
-        "actionMode": "sequential",
-        "actions": [
+    "iterationParam": "singleorder",
+    "outputCollection": "{{ $.provisionresults }}",
+    "actions": [
         {
             "functionRef": {
                 "refName": "provisionOrderFunction",
                 "parameters": {
-                    "order": "{{ $.order }}"
+                    "order": "{{ $.singleorder }}"
                 }
             }
         }
-        ],
-        "end": {
-            "kind": "default"
-        }
-    }
-    ],
-    "stateDataFilter": {
-        "dataOutputPath": "{{ $.provisionedOrders }}"
-    },
-    "end": {
-        "kind": "event",
-        "produceEvent": {
-            "eventRef": "provisioningCompleteEvent",
-            "data": "{{ $.provisionedOrders }}"
-        }
-    }
+    ]
 }
 ```
 
@@ -2327,28 +2303,13 @@ type: foreach
 start:
   kind: default
 inputCollection: "{{ $.orders }}"
-inputParameter: "{{ $.singleorder }}"
-outputCollection: "{{ $.results }}"
-states:
-- name: DoProvision
-  type: operation
-  start:
-    kind: default
-  actionMode: sequential
-  actions:
-  - functionRef:
-      refName: provisionOrderFunction
-      parameters:
-        order: "{{ $.order }}"
-  end:
-    kind: default
-stateDataFilter:
-  dataOutputPath: "{{ $.provisionedOrders }}"
-end:
-  kind: event
-  produceEvent:
-    eventRef: provisioningCompleteEvent
-    data: "{{ $.provisionedOrders }}"
+iterationParam: "singleorder"
+outputCollection: "{{ $.provisionresults }}"
+actions:
+- functionRef:
+    refName: provisionOrderFunction
+    parameters:
+      order: "{{ $.singleorder }}"
 ```
 
 </td>
@@ -2357,25 +2318,31 @@ end:
 
 </details>
 
-ForEach states can be used to execute a defined set of states or actions for each element of an array (defined in the states data input).
-While the [Parallel state](#Parallel-State) performs multiple branches of states or actions using the
-same data input, the ForEach state performs the defined steps or actions for multiple entries of an array in the states data input.
+ForEach states can be used to execute a defined actions, or execute a sub-workflow for each element of a data array.
+Each iteration of the ForEach state should be executed in parallel.
 
-Note that each iteration of the ForEach state should be executed in parallel.
 You can use the `max` property to set the upper bound on how many iterations may run in parallel. The default
 of the `max` property is zero, which places no limit on number of parallel executions.
 
-You can choose to define either states or actions to be executed, not both. 
+The `inputCollection` property is a JsonPath expression which selects an array in the states data. All iterations 
+of are done against the data elements of this array. This array must exist.
 
-States defined in the `states` property of the ForEach state can only transition to each other and
-cannot transition to states outside of this state.
-Similarly other workflow states cannot transition to one of the states defined within the ForEach state.
+The `outputCollection` property is a JsonPath expression which selects an array in the state data where the results
+of each iteration should be added to. If this array does not exist, it should be created.
 
-States defined in the `states` property must contain at least one state which is an end state (has the end property defined).
+The `iterationParam` property defines the name of the iteration parameter passed to each parallel execution of the foreach state.
+It should contain the unique element of the `inputCollection` array and passed as data input to the actions/workflow defined.
+`iterationParam` should be created for each iteration, so it can be referenced/used in defined actions / workflow data input.
 
-Let's take a look at a simple ForEach state example:
+The `actions` property defines actions to be executed in each state iteration.
 
-In this example the data input to our ForEach state is an array of orders:
+If actions are not defined, you can specify the `workflowid` to reference a workflow id which needs to be executed
+for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow wher the foreach state
+is defined.
+
+Let's take a look at an example:
+
+In this example the data input to our workflow is an array of orders:
 
 ```json
 {
@@ -2399,7 +2366,7 @@ In this example the data input to our ForEach state is an array of orders:
 }
 ```
 
-and the state is defined as:
+and our workflow is defined as:
 
 <table>
 <tr>
@@ -2411,26 +2378,23 @@ and the state is defined as:
 
 ```json
 {
+  "id": "sendConfirmWorkflow",
+  "name": "SendConfirmationForCompletedOrders",
+  "version": "1.0",
   "functions": [
   {
     "name": "sendConfirmationFunction",
-    "resource": "functionResourse"
+    "resource": "functionResourseUri"
   }
   ],
   "states": [
   {
-   "name":"SendConfirmationForEachCompletedhOrder",
-   "type":"foreach",
-   "inputCollection": "{{ $.orders[?(@.completed == true)] }}",
-   "inputParameter": "{{ $.completedorder }}",
-   "states": [
-      {  
-      "start": {
-         "kind": "default"
-      },
-      "name":"SendConfirmation",
-      "type":"operation",
-      "actionMode":"sequential",
+      "start": { "kind":  "default" },
+      "name":"SendConfirmState",
+      "type":"foreach",
+      "inputCollection": "{{ $.orders[?(@.completed == true)] }}",
+      "iterationParam": "completedorder",
+      "outputCollection": "{{ $.confirmationresults }}",
       "actions":[  
       {  
        "functionRef": {
@@ -2440,17 +2404,9 @@ and the state is defined as:
            "email": "{{ $.completedorder.email }}"
          }
        }
-    }],
-    "end": {
-      "kind": "default"
-    }
-    }
- ],
- "end": {
-    "kind": "default"
- }
-}
-]
+      }],
+      "end": { "kind": "default" }
+  }]
 }
 ```
 
@@ -2458,162 +2414,20 @@ and the state is defined as:
 <td valign="top">
 
 ```yaml
+id: sendConfirmWorkflow
+name: SendConfirmationForCompletedOrders
+version: '1.0'
 functions:
 - name: sendConfirmationFunction
-  resource: functionResourse
+  resource: functionResourseUri
 states:
-- name: SendConfirmationForEachCompletedhOrder
-  type: foreach
-  inputCollection: "{{ $.orders[?(@.completed == true)] }}"
-  inputParameter: "{{ $.completedorder }}"
-  states:
-  - start:
-      kind: default
-    name: SendConfirmation
-    type: operation
-    actionMode: sequential
-    actions:
-    - functionRef:
-        refName: sendConfirmationFunction
-        parameters:
-          orderNumber: "{{ $.completedorder.orderNumber }}"
-          email: "{{ $.completedorder.email }}"
-    end:
-      kind: default
-  end:
+- start:
     kind: default
-```
-
-</td>
-</tr>
-</table>
-
-This ForEach state will first look at its "inputCollection" path to determine which array in the states data input
-to iterate over.
-In this case it will be the "orders" array, which contains orders information. The states `inputCollection` property
-then further filters this array, only selecting elements of the orders array which have the completed property
-set to true.
-
-For each of the completed order the state will then execute the defined set of states in parallel.
-
-For this example, the data inputs of staring states for the two iterations would be: 
-
-```json
-{
-    "orders": [
-        {
-            "orderNumber": "1234",
-            "completed": true,
-            "email": "firstBuyer@buyer.com"
-        },
-        {
-            "orderNumber": "5678",
-            "completed": true,
-            "email": "secondBuyer@buyer.com"
-        },
-        {
-            "orderNumber": "9910",
-            "completed": false,
-            "email": "thirdBuyer@buyer.com"
-        }
-    ],
-    "completedorder": {
-        "orderNumber": "1234",
-        "completed": true,
-        "email": "firstBuyer@buyer.com"
-    }
-}
-```
-
-and:
-
-```json
-{
-    "orders": [
-        {
-            "orderNumber": "1234",
-            "completed": true,
-            "email": "firstBuyer@buyer.com"
-        },
-        {
-            "orderNumber": "5678",
-            "completed": true,
-            "email": "secondBuyer@buyer.com"
-        },
-        {
-            "orderNumber": "9910",
-            "completed": false,
-            "email": "thirdBuyer@buyer.com"
-        }
-    ],
-    "completedorder": {
-        "orderNumber": "5678",
-        "completed": true,
-        "email": "secondBuyer@buyer.com"
-    }
-}
-```
-
-Once iterations over the completed orders complete, workflow execution finishes as our ForEach state is an end state (i.e., has the `end` property defined).
-
-So in this example, our ForEach state will send two confirmation emails: one for each of the completed orders
-defined in the "orders" array of its data input.
-
-The same example can be defined using "actions" instead of "states" definitions. This may be useful in cases where you do need to express
-each iteration with control flow logic (states) but only need one or more actions to be performed for each iteration.
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-  "functions": [
-  {
-    "name": "sendConfirmationFunction",
-    "resource": "functionResourse"
-  }
-  ],
-  "states": [
-  {
-   "name":"SendConfirmationForEachCompletedhOrder",
-   "type":"foreach",
-   "inputCollection": "{{ $.orders[?(@.completed == true)] }}",
-   "inputParameter": "{{ $.completedorder }}",
-    "actions":[  
-      {  
-       "functionRef": {
-         "refName": "sendConfirmationFunction",
-         "parameters": {
-           "orderNumber": "{{ $.completedorder.orderNumber }}",
-           "email": "{{ $.completedorder.email }}"
-         }
-       }
-    }],
- "end": {
-    "kind": "default"
- }
-}
-]
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-functions:
-- name: sendConfirmationFunction
-  resource: functionResourse
-states:
-- name: SendConfirmationForEachCompletedhOrder
+  name: SendConfirmState
   type: foreach
   inputCollection: "{{ $.orders[?(@.completed == true)] }}"
-  inputParameter: "{{ $.completedorder }}"
+  iterationParam: "completedorder"
+  outputCollection: "{{ $.confirmationresults }}"
   actions:
   - functionRef:
       refName: sendConfirmationFunction
@@ -2627,6 +2441,38 @@ states:
 </td>
 </tr>
 </table>
+
+The workflow data input containing order information is passed to the `SendConfirmState` foreach state.
+The foreach state defines an `inputCollection` property which selects all orders that have the `completed` property set to `true`.
+
+For each element of the array selected by `inputCollection` a JSON object defined by `iterationParam` should be
+created containing an unique element of `inputCollection` and passed as the data input to the parallel executed actions.
+
+So for this example, we would have two parallel executions of the `sendConfirmationFunction`, the first one having data:
+
+```json
+{
+    "completedorder": {
+        "orderNumber": "1234",
+        "completed": true,
+        "email": "firstBuyer@buyer.com"
+    }
+}
+```
+
+and the second:
+
+```json
+{
+    "completedorder": {
+        "orderNumber": "5678",
+        "completed": true,
+        "email": "secondBuyer@buyer.com"
+    }
+}
+```
+
+The results of each parallel action execution are stored as elements in the state data array defined by the `outputCollection` property.
 
 #### Callback State
 
