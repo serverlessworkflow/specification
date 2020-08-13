@@ -20,7 +20,7 @@ Cloud Native Sandbox level project on July 14, 2020.
 - [Community](#Community)
     - [Communication](#Communication)
     - [Code of Conduct](#Code-of-Conduct)
-    - [Meetings](#Community-Meetings)
+    - [Meetings](#Meetings)
     - [Meeting Minutes](#Meeting-Minutes)
 - [Repository Structure](#Repository-Structure)
 
