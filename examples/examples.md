@@ -307,7 +307,7 @@ filters what is selected to be the state data output which then becomes the work
      "start": {
        "kind": "default"
      },
-     "eventsActions": [{
+     "onEvents": [{
          "eventRefs": ["GreetingEvent"],
          "eventDataFilter": {
             "inputPath": "{{ $.data.greet }}"
@@ -354,7 +354,7 @@ states:
   type: event
   start:
     kind: default
-  eventsActions:
+  onEvents:
   - eventRefs:
     - GreetingEvent
     eventDataFilter:
@@ -689,9 +689,9 @@ events:
   source: visaCheckSource
 states:
 - name: CheckVisaStatus
-  type: SWITCH
+  type: switch
   start:
-    kind: DEFAULT
+    kind: default
   eventConditions:
   - eventRef: visaApprovedEvent
     transition:
@@ -703,20 +703,20 @@ states:
   default:
     nextState: HandleNoVisaDecision
 - name: HandleApprovedVisa
-  type: SUBFLOW
+  type: subflow
   workflowId: handleApprovedVisaWorkflowID
   end:
-    kind: DEFAULT
+    kind: default
 - name: HandleRejectedVisa
-  type: SUBFLOW
+  type: subflow
   workflowId: handleRejectedVisaWorkflowID
   end:
-    kind: DEFAULT
+    kind: default
 - name: HandleNoVisaDecision
-  type: SUBFLOW
+  type: subflow
   workflowId: handleNoVisaDecisionWorkfowId
   end:
-    kind: DEFAULT
+    kind: default
 ```
 
 </td>
@@ -1641,7 +1641,7 @@ have the matching patient id.
     "kind": "default"
 },
 "exclusive": true,
-"eventsActions": [{
+"onEvents": [{
         "eventRefs": ["HighBodyTemperature"],
         "actions": [{
             "functionRef": {
@@ -1721,7 +1721,7 @@ states:
   start:
     kind: default
   exclusive: true
-  eventsActions:
+  onEvents:
   - eventRefs:
     - HighBodyTemperature
     actions:
@@ -1833,7 +1833,7 @@ when all three of these events happened (in no particular order).
        "kind": "default"
     },
     "exclusive": false,
-    "eventsActions": [
+    "onEvents": [
         {
             "eventRefs": [
                 "ApplicationSubmitted",
@@ -1893,7 +1893,7 @@ states:
   start:
     kind: default
   exclusive: false
-  eventsActions:
+  onEvents:
   - eventRefs:
     - ApplicationSubmitted
     - SATScoresReceived
@@ -2242,7 +2242,7 @@ Bidding is done via an online application and bids are received as events are as
               }
           },
           "exclusive": true,
-          "eventsActions": [
+          "onEvents": [
             {
                 "eventRefs": ["CarBidEvent"],
                 "actions": [{
@@ -2287,7 +2287,7 @@ states:
     schedule:
       interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
   exclusive: true
-  eventsActions:
+  onEvents:
   - eventRefs:
     - CarBidEvent
     actions:

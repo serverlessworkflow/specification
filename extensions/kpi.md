@@ -157,7 +157,7 @@ states:
   start:
     kind: default
   exclusive: true
-  eventsActions:
+  onEvents:
   - eventRefs:
     - HighBodyTemperature
     actions:
