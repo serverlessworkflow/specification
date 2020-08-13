@@ -310,7 +310,7 @@ filters what is selected to be the state data output which then becomes the work
      "onEvents": [{
          "eventRefs": ["GreetingEvent"],
          "eventDataFilter": {
-            "inputPath": "{{ $.data.greet }}"
+            "dataOutputPath": "{{ $.data.greet }}"
          },
          "actions":[  
             {  
@@ -358,7 +358,7 @@ states:
   - eventRefs:
     - GreetingEvent
     eventDataFilter:
-      inputPath: "{{ $.data.greet }}"
+      dataOutputPath: "{{ $.data.greet }}"
     actions:
     - functionRef:
         refName: greetingFunction
