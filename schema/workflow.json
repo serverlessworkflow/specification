@@ -337,9 +337,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "delay"
-          ],
+          "const": "delay",
           "description": "State type"
         },
         "start": {
@@ -435,9 +433,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "event"
-          ],
+          "const": "event",
           "description": "State type"
         },
         "exclusive": {
@@ -554,9 +550,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "operation"
-          ],
+          "const": "operation",
           "description": "State type"
         },
         "start": {
@@ -677,9 +671,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "parallel"
-          ],
+          "const": "parallel",
           "description": "State type"
         },
         "start": {
@@ -810,9 +802,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "switch"
-          ],
+          "const": "switch",
           "description": "State type"
         },
         "start": {
@@ -843,8 +833,8 @@
           "description": "If eventConditions is used, defines the time period to wait for events (ISO 8601 format)"
         },
         "default": {
-          "description": "Next transition of the workflow if there is no matching data conditions, or event timeout is reached",
-          "$ref": "#/definitions/transition"
+          "$ref": "#/definitions/defaultdef",
+          "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition"
         },
         "dataInputSchema": {
           "type": "string",
@@ -895,9 +885,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "switch"
-          ],
+          "const": "switch",
           "description": "State type"
         },
         "start": {
@@ -924,8 +912,8 @@
           }
         },
         "default": {
-          "description": "Next transition of the workflow if there is no matching data conditions, or event timeout is reached",
-          "$ref": "#/definitions/transition"
+          "$ref": "#/definitions/defaultdef",
+          "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition"
         },
         "dataInputSchema": {
           "type": "string",
@@ -961,7 +949,39 @@
         }
       ]
     },
+    "defaultdef": {
+      "type": "object",
+      "description": "Default definition. Can be either a transition or end definition",
+      "oneOf": [
+        {
+          "properties": {
+            "transition": {
+              "$ref": "#/definitions/transition"
+            }
+          },
+          "required": ["properties"]
+        },
+        {
+          "properties": {
+            "end": {
+              "$ref": "#/definitions/end"
+            }
+          },
+          "required": ["end"]
+        }
+      ]
+    },
     "eventcondition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/transitioneventcondition"
+        },
+        {
+          "$ref": "#/definitions/enddeventcondition"
+        }
+      ]
+    },
+    "transitioneventcondition": {
       "type": "object",
       "description": "Switch state data event condition",
       "properties": {
@@ -983,7 +1003,39 @@
       },
       "required": ["eventRef", "transition"]
     },
+    "enddeventcondition": {
+      "type": "object",
+      "description": "Switch state data event condition",
+      "properties": {
+        "eventRef": {
+          "type" : "string",
+          "description": "References an unique event name in the defined workflow events"
+        },
+        "end": {
+          "$ref": "#/definitions/end",
+          "description": "Explicit transition to end"
+        }
+      },
+      "eventDataFilter": {
+        "description": "Event data filter definition",
+        "$ref": "#/definitions/eventdatafilter"
+      },
+      "metadata": {
+        "$ref": "common.json#/definitions/metadata"
+      },
+      "required": ["eventRef", "transition"]
+    },
     "datacondition": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/transitiondatacondition"
+        },
+        {
+          "$ref": "#/definitions/enddatacondition"
+        }
+      ]
+    },
+    "transitiondatacondition": {
       "type": "object",
       "description": "Switch state data based condition",
       "properties": {
@@ -1001,6 +1053,24 @@
       },
       "required": ["condition", "transition"]
     },
+    "enddatacondition": {
+      "type": "object",
+      "description": "Switch state data based condition",
+      "properties": {
+        "condition": {
+          "type": "string",
+          "description": "JsonPath expression evaluated against state data. True if results are not empty"
+        },
+        "end": {
+          "$ref": "#/definitions/end",
+          "description": "Explicit transition to end"
+        }
+      },
+      "metadata": {
+        "$ref": "common.json#/definitions/metadata"
+      },
+      "required": ["condition", "end"]
+    },
     "subflowstate": {
       "type": "object",
       "description": "Defines a sub-workflow to be executed",
@@ -1016,9 +1086,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "subflow"
-          ],
+          "const": "subflow",
           "description": "State type"
         },
         "start": {
@@ -1119,9 +1187,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "inject"
-          ],
+          "const": "inject",
           "description": "State type"
         },
         "start": {
@@ -1205,9 +1271,7 @@
         },
         "type": {
           "type": "string",
-          "enum": [
-            "foreach"
-          ],
+          "const": "foreach",
           "description": "State type"
         },
         "start": {
@@ -1387,7 +1451,7 @@
         },
         "type": {
           "type" : "string",
-          "enum": ["callback"],
+          "const": "callback",
           "description": "State type"
         },
         "action": {

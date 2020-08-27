@@ -641,7 +641,9 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
      ],
      "eventTimeout": "PT1H",
      "default": {
-        "nextState": "HandleNoVisaDecision"
+        "transition": {
+         "nextState": "HandleNoVisaDecision"
+        }
      }
   },
   {
@@ -701,7 +703,8 @@ states:
       nextState: HandleRejectedVisa
   eventTimeout: PT1H
   default:
-    nextState: HandleNoVisaDecision
+    transition:
+      nextState: HandleNoVisaDecision
 - name: HandleApprovedVisa
   type: subflow
   workflowId: handleApprovedVisaWorkflowID
@@ -795,7 +798,9 @@ If the applicants age is over 18 we start the application (subflow state). Other
             }
          ],
          "default": {
-            "nextState": "RejectApplication"
+            "transition": {
+               "nextState": "RejectApplication"
+            }
          }
       },
       {
@@ -852,7 +857,8 @@ states:
     transition:
       nextState: RejectApplication
   default:
-    nextState: RejectApplication
+    transition:
+      nextState: RejectApplication
 - name: StartApplication
   type: subflow
   workflowId: startApplicationWorkflowId
@@ -1221,7 +1227,9 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       }
     ],
     "default": {
-        "nextState": "WaitForCompletion"
+      "transition": {
+         "nextState": "WaitForCompletion"
+       }
     }
   },
   {  
@@ -1338,7 +1346,8 @@ states:
     transition:
       nextState: JobFailed
   default:
-    nextState: WaitForCompletion
+    transition:
+      nextState: WaitForCompletion
 - name: JobSucceeded
   type: operation
   actionMode: sequential
@@ -2064,7 +2073,9 @@ And for denied credit check, for example:
                 }
             ],
             "default": {
-                "nextState": "RejectApplication"
+               "transition": {
+                 "nextState": "RejectApplication"
+                }
             }
         },
         {
@@ -2141,7 +2152,8 @@ states:
     transition:
       nextState: RejectApplication
   default:
-    nextState: RejectApplication
+    transition:
+      nextState: RejectApplication
 - name: StartApplication
   type: subflow
   workflowId: startApplicationWorkflowId
