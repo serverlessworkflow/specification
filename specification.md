@@ -1333,7 +1333,7 @@ Once all actions have been performed, a transition to another state can occur.
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onError](#Workflow-Error-Handling) | States error handling definitions | array | no |
 | eventTimeout | If eventConditions is used, defines the time period to wait for events (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | yes only if eventConditions is defined |
-| [default](#Transitions) | Next transition of the workflow if there is no matching data conditions, or event timeout is reached | object | yes |
+| default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
 | [dataOutputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data output adheres to | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -1373,7 +1373,9 @@ Once all actions have been performed, a transition to another state can occur.
      ],
      "eventTimeout": "PT1H",
      "default": {
-        "nextState": "HandleNoVisaDecision"
+        "transition": {
+          "nextState": "HandleNoVisaDecision"
+        }
      }
 }
 ```
@@ -1395,7 +1397,8 @@ eventConditions:
     nextState: HandleRejectedVisa
 eventTimeout: PT1H
 default:
-  nextState: HandleNoVisaDecision
+  transition:
+    nextState: HandleNoVisaDecision
 ```
 
 </td>
@@ -1412,21 +1415,20 @@ There are two types of conditions for switch states:
 These are exclusive, meaning that a switch state can define one or the other condition type, but not both.
 
 In case of data-based conditions definition, switch state controls workflow transitions based on the states data.
-If no defined conditions can be matched, the state transitions based on the defined "default" transition property.
+If no defined conditions can be matched, the state transitions is taken based on the `default` property.
+This property can be either a `transition` to another workflow state, or an `end` definition meaning a workflow end.
 
 For event-based conditions, a switch state acts as a workflow wait state. It halts workflow execution 
 until one of the referenced events arrive, then making a transition depending on that event definition.
 If events defined in event-based conditions do not arrive before the states `eventTimeout` property expires, 
- state transitions are based on the defined "default" transition property.
-
-Switch states cannot be workflow ending states.
+ state transitions are based on the defined `default` property.
 
 #### <a name="switch-state-dataconditions"></a>Switch State: Data Conditions
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | condition | JsonPath expression evaluated against state data. True if results are not empty | string | yes |
-| [transition](#Transitions) | Next transition of the workflow if condition is matched | object | yes |
+| [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -1469,12 +1471,15 @@ workflow state if evaluated to true.
 The `condition` property of the condition defines a JsonPath expression (e.g., `$.applicants[?(@.age >= 18)]`), which selects
 parts of the state data input. The condition is evaluated as "true" if it results a non-empty result.
 
+If the condition is evaluated to "true", you can specify either the `transition` or `end` definitions
+to decide what to do, transition to another workflow state, or end workflow execution.
+
 #### <a name="switch-state-eventconditions"></a>Switch State: Event Conditions
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | eventRef | References an unique event name in the defined workflow events | string | yes |
-| [transition](#Transitions) | Next transition of the workflow if condition is matched | object | yes |
+| [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
 | [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -1516,8 +1521,11 @@ transition:
 Switch state event conditions specify events, which the switch state must wait for. Each condition
 can reference one workflow-defined event. Upon arrival of this event, the associated transition is taken.
 The `eventRef` property references a name of one of the defined workflow events. 
-The `transition` property defines the workflow transition to be taken when the referenced event arrives.
-the "eventDataFilter" defines the event data filter to be used to filter event data before the transition is made.
+
+If the referenced event is received, you can specify either the `transition` or `end` definitions
+to decide what to do, transition to another workflow state, or end workflow execution.
+
+The `eventDataFilter` property can be used to filter event when it is received.
 
 #### Delay State
 
