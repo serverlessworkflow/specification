@@ -68,3 +68,4 @@ _Status description:_
 | ✔️| Add Workflow KPIs extension | [spec doc](../specification.md) |
 | ✔️| Add Workflow Validation to Java SDK | [sdk repo](https://github.com/serverlessworkflow/sdk-java) |
 | ✔️| Update Switch state conditions and default definition | [spec doc](../specification.md) |
+| ✔️| Update transitions and end definition 'produceEvents' definition | [spec doc](../specification.md) |

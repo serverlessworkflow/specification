@@ -1492,10 +1492,10 @@ CloudEvent upon completion of the workflow could look like:
     ],
     "end": {
         "kind": "event",
-        "produceEvent": {
+        "produceEvents": [{
             "eventRef": "provisioningCompleteEvent",
             "data": "{{ $.provisionedOrders }}"
-        }
+        }]
     }
 }
 ]
@@ -1531,8 +1531,8 @@ states:
         order: "{{ $.singleorder }}"
   end:
     kind: event
-    produceEvent:
-      eventRef: provisioningCompleteEvent
+    produceEvents:
+    - eventRef: provisioningCompleteEvent
       data: "{{ $.provisionedOrders }}"
 ```
 

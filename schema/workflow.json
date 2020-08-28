@@ -106,9 +106,13 @@
           "type": "string",
           "description": "JsonPath expression. Evaluates to true if returns non-empty result"
         },
-        "produceEvent": {
-          "description": "Reference one of the defined 'produced' events by name and set its payload and context attributes",
-          "$ref": "#/definitions/produceevent"
+        "produceEvents": {
+          "type": "array",
+          "description": "Array of events to be produced",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/produceeventdef"
+          }
         },
         "nextState": {
           "type": "string",
@@ -1650,9 +1654,13 @@
           ],
           "description": "Kind of end definition"
         },
-        "produceEvent": {
-          "description": "If end kind is event, select one of the defined 'produced' events by name and set its data",
-          "$ref": "#/definitions/produceevent"
+        "produceEvents": {
+          "type": "array",
+          "description": "Used if kind is event. Array of events to be produced",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/produceeventdef"
+          }
         }
       },
       "if": {
@@ -1665,7 +1673,7 @@
       "then": {
         "required": [
           "kind",
-          "produceEvent"
+          "produceEvents"
         ]
       },
       "else": {
@@ -1674,7 +1682,7 @@
         ]
       }
     },
-    "produceevent": {
+    "produceeventdef": {
       "type": "object",
       "description": "Produce an event and set its data",
       "properties": {

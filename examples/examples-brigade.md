@@ -588,8 +588,8 @@ states:
       dataOutputPath: "{{ $.execEvent }}"
   transition:
     nextState: NextEventState
-    produceEvent:
-      eventRef: nextEvent
+    produceEvents:
+    - eventRef: nextEvent
       data:
         type: next
         provider: exec-handler
