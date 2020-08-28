@@ -653,7 +653,7 @@ The following is a detailed description of each of the defined states.
 | id | Unique state id | string | no |
 | name | State name | string | yes |
 | type | State type | string | yes |
-| exclusive | If true consuming one of the defined events causes its associated actions to be performed. If false all of the defined events must be consumed in order for actions to be performed. Default is "true"  | boolean | no |
+| exclusive | If "true", consuming one of the defined events causes its associated actions to be performed. If "false", all of the defined events must be consumed in order for actions to be performed. Default is "true"  | boolean | no |
 | [onEvents](#eventstate-onevents) | Define the events to be consumed and one or more actions to be performed | array | yes |
 | [timeout](#eventstate-timeout) | Time period to wait for incoming events (ISO 8601 format). For example: "PT15M" (wait 15 minutes), or "P2DT3H4M" (wait 2 days, 3 hours and 4 minutes)| string | no |
 | [stateDataFilter](#state-data-filter) | State data filter definition| object | no |
@@ -779,28 +779,29 @@ Following two figures illustrate the `exclusive` property:
 <img src="media/spec/event-state-exclusive-true.png" height="300px" alt="Event state with exclusive set to true"/>
 </p>
 
-If the event state in this case is a starting state, the occurence of *any* of the defined events would start a new workflow instance.
+If the Event state in this case is a starting state, the occurrence of *any* of the defined events would start a new workflow instance.
 
 <p align="center">
 <img src="media/spec/event-state-exclusive-false.png" height="300px" alt="Event state with exclusive set to false"/>
 </p>
 
-If the event state in this case is a starting state, the occurrence of *all* defined events would start a new
+If the Event state in this case is a starting state, the occurrence of *all* defined events would start a new
  workflow instance.
   
 In order to consider only events that are related to each other, we need to set the `correlation` property in the workflow
  [events definitions](#Event-Definition). This allows us to set up event correlation rules against the events 
  extension context attributes.
 
-The `timeout` property defines the time duration from the invocation of the event state. If the defined events
-have not been received during this time, the state should transition to the next state or end the workflow execution (i.e., if it is an end state).
+If the Event state is not a starting state, the `timeout` property can be used to define the time duration from the 
+invocation of the event state. If the defined event, or events have not been received during this time, 
+the state should transition to the next state or can end the workflow execution (if it is an end state).
 
 #### <a name="eventstate-onevents"></a> Event State: onEvents Definition
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
-| actionMode | Specifies how actions are to be performed (in sequence of parallel) | string | no |
+| actionMode | Specifies how actions are to be performed (in sequence of parallel). Default is "sequential" | string | no |
 | [actions](#Action-Definition) | Actions to be performed | array | yes |
 | [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
 
@@ -848,13 +849,61 @@ actions:
 
 </details>
 
-Event actions reference one or more events in the workflow [events definitions](#Event-Definition).
-Both the source and type of incoming events must match the ones defined in the references events in order for
-the event to be considered. 
+OnEvent definition allow you to define which [actions](#Action-Definition) are to be performed 
+for the one or more [events definitions](#Event-Definition) defined in the `eventRefs` property.
 
-You can set event correlation rules via the `correlation` property. See more info on event correlation [here](#Correlation-Definition).
+The `actionMode` property defines if the defined actions need to be performed sequentially or in parallel.
 
-The actions array property defines a list of actions to be performed.
+The `actions` property defines a list of actions to be performed.
+
+When specifying the `onEvents` definition it is important to consider the Event states `exclusive` property, 
+because it determines how 'onEvents' is interpreted.
+Let's look at the following JSON definition of 'onEvents' to show this:
+
+```json
+{
+ "eventsActions": [
+    {
+        "eventRefs": [
+            "HighBodyTemperature",
+            "HighBloodPressure"
+        ],
+        "actions": [
+            {
+                "functionRef": {
+                    "refName": "SendTylenolOrder",
+                    "parameters": {
+                       "patient": "{{ $.patientId }}"
+                    }
+                }
+            },
+            {
+                "functionRef": {
+                    "refName": "CallNurse",
+                    "parameters": {
+                       "patient": "{{ $.patientId }}"
+                    }
+                }
+            } 
+        ]
+    }
+]
+}
+```
+
+Depending on the value of the Event states `exclusive` property, this definition can mean two different things:
+
+1. If `exclusive` is set to "true", the consumption of **either** the "HighBodyTemperature" or "HighBloodPressure" events 
+will trigger action execution.
+
+1. If `exclusive` is set to "false", the consumption of **both** the "HighBodyTemperature" and "HighBloodPressure" events
+will trigger action execution. 
+
+This is visualized in the diagram below:
+
+<p align="center">
+<img src="media/spec/event-state-onevents-example.png" height="300px" alt="Event onEvents example"/>
+</p>
 
 #### <a name="eventstate-timeout"></a> Event State: Timeout
 
@@ -862,13 +911,13 @@ The event state timeout period is described in the ISO 8601 data and time format
 You can specify for example "PT15M" to represent 15 minutes or "P2DT3H4M" to represent 2 days, 3 hours and 4 minutes.
 Timeout values should always be represented as durations and not as time/repeating intervals.
 
-The timeout property needs to be described in detail as it depends on whether or not the event state is a starting workflow
+The timeout property needs to be described in detail as it depends on whether or not the Event state is a starting workflow
 state or not.
 
-If the event state is a starting state, incoming events may trigger workflow instances. If the event waits for
-any of the defined events (exclusive property is set to true), the timeout property should be ignored.
+If the Event state is a starting state, incoming events may trigger workflow instances. In this case,
+if the `exclusive` property is set to true, the timeout property should be ignored.
 
-If exclusive property is set to false (all defined events must occur), the defined timeout represents the time
+If the `exclusive` property is set to false, in this case, the defined timeout represents the time
 between arrival of specified events. To give an example, consider the following:
 
 ```json
@@ -883,10 +932,10 @@ between arrival of specified events. To give an example, consider the following:
         {
             "eventRefs": [
                 "ExampleEvent1",
-                "ExampleEvent2",
-                "ExampleEvent3"
+                "ExampleEvent2"
             ],
             "actions": [
+              ...
             ]
         }
     ],
@@ -898,11 +947,10 @@ between arrival of specified events. To give an example, consider the following:
 }
 ```
 
-The first timeout would start once any of the referenced events are consumed. If the next event does not occur within
-the defined timeout, no workflow instance should be created. Otherwise, the timeout
-resets while we are waiting for the next defined event.
+The first timeout would start once any of the referenced events are consumed. If the second event does not occur within
+the defined timeout, no workflow instance should be created.
 
-If the event state is not a starting state, the timeout property is relative to the time when the
+If the event state is not a starting state, the `timeout` property is relative to the time when the
 state becomes active. If the defined event conditions (regardless of the value of the exclusive property)
 are not satisfied within the defined timeout period, the event state should transition to the next state or end the workflow
 instance in case it is an end state without performing any actions.
