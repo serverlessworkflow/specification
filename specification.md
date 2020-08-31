@@ -893,11 +893,9 @@ Let's look at the following JSON definition of 'onEvents' to show this:
 
 Depending on the value of the Event states `exclusive` property, this definition can mean two different things:
 
-1. If `exclusive` is set to "true", the consumption of **either** the "HighBodyTemperature" or "HighBloodPressure" events 
-will trigger action execution.
+1. If `exclusive` is set to "true", the consumption of **either** the `HighBodyTemperature` or `HighBloodPressure` events will trigger action execution.
 
-2. If `exclusive` is set to "false", the consumption of **both** the "HighBodyTemperature" and "HighBloodPressure" events
-will trigger action execution. 
+2. If `exclusive` is set to "false", the consumption of **both** the `HighBodyTemperature` and `HighBloodPressure` events will trigger action execution. 
 
 This is visualized in the diagram below:
 
