@@ -82,7 +82,7 @@ See our full project Code of Conduct information [here](code-of-conduct.md).
 
 ### Meetings
 
-* [CNCF public events calendar](https://www.cncf.io/community/calendar/)
+* [CNCF public events calendar](https://www.cncf.io/calendar/)
 
 The Serverless Workflow sub-group meets biweekly, every second Monday
 at 10AM PT (USA Pacific).
