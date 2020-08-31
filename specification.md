@@ -1247,7 +1247,7 @@ For more information, refer to the [Workflow Error Handling - Retrying](#workflo
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | expression | JsonPath expression. Must return a result for the transition to be valid | string | no |
-| [produceEvent](#ProduceEvent-Definition) | Event to be produced when this transition happens | object | no |
+| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Events to be produced when this transition happens | array | no |
 | [nextState](#Transitions) | State to transition to next | string | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -1264,10 +1264,10 @@ For more information, refer to the [Workflow Error Handling - Retrying](#workflo
 ```json
 {
    "expression": "{{ $.result }}",
-   "produceEvent": {
+   "produceEvents": [{
        "eventRef": "produceResultEvent",
        "data": "{{ $.result.data }}"
-   },
+   }],
    "nextState": "EvalResultState"
 }
 ```
@@ -1277,8 +1277,8 @@ For more information, refer to the [Workflow Error Handling - Retrying](#workflo
 
 ```yaml
 expression: "{{ $.result }}"
-produceEvent:
-  eventRef: produceResultEvent
+produceEvents:
+- eventRef: produceResultEvent
   data: "{{ $.result.data }}"
 nextState: EvalResultState
 ```
@@ -1289,8 +1289,8 @@ nextState: EvalResultState
 
 </details>
 
-Defines a transition from point A to point B in the serverless workflow. For more information, see the
-[Transitions section](#Transitions).
+Transitions allow you to move from one state (control-logic block) to another. For more information see the
+[Transitions section](#Transitions) section.
 
 #### Operation State
 
@@ -2640,7 +2640,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | kind | End kind ("default", "terminate", or "event") | enum | yes |
-| [produceEvent](#ProduceEvent-Definition) | If kind is "event", define what type of event to produce | object | yes only if kind is "event" |
+| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. If `kind` is "event", define what type of event to produce | array | yes only if `kind` is "event" |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2656,10 +2656,10 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 ```json
 {
     "kind": "event",
-    "produceEvent": {
+    "produceEvents": [{
         "eventRef": "provisioningCompleteEvent",
         "data": "{{ $.provisionedOrders }}"
-    }
+    }]
 }
 ```
 
@@ -2668,8 +2668,8 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 
 ```yaml
 kind: event
-produceEvent:
-  eventRef: provisioningCompleteEvent
+produceEvents:
+- eventRef: provisioningCompleteEvent
   data: "{{ $.provisionedOrders }}"
 ```
 
@@ -2686,9 +2686,9 @@ The end definitions provides different ways to complete workflow execution, whic
 - **default** - Default workflow execution completion; no other special behavior.
 - **terminate** - Completes all execution flows in the given workflow instance. All activities/actions being executed
 are completed. If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the entire workflow instance is terminated.
-- **event** - Workflow executions completes, and a CloudEvent is produced according to the [produceEvent](#ProduceEvent-Definition) definition.
+- **event** - Workflow executions completes, and one or moreCloudEvents can be produced.
 
-#### ProduceEvent Definition
+#### ProducedEvent Definition
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
@@ -2743,7 +2743,7 @@ to be used as the event payload. If of object type, you can define a custom obje
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the generated event. 
 
-Being able to produce an event when workflow execution completes or during state transition
+Being able to produce events when workflow execution completes or during state transition
 allows for event-based orchestration communication.
 For example, completion of an orchestration workflow can notify other orchestration workflows to decide if they need to act upon
 the produced event, or notify monitoring services of the current state of workflow execution, etc. 
@@ -2752,12 +2752,12 @@ It can be used to create very dynamic orchestration scenarios.
 #### Transitions
 
 Serverless workflow states can have one or more incoming and outgoing transitions (from/to other states).
-Each state has a "transition" definition that is used to determines which
+Each state can define a `transition` definition that is used to determine which
 state to transition to next.
 
 To define a transition, set the `nextState` property in your transition definitions.
 
-Implementers can choose to use the states "name" string property
+Implementers can choose to use the states `name` property
 for determining the transition; however, we realize that in most cases this is not an
 optimal solution that can lead to ambiguity. This is why each state also include an "id"
 property. Implementers can choose their own id generation strategy to populate the `id` property
@@ -2769,9 +2769,9 @@ So the options for next state transitions are:
 - Use the state id property
 - Use a combination of name and id properties
 
-Events can be produced during state transitions. The `produceEvent` property allows you
-to reference one of the defined `produced` events in the workflow [events definitions](#Event-Definition).
-It also allows you to select part of states data to be sent as the event payload.
+Events can be produced during state transitions. The `produceEvents` property of the `transition` definitions allows you
+to reference one or more defined `produced` events in the workflow [events definitions](#Event-Definition).
+For each of the produced events you can select what parts of state data to be the event payload.
 
 #### Restricting Transitions based on state output
 
