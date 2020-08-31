@@ -1,1 +1,5 @@
-*       @tsurdilo @manuelstein @falko @duglin
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence,
+# They will be requested for
+# review when someone opens a pull request.
+*       @tsurdilo @ricardozanini @manuelstein
