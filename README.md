@@ -17,6 +17,7 @@ Cloud Native Sandbox level project on July 14, 2020.
 
 - [Releases](#Releases)
 - [SDKs](#SDKs)
+- [Tooling](#Tooling)
 - [Community](#Community)
     - [Communication](#Communication)
     - [Code of Conduct](#Code-of-Conduct)
@@ -42,7 +43,7 @@ In addition to the documentation mentioned above, there is also a set of SDKs be
 - [Java](https://github.com/serverlessworkflow/sdk-java)
 
 Being an open source community the Serverless Workflow team is open for new members as well open to their contributions. 
-In order to ensure that an SDK is going to be supported and maintained the Serverless Workflow community would like to ensure that:
+In order to ensure that an SDK is going to be supported and maintained, the Serverless Workflow community would like to ensure that:
 
 * Each SDK has active points of contact.
 * Each SDK supports the latest(N), and N-1, major releases of the specification.
@@ -50,12 +51,20 @@ In order to ensure that an SDK is going to be supported and maintained the Serve
 
 Support for release candidates is not required, but strongly encouraged.
 
+## Tooling
+
+In order to enhance developer experience with the specification, we also provide a [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension).
+The sources of the extension are found [here](https://github.com/serverlessworkflow/vscode-extension).
+
+In order to ensure that the VSCode Extension is going to be supported and maintained, the Serverless Workflow community 
+would like to ensure that is has a dedicated point of contact.
+
 ## Community
 
 We have an growing community working together to build a dynamic serverless workflow
 ecosystem. Community contributions are welcome and much needed to foster specification growth.
 
-To learn more about the specification community reference the community docs.
+See [here](community/contributors.md) for the list of all community members that have contributed to the specification.
 
 To learn how to contribute to the specification reference the ['how to contribute'](contributing.md) doc.
   
