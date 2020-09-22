@@ -34,6 +34,12 @@ data output, which is:
 }
 ```
 
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-helloworld.png" height="400px" alt="Hello World Example"/>
+</p>
+
 #### Workflow Definition
 
 <table>
@@ -91,12 +97,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-helloworld.png" height="400px" alt="Hello World Example"/>
-</p>
-
 ### Greeting Example
 
 #### Description
@@ -121,6 +121,12 @@ The results of the action is assumed to be the greeting for the provided persons
 ```
 
 Which is added to the states data and becomes the workflow data output.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-greeting.png" height="500px" alt="Greeting Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -203,12 +209,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-greeting.png" height="500px" alt="Greeting Example"/>
-</p>
-
 ### Event Based Greeting Example
 
 #### Description
@@ -270,6 +270,12 @@ filters what is selected to be the state data output which then becomes the work
 ```text
    "Welcome to Serverless Workflow, John!"
 ```
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-eventbasedgreeting.png" height="500px" alt="Event Based Greeting Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -374,12 +380,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-eventbasedgreeting.png" height="500px" alt="Event Based Greeting Example"/>
-</p>
-
 ### Solving Math Problems Example
 
 #### Description
@@ -400,6 +400,12 @@ and returns its result.
 
 Results of all math expressions are accumulated into the data output of the ForEach state which become the final
 result of the workflow execution.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-looping.png" height="500px" alt="Looping Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -488,12 +494,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-looping.png" height="500px" alt="Looping Example"/>
-</p>
-
 ### Parallel Execution Example
 
 #### Description
@@ -501,6 +501,12 @@ states:
 This example uses a parallel state to execute two branches (simple wait states) at the same time.
 The completionType type is set to "and", which means the parallel state has to wait for both branches
 to finish execution before it can transition (end workflow execution in this case as it is an end state).
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-parallel.png" height="500px" alt="Parallel Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -575,12 +581,6 @@ We assume that the two referenced workflows, namely `shortdelayworkflowid` and `
 with the `shortdelayworkflowid` workflow delay state defining its `timeDelay` property to be shorter than that of the `longdelayworkflowid` workflows
 delay state.
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-parallel.png" height="500px" alt="Parallel Example"/>
-</p>
-
 ### Event Based Transitions Example
 
 #### Description
@@ -589,6 +589,12 @@ In this example we use an Event-based Switch state to wait for arrival
 of the "VisaApproved", or "VisaRejected" Cloud Events. Depending on which type of event happens,
 the workflow performs a different transition. If none of the events arrive in the defined 1 hour timeout
 period, the workflow transitions to the "HandleNoVisaDecision" state. 
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-eventbasedswitch.png" height="500px" alt="Event Based Switch Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -726,13 +732,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-eventbasedswitch.png" height="500px" alt="Event Based Switch Example"/>
-</p>
-
-
 ### Applicant Request Decision Example
 
 #### Description
@@ -753,6 +752,12 @@ This example shows off the switch state and the subflow state. The workflow is s
 We use the switch state with two conditions to determine if the application should be made based on the applicants age.
 If the applicants age is over 18 we start the application (subflow state). Otherwise the workflow notifies the
  applicant of the rejection.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-switchstate.png" height="500px" alt="Switch State Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -880,12 +885,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-switchstate.png" height="500px" alt="Switch State Example"/>
-</p>
-
 ### Provision Orders Example
 
 #### Description
@@ -909,6 +908,12 @@ Workflow data is assumed to me:
 ```
 
 The data output of the workflow contains the information of the exception caught during workflow execution.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-handlerrors.png" height="500px" alt="Handle Errors Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -1075,12 +1080,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-handlerrors.png" height="500px" alt="Handle Errors Example"/>
-</p>
-
 ### Monitor Job Example
 
 #### Description
@@ -1095,6 +1094,11 @@ finishes execution.
 
 In the case job submission raises a runtime error, we transition to a SubFlow state which handles the job submission issue.
 
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/examples-jobmonitoring.png" height="500px" alt="Job Monitoring Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -1374,12 +1378,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/examples-jobmonitoring.png" height="500px" alt="Job Monitoring Example"/>
-</p>
-
 ### Send CloudEvent On Workfow Completion Example
 
 #### Description
@@ -1441,6 +1439,12 @@ CloudEvent upon completion of the workflow could look like:
   }
 }
 ```
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-sendcloudeentonworkflowcompletion.png" height="500px" alt="Send CloudEvent on Workflow Completion Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -1540,12 +1544,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-sendcloudeentonworkflowcompletion.png" height="500px" alt="Send CloudEvent on Workflow Completion Example"/>
-</p>
-
 ### Monitor Patient Vital Signs Example
 
 #### Description
@@ -1577,6 +1575,12 @@ Since the hospital may include many patients that are being monitored it is assu
 As you can see the "patientId" context attribute of the event includes our correlation key which is the unique
 patient id. If we set it to be the correlation key in our events definition, all events that are considered must
 have the matching patient id.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-monitorpatientvitalsigns.png" height="500px" alt="Monitor Patient Vital Signs Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -1760,12 +1764,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-monitorpatientvitalsigns.png" height="500px" alt="Monitor Patient Vital Signs Example"/>
-</p>
-
 ### Finalize College Application Example
 
 #### Description
@@ -1779,6 +1777,12 @@ Each include the applicant id in their "applicantId" context attribute, so we ca
 
 Our workflow is instantiated and performs the actions to finalize the college application for a student only
 when all three of these events happened (in no particular order).
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-finalizecollegeapplication.png" height="500px" alt="Finalize College Application Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -1920,12 +1924,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-finalizecollegeapplication.png" height="500px" alt="Finalize College Application Example"/>
-</p>
-
 ### Perform Customer Credit Check Example
 
 #### Description
@@ -1994,6 +1992,12 @@ And for denied credit check, for example:
   }
 }
 ```
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-customercreditcheck.png" height="500px" alt="Perform Customer Credit Check Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -2175,12 +2179,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-customercreditcheck.png" height="500px" alt="Perform Customer Credit Check Example"/>
-</p>
-
 ### Handle Car Auction Bids Example
 
 #### Description
@@ -2212,6 +2210,12 @@ Bidding is done via an online application and bids are received as events are as
   }
 }
 ```
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-carauctionbid.png" height="500px" alt="Handle Car Auction Bid Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -2315,12 +2319,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-carauctionbid.png" height="500px" alt="Handle Car Auction Bid Example"/>
-</p>
-
 ### Check Inbox Periodically
 
 #### Description
@@ -2347,6 +2345,12 @@ The results of the inbox service called is expected to be for example:
    ]
 }
 ```
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-periodicalexec.png" height="400px" alt="Check Inbox Periodically Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -2464,13 +2468,6 @@ states:
 </tr>
 </table>
 
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-periodicalexec.png" height="400px" alt="Check Inbox Periodically Example"/>
-</p>
-
-
 ### Event Based Service Invocation
 
 #### Description
@@ -2500,6 +2497,12 @@ For this example we assume that the workflow instance is started given the follo
       }   
     }
 ```
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-vetappointment.png" height="400px" alt="Vet Appointment Example"/>
+</p>
 
 #### Workflow Definition
 
@@ -2594,9 +2597,3 @@ states:
 </td>
 </tr>
 </table>
-
-#### Workflow Diagram
-
-<p align="center">
-<img src="../media/examples/example-vetappointment.png" height="400px" alt="Vet Appointment Example"/>
-</p>
