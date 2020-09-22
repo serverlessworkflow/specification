@@ -365,7 +365,8 @@ defined via the `parameters` property of [function definitions](#FunctionRef-Def
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique event name | string | yes |
+| name | Unique event name | string | yes if `names` is not used |
+| names | List of unique event names that share the rest of the properties (source, type, kind, ...) | array | yes if `name` is not used |
 | source | CloudEvent source | string | yes if kind is set to "consumed", otherwise no |
 | type | CloudEvent type | string | yes |
 | kind | Defines the event is either `consumed` or `produced` by the workflow. Default is `consumed` | enum | no |
@@ -420,8 +421,61 @@ Used to define events and their correlations. These events can be either consume
 The Serverless Workflow specification mandates that all events conform to the [CloudEvents](https://github.com/cloudevents/spec) specification. 
 This is to assure consistency and portability of the events format used.
 
-The `name` property defines the name of the event that is unique inside the workflow definition. This event name can be 
+The `name` property defines a single name of the event that is unique inside the workflow definition. This event name can be 
 then referenced within [function](#Function-Definition) and [state](#State-Definition) definitions.
+
+The `names` property can be used instead of `name` when you want to define multiple events that share
+the same `source`, `type`, `kind`, and correlation rules. 
+To give an example, the following two events definitions are considered to be equal:
+
+<table>
+<tr>
+    <th>(1)</th>
+    <th>(2)</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{  
+  "events": [
+    {
+      "name": "Event1",
+      "type": "org.events",
+      "source": "eventssource"
+    },
+    {
+      "name": "Event2",
+      "type": "org.events",
+      "source": "eventssource"
+    },
+    {
+      "name": "Event3",
+      "type": "org.events",
+      "source": "eventssource"
+    }
+  ]
+}
+```
+
+</td>
+<td valign="top">
+
+```json
+{  
+  "events": [
+    {
+      "names": ["Event1", "Event2", "Event3"],
+      "type": "org.events",
+      "source": "eventssource"
+    }
+  ]
+}
+```
+
+</td>
+</tr>
+</table>
 
 The `source` property matches this event definition with the [source](https://github.com/cloudevents/spec/blob/master/spec.md#source-1)
 property of the CloudEvent required attributes.

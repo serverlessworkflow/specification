@@ -20,6 +20,15 @@
           "description": "Unique event name",
           "minLength": 1
         },
+        "names": {
+          "type": "array",
+          "description": "List of unique event names that share the rest of the properties (source, type, kind, default)",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "uniqueItems": true
+        },
         "source": {
           "type": "string",
           "description": "CloudEvent source"
@@ -59,16 +68,37 @@
         }
       },
       "then": {
-        "required": [
-          "name",
-          "source",
-          "type"
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "source",
+              "type"
+            ]
+          },
+          {
+            "required": [
+              "names",
+              "source",
+              "type"
+            ]
+          }
         ]
       },
       "else": {
-        "required": [
-          "name",
-          "type"
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type"
+            ]
+          },
+          {
+            "required": [
+              "names",
+              "type"
+            ]
+          }
         ]
       }
     },
