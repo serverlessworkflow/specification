@@ -246,6 +246,7 @@ which would set the workflow version to `1.0.0`.
 | schemaVersion | Workflow schema version | string | no |
 | [dataInputSchema](#Workflow-Data-Input) | URI to JSON Schema that workflow data input adheres to | string | no |
 | [dataOutputSchema](#Workflow-data-output) | URI to JSON Schema that workflow data output adheres to | string | no |
+| standalone | Indicates if the workflow can be executed directly (if "true") or can be executed only from other workflows (if "false"). Default is "true" | boolean | no |
 | [events](#Event-Definition) | Workflow event definitions. Defines events that can be consumed or produced | array | no |
 | [functions](#Function-Definition) | Workflow function definitions | array | no |
 | [states](#State-Definition) | Workflow states | array | yes |
@@ -1843,11 +1844,11 @@ For more information, see the [workflow error handling and retrying section](#wo
 | id | Unique state id | string | no |
 | name |State name | string | yes |
 | type |State type | string | yes |
-| waitForCompletion |If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
+| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
 | workflowId |Sub-workflow unique id | boolean | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onError](#Workflow-Error-Handling) | States error handling definitions | array | no |
-| [transition](#Transitions) |Next transition of the workflow after subflow has completed | object | yes (if end is not defined) |
+| [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is not defined) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -1893,27 +1894,32 @@ end:
 
 </details>
 
-It is often the case that you want to group your workflows into small, reusable logical units that perform certain needed functionality.
-Even though you can use the Event or Callback states to call externally deployed services (via function), at times
-there is a need to include/inject another serverless workflow (from classpath/local file system etc, depending on the implementation logic).
-In that case you would use the SubFlow state.
-It also allows developers to model their workflows with reusability and logical grouping in mind.
+Often you want to group your workflows into small logical units that solve a particular business problem and can be reused in 
+multiple other workflow definitions.
 
-This state allows developers to include/inject a uniquely identified sub-workflow and start its execution.
-Another use of this state is within [branches](#parallel-state-branch) of the [Parallel State](#Parallel-State). 
-Instead of having to define all states
-in each branch, you could separate the branch states into individual sub-workflows and call the SubFlow state
-as a single state in each.
+<p align="center">
+<img src="media/spec/subflowstateref.png" height="350px" alt="Referencing reusable workflow via SubFlow states"/>
+</p>
 
-Sub-workflows must have a defined start and end states.
-The `waitForCompletion` property defines if the SubFlow state should wait until execution of the sub-workflow
-is completed or not.
+Reusable workflow are referenced by their `id` property via the SubFlow states`workflowId` parameter.
 
-Each sub-workflow receives the same copy of the SubFlow state's data input.
-If the `waitForCompletion` property is set to true, sub-workflows have the ability to edit the parent's workflow data.
-If the `waitForCompletion` property is set to false, data access to the parent workflow should not be allowed.
+Each referenced workflow receives the SubFlow states data as workflow data input.
 
-Sub-workflows inherit all the [function](#Function-Definition) and [event](#Event-Definition) definitions of their parent workflow.
+Each referenced workflow can reuse the "parent" workflow [functions](#Function-Definition) and [events](#Event-Definition) definitions.
+It can chose to overwrite them if needed by defining its own.
+
+The `waitForCompletion` property defines if the SubFlow state should wait until the referenced reusable workflow
+has completed its execution. 
+
+If `waitForCompletion` is "true", SubFlow state execution must wait until the referenced workflow has completed its execution.
+In this case the workflow data output of the referenced workflow can and should be merged with the SubFlow states state data.
+
+If `waitForCompletion` is set to "false" the parent workflow can continue its execution while the referenced workflow 
+is being executed. For this case, the referenced (child) workflow data output cannot be merged with the SubFlow states
+state data (as by the time its completion the parent workflow execution has already continued).
+
+Referenced workflow can tell runtime implementations that they should only be invocable via another workflow that references them
+in its SubFlow states. This is done by setting the referenced workflow top-level `standalone` property to `true`.
 
 #### Inject State
 
