@@ -10,7 +10,8 @@
       "items": {
         "type": "object",
         "$ref": "#/definitions/function"
-      }
+      },
+      "minLength": 1
     },
     "function": {
       "type": "object",

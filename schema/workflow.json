@@ -89,7 +89,8 @@
             "$ref": "#/definitions/callbackstate"
           }
         ]
-      }
+      },
+      "minLength": 1
     }
   },
   "required": [
