@@ -246,7 +246,6 @@ which would set the workflow version to `1.0.0`.
 | schemaVersion | Workflow schema version | string | no |
 | [dataInputSchema](#Workflow-Data-Input) | URI to JSON Schema that workflow data input adheres to | string | no |
 | [dataOutputSchema](#Workflow-data-output) | URI to JSON Schema that workflow data output adheres to | string | no |
-| standalone | Indicates if the workflow can be executed directly (if "true") or can be executed only from other workflows (if "false"). Default is "true" | boolean | no |
 | [events](#Event-Definition) | Workflow event definitions. Defines events that can be consumed or produced | array | no |
 | [functions](#Function-Definition) | Workflow function definitions | array | no |
 | [states](#State-Definition) | Workflow states | array | yes |
@@ -1905,9 +1904,6 @@ Reusable workflow are referenced by their `id` property via the SubFlow states`w
 
 Each referenced workflow receives the SubFlow states data as workflow data input.
 
-Each referenced workflow can reuse the "parent" workflow [functions](#Function-Definition) and [events](#Event-Definition) definitions.
-It can chose to overwrite them if needed by defining its own.
-
 The `waitForCompletion` property defines if the SubFlow state should wait until the referenced reusable workflow
 has completed its execution. 
 
@@ -1918,8 +1914,7 @@ If `waitForCompletion` is set to "false" the parent workflow can continue its ex
 is being executed. For this case, the referenced (child) workflow data output cannot be merged with the SubFlow states
 state data (as by the time its completion the parent workflow execution has already continued).
 
-Referenced workflow can tell runtime implementations that they should only be invocable via another workflow that references them
-in its SubFlow states. This is done by setting the referenced workflow top-level `standalone` property to `true`.
+Referenced workflows must declare their own [function](#Function-Definition) and [event](#Event-Definition) definitions.
 
 #### Inject State
 

@@ -33,11 +33,6 @@
       "format": "uri",
       "description": "URI to JSON Schema that workflow data input adheres to"
     },
-    "standalone": {
-      "type": "boolean",
-      "default": true,
-      "description": "Indicates if the workflow can be executed directly or can be executed only from other workflows (via SubFlow state)"
-    },
     "dataOutputSchema": {
       "type": "string",
       "format": "uri",
