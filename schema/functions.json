@@ -3,16 +3,19 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Serverless Workflow specification - functions schema",
   "type": "object",
-  "definitions": {
-    "functions": {
-      "type": "array",
-      "description": "Workflow function definitions",
-      "items": {
-        "type": "object",
-        "$ref": "#/definitions/function"
-      },
-      "minLength": 1
+  "functions": {
+    "type": "array",
+    "description": "Workflow function definitions",
+    "items": {
+      "type": "object",
+      "$ref": "#/definitions/function"
     },
+    "minItems": 1
+  },
+  "required": [
+    "functions"
+  ],
+  "definitions": {
     "function": {
       "type": "object",
       "properties": {
