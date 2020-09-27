@@ -148,7 +148,7 @@ Which is added to the states data and becomes the workflow data output.
 "functions": [
   {
      "name": "greetingFunction",
-     "resource": "functionResourse"
+     "operation": "file://myapis/greetingapis.json#greeting"
   }
 ],
 "states":[  
@@ -189,7 +189,7 @@ name: Greeting Workflow
 description: Greet Someone
 functions:
 - name: greetingFunction
-  resource: functionResourse
+  operation: file://myapis/greetingapis.json#greeting
 states:
 - name: Greet
   type: operation
@@ -304,7 +304,7 @@ filters what is selected to be the state data output which then becomes the work
 "functions": [
   {
      "name": "greetingFunction",
-     "resource": "functionResourse"
+     "operation": "file://myapis/greetingapis.json#greeting"
   }
 ],
 "states":[  
@@ -355,7 +355,7 @@ events:
   source: greetingEventSource
 functions:
 - name: greetingFunction
-  resource: functionResourse
+  operation: file://myapis/greetingapis.json#greeting
 states:
 - name: Greet
   type: event
@@ -427,7 +427,7 @@ result of the workflow execution.
 "functions": [
 {
   "name": "solveMathExpressionFunction",
-  "resource": "functionResourse"
+  "operation": "http://myapis.org/mapthapis.json#solveExpression"
 }
 ],
 "states":[  
@@ -471,7 +471,7 @@ name: Solve Math Problems Workflow
 description: Solve math problems
 functions:
 - name: solveMathExpressionFunction
-  resource: functionResourse
+  operation: http://myapis.org/mapthapis.json#solveExpression
 states:
 - name: Solve
   start:
@@ -779,7 +779,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
    "functions": [
      {
         "name": "sendRejectionEmailFunction",
-        "resource": "functionResourse"
+        "operation": "http://myapis.org/applicationapi.json#emailRejection"
      }
    ],
    "states":[  
@@ -849,7 +849,7 @@ name: Applicant Request Decision Workflow
 description: Determine if applicant request is valid
 functions:
 - name: sendRejectionEmailFunction
-  resource: functionResourse
+  operation: http://myapis.org/applicationapi.json#emailRejection
 states:
 - name: CheckApplication
   type: switch
@@ -935,7 +935,7 @@ The data output of the workflow contains the information of the exception caught
 "functions": [
   {
      "name": "provisionOrderFunction",
-     "resource": "functionResourse"
+     "operation": "http://myapis.org/provisioningapi.json#doProvision"
   }
 ],
 "states":[  
@@ -1029,7 +1029,7 @@ name: Provision Orders
 description: Provision Orders and handle errors thrown
 functions:
 - name: provisionOrderFunction
-  resource: functionResourse
+  operation: http://myapis.org/provisioningapi.json#doProvision
 states:
 - name: ProvisionOrder
   type: operation
@@ -1120,19 +1120,19 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
   "functions": [
     {
       "name": "submitJob",
-      "resource": "submitJobResource"
+      "operation": "http://myapis.org/monitorapi.json#doSubmit"
     },
     {
       "name": "checkJobStatus",
-      "resource": "checkJobStatusResource"
+      "operation": "http://myapis.org/monitorapi.json#checkStatus"
     },
     {
       "name": "reportJobSuceeded",
-      "resource": "reportJobSuceededResource"
+      "operation": "http://myapis.org/monitorapi.json#reportSucceeded"
     },
     {
       "name": "reportJobFailed",
-      "resource": "reportJobFailedResource"
+      "operation": "http://myapis.org/monitorapi.json#reportFailure"
     }
   ],
   "states":[  
@@ -1287,13 +1287,13 @@ name: Job Monitoring
 description: Monitor finished execution of a submitted job
 functions:
 - name: submitJob
-  resource: submitJobResource
+  operation: http://myapis.org/monitorapi.json#doSubmit
 - name: checkJobStatus
-  resource: checkJobStatusResource
+  operation: http://myapis.org/monitorapi.json#checkStatus
 - name: reportJobSuceeded
-  resource: reportJobSuceededResource
+  operation: http://myapis.org/monitorapi.json#reportSucceeded
 - name: reportJobFailed
-  resource: reportJobFailedResource
+  operation: http://myapis.org/monitorapi.json#reportFailure
 states:
 - name: SubmitJob
   type: operation
@@ -1472,7 +1472,7 @@ CloudEvent upon completion of the workflow could look like:
 "functions": [
 {
     "name": "provisionOrderFunction",
-    "resource": "functionResourse"
+    "operation": "http://myapis.org/provisioning.json#doProvision"
 }
 ],
 "states": [
@@ -1520,7 +1520,7 @@ events:
   kind: produced
 functions:
 - name: provisionOrderFunction
-  resource: functionResourse
+  operation: http://myapis.org/provisioning.json#doProvision
 states:
 - name: ProvisionOrdersState
   type: foreach
@@ -1633,18 +1633,15 @@ have the matching patient id.
 "functions": [
 {
     "name": "callPulmonologist",
-    "type": "function",
-    "resource": "callPulmonologistResource"
+    "operation": "http://myapis.org/patientapis.json#callPulmonologist"
 },
 {
     "name": "sendTylenolOrder",
-    "type": "function",
-    "resource": "sendTylenolOrderFunction"
+    "operation": "http://myapis.org/patientapis.json#tylenolOrder"
 },
 {
     "name": "callNurse",
-    "type": "function",
-    "resource": "callNurseResource"
+    "operation": "http://myapis.org/patientapis.json#callNurse"
 }
 ],
 "states": [
@@ -1721,14 +1718,11 @@ events:
   - contextAttributeName: patientId
 functions:
 - name: callPulmonologist
-  type: function
-  resource: callPulmonologistResource
+  operation: http://myapis.org/patientapis.json#callPulmonologist
 - name: sendTylenolOrder
-  type: function
-  resource: sendTylenolOrderFunction
+  operation: http://myapis.org/patientapis.json#tylenolOrder
 - name: callNurse
-  type: function
-  resource: callNurseResource
+  operation: http://myapis.org/patientapis.json#callNurse
 states:
 - name: MonitorVitals
   type: event
@@ -1835,8 +1829,7 @@ when all three of these events happened (in no particular order).
 "functions": [
 {
     "name": "finalizeApplicationFunction",
-    "type": "function",
-    "resource": "finalizeApplicationResource"
+    "operation": "http://myapis.org/collegeapplicationapi.json#finalize"
 }
 ],
 "states": [
@@ -1899,8 +1892,7 @@ events:
   - contextAttributeName: applicantId
 functions:
 - name: finalizeApplicationFunction
-  type: function
-  resource: finalizeApplicationResource
+  operation: http://myapis.org/collegeapplicationapi.json#finalize
 states:
 - name: FinalizeApplication
   type: event
@@ -2018,13 +2010,12 @@ And for denied credit check, for example:
     "description": "Perform Customer Credit Check",
     "functions": [
         {
-            "name": "callCreditCheckMicroservice",
-            "resource": "creditCheckResource",
-            "type": "microservice"
+            "name": "creditCheckFunction",
+            "operation": "http://myapis.org/creditcheckapi.json#doCreditCheck"
         },
         {
             "name": "sendRejectionEmailFunction",
-            "resource": "rejectEmailResource"
+            "operation": "http://myapis.org/creditcheckapi.json#rejectionEmail"
         }
     ],
     "events": [
@@ -2122,11 +2113,10 @@ version: '1.0'
 name: Customer Credit Check Workflow
 description: Perform Customer Credit Check
 functions:
-- name: callCreditCheckMicroservice
-  resource: creditCheckResource
-  type: microservice
+- name: creditCheckFunction
+  operation: http://myapis.org/creditcheckapi.json#doCreditCheck
 - name: sendRejectionEmailFunction
-  resource: rejectEmailResource
+  operation: http://myapis.org/creditcheckapi.json#rejectionEmail
 events:
 - name: CreditCheckCompletedEvent
   type: creditCheckCompleteType
@@ -2237,8 +2227,7 @@ Bidding is done via an online application and bids are received as events are as
     "functions": [
         {
             "name": "StoreBidFunction",
-            "resource": "storeBidResource",
-            "type": "function"
+            "operation": "http://myapis.org/carauctionapi.json#storeBid"
         }
     ],
     "events": [
@@ -2290,8 +2279,7 @@ name: Car Auction Bidding Workflow
 description: Store a single bid whole the car auction is active
 functions:
 - name: StoreBidFunction
-  resource: storeBidResource
-  type: function
+  operation: http://myapis.org/carauctionapi.json#storeBid
 events:
 - name: CarBidEvent
   type: carBidMadeType
@@ -2372,12 +2360,11 @@ The results of the inbox service called is expected to be for example:
 "functions": [
     {
         "name": "checkInboxFunction",
-        "resource": "inboxFunctionResource",
-        "type": "getNewMessages"
+        "operation": "http://myapis.org/inboxapi.json#checkNewMessages"
     },
     {
         "name": "sendTextFunction",
-        "resource": "sendTextFunctionResource"
+        "operation": "http://myapis.org/inboxapi.json#sendText"
     }
 ],
 "states": [
@@ -2399,11 +2386,11 @@ The results of the inbox service called is expected to be for example:
             }
         ],
         "transition": {
-            "nextState": "SendTextForHighPrioriry"
+            "nextState": "SendTextForHighPriority"
         }
     },
     {
-        "name": "SendTextForHighPrioriry",
+        "name": "SendTextForHighPriority",
         "type": "foreach",
         "inputCollection": "{{ $.messages }}",
         "iterationParam": "singlemessage",
@@ -2435,10 +2422,9 @@ description: Periodically Check Inbox
 version: '1.0'
 functions:
 - name: checkInboxFunction
-  resource: inboxFunctionResource
-  type: getNewMessages
+  operation: http://myapis.org/inboxapi.json#checkNewMessages
 - name: sendTextFunction
-  resource: sendTextFunctionResource
+  operation: http://myapis.org/inboxapi.json#sendText
 states:
 - name: CheckInbox
   type: operation
@@ -2451,8 +2437,8 @@ states:
   - functionRef:
       refName: checkInboxFunction
   transition:
-    nextState: SendTextForHighPrioriry
-- name: SendTextForHighPrioriry
+    nextState: SendTextForHighPriority
+- name: SendTextForHighPriority
   type: foreach
   inputCollection: "{{ $.messages }}"
   iterationParam: singlemessage
