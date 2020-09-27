@@ -96,7 +96,7 @@ See our full project Code of Conduct information [here](code-of-conduct.md).
 The Serverless Workflow sub-group meets biweekly, every second Monday
 at 10AM PT (USA Pacific).
 
-Join from PC, Mac, Linux, iOS or Android: https://zoom.us/my/cncfserverlesswg
+Join from PC, Mac, Linux, iOS or Android via [zoom](https://zoom.us/my/cncfserverlesswg?pwd=YjNqYzhOdjRRd01YWFkzS1lHbDZqUT09)
 
 Or iPhone one-tap :
 
