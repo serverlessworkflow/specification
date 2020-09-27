@@ -3,15 +3,19 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Serverless Workflow specification - events schema",
   "type": "object",
-  "definitions": {
-    "events": {
-      "type": "array",
-      "description": "Workflow CloudEvent definitions. Defines CloudEvents that can be consumed or produced",
-      "items": {
-        "type": "object",
-        "$ref": "#/definitions/eventdef"
-      }
+  "events": {
+    "type": "array",
+    "description": "Workflow CloudEvent definitions. Defines CloudEvents that can be consumed or produced",
+    "items": {
+      "type": "object",
+      "$ref": "#/definitions/eventdef"
     },
+    "minItems": 1
+  },
+  "required": [
+    "events"
+  ],
+  "definitions": {
     "eventdef": {
       "type": "object",
       "properties": {

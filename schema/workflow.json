@@ -3,96 +3,196 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Serverless Workflow specification - workflow schema",
   "type": "object",
-  "properties": {
-    "id": {
-      "type": "string",
-      "description": "Workflow unique identifier",
-      "minLength": 1
-    },
-    "name": {
-      "type": "string",
-      "description": "Workflow name",
-      "minLength": 1
-    },
-    "description": {
-      "type": "string",
-      "description": "Workflow description"
-    },
-    "version": {
-      "type": "string",
-      "description": "Workflow version",
-      "minLength": 1
-    },
-    "schemaVersion": {
-      "type": "string",
-      "description": "Serverless Workflow schema version",
-      "minLength": 1
-    },
-    "dataInputSchema": {
-      "type": "string",
-      "format": "uri",
-      "description": "URI to JSON Schema that workflow data input adheres to"
-    },
-    "dataOutputSchema": {
-      "type": "string",
-      "format": "uri",
-      "description": "URI to JSON Schema that workflow data output adheres to"
-    },
-    "metadata": {
-      "$ref": "common.json#/definitions/metadata"
-    },
-    "events": {
-      "$ref": "events.json#/definitions/events"
-    },
-    "functions": {
-      "$ref": "functions.json#/definitions/functions"
-    },
-    "states": {
-      "type": "array",
-      "description": "State definitions",
-      "items": {
-        "anyOf": [
-          {
-            "title": "Delay State",
-            "$ref": "#/definitions/delaystate"
+  "oneOf": [
+    {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Workflow unique identifier",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "description": "Workflow name",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Workflow description"
+        },
+        "version": {
+          "type": "string",
+          "description": "Workflow version",
+          "minLength": 1
+        },
+        "schemaVersion": {
+          "type": "string",
+          "description": "Serverless Workflow schema version",
+          "minLength": 1
+        },
+        "dataInputSchema": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to JSON Schema that workflow data input adheres to"
+        },
+        "dataOutputSchema": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to JSON Schema that workflow data output adheres to"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata"
+        },
+        "events": {
+          "$ref": "events.json#/events"
+        },
+        "functions": {
+          "$ref": "functions.json#/functions"
+        },
+        "states": {
+          "type": "array",
+          "description": "State definitions",
+          "items": {
+            "anyOf": [
+              {
+                "title": "Delay State",
+                "$ref": "#/definitions/delaystate"
+              },
+              {
+                "title": "Event State",
+                "$ref": "#/definitions/eventstate"
+              },
+              {
+                "title": "Operation State",
+                "$ref": "#/definitions/operationstate"
+              },
+              {
+                "title": "Parallel State",
+                "$ref": "#/definitions/parallelstate"
+              },
+              {
+                "title": "Switch State",
+                "$ref": "#/definitions/switchstate"
+              },
+              {
+                "title": "SubFlow State",
+                "$ref": "#/definitions/subflowstate"
+              },
+              {
+                "title": "Inject State",
+                "$ref": "#/definitions/injectstate"
+              },
+              {
+                "title": "ForEach State",
+                "$ref": "#/definitions/foreachstate"
+              },
+              {
+                "title": "Callback State",
+                "$ref": "#/definitions/callbackstate"
+              }
+            ]
           },
-          {
-            "title": "Event State",
-            "$ref": "#/definitions/eventstate"
+          "minItems": 1
+        }
+      }
+    },
+    {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Workflow unique identifier",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "description": "Workflow name",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Workflow description"
+        },
+        "version": {
+          "type": "string",
+          "description": "Workflow version",
+          "minLength": 1
+        },
+        "schemaVersion": {
+          "type": "string",
+          "description": "Serverless Workflow schema version",
+          "minLength": 1
+        },
+        "dataInputSchema": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to JSON Schema that workflow data input adheres to"
+        },
+        "dataOutputSchema": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to JSON Schema that workflow data output adheres to"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata"
+        },
+        "events": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to a resource containing event definitions (json or yaml)"
+        },
+        "functions": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to a resource containing function definitions (json or yaml)"
+        },
+        "states": {
+          "type": "array",
+          "description": "State definitions",
+          "items": {
+            "anyOf": [
+              {
+                "title": "Delay State",
+                "$ref": "#/definitions/delaystate"
+              },
+              {
+                "title": "Event State",
+                "$ref": "#/definitions/eventstate"
+              },
+              {
+                "title": "Operation State",
+                "$ref": "#/definitions/operationstate"
+              },
+              {
+                "title": "Parallel State",
+                "$ref": "#/definitions/parallelstate"
+              },
+              {
+                "title": "Switch State",
+                "$ref": "#/definitions/switchstate"
+              },
+              {
+                "title": "SubFlow State",
+                "$ref": "#/definitions/subflowstate"
+              },
+              {
+                "title": "Inject State",
+                "$ref": "#/definitions/injectstate"
+              },
+              {
+                "title": "ForEach State",
+                "$ref": "#/definitions/foreachstate"
+              },
+              {
+                "title": "Callback State",
+                "$ref": "#/definitions/callbackstate"
+              }
+            ]
           },
-          {
-            "title": "Operation State",
-            "$ref": "#/definitions/operationstate"
-          },
-          {
-            "title": "Parallel State",
-            "$ref": "#/definitions/parallelstate"
-          },
-          {
-            "title": "Switch State",
-            "$ref": "#/definitions/switchstate"
-          },
-          {
-            "title": "SubFlow State",
-            "$ref": "#/definitions/subflowstate"
-          },
-          {
-            "title": "Inject State",
-            "$ref": "#/definitions/injectstate"
-          },
-          {
-            "title": "ForEach State",
-            "$ref": "#/definitions/foreachstate"
-          },
-          {
-            "title": "Callback State",
-            "$ref": "#/definitions/callbackstate"
-          }
-        ]
-      },
-      "minLength": 1
+          "minItems": 1
+        }
+      }
     }
-  },
+  ],
   "required": [
     "id",
     "name",

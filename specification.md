@@ -84,13 +84,12 @@ Following sections provide a detailed descriptions of all parts of the workflow 
 The Serverless Workflow model is composed of: 
 
 * Set of [functions](#Function-Definition) (services) that need to be `invoked` during workflow execution. 
-* Set of [events](#Event-Definition) that need to be `consumed` to start workflow instances, trigger functions, or be `produced` during workflow execution.
+* Set of [events](#Event-Definition) that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
 * Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the workflow `control flow logic`, manage workflow data, and can reference defined functions and events. 
 Transitions connect workflow states.
 
-The defined workflow model is a declarative language that can be used to model small or complex orchestrations
+Workflow model defines a declarative language that can be used to model simple or complex orchestrations
 for event-driven, serverless applications.
-to start workflow instances or trigger functions,
 
 ### Workflow Data
 
@@ -246,8 +245,8 @@ which would set the workflow version to `1.0.0`.
 | schemaVersion | Workflow schema version | string | no |
 | [dataInputSchema](#Workflow-Data-Input) | URI to JSON Schema that workflow data input adheres to | string | no |
 | [dataOutputSchema](#Workflow-data-output) | URI to JSON Schema that workflow data output adheres to | string | no |
-| [events](#Event-Definition) | Workflow event definitions. Defines events that can be consumed or produced | array | no |
-| [functions](#Function-Definition) | Workflow function definitions | array | no |
+| [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
+| [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | [states](#State-Definition) | Workflow states | array | yes |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -300,6 +299,79 @@ Following figure describes the main workflow definition blocks.
 <img src="media/spec/workflowdefinitionblocks.png" height="300px" alt="Serverless Workflow Definitions Blocks"/>
 </p>
 
+The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
+a resource containing an array [functions](#Function-Definition) definition. 
+Referenced resource can be used by multiple workflow definitions.
+
+Here is an example of using external resource for function definitions:
+
+1. Workflow definition:
+```json
+{  
+   "id": "sampleWorkflow",
+   "version": "1.0",
+   "name": "Sample Workflow",
+   "description": "Sample Workflow",
+   "functions": "http://myhost:8080/functiondefs.json",
+   "states":[
+     ...
+   ]
+}
+```
+
+2. Function definitions resource
+```json
+{
+   "functions": [
+      {
+         "name":"HelloWorldFunction",
+         "resource":"https://hellworldservice.test.com:8443/api/hellofunction"
+      }
+   ]
+}
+```
+
+Referenced resource must conform to the specifications [Workflow Functions JSON Schema](schema/functions.json). 
+
+The `events` property can be either an in-line [event](#Event-Definition) definition array, or an [URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) reference to
+a resource containing an array of [event](#Event-Definition) definition. Referenced resource can be used by multiple workflow definitions.
+
+Here is an example of using external resource for event definitions:
+
+1. Workflow definition:
+```json
+{  
+   "id": "sampleWorkflow",
+   "version": "1.0",
+   "name": "Sample Workflow",
+   "description": "Sample Workflow",
+   "events": "http://myhost:8080/eventsdefs.json",
+   "states":[
+     ...
+   ]
+}
+```
+
+2. Event definitions resource
+```json
+{
+   "events": [
+      {  
+         "name": "ApplicantInfo",
+         "type": "org.application.info",
+         "source": "applicationssource",
+         "correlation": [
+          { 
+            "contextAttributeName": "applicantId"
+          } 
+         ]
+      }
+   ]
+}
+```
+
+Referenced resource must conform to the specifications [Workflow Events JSON Schema](schema/events.json). 
+
 #### Function Definition
 
 | Parameter | Description | Type | Required |
@@ -324,7 +396,6 @@ Following figure describes the main workflow definition blocks.
 {  
    "name": "HelloWorldFunction",
    "resource": "https://hellworldservice.test.com:8443/api/hellofunction",
-   "type": "REST",
    "metadata": {
       "authToken": "{{ $.token }}"
    }
@@ -337,7 +408,6 @@ Following figure describes the main workflow definition blocks.
 ```yaml
 name: HelloWorldFunction
 resource: https://hellworldservice.test.com:8443/api/hellofunction
-type: REST
 metadata:
   authToken: "{{ $.token }}"
 ```
