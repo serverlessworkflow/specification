@@ -377,7 +377,8 @@ Referenced resource must conform to the specifications [Workflow Events JSON Sch
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | Combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. For example 'https://petstore.swagger.io/v2/swagger.json#getPetById' | string | no |
+| operation | Combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. For example 'https://petstore.swagger.io/v2/swagger.json#getPetById' | string | yes |
+| type | Can be used to further describe the function defined (e.g. 'http', 'webhook', etc). This parameter should not be relied upon to be portable across platforms. Its main use is to give additional information about the function definition. The default value for this parameter is `rest-openapi`. | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -443,11 +444,16 @@ For example 'https://petstore.swagger.io/v2/swagger.json#getPetById'.
 In this example "getPetById" is the OpenAPI ["operationId"](https://swagger.io/docs/specification/paths-and-operations/)
 property in the services OpenAPI definition document which uniquely identifies a specific service operation that needs to be infoked.
 
+The `type` property can be used to further describe the function defined (e.g. 'http', 'webhook', etc). 
+This parameter should not be relied upon to be portable across platforms. 
+Its main use is to give additional information about the function definition. The default value for this parameter is `rest-openapi`.
+
 Function definitions themselves do not define data input parameters as they are reusable definitions. Parameters can be 
 defined via the `parameters` property of [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
 
 If the use of OpenAPI is not feasible in some scenarios, users and runtimes can chose to describe their custom function
-invocation using the [`metadata` property](#Workflow-Metadata). Please note however that such definitions cannot be considered portable across 
+invocation using the [`metadata` property](#Workflow-Metadata). 
+Please note however that such definitions cannot be considered portable across 
 multiple container/cloud environments.
 
 #### Event Definition
