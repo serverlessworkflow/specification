@@ -18,6 +18,7 @@
 - [Handle Car Auction Bids (Scheduled start Event state)](#Handle-Car-Auction-Bids-Example)
 - [Check Inbox Periodically (Cron-based Workflow start)](#Check-Inbox-Periodically)
 - [Event-based service invocation (Event triggered actions)](#Event-Based-Service-Invocation)
+- [Reusing Function and Event Definitions](#Reusing-Function-And-Event-Definitions)
 
 ### Hello World Example
 
@@ -2592,6 +2593,245 @@ states:
     timeout: PT15M
   end:
     kind: default
+```
+
+</td>
+</tr>
+</table>
+
+### Reusing Function And Event Definitions
+
+#### Description
+
+This example shows how [function](../specification.md#Function-Definition) and [event](../specification.md#Event-Definition) definitions 
+can be declared independently and referenced by workflow definitions. 
+This is useful when you would like to reuse event and function definitions across multiple workflows. In those scenarios it allows you to make 
+changed/updates to these definitions in a single place without having to modify multiple workflows.
+
+For the example we have two files, namely our "functiondefs.json" and "eventdefs.yml" (to show that they can be expressed in either JSON or YAML).
+These hold our function and event definitions which then can be referenced by multiple workflows.
+
+* functiondefs.json
+```json
+{
+  "functions": [
+      {
+        "name": "checkFundsAvailability",
+        "resource": "accountFundsResource"
+      },
+      {
+        "name": "sendSuccessEmail",
+        "resource": "emailServiceResource"
+      },
+      {
+        "name": "sendInsufficientFundsEmail",
+        "resource": "emailServiceResource"
+      }
+    ]
+}
+```
+
+* eventdefs.yml
+```yaml
+events:
+- name: PaymentReceivedEvent
+  type: payment.receive
+  source: paymentEventSource
+  correlation:
+  - contextAttributeName: accountId
+- name: ConfirmationCompletedEvent
+  type: payment.confirmation
+  kind: produced
+
+```
+
+In our workflow definition then we can reference these files rather than defining function and events in-line.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-reusefunceventdefs.png" height="400px" alt="Reusing Function and Event Definitions Example"/>
+</p>
+
+#### Workflow Definitions
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "id": "paymentconfirmation",
+  "version": "1.0",
+  "name": "Payment Confirmation Workflow",
+  "description": "Performs Payment Confirmation",
+  "functions": "functiondefs.json",
+  "events": "eventdefs.yml",
+  "states": [
+    {
+      "name": "PaymentReceived",
+      "type": "event",
+      "onEvents": [
+        {
+          "eventRefs": [
+            "PaymentReceivedEvent"
+          ],
+          "actions": [
+            {
+              "name": "checkfunds",
+              "functionRef": {
+                "refName": "checkFundsAvailability",
+                "parameters": {
+                  "account": "{{ $.accountId }}",
+                  "paymentamount": "{{ $.payment.amount }}"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "transition": {
+        "nextState": "ConfirmBasedOnFunds"
+      }
+    },
+    {
+      "name": "ConfirmBasedOnFunds",
+      "type": "switch",
+      "dataConditions": [
+        {
+          "condition": "{{ $.funds[?(@.available == 'true')] }}",
+          "transition": {
+            "nextState": "SendPaymentSuccess"
+          }
+        },
+        {
+          "condition": "{{ $.funds[?(@.available == 'false')] }}",
+          "transition": {
+            "nextState": "SendInsufficientResults"
+          }
+        }
+      ],
+      "default": {
+        "transition": {
+          "nextState": "SendPaymentSuccess"
+        }
+      }
+    },
+    {
+      "name": "SendPaymentSuccess",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "sendSuccessEmail",
+            "parameters": {
+              "applicant": "{{ $.customer }}"
+            }
+          }
+        }
+      ],
+      "end": {
+        "kind": "event",
+        "produceEvents": [
+          {
+            "eventRef": "ConfirmationCompletedEvent",
+            "data": "{{ $.payment }}"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SendInsufficientResults",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "sendInsufficientFundsEmail",
+            "parameters": {
+              "applicant": "{{ $.customer }}"
+            }
+          }
+        }
+      ],
+      "end": {
+        "kind": "event",
+        "produceEvents": [
+          {
+            "eventRef": "ConfirmationCompletedEvent",
+            "data": "{{ $.payment }}"
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: paymentconfirmation
+version: '1.0'
+name: Payment Confirmation Workflow
+description: Performs Payment Confirmation
+functions: functiondefs.json
+events: eventdefs.yml
+states:
+- name: PaymentReceived
+  type: event
+  onEvents:
+  - eventRefs:
+    - PaymentReceivedEvent
+    actions:
+    - name: checkfunds
+      functionRef:
+        refName: checkFundsAvailability
+        parameters:
+          account: "{{ $.accountId }}"
+          paymentamount: "{{ $.payment.amount }}"
+  transition:
+    nextState: ConfirmBasedOnFunds
+- name: ConfirmBasedOnFunds
+  type: switch
+  dataConditions:
+  - condition: "{{ $.funds[?(@.available == 'true')] }}"
+    transition:
+      nextState: SendPaymentSuccess
+  - condition: "{{ $.funds[?(@.available == 'false')] }}"
+    transition:
+      nextState: SendInsufficientResults
+  default:
+    transition:
+      nextState: SendPaymentSuccess
+- name: SendPaymentSuccess
+  type: operation
+  actions:
+  - functionRef:
+      refName: sendSuccessEmail
+      parameters:
+        applicant: "{{ $.customer }}"
+  end:
+    kind: event
+    produceEvents:
+    - eventRef: ConfirmationCompletedEvent
+      data: "{{ $.payment }}"
+- name: SendInsufficientResults
+  type: operation
+  actions:
+  - functionRef:
+      refName: sendInsufficientFundsEmail
+      parameters:
+        applicant: "{{ $.customer }}"
+  end:
+    kind: event
+    produceEvents:
+    - eventRef: ConfirmationCompletedEvent
+      data: "{{ $.payment }}"
 ```
 
 </td>
