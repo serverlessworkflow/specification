@@ -2603,15 +2603,15 @@ These hold our function and event definitions which then can be referenced by mu
   "functions": [
       {
         "name": "checkFundsAvailability",
-        "resource": "accountFundsResource"
+        "operation": "file://myapis/billingapis.json#checkFunds"
       },
       {
         "name": "sendSuccessEmail",
-        "resource": "emailServiceResource"
+        "operation": "file://myapis/emailapis.json#paymentSuccess"
       },
       {
         "name": "sendInsufficientFundsEmail",
-        "resource": "emailServiceResource"
+        "operation": "file://myapis/emailapis.json#paymentInsufficientFunds"
       }
     ]
 }
