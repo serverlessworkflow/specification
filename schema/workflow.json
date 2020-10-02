@@ -938,8 +938,8 @@
           "description": "If eventConditions is used, defines the time period to wait for events (ISO 8601 format)"
         },
         "default": {
-          "$ref": "#/definitions/defaultdef",
-          "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition"
+          "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition",
+          "$ref": "#/definitions/defaultdef"
         },
         "dataInputSchema": {
           "type": "string",
@@ -1017,8 +1017,8 @@
           }
         },
         "default": {
-          "$ref": "#/definitions/defaultdef",
-          "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition"
+          "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition",
+          "$ref": "#/definitions/defaultdef"
         },
         "dataInputSchema": {
           "type": "string",
@@ -1057,22 +1057,24 @@
     "defaultdef": {
       "type": "object",
       "description": "Default definition. Can be either a transition or end definition",
+      "properties": {
+        "transition": {
+          "$ref": "#/definitions/transition"
+        },
+        "end": {
+          "$ref": "#/definitions/end"
+        }
+      },
       "oneOf": [
         {
-          "properties": {
-            "transition": {
-              "$ref": "#/definitions/transition"
-            }
-          },
-          "required": ["properties"]
+          "required": [
+            "transition"
+          ]
         },
         {
-          "properties": {
-            "end": {
-              "$ref": "#/definitions/end"
-            }
-          },
-          "required": ["end"]
+          "required": [
+            "end"
+          ]
         }
       ]
     },
@@ -1090,6 +1092,10 @@
       "type": "object",
       "description": "Switch state data event condition",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Event condition name"
+        },
         "eventRef": {
           "type" : "string",
           "description": "References an unique event name in the defined workflow events"
@@ -1112,6 +1118,10 @@
       "type": "object",
       "description": "Switch state data event condition",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Event condition name"
+        },
         "eventRef": {
           "type" : "string",
           "description": "References an unique event name in the defined workflow events"
@@ -1144,6 +1154,10 @@
       "type": "object",
       "description": "Switch state data based condition",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Data condition name"
+        },
         "condition": {
           "type": "string",
           "description": "JsonPath expression evaluated against state data. True if results are not empty"
@@ -1162,6 +1176,10 @@
       "type": "object",
       "description": "Switch state data based condition",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Data condition name"
+        },
         "condition": {
           "type": "string",
           "description": "JsonPath expression evaluated against state data. True if results are not empty"

@@ -1597,6 +1597,7 @@ If events defined in event-based conditions do not arrive before the states `eve
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
+| name | Data condition name | string | no |
 | condition | JsonPath expression evaluated against state data. True if results are not empty | string | yes |
 | [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -1614,6 +1615,7 @@ If events defined in event-based conditions do not arrive before the states `eve
 
 ```json
 {
+      "name": "Eighteen or older",
       "condition": "{{ $.applicants[?(@.age >= 18)] }}",
       "transition": {
         "nextState": "StartApplication"
@@ -1625,6 +1627,7 @@ If events defined in event-based conditions do not arrive before the states `eve
 <td valign="top">
 
 ```yaml
+name: Eighteen or older
 condition: "{{ $.applicants[?(@.age >= 18)] }}"
 transition:
   nextState: StartApplication
@@ -1648,6 +1651,7 @@ to decide what to do, transition to another workflow state, or end workflow exec
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
+| name | Event condition name | string | no |
 | eventRef | References an unique event name in the defined workflow events | string | yes |
 | [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
 | [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
@@ -1666,6 +1670,7 @@ to decide what to do, transition to another workflow state, or end workflow exec
 
 ```json
 {
+      "name": "Visa approved",
       "eventRef": "visaApprovedEvent",
       "transition": {
         "nextState": "HandleApprovedVisa"
@@ -1677,6 +1682,7 @@ to decide what to do, transition to another workflow state, or end workflow exec
 <td valign="top">
 
 ```yaml
+name: Visa approved
 eventRef: visaApprovedEvent
 transition:
   nextState: HandleApprovedVisa
