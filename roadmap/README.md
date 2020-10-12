@@ -71,3 +71,4 @@ _Status description:_
 | ✔️| Update transitions and end definition 'produceEvents' definition | [spec doc](../specification.md) |
 | ✔️| Events definition update - add convenience way to define multiple events that share properties | [spec doc](../specification.md) |
 | ✔️| Update to function and events definitions - allow inline array def as well as uri reference to external resource | [spec doc](../specification.md) |
+| ✔️| Enforce use of OpenAPI specification in function definitions for portability | [spec doc](../specification.md) |

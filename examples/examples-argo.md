@@ -79,9 +79,8 @@ name: Hello World with parameters
 version: '1.0'
 functions:
 - name: whalesayimage
-  resource: docker/whalesay
-  type: container
   metadata:
+    image: docker/whalesay
     command: cowsay
 states:
 - name: whalesay
@@ -166,9 +165,8 @@ name: Multi Step Hello
 version: '1.0'
 functions:
 - name: whalesayimage
-  resource: docker/whalesay
-  type: container
   metadata:
+    image: docker/whalesay
     command: cowsay
 states:
 - name: hello1
@@ -271,9 +269,8 @@ name: DAG Diamond Example
 version: '1.0'
 functions:
 - name: echo
-  resource: alpine:3.7
-  type: container
   metadata:
+    image: alpine:3.7
     command: '[echo, "{{inputs.parameters.message}}"]'
 states:
 - name: A
@@ -396,34 +393,30 @@ name: Scripts and Results Example
 version: '1.0'
 functions:
 - name: gen-random-int-bash
-  resource: debian:9.4
-  type: script
   metadata:
+    image: debian:9.4
     command: bash
     source: |-
       cat /dev/urandom | od -N2 -An -i | awk -v f=1 -v r=100 '{printf "%i
       ", f + r * $1 / 65536}'
 - name: gen-random-int-python
-  resource: python:alpine3.6
-  type: script
   metadata:
+    image: python:alpine3.6
     command: python
     source: | 
       import random 
       i = random.randint(1, 100) 
       print(i)
 - name: gen-random-int-javascript
-  resource: node:9.1-alpine
-  type: script
   metadata:
+    image: node:9.1-alpine
     command: node
     source: |
       var rand = Math.floor(Math.random() * 100); 
       console.log(rand);
 - name: printmessagefunc
-  resource: alpine:latest
-  type: container
   metadata:
+    image: alpine:latest
     command: sh, -c
     source: 'echo result was: {{inputs.parameters.message}}'
 states:
@@ -504,9 +497,8 @@ name: Loop over data example
 version: '1.0'
 functions:
 - name: whalesay
-  resource: docker/whalesay:latest
-  type: container
   metadata:
+    image: docker/whalesay:latest
     command: cowsay
 states:
 - name: injectdata
@@ -602,16 +594,14 @@ name: Conditionals Example
 version: '1.0'
 functions:
 - name: flip-coin-function
-  resource: python:alpine3.6
-  type: script
   metadata:
+    image: python:alpine3.6
     command: python
     source: import random result = "heads" if random.randint(0,1) == 0 else "tails"
       print(result)
 - name: echo
-  resource: alpine:3.6
-  type: container
   metadata:
+    image: alpine:3.6
     command: sh, -c
 states:
 - name: flip-coin
@@ -703,9 +693,8 @@ name: Retry Example
 version: '1.0'
 functions:
 - name: fail-function
-  resource: python:alpine3.6
-  type: container
   metadata:
+    image: python:alpine3.6
     command: python
 states:
 - name: retry-backoff
@@ -790,14 +779,12 @@ name: Recursion Example
 version: '1.0'
 functions:
 - name: heads-function
-  resource: alpine:3.6
-  type: container
   metadata:
+    image: alpine:3.6
     command: echo "it was heads"
 - name: flip-coin-function
-  resource: python:alpine3.6
-  type: script
   metadata:
+    image: python:alpine3.6
     command: python
     source: import random result = "heads" if random.randint(0,1) == 0 else "tail"  print(result)
 states:
@@ -911,19 +898,16 @@ name: Exit/Error Handling Example
 version: '1.0'
 functions:
 - name: intentional-fail-function
-  resource: alpine:latest
-  type: container
   metadata:
+    image: alpine:latest
     command: "[sh, -c]"
 - name: send-email-function
-  resource: alpine:latest
-  type: script
   metadata:
+    image: alpine:latest
     command: "[sh, -c]"
 - name: celebrate-cry-function
-  resource: alpine:latest
-  type: script
   metadata:
+    image: alpine:latest
     command: "[sh, -c]"
 states:
 - name: intentional-fail-state

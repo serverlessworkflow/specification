@@ -143,14 +143,11 @@ events:
   - contextAttributeName: patientId
 functions:
 - name: callPulmonologist
-  type: function
-  resource: callPulmonologistResource
+  operation: http://myapi.org/patientapi.json#callPulmonologist
 - name: sendTylenolOrder
-  type: function
-  resource: sendTylenolOrderFunction
+  operation: http://myapi.org/patientapi.json#sendTylenol
 - name: callNurse
-  type: function
-  resource: callNurseResource
+  operation: http://myapi.org/patientapi.json#callNurse
 states:
 - name: MonitorVitals
   type: event

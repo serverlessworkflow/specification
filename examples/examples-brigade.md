@@ -70,8 +70,9 @@ events:
   type: exec
 functions:
 - name: greetingFunction
-  resource: alpine:3.7
-  type: echo
+  metadata:
+    image: alpine:3.7
+    command: echo
 - name: consoleLogFunction
   type: console
 states:
@@ -150,8 +151,9 @@ events:
   type: exec
 functions:
 - name: greetingFunction
-  resource: alpine:3.7
-  type: echo
+  metadata:
+    image: alpine:3.7
+    command: echo
 - name: consoleLogFunction
   type: console
 states:
@@ -324,8 +326,9 @@ events:
   type: exec
 functions:
 - name: echoFunction
-  resource: alpine:3.7
-  type: echo
+  metadata:
+    image: alpine:3.7
+    command: echo
 states:
 - name: FirstGreetGroup
   type: event
@@ -481,11 +484,13 @@ events:
   type: exec
 functions:
 - name: greetingFunction
-  resource: alpine:3.7
-  type: echo
+  metadata:
+    image: alpine:3.7
+    command: echo
 - name: storeToFileFunction
-  resource: alpine:3.7
-  type: filestore
+  metadata:
+    image: alpine:3.7
+    command: filestore
 states:
 - name: ExecActionsAndStoreResults
   type: event

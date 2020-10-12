@@ -83,12 +83,12 @@ Following sections provide a detailed descriptions of all parts of the workflow 
 
 The Serverless Workflow model is composed of: 
 
-* Set of [functions](#Function-Definition) (services) that need to be `invoked` during workflow execution. 
-* Set of [events](#Event-Definition) that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
-* Set of [states](#State-Definition) and [transitions](#Transitions) between them. States define the workflow `control flow logic`, manage workflow data, and can reference defined functions and events. 
-Transitions connect workflow states.
+* [Function](#Function-Definition) definitions. Declare services that need to be invoked during workflow execution. 
+* [Event](#Event-Definition) definitions. Declare events that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
+* [State](#State-Definition) and [transition](#Transitions) definitions. States define the workflow `control flow logic`, manage workflow data, and can reference defined functions and events. 
+Transitions define the connections between workflow states.
 
-Workflow model defines a declarative language that can be used to model simple or complex orchestrations
+Serverless Workflow model defines a declarative language that can be used to model both simple and complex orchestrations
 for event-driven, serverless applications.
 
 ### Workflow Data
@@ -325,7 +325,7 @@ Here is an example of using external resource for function definitions:
    "functions": [
       {
          "name":"HelloWorldFunction",
-         "resource":"https://hellworldservice.test.com:8443/api/hellofunction"
+         "operation":"file://myapi.json#helloWorld"
       }
    ]
 }
@@ -377,9 +377,8 @@ Referenced resource must conform to the specifications [Workflow Events JSON Sch
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| resource | Function resource (URI) | string | yes |
-| type | Function type | string | no |
-| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+| operation | Combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. For example 'https://petstore.swagger.io/v2/swagger.json#getPetById' | string | no |
+| [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -395,10 +394,7 @@ Referenced resource must conform to the specifications [Workflow Events JSON Sch
 ```json
 {  
    "name": "HelloWorldFunction",
-   "resource": "https://hellworldservice.test.com:8443/api/hellofunction",
-   "metadata": {
-      "authToken": "{{ $.token }}"
-   }
+   "operation": "https://hellworldservice.api.com/api.json#helloWorld"
 }
 ```
 
@@ -407,9 +403,7 @@ Referenced resource must conform to the specifications [Workflow Events JSON Sch
 
 ```yaml
 name: HelloWorldFunction
-resource: https://hellworldservice.test.com:8443/api/hellofunction
-metadata:
-  authToken: "{{ $.token }}"
+operation: https://hellworldservice.api.com/api.json#helloWorld
 ```
 
 </td>
@@ -418,18 +412,49 @@ metadata:
 
 </details>
 
-Function definitions allow one to define invocation information of services that need to be invoked during the
-workflow execution. 
+Function definitions describe services and their operations that need to be invoked during workflow execution.
+They can be referenced by states [action definitions](#Action-Definition)]. 
 
-They can be referenced by name in [actions](#Action-Definition) defined in [Event](#Event-State), [Operation](#Operation-State), or [Callback](#Callback-State) workflow states.
+Note that function definitions focus on defining services which are not invoked via events. 
+To define services that are invoked via events, please reference the [event definitions](#Event-Definition) section, as well as the [actions definitions](#Action-Definition) [eventRef](#EventRef-Definition) property.
+ 
+Because of an overall lack of a common way to describe different services and their operations,
+workflow markups typically chose to define custom function definitions.
+This approach often runs into issues such as lack of markup portability, limited capabilities, as well as 
+forces non-workflow-specific information such as service authentication to be added inside workflow markup.
 
-The `resource` property defines the exposed URI of the service that allows its invocation (e.g., via REST).
+To avoid these issues, the Serverless Workflow specification mandates that details about 
+services and their operations be described using the [OpenAPI Specification](https://www.openapis.org/) specification.
+OpanAPI is a language-agnostic standard that describes discovery of RESTful services. It is perfectly suited
+for defining every detail about how RESTful services and their operations should be invoked.
+It allows Servlerless Workflow markup to describe RESTful services in a portable 
+way, as well as workflow runtimes to utilize OpenAPI tooling and APIs to invoke those services.
 
-The type parameter allows implementations to give more information regarding the function to the readers. 
-It should not affect workflow execution or service invocation. 
+The workflow markup still supports defining non-restful services and their operations using the `metadata` property
+of function definitions. It can however not guarantee its portability on the markup level.
+Runtimes can utilize the function definition `metadata` information to invoke non-restful service operations.
 
-Function definitions themselves do not define data input parameters as they are reusable definitions. Parameters can be 
-defined via the `parameters` property of [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
+The `name` property defines an unique name of the function definition.
+
+The `operation` property is a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'. 
+For example `https://petstore.swagger.io/v2/swagger.json#getPetById`. 
+In this example "getPetById" is the OpenAPI ["operationId"](https://swagger.io/docs/specification/paths-and-operations/)
+property in the services OpenAPI definition document which uniquely identifies a specific service operation that needs to be invoked.
+
+The [`metadata`](#Workflow-Metadata) property allows users to define custom information to the custom definitions.
+This allows runtimes to define services and their operations that cannot be described via OpenAPI.
+An example of such definition could be defining invocation of a command on an image, for example:
+
+```yaml
+functions:
+- name: whalesayimage
+  metadata:
+    image: docker/whalesay
+    command: cowsay
+```
+
+Function definitions themselves do not define data input parameters. Parameters can be 
+defined via the `parameters` property in [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
 
 #### Event Definition
 
@@ -486,7 +511,8 @@ correlation:
 
 </details>
 
-Used to define events and their correlations. These events can be either consumed or produced during workflow execution.
+Used to define events and their correlations. These events can be either consumed or produced during workflow execution as well
+as can be used to [trigger function/service invocations](#EventRef-Definition).
 
 The Serverless Workflow specification mandates that all events conform to the [CloudEvents](https://github.com/cloudevents/spec) specification. 
 This is to assure consistency and portability of the events format used.
@@ -2413,7 +2439,7 @@ and our workflow is defined as:
   "functions": [
   {
     "name": "sendConfirmationFunction",
-    "resource": "functionResourseUri"
+    "operation": "file://confirmationapi.json#sendOrderConfirmation"
   }
   ],
   "states": [
@@ -2448,14 +2474,14 @@ name: SendConfirmationForCompletedOrders
 version: '1.0'
 functions:
 - name: sendConfirmationFunction
-  resource: functionResourseUri
+  operation: file://confirmationapi.json#sendOrderConfirmation
 states:
 - start:
     kind: default
   name: SendConfirmState
   type: foreach
   inputCollection: "{{ $.orders[?(@.completed == true)] }}"
-  iterationParam: "completedorder"
+  iterationParam: completedorder
   outputCollection: "{{ $.confirmationresults }}"
   actions:
   - functionRef:
@@ -2929,11 +2955,11 @@ output of the state to transition from includes an user with the title "MANAGER"
 "functions": [
   {
    "name": "doLowRistOperationFunction",
-   "resource": "functionResourse"
+   "operation": "file://myapi.json#lowRisk"
   },
   {
    "name": "doHighRistOperationFunction",
-   "resource": "functionResourse"
+   "operation": "file://myapi.json#highRisk"
   }
 ],
 "states":[  
@@ -2981,9 +3007,9 @@ output of the state to transition from includes an user with the title "MANAGER"
 ```yaml
 functions:
 - name: doLowRistOperationFunction
-  resource: functionResourse
+  operation: file://myapi.json#lowRisk
 - name: doHighRistOperationFunction
-  resource: functionResourse
+  operation: file://myapi.json#highRisk
 states:
 - start:
     kind: default
@@ -3421,7 +3447,7 @@ and then lets us know how to greet this customer in different languages. We coul
      }],
     "functions": [{
         "name": "greetingFunction",
-        "resource": "functionResourse"
+        "operation": "http://my.api.org/myapi.json#greeting"
     }],
     "states":[
         {
