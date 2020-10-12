@@ -29,19 +29,12 @@
           "description": "Combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. For example 'https://petstore.swagger.io/v2/swagger.json#getPetById'",
           "minLength": 1
         },
-        "type": {
-          "type": "string",
-          "description": "Can be used to further describe the function defined (e.g. 'http', 'webhook', etc). This parameter should not be relied upon to be portable across platforms. Its main use is to give additional information about the function definition.",
-          "default": "rest-openapi",
-          "minLength": 1
-        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
       "required": [
-        "name",
-        "operation"
+        "name"
       ]
     }
   }

@@ -377,9 +377,8 @@ Referenced resource must conform to the specifications [Workflow Events JSON Sch
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | Combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. For example 'https://petstore.swagger.io/v2/swagger.json#getPetById' | string | yes |
-| type | Can be used to further describe the function defined (e.g. 'http', 'webhook', etc). This parameter should not be relied upon to be portable across platforms. Its main use is to give additional information about the function definition. The default value for this parameter is `rest-openapi`. | string | no |
-| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+| operation | Combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. For example 'https://petstore.swagger.io/v2/swagger.json#getPetById' | string | no |
+| [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -414,47 +413,48 @@ operation: https://hellworldservice.api.com/api.json#helloWorld
 </details>
 
 Function definitions describe services and their operations that need to be invoked during workflow execution.
+They can be referenced by states [action definitions](#Action-Definition)]. 
 
-Given that there are many proprietary and non-proprietary ways to discover and interact with remote services
-it is not feasible for the workflow specification to define a custom way to describe their operation invocation that would work in all situations.
-At the same the defining a custom way for this would limit the portability and vendor-neutrality of the specification.
-
-This is why the Serverless Workflow specification requires service operations that need to be invoked during 
-workflow execution are described in the structure of the [OpenAPI Specification](https://www.openapis.org/).
-
-OpenAPI Specification (OAS) defines a standard, language-agnostic interface to RESTful APIs. It can be used by both workflow modellers and 
-workflow runtimes to discover and understand capabilities of services that need to be invoked during 
-workflow execution without access to services source code.
+Note that function definitions focus on defining services which are not invoked via events. 
+To define services that are invoked via events, please reference the [event definitions](#Event-Definition) section, as well as the [actions definitions](#Action-Definition) [eventRef](#EventRef-Definition) property.
  
-Having your service capabilities described using the [OpenAPI Specification](https://www.openapis.org/) allows workflow runtimes
-to use a widely used standard to find out exactly how to invoke the needed service and their operations during workflow execution. 
-The use of OpenAPI gives workflow runtimes all the information they need in order to invoke needed operations, including security information,
-required data inputs and outputs and much more.
+Because of an overall lack of a common way to describe different services and their operations,
+workflow markups typically chose to define custom function definitions.
+This approach often runs into issues such as lack of markup portability, limited capabilities, as well as 
+forces non-workflow-specific information such as service authentication to be added inside workflow markup.
 
-Workflow runtimes can use the service OpenAPI descriptions to validate the workflow markup as well, and in addition it helps 
-workflow tooling to expose service information to users during workflow modelling.
+To avoid these issues, the Serverless Workflow specification mandates that details about 
+services and their operations be described using the [OpenAPI Specification](https://www.openapis.org/) specification.
+OpanAPI is a language-agnostic standard that describes discovery of RESTful services. It is perfectly suited
+for defining every detail about how RESTful services and their operations should be invoked.
+It allows Servlerless Workflow markup to describe RESTful services in a portable 
+way, as well as workflow runtimes to utilize OpenAPI tooling and APIs to invoke those services.
 
-
-Function definitions can be referenced by their unique `name` parameter in [actions](#Action-Definition) defined in [Event](#Event-State), [Operation](#Operation-State), or [Callback](#Callback-State) workflow states.
+The workflow markup still supports defining non-restful services and their operations using the `metadata` property
+of function definitions. It can however not guarantee its portability on the markup level.
+Runtimes can utilize the function definition `metadata` information to invoke non-restful service operations.
 
 The `name` property defines an unique name of the function definition.
 
 The `operation` property is a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be onvoked, separated by a '#'. 
-For example 'https://petstore.swagger.io/v2/swagger.json#getPetById'. 
+For example `https://petstore.swagger.io/v2/swagger.json#getPetById`. 
 In this example "getPetById" is the OpenAPI ["operationId"](https://swagger.io/docs/specification/paths-and-operations/)
 property in the services OpenAPI definition document which uniquely identifies a specific service operation that needs to be infoked.
 
-The `type` property can be used to further describe the function defined (e.g. 'http', 'webhook', etc). 
-This parameter should not be relied upon to be portable across platforms. 
-Its main use is to give additional information about the function definition. The default value for this parameter is `rest-openapi`.
+The [`metadata`](#Workflow-Metadata) property allows users to define custom information to the custom definitions.
+This allows runtimes to define services and their operations that cannot be described via OpenAPI.
+An example of such definition could be defining invocation of a command on an image, for example:
 
-Function definitions themselves do not define data input parameters as they are reusable definitions. Parameters can be 
-defined via the `parameters` property of [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
+```yaml
+functions:
+- name: whalesayimage
+  metadata:
+    image: docker/whalesay
+    command: cowsay
+```
 
-If the use of OpenAPI is not feasible in some scenarios, users and runtimes can chose to describe their custom function
-invocation using the [`metadata` property](#Workflow-Metadata). 
-Please note however that such definitions cannot be considered portable across 
-multiple container/cloud environments.
+Function definitions themselves do not define data input parameters. Parameters can be 
+defined via the `parameters` property in [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
 
 #### Event Definition
 
