@@ -436,10 +436,10 @@ Runtimes can utilize the function definition `metadata` information to invoke no
 
 The `name` property defines an unique name of the function definition.
 
-The `operation` property is a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be onvoked, separated by a '#'. 
+The `operation` property is a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'. 
 For example `https://petstore.swagger.io/v2/swagger.json#getPetById`. 
 In this example "getPetById" is the OpenAPI ["operationId"](https://swagger.io/docs/specification/paths-and-operations/)
-property in the services OpenAPI definition document which uniquely identifies a specific service operation that needs to be infoked.
+property in the services OpenAPI definition document which uniquely identifies a specific service operation that needs to be invoked.
 
 The [`metadata`](#Workflow-Metadata) property allows users to define custom information to the custom definitions.
 This allows runtimes to define services and their operations that cannot be described via OpenAPI.
