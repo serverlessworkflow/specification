@@ -52,6 +52,7 @@ If you are participating insome way, please add your information via pull reques
     * Mona Borham
     
 * **Oracle Cloud Infrastructure**
-    * Kay Singh      
+    * Kay Singh
+    * Jorgen Johnson      
     
 
