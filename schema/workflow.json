@@ -339,6 +339,10 @@
           "minimum": 0,
           "minLength": 0,
           "description": "Maximum number of retry attempts. Value of 0 means no retries are performed"
+        },
+        "jitter": {
+          "type": "string",
+          "description": "Maximum random amount of time added or subtracted from the delay between each retry (ISO 8601 repeatable format)"
         }
       },
       "required": [
