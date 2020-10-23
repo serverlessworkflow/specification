@@ -1332,7 +1332,7 @@ transition:
 | interval | Interval value for retry (ISO 8601 repeatable format). For example: "R5/PT15M" (Starting from now repeat 5 times with 15 minute intervals)| string | no |
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
 | maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or integer | no |
-| jitter | Maximum random amount of time added or subtracted from the delay between each retry (ISO 8601 repeatable format) | string | no |
+| jitter | Maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format) | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1399,7 +1399,7 @@ The `jitter` property is important to prevent certain scenarios where clients
 are retrying in sync, possibly causing or contributing to a transient failure
 precisely because they're retrying at the same time. Adding a typically small,
 bounded random amount of time to the period between retries serves the purpose
-of attempting to prevent these attempts from happening simultaneously, possibly
+of attempting to prevent these retries from happening simultaneously, possibly
 reducing total time to complete requests and overall congestion. How this value
 is used in the exponential backoff algorithm is left up to implementations.
 

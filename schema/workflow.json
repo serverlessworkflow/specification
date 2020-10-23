@@ -342,7 +342,7 @@
         },
         "jitter": {
           "type": "string",
-          "description": "Maximum random amount of time added or subtracted from the delay between each retry (ISO 8601 repeatable format)"
+          "description": "Maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format)"
         }
       },
       "required": [
