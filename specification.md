@@ -1332,6 +1332,7 @@ transition:
 | interval | Interval value for retry (ISO 8601 repeatable format). For example: "R5/PT15M" (Starting from now repeat 5 times with 15 minute intervals)| string | no |
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
 | maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or integer | no |
+| jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format) | float or string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1348,7 +1349,8 @@ transition:
 {
    "expression": "{{ $.errors[?(@.name == 'FunctionError')] }}",
    "interval": "PT2M",
-   "maxAttempts": 3
+   "maxAttempts": 3,
+   "jitter": "PT0.001S"
 }
 ```
 
@@ -1359,6 +1361,7 @@ transition:
 expression: "{{ $.errors[?(@.name == 'FunctionError')] }}"
 interval: PT2M
 maxAttempts: 3
+jitter: PT0.001S
 ```
 
 </td>
@@ -1388,9 +1391,27 @@ To explain this better, let's say we have:
 
 which means that we will retry 4 times after waiting 1, 3 (1 + 2), 5 (1 + 2 + 2), and 7 (1 + 2 + 2 + 2) minutes.  
 
-The maxAttempts property determines the maximum number of retry attempts allowed. If this property is set to 0 no retries are performed.
+The `maxAttempts` property determines the maximum number of retry attempts allowed. If this property is set to 0 no retries are performed.
 
 For more information, refer to the [Workflow Error Handling - Retrying](#workflow-retrying) section.
+
+The `jitter` property is important to prevent certain scenarios where clients
+are retrying in sync, possibly causing or contributing to a transient failure
+precisely because they're retrying at the same time. Adding a typically small,
+bounded random amount of time to the period between retries serves the purpose
+of attempting to prevent these retries from happening simultaneously, possibly
+reducing total time to complete requests and overall congestion. How this value
+is used in the exponential backoff algorithm is left up to implementations.
+
+`jitter` may be specified as a percentage relative to the total delay. 
+For example, if `interval` is 2 seconds, `multiplier` is 2 seconds and we're at
+the third attempt, there will be a delay of 6 seconds. If we set `jitter` to
+0.3, then a random amount of time between 0 and 1.8 (`totalDelay * jitter == 6 * 0.3`)
+will be added or subtracted from the delay.
+
+Alternatively, `jitter` may be defined as an absolute value speficied as an ISO
+8601 duration. This way, the maximum amount of random time added is fixed and
+will not increase as new attempts are made.
 
 #### Transition Definition
 

@@ -33,6 +33,7 @@ If you are participating insome way, please add your information via pull reques
   * Ruben Romero Montes
   * Tihomir Surdilovic
   * Ricardo Zanini 
+  * Lucas Caparelli
   
 * **Camunda**
   * Mauricio Salatino
