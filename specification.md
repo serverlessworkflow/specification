@@ -1225,7 +1225,7 @@ function. They can include either static values or reference the states data inp
 | --- | --- | --- | --- |
 | [triggerEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
 | [resultEventRef](#Event-Definitions) | Reference to the unique name of a `consumed` event definition | string | yes |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the produced event. If object type, a custom object to become the data (payload) of trigger/produced event. | string or object | no |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of trigger/produced event. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
