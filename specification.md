@@ -1225,7 +1225,7 @@ function. They can include either static values or reference the states data inp
 | --- | --- | --- | --- |
 | [triggerEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
 | [resultEventRef](#Event-Definitions) | Reference to the unique name of a `consumed` event definition | string | yes |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of trigger/produced event. | string or object | no |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `triggerEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -1268,7 +1268,7 @@ eventRef:
 References a `produced` and `consumed` [event definitions](#Event-Definition) via the "triggerEventRef" and `resultEventRef` properties, respectively.
 
 The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
-to be used as the trigger/produced event payload. If it is of object type, you can define a custom object to be the event payload.
+to be used as payload of the event referenced by `triggerEventRef`. If it is of object type, you can define a custom object to be the event payload.
 
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the trigger/produced event. 
