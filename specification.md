@@ -106,8 +106,8 @@ Data flow during workflow execution can be divided into:
 ### Workflow Data Expressions
 
 Workflow model parameters may use expressions to access the JSON data. 
-Note that different data filters play a big role as to which parts of the state data is queried against. Reference the 
-[State Data Filtering](#State-Data-Filtering) section for more information.
+Note that different data filters play a big role as to which parts of the states data are selected. Reference the 
+[State Data Filtering](#State-Data-Filtering) section for more information about data state data filters.
 
 All expressions must follow the [JsonPath](https://github.com/json-path/JsonPath) format and can be evaluated with a JsonPath expression evaluator. 
 JsonPath expressions can select and extract the workflow JSON data. 
@@ -118,7 +118,7 @@ All expressions are written inside double braces:
 {{ expression }}
 ```
 
-Expressions should be resolved and the result returned exactly where the expression is written.
+Expressions should be resolved and the results returned exactly where the expression is written.
 
 To show some expression examples, let's say that we have the following JSON data:
 
@@ -180,24 +180,22 @@ Would set the data output of the particular state to:
 ]
 ```
 
-Some parameters require an expression to resolve to a boolean (true / false). In this case JsonPath expressions can also be used.
-The expression should evaluate to true, if the result contains a subset of the JSON data, and false if it is empty. For example:
+[Switch state](#Switch-State) [conditions](#switch-state-dataconditions) require for expressions to be resolved to a boolean value (true / false).
+In this case JsonPath expressions can also be used. 
+The expression should evaluate to true, if the result contains a subset of the JSON data, and false if it is empty. 
+For example:
 
 ```json
 {
-   "isAdult" : "{{ $.[?(@.age  > 18)] }}"
+      "name": "Eighteen or older",
+      "condition": "{{ $.applicants[?(@.age >= 18)] }}",
+      "transition": {
+        "nextState": "StartApplication"
+      }
 }
 ```
 
-would set the value if `isAdult` to true, as the expression returns a non-empty subset of the JSON data. Similarly 
-
-```json
-{
-   "isChild" : "{{ $.[?(@.age  < 18)] }}"
-}
-```
-
-would return false as the result of the JsonPath expression is empty.
+In this case the condition would be evaluated to true if it returns a non-empty subset of the queried data.
 
 JsonPath also includes a limited set of built-in functions that can be used inside expressions. For example the expression
 
@@ -209,11 +207,12 @@ JsonPath also includes a limited set of built-in functions that can be used insi
 
 would set the value of `phoneNums` to `2`.
 
-As previously mentioned, expressions are evaluated against the subset of data that can see. For example 
+As previously mentioned, expressions are evaluated against certain subsets of data. For example 
 the `parameters` param of the [functionRef definition](#FunctionRef-Definition) can evaluate expressions 
 only against the data that is available to the [action](#Action-Definition) it belongs to.
 One thing to note here are the top-level [workflow definition](#Workflow-Definition) parameters. Expressions defined
-in them can only be evaluated against the initial [workflow data input](#Workflow-Data-Input) JSON.
+in them can only be evaluated against the initial [workflow data input](#Workflow-Data-Input).
+
 For example let's say that we have a workflow data input of:
 
 ```json
