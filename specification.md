@@ -1,4 +1,4 @@
-# Serverless Workflow
+# Serverless Workflow - Version 0.5
 
 ## Abstract
 

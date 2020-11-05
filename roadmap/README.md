@@ -38,7 +38,7 @@ _Status description:_
 | ✔️| Update workflow start definition | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
 | ✔️| Prepare github branch and docs for v0.1 | [branch](https://github.com/cncf/wg-serverless/tree/v0.1/workflow/spec) |
 
-## 1.0-alpha-1 (Release data TBD)
+## v0.5 (Released November 2020)
 
 | Status | Description | Comments |
 | --- | --- |  --- |

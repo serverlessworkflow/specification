@@ -28,12 +28,14 @@ Cloud Native Sandbox level project on July 14, 2020.
 
 ## Releases
 
-|| Latest Release | Working Draft |
+| | Latest Release | Working Draft |
 | :--- | :--- | :--- |
 | **Core Specification:** | | |
-| Serverless Workflow| [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) | [master](specification.md)  |
-| **Additional Documentation:** | | |
-| Model JSON Schema | [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/schema/serverless-workflow-schema-v01.json) | [master](schema/workflow.json) |
+| Serverless Workflow| [v0.5]() | [master](https://github.com/serverlessworkflow/specification)  |
+| **Additional Components:** | | |
+| Java SDK | [v0.5]() | [master](https://github.com/serverlessworkflow/sdk-java) |
+| GO SDK | [v0.5]() | [master](https://github.com/serverlessworkflow/sdk-go) |
+| VSCode Extension | [v0.5]() | [master](https://github.com/serverlessworkflow/vscode-extension) |
 
 ## SDKs
 
