@@ -31,7 +31,7 @@ Cloud Native Sandbox level project on July 14, 2020.
 | | Latest Release | Working Draft |
 | :--- | :--- | :--- |
 | **Core Specification:** | | |
-| Serverless Workflow| [v0.5]() | [master](https://github.com/serverlessworkflow/specification)  |
+| Serverless Workflow| [v0.5](https://github.com/serverlessworkflow/specification/tree/0.5.x) | [master](https://github.com/serverlessworkflow/specification)  |
 | **Additional Components:** | | |
 | Java SDK | [v0.5]() | [master](https://github.com/serverlessworkflow/sdk-java) |
 | GO SDK | [v0.5]() | [master](https://github.com/serverlessworkflow/sdk-go) |
