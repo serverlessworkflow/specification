@@ -696,6 +696,11 @@ functions:
   metadata:
     image: python:alpine3.6
     command: python
+retries:
+- name: All workflow errors retry strategy
+  maxAttempts: 10
+  multiplier: PT2M
+  delay: PT1M
 states:
 - name: retry-backoff
   type: operation
@@ -707,11 +712,11 @@ states:
       parameters:
         args:
         - import random; import sys; exit_code = random.choice([0, 1, 1]); sys.exit(exit_code)
-  retries:
+  onErrors:
   - error: "*"
-    maxAttempts: 10
-    multiplier: PT2M
-    delay: PT1M
+    retryRef: All workflow errors retry strategy
+    end:
+      kind: default
   end:
     kind: default
 ```
