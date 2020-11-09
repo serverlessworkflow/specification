@@ -3850,9 +3850,9 @@ onErrors:
 </tr>
 </table>
 
-Here is say that when the "Inventory service timeout" is encountered, we want to use our defined "Service Call Timeout Retry Strategy"
-which hold the needed retry information. If the error definition does not include a `retryRef` property
-it means that we do not want to perform retries when this error is encountered during workflow execution.
+In this example we say that if the  "Inventory service timeout" error is encountered, we want to use our defined "Service Call Timeout Retry Strategy"
+which holds the needed retry information. If the error definition does not include a `retryRef` property
+it means that we do not want to perform retries for the defined error.
 
 
 When referencing a retry strategy in your states error definitions, if the maximum amount of unsuccessful retries is reached, 
