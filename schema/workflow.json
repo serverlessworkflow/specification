@@ -238,7 +238,7 @@
         },
         "code": {
           "type": "string",
-          "description": "Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions",
+          "description": "Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions. Should not be defined if error is set to '*'",
           "minLength": 1
         },
         "retryRef": {

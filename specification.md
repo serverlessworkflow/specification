@@ -379,7 +379,7 @@ Referenced resource must conform to the specifications [Workflow Events JSON Sch
 The `retries` property can be either an in-line [retry](#Retry-Definition) definition array, or an URI reference to
 a resource containing an array of [retry](#Retry-Definition) definition. 
 Referenced resource can be used by multiple workflow definitions. For more information about 
-using and referencies retry definitions see the [Workflow Error Handling](#Workflow-Error-Handling) section.
+using and referencing retry definitions see the [Workflow Error Handling](#Workflow-Error-Handling) section.
 
 #### Function Definition
 
@@ -1284,7 +1284,7 @@ to the trigger/produced event.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | error | Domain-specific error name, or '*' to indicate all possible errors | string | yes |
-| code | Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions | string | no |
+| code | Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions. Should not be defined if error is set to '*' | string | no |
 | retryRef | Defines the unique retry strategy definition to be used | string | no |
 | [transition](#Transitions) or [end](#End-Definition) | Transition to next state to handle the error, or end workflow execution if this error is encountered | object | yes |
 
@@ -1345,7 +1345,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique retry strategy name | string | no |
+| name | Unique retry strategy name | string | yes |
 | delay | Time delay between retry attempts (ISO 8601 duration format) | string | no |
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
 | maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or integer | no |
@@ -1387,7 +1387,7 @@ jitter: PT0.001S
 
 </details>
 
-Defines the states retry policy (strategy). This is an explicity definition and can be reused across multiple 
+Defines the states retry policy (strategy). This is an explicit definition and can be reused across multiple 
 defined workflow state errors.
 
 The `name` property specifies the unique name of the retry definition (strategy). This unique name 
@@ -1406,7 +1406,8 @@ To explain this better, let's say we have the following retry definition:
   "maxAttempts": 4
 }
 ```
-which means that we will retry up to 4 times after waiting 1, 3 (1 + 2), 5 (1 + 2 + 2), and 7 (1 + 2 + 2 + 2) minutes.  
+which means that we will retry up to 4 times after waiting with increasing delay between attempts; 
+in this example 1, 3 (1 + 2), 5 (1 + 2 + 2), and 7 (1 + 2 + 2 + 2) minutes between retries.  
 
 The `maxAttempts` property determines the maximum number of retry attempts allowed and is a positive integer value.
 
@@ -2024,6 +2025,10 @@ If the parallel states defines a `workflowId`, exceptions that occur during exec
 can chose to handle exceptions on their own. All unhandled exceptions from the called workflow
 execution however are propagated back to the parallel state and can be handled with the parallel states
 `onErrors` definition.
+
+Note that once an error that is propagated to the parallel state from a branch and handled by the 
+states `onErrors` definition is handled (its associated transition is taken) no further errors from branches of this 
+parallel state should be considered as the workflow control flow logic has already moved to a different state. 
 
 For more information, see the [Workflow Error Handling](#Workflow-Error-Handling) sections.
 
@@ -3661,6 +3666,8 @@ The order of error definitions within `onErrors` does not matter.
 If there is an error definition with the `error` property set to the wildcard character `*`, it 
 can mean either "all errors", if it is the only error definition defined, or it can mean
 "all other errors", in the case where other error definitions are defined.
+Note that if the `error` property is set to `*`, the error definition `code` property should not be defined.
+Runtime implementations should warn users in this case.
 
 Let's take a look at an example of each of these two cases:
 
@@ -3780,10 +3787,7 @@ Let's take a look at an example of a top-level retries definition of a workflow:
   {
     "name": "Service Call Timeout Retry Strategy",
     "delay": "PT1M",
-    "maxAttempts": 4,
-    "transition": {
-      "nextState": "handleServiceCallTimeout"
-    }
+    "maxAttempts": 4
   }
 ]
 }
@@ -3797,8 +3801,6 @@ retries:
 - name: Service Call Timeout Retry Strategy
   delay: PT1M
   maxAttempts: 4
-  transition:
-    nextState: handleServiceCallTimeout
 ```
 
 </td>
