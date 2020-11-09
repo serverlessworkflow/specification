@@ -181,8 +181,7 @@ states:
         parameters:
           log: done
   onErrors:
-  - expression:
-      name: "*"
+  - error: "*"
     transition:
       nextState: HandleErrorState
   end:

@@ -228,7 +228,7 @@
     "error": {
       "type": "object",
       "properties": {
-        "name": {
+        "error": {
           "type": "string",
           "description": "Domain-specific error name, or '*' to indicate all possible errors",
           "minLength": 1
@@ -238,18 +238,28 @@
           "description": "Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions",
           "minLength": 1
         },
-        "retry": {
-          "description": "Retry Definition",
-          "$ref": "#/definitions/retry"
-        },
         "transition": {
-          "description": "Transition to next state. If retry is defined, it is taken if defined retries were not successful",
+          "description": "Transition to next state to handle the error.",
           "$ref": "#/definitions/transition"
+        },
+        "end": {
+          "description": "End workflow execution in case of this error",
+          "$ref": "#/definitions/end"
         }
       },
-      "required": [
-        "name",
-        "transition"
+      "oneOf": [
+        {
+          "required": [
+            "error",
+            "transition"
+          ]
+        },
+        {
+          "required": [
+            "error",
+            "end"
+          ]
+        }
       ]
     },
     "onevents": {
@@ -329,9 +339,19 @@
       "type": "object",
       "description": "Retry Definition",
       "properties": {
+        "error": {
+          "type": "string",
+          "description": "Domain-specific error name, or '*' to indicate all possible errors",
+          "minLength": 1
+        },
+        "code": {
+          "type": "string",
+          "description": "Error code. Can be used in addition to the error to help runtimes resolve to technical errors/exceptions",
+          "minLength": 1
+        },
         "delay": {
           "type": "string",
-          "description": "Time delay between retry attempts (ISO 8601 time format)"
+          "description": "Time delay between retry attempts (ISO 8601 duration format)"
         },
         "multiplier": {
           "type": "string",
@@ -348,10 +368,31 @@
           "minimum": 0.0,
           "maximum": 1.0,
           "description": "If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format)"
+        },
+        "transition": {
+          "description": "Transition to next state if retries were unsuccessful",
+          "$ref": "#/definitions/transition"
+        },
+        "end": {
+          "description": "End workflow execution definition if retries were unsuccessful",
+          "$ref": "#/definitions/end"
         }
       },
-      "required": [
-        "maxAttempts"
+      "oneOf": [
+        {
+          "required": [
+            "error",
+            "maxAttempts",
+            "transition"
+          ]
+        },
+        {
+          "required": [
+            "error",
+            "maxAttempts",
+            "end"
+          ]
+        }
       ]
     },
     "functionref": {
@@ -477,6 +518,14 @@
             "$ref": "#/definitions/error"
           }
         },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
+          }
+        },
         "transition": {
           "description": "Next transition of the workflow after the time delay",
           "$ref": "#/definitions/transition"
@@ -576,6 +625,14 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
+          }
+        },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
           }
         },
         "dataInputSchema": {
@@ -695,6 +752,14 @@
             "$ref": "#/definitions/error"
           }
         },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
+          }
+        },
         "transition": {
           "description": "Next transition of the workflow after all the actions have been performed",
           "$ref": "#/definitions/transition"
@@ -811,6 +876,14 @@
             "$ref": "#/definitions/error"
           }
         },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
+          }
+        },
         "transition": {
           "description": "Next transition of the workflow after all branches have completed execution",
           "$ref": "#/definitions/transition"
@@ -918,6 +991,14 @@
             "$ref": "#/definitions/error"
           }
         },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
+          }
+        },
         "eventTimeout": {
           "type": "string",
           "description": "If eventConditions is used, defines the time period to wait for events (ISO 8601 format)"
@@ -999,6 +1080,14 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
+          }
+        },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
           }
         },
         "default": {
@@ -1225,6 +1314,14 @@
             "$ref": "#/definitions/error"
           }
         },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
+          }
+        },
         "transition": {
           "description": "Next transition of the workflow after SubFlow has completed execution",
           "$ref": "#/definitions/transition"
@@ -1431,6 +1528,14 @@
             "$ref": "#/definitions/error"
           }
         },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
+          }
+        },
         "transition": {
           "description": "Next transition of the workflow after state has completed",
           "$ref": "#/definitions/transition"
@@ -1580,6 +1685,14 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
+          }
+        },
+        "retries": {
+          "type": "array",
+          "description": "States retry definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/retry"
           }
         },
         "dataInputSchema": {

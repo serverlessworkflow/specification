@@ -19,6 +19,9 @@ This document is a working draft.
   - [Workflow Data Expressions](#Workflow-Data-Expressions)
   - [Workflow Definition](#Workflow-Definition)
   - [Workflow Error Handling](#Workflow-Error-Handling)
+    - [Defining Errors](#Defining-Errors)
+    - [Defining Retries](#Defining-Retries)
+    - [Combining Errors and Retries](#Combining-Errors-and-Retries)
   - [Workflow Metadata](#Workflow-Metadata)
 - [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
@@ -809,7 +812,8 @@ The following is a detailed description of each of the defined states.
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
 | [dataOutputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data output adheres to | string | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes |
-| [onErrors](#Workflow-Error-Handling) | States error handling definitions | array | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -1273,10 +1277,9 @@ to the trigger/produced event.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Domain-specific error name, or '*' to indicate all possible errors | string | yes |
+| error | Domain-specific error name, or '*' to indicate all possible errors | string | yes |
 | code | Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions | string | no |
-| [retry](#Retry-Definition) | Retry definition | object | no |
-| [transition](#Transitions) | Transition to next state. If retry is defined, it is taken if defined retries were not successful | object | yes |
+| [transition](#Transitions) or [end](#End-Definition) | Transition to next state to handle the error, or end workflow execution if this error is encountered | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1291,7 +1294,7 @@ to the trigger/produced event.
 
 ```json
 {
-   "name": "Item not in inventory",
+   "error": "Item not in inventory",
    "transition": {
      "nextState": "IssueRefundToCustomer"
    }
@@ -1302,7 +1305,7 @@ to the trigger/produced event.
 <td valign="top">
 
 ```yaml
-name: Item not in inventory
+error: Item not in inventory
 transition:
   nextState: IssueRefundToCustomer
 ```
@@ -1315,18 +1318,17 @@ transition:
 
 Error definitions describe errors that can occur during workflow execution and how to handle them. 
 
-The `name`property defines the domain-specific name of the error. Users can also set the name to 
+The `error`property defines the domain-specific name of the error. Users can also set the name to 
 `*` which is a wildcard specifying "all" errors, in the case where no other error definitions are defined,
 or "all other" errors if there are other errors defined within the same states `onErrors` definition.
 
 The `code` property can be used in addition to `name` to help runtimes resolve the defined 
-domain-spefic error to the actual technical errors/exceptions that may happen during runtime execution.
-
-The `retry` property is the errors retry definition.
+domain-specific error to the actual technical errors/exceptions that may happen during runtime execution.
 
 The `transition` property defines the transition to the next workflow state in cases when the defined 
-error happens during runtime execution. If the `retry` property is defined this transition can only be
-taken after all retries have been performed without a successful outcome.
+error happens during runtime execution.
+
+It `transition` is not defined you can also define the `end` property which will end workflow execution at that point.
 
 For more information, see the [Workflow Error Handling](#Workflow-Error-Handling) sections.
 
@@ -1334,10 +1336,13 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| delay | Time delay between retry attempts (ISO 8601 time format) | string | no |
+| error | Domain-specific error name, or '*' to indicate all possible errors | string | yes |
+| code | Error code. Can be used in addition to the error to help runtimes resolve to technical errors/exceptions | string | no |
+| delay | Time delay between retry attempts (ISO 8601 duration format) | string | no |
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
 | maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or integer | no |
 | jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format) | float or string | no |
+| [transition](#Transitions) or [end](#End-Definition) | Transition to next state to to be taken on unsuccessful retries, or end workflow execution | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1352,9 +1357,13 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 
 ```json
 {
+   "error": "Item not in inventory",
    "delay": "PT2M",
    "maxAttempts": 3,
-   "jitter": "PT0.001S"
+   "jitter": "PT0.001S",
+   "transition": {
+     "nextState": "IssueRefundToCustomer"
+   }
 }
 ```
 
@@ -1362,9 +1371,12 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 <td valign="top">
 
 ```yaml
+error: Item not in inventory
 delay: PT2M
 maxAttempts: 3
 jitter: PT0.001S
+transition:
+  nextState: IssueRefundToCustomer
 ```
 
 </td>
@@ -1373,22 +1385,28 @@ jitter: PT0.001S
 
 </details>
 
-Defines the state retry policy. 
+Defines the state retry policy.
 
-The `delay` property specifies the time delay between retry attempts (ISO 8601 time format).
+The `error` property specifies the domain-specific error name, or '*' to indicate all possible errors to be considered.
+for this retry definition.
+
+The `code` property can be used in addition to `error` to help runtimes resolve to technical errors/exceptions.
+
+The `delay` property specifies the time delay between retry attempts (ISO 8601 duration format).
 
 The `multiplier` property specifies the value by which the interval time is increased for each of the retry attempts.
-To explain this better, let's say we have:
+To explain this better, let's say we have the following retry definition:
 
 ```json
 {
-  "expression": "...",
-  "interval": "R4/PT1M",
+  "error": "Timeout Error",
+  "code": "408",
+  "delay": "PT1M",
   "multiplier": "PT2M",
   "maxAttempts": 4
 }
 ```
-which means that we will retry 4 times after waiting 1, 3 (1 + 2), 5 (1 + 2 + 2), and 7 (1 + 2 + 2 + 2) minutes.  
+which means that we will retry up to 4 times after waiting 1, 3 (1 + 2), 5 (1 + 2 + 2), and 7 (1 + 2 + 2 + 2) minutes.  
 
 The `maxAttempts` property determines the maximum number of retry attempts allowed and is a positive integer value.
 
@@ -1406,9 +1424,14 @@ the third attempt, there will be a delay of 6 seconds. If we set `jitter` to
 0.3, then a random amount of time between 0 and 1.8 (`totalDelay * jitter == 6 * 0.3`)
 will be added or subtracted from the delay.
 
-Alternatively, `jitter` may be defined as an absolute value speficied as an ISO
+Alternatively, `jitter` may be defined as an absolute value specified as an ISO
 8601 duration. This way, the maximum amount of random time added is fixed and
 will not increase as new attempts are made.
+
+The `transition` property defines the transition to the next workflow state in the cases where the defined retries
+are unsuccessful.
+
+It `transition` is not defined you can also define the `end` property which will end workflow execution at that point.
 
 For more information, refer to the [Workflow Error Handling](#Workflow-Error-Handling) sections.
 
@@ -1472,7 +1495,8 @@ Transitions allow you to move from one state (control-logic block) to another. F
 | actionMode | Should actions be performed sequentially or in parallel | string | no |
 | [actions](#Action-Definition) | Actions to be performed | array | yes |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
-| [onErrors](#Workflow-Error-Handling) | States error handling definitions | array | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes (if end is not defined) |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
 | [dataOutputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data output adheres to | string | no |
@@ -1546,7 +1570,8 @@ Once all actions have been performed, a transition to another state can occur.
 | type | State type | string | yes |
 | [dataConditions](#switch-state-dataconditions) or [eventConditions](#switch-state-eventconditions) | Defined if the Switch state evaluates conditions and transitions based on state data, or arrival of events. | array | yes (one) |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
-| [onErrors](#Workflow-Error-Handling) | States error handling definitions | array | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | eventTimeout | If eventConditions is used, defines the time period to wait for events (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | yes only if eventConditions is defined |
 | default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
@@ -1757,7 +1782,8 @@ The `eventDataFilter` property can be used to filter event when it is received.
 | type |State type | string | yes |
 | timeDelay |Amount of time (ISO 8601 format) to delay when in this state. For example: "PT15M" (delay 15 minutes), or "P2DT3H4M" (delay 2 days, 3 hours and 4 minutes) | integer | yes |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
-| [onErrors](#Workflow-Error-Handling) | States error handling definitions | array | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after the delay | object | yes (if end is not defined) |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
 | [dataOutputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data output adheres to | string | no |
@@ -1816,7 +1842,8 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | completionType | Option types on how to complete branch execution. | enum | no |
 | n | Used when branchCompletionType is set to `n_of_m` to specify the `n` value. | string or integer | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
-| [onErrors](#Workflow-Error-Handling) | States error handling definitions | array | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes (if end is not defined) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
@@ -2019,7 +2046,8 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
 | workflowId |Sub-workflow unique id | boolean | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
-| [onErrors](#Workflow-Error-Handling) | States error handling definitions | array | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is not defined) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
@@ -2101,6 +2129,8 @@ Referenced workflows must declare their own [function](#Function-Definition) and
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is set to false) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
@@ -2323,7 +2353,8 @@ This allows you to test if your workflow behaves properly for cases when there a
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if subflowId is not defined |
 | workflowId | Unique Id of a workflow to be executed for each of the elements of inputCollection | string | yes if actions is not defined |
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
-| [onErrors](#Workflow-Error-Handling) | States error handling definitions | array | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes (if end is not defined) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
@@ -2557,7 +2588,8 @@ The results of each parallel action execution are stored as elements in the stat
 | [timeout](#eventstate-timeout) | Time period to wait from when action is executed until the callback event is received (ISO 8601 format). For example: "PT15M" (wait 15 minutes), or "P2DT3H4M" (wait 2 days, 3 hours and 4 minutes)| string | yes |
 | [eventDataFilter](#event-data-filter) | Callback event data filter definition | object | no |
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
-| [onErrors](#Workflow-Error-Handling) | States error handling definitions | array | no |
+| [onErrors](#Error-Definition) | States error handling definitions | array | no |
+| [retries](#Retry-Definition) | States retry definitions | array | no |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
 | [dataOutputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data output adheres to | string | no |
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes |
@@ -3620,22 +3652,22 @@ should be reported by runtime implementations and halt workflow execution,
 Within workflow definitions, errors defined are `domain specific`, meaning they are defined within 
 the actual business domain, rather than their technical (programming-language-specific) description.
 
-For example we can define errors such as "Order not found", or "Item not in inventory", rather than having to
+For example, we can define errors such as "Order not found", or "Item not in inventory", rather than having to
 use terms such as "java.lang.IllegalAccessError", or "response.status == 404", which 
 might make little to no sense to our specific problem domain, as well as may not be portable across various runtime implementations.
 
-In addition to the domain specific error name, users have the option to also an an optional error code
+In addition to the domain specific error name, users have the option to also an optional error code
 to help runtime implementations with mapping defined errors to concrete underlying technical ones.
 
 Runtime implementations must be able to map the error domain specific name (and the optional error code)
 to concrete technical errors that arise during workflow execution. 
 
-#### Defining Error Handling
+#### Defining Errors
 
-Errors are defined via the states `onErrors` property. It is an array of ['error'](#Error-Definition) definitions.
+Errors can be defined via the states `onErrors` property. It is an array of ['error'](#Error-Definition) definitions.
 
 Each error definition should have a unique `name` property. There can be only one error definition
-which has the `name`property set to the wildcard character `*`.
+which has the `name` property set to the wildcard character `*`.
 
 The order of error definitions within `onErrors` does not matter. 
 
@@ -3690,7 +3722,7 @@ onErrors:
 </tr>
 </table>
 
-In this example the "Item not in inventory" error is handled by the first error definition.
+In this example the "Item not in inventory" error is being handled by the first error definition.
 The second error definition handles "all other" errors that may happen during this states execution.
 
 On the other hand the following example shows how to handle "all" errors with the same error definition:
@@ -3730,13 +3762,109 @@ onErrors:
 </tr>
 </table>
 
-#### <a name="workflow-retrying"></a> Workflow Error Handling - Retrying
+#### Defining Retries
 
-In cases when an error happens during execution of a workflow state, you can define for this states 
-control flow logic to be retried. This is done via the [error definitions](#Error-Definition) 
-`retry` parameter. A retry definition is specific to the error defined in its parent error definition.
+In addition to defining how to [explicitly handle workflow errors](#Defining-Errors) you can also define explicit
+retry policies for errors that happen during workflow execution.
 
-Let's take a look at an example retry definition:
+Retries are defined via the states `retries` parameter which is an array of [retry definitions](#Retry-Definition).
+
+Just like with defined errors, defined retries are only related to the state where they are defined.
+Retries defined in one state cannot be used to handle retries of another state during workflow execution.
+
+Retries are related to errors, and are issued upon the explicitly defined errors happening during execution
+in the state they are defined.
+
+Each retry definition should have a unique `error` property. There can be only one retry definition
+which has the `error` property set to the wildcard character `*`.
+
+The order of error definitions within `retries` array does not matter. 
+
+If a defined retry for the defined error is successful,the defined workflow control flow logic of the state
+should be performed, meaning either workflow can transition according to the states `transition`
+definition, or end workflow execution in case the state defines an `end` definition.
+
+If the defined retry for the defined error is no successful, workflow control flow logic should follow the 
+`transition` definition of the retry definition to transition to the next state that can handle this problem.
+
+Let's take a look at an example retries definition of a workflow state:
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+"retries": [
+  {
+    "error": "Service call timeout",
+    "code": "408",
+    "delay": "PT1M",
+    "maxAttempts": 4,
+    "transition": {
+      "nextState": "handleServiceCallTimeout"
+    }
+  }
+]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+retries:
+- error: Service call timeout
+  code: '408'
+  delay: PT1M
+  maxAttempts: 4
+  transition:
+    nextState: handleServiceCallTimeout
+```
+
+</td>
+</tr>
+</table>
+
+In this example, if workflow execution encounters the "Service call timeout" error,
+the states control-flow logic should be retried up to 4 times, with a 1 minute delay between
+each retry attempt.
+
+If the maximum amount of unsuccessful retries is reached, the workflow should transition to the next state
+as defined by the retry definitions `transition` property. If one of the performed retries is successful,
+the states `transition` property should be taken, and the one defined in the retry definition should be 
+ignored.
+
+In order to issue a retry, the current state execution should be halted first, meaning 
+that in the cases of [parallel](#Parallel-State) states, all currently running branches should 
+halt their executions, before a retry can be performed.
+
+
+Similar to states [error definitions](#Error-definition), with retries the `error` property defines the domain-specific name of the error. 
+Users can set this `error` property to 
+`*` which is a wildcard specifying "all" errors, in the case where no other retry definitions are defined,
+or "all other" errors if there are other retry definitions defined within the same states `retries` array.
+
+It is important to consider one particular case which are retry definitions inside [event](#Event-State) states that are also
+workflow starting states 
+(have the `start` property defined). Starting event states trigger an instance of the workflow
+when the particular event or events it defines are consumed. In case of an error which happens during
+execution of the state, runtimes should not create a new instance of this workflow, or 
+wait for the defined event or events again. In these cases only the states actions should be retried
+and the received event information used for all of the issued retries.
+
+#### Combining Errors and Retries
+
+In some cases it is important to combine [error](#Defining-Errors) and [retry](#Defining-Retries) handling for a workflow state.
+This allows you to have fine-grained control on the decisions to which errors should be just caught and which should 
+trigger retries of the state before handling them.
+
+To give an example, let's say that we have an [operation state](#Operation-State) that invokes a single 
+service that provisions a new order. In our state then we could define:
 
 <table>
 <tr>
@@ -3750,13 +3878,20 @@ Let's take a look at an example retry definition:
 {
 "onErrors": [
   {
-    "name": "Service call timeout",
-    "retry": {
-      "delay": "PT1M",
-      "maxAttempts": 4
-    },
+    "error": "Order Rejected",
     "transition": {
-      "nextState": "handleRetriesNotSuccessful"
+      "nextState": "handleRejectedOrder"
+    }
+  }
+],
+"retries": [
+  {
+    "error": "Service call timeout",
+    "code": "408",
+    "delay": "PT1M",
+    "maxAttempts": 4,
+    "transition": {
+      "nextState": "handleServiceCallTimeout"
     }
   }
 ]
@@ -3768,37 +3903,37 @@ Let's take a look at an example retry definition:
 
 ```yaml
 onErrors:
-- name: Service call timeout
-  retry:
-    delay: PT1M
-    maxAttempts: 4
+- error: Order Rejected
   transition:
-    nextState: handleRetriesNotSuccessful
+    nextState: handleRejectedOrder
+retries:
+- error: Service call timeout
+  code: '408'
+  delay: PT1M
+  maxAttempts: 4
+  transition:
+    nextState: handleServiceCallTimeout
 ```
 
 </td>
 </tr>
 </table>
 
-In this example, if workflow execution encounters the "Service call timeout" error,
-the states control-flow logic should be retried up to 4 times, with a 1 minute delay between
-each retry attempt.
-If the maximum amount of unsuccessful retries is reached, the workflow should transition to the next state
-as defined by the `transition` property. If one of the performed retries is successful,
-the states `transition` property should be taken, and the one defined in the error definition should be 
-ignored.
+In this example we handle the "Order Rejected" error with the `onErrors` definition, meaning that 
+if this error is encountered we catch it and transition our workflow execution to the "handleRejectedOrder" state.
 
-In order to issue an retry, the current state execution should be halted first, meaning 
-that in the cases of [parallel](#Parallel-State) states, all currently running branches should 
-halt their executions, before a retry can be performed.
+In case of "Service call timeout" error, we want to issues retries first, up to 4. If they are not successful, 
+then we want to transition to the "handleServiceCallTimeout" state.
 
-It is important to consider one particular case which are retry definitions inside [event](#Event-State) states that are also
-workflow starting states 
-(have the `start` property defined). Starting event states trigger an instance of the workflow
-when the particular event or events it defines are consumed. In case of an error which happens during
-execution of the state, runtimes should not create a new instance of this workflow, or 
-wait for the defined event or events again. In these cases only the states actions should be retried
-and the received event information used for all of the issued retries.
+Combining error and retry definitions can at times lead to ambiguity. Errors defined in `onErrors` and `retries`
+must be mutually exclusive. So the following rules apply when defining both definitions inside a workflow state:
+
+* The same error cannot be defined in both `onErrors` and `retries` definitions. You have to make an explicit choice
+as to whether you want to issue retries for a specific errors or not. Runtime implementations should warn users in the cases
+where same errors are defined in both places. Such workflow definitions should not be considered valid.
+* If both `onErrors` and `retries` are define in a workflow state, only one should be able to use the wildcard `*`
+in their `error` parameters. Using the `*` wildcard in both leads to ambiguity and should be reported 
+to the users by runtime implementations.
 
 ### Workflow Metadata
 

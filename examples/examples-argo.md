@@ -707,12 +707,11 @@ states:
       parameters:
         args:
         - import random; import sys; exit_code = random.choice([0, 1, 1]); sys.exit(exit_code)
-  onErrors:
-  - name: "*"
-    retry:
-      maxAttempts: 10
-      multiplier: PT2M
-      delay: PT1M
+  retries:
+  - error: "*"
+    maxAttempts: 10
+    multiplier: PT2M
+    delay: PT1M
   end:
     kind: default
 ```
@@ -922,9 +921,9 @@ states:
       parameters:
         args: echo intentional failure; exit 1
   onErrors:
-  - name: "*"
-  transition:
-    nextState: send-email-state
+  - error: "*"
+    transition:
+      nextState: send-email-state
 - name: send-email-state
   type: operation
   actions:

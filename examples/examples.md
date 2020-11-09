@@ -963,19 +963,19 @@ The data output of the workflow contains the information of the exception caught
     },
     "onErrors": [
        {
-         "name": "Missing order id",
+         "error": "Missing order id",
          "transition": {
            "nextState": "MissingId"
          }
        },
        {
-         "name": "Missing order item",
+         "error": "Missing order item",
          "transition": {
            "nextState": "MissingItem"
          }
        },
        {
-        "expression": "Missing order quantity",
+        "error": "Missing order quantity",
         "transition": {
           "nextState": "MissingQuantity"
         }
@@ -1045,13 +1045,13 @@ states:
   transition:
     nextState: ApplyOrder
   onErrors:
-  - name: Missing order id
+  - error: Missing order id
     transition:
       nextState: MissingId
-  - name: Missing order item
+  - error: Missing order item
     transition:
       nextState: MissingItem
-  - expression: Missing order quantity
+  - error: Missing order quantity
     transition:
       nextState: MissingQuantity
 - name: MissingId
@@ -1157,7 +1157,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       ],
       "onErrors": [
       {
-        "name": "*",
+        "error": "*",
         "transition": {
           "nextState": "SubmitError"
         }
@@ -1304,7 +1304,7 @@ states:
     actionDataFilter:
       dataResultsPath: "{{ $.jobuid }}"
   onErrors:
-  - name: "*"
+  - error: "*"
     transition:
       nextState: SubmitError
   stateDataFilter:
