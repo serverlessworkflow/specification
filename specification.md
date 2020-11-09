@@ -248,7 +248,7 @@ which would set the workflow version to `1.0.0`.
 | [dataOutputSchema](#Workflow-data-output) | URI to JSON Schema that workflow data output adheres to | string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
-| [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
+| [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
 | [states](#State-Definition) | Workflow states | array | yes |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
