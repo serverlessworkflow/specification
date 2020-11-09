@@ -247,7 +247,7 @@
           "minLength": 1
         },
         "transition": {
-          "description": "Transition to next state to handle the error. If retryRef is define, this transition is taken only if retries were unsuccessful.",
+          "description": "Transition to next state to handle the error. If retryRef is defined, this transition is taken only if retries were unsuccessful.",
           "$ref": "#/definitions/transition"
         },
         "end": {
