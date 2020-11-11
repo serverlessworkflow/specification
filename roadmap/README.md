@@ -38,7 +38,7 @@ _Status description:_
 | ✔️| Update workflow start definition | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
 | ✔️| Prepare github branch and docs for v0.1 | [branch](https://github.com/cncf/wg-serverless/tree/v0.1/workflow/spec) |
 
-## 1.0-alpha-1 (Release data TBD)
+## v0.5
 
 | Status | Description | Comments |
 | --- | --- |  --- |
@@ -72,3 +72,4 @@ _Status description:_
 | ✔️| Events definition update - add convenience way to define multiple events that share properties | [spec doc](../specification.md) |
 | ✔️| Update to function and events definitions - allow inline array def as well as uri reference to external resource | [spec doc](../specification.md) |
 | ✔️| Enforce use of OpenAPI specification in function definitions for portability | [spec doc](../specification.md) |
+| ✔️| Update workflow Error Handling | [spec doc](../specification.md) |
