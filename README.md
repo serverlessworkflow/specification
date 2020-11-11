@@ -25,7 +25,6 @@ Cloud Native Sandbox level project on July 14, 2020.
     - [Meeting Minutes](#Meeting-Minutes)
 - [Repository Structure](#Repository-Structure)
 
-
 ## Releases
 
 | | Latest Release | Working Draft | 
