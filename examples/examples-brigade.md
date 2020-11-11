@@ -180,10 +180,8 @@ states:
         refName: consoleLogFunction
         parameters:
           log: done
-  onError:
-  - expression:
-      language: spel
-      body: "{{ $.exceptions[0] }}"
+  onErrors:
+  - error: "*"
     transition:
       nextState: HandleErrorState
   end:
