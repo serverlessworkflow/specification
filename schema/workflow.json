@@ -49,6 +49,9 @@
         "functions": {
           "$ref": "functions.json#/functions"
         },
+        "retries": {
+          "$ref": "retries.json#/retries"
+        },
         "states": {
           "type": "array",
           "description": "State definitions",
@@ -228,21 +231,43 @@
     "error": {
       "type": "object",
       "properties": {
-        "expression": {
+        "error": {
           "type": "string",
-          "description": "JsonPath expression. Evaluated against error data. Is true if returns non empty result"
+          "description": "Domain-specific error name, or '*' to indicate all possible errors",
+          "minLength": 1
         },
-        "errorDataFilter": {
-          "$ref": "#/definitions/errordatafilter"
+        "code": {
+          "type": "string",
+          "description": "Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions. Should not be defined if error is set to '*'",
+          "minLength": 1
+        },
+        "retryRef": {
+          "type": "string",
+          "description": "References a unique name of a retry definition.",
+          "minLength": 1
         },
         "transition": {
-          "description": "Next transition of the workflow when expression is matched",
+          "description": "Transition to next state to handle the error. If retryRef is defined, this transition is taken only if retries were unsuccessful.",
           "$ref": "#/definitions/transition"
+        },
+        "end": {
+          "description": "End workflow execution in case of this error. If retryRef is defined, this ends workflow only if retries were unsuccessful.",
+          "$ref": "#/definitions/end"
         }
       },
-      "required": [
-        "expression",
-        "transition"
+      "oneOf": [
+        {
+          "required": [
+            "error",
+            "transition"
+          ]
+        },
+        {
+          "required": [
+            "error",
+            "end"
+          ]
+        }
       ]
     },
     "onevents": {
@@ -316,39 +341,6 @@
             "eventRef"
           ]
         }
-      ]
-    },
-    "retry": {
-      "type": "object",
-      "description": "Retry Definition",
-      "properties": {
-        "expression": {
-          "type": "string",
-          "description": "JsonPath expression. Evaluated against state data. Is true if returns non empty data"
-        },
-        "interval": {
-          "type": "string",
-          "description": "Interval value for retry (ISO 8601 repeatable format)"
-        },
-        "multiplier": {
-          "type": "string",
-          "description": "Multiplier value by which interval increases during each attempt (ISO 8601 time format)"
-        },
-        "maxAttempts": {
-          "type": ["integer","string"],
-          "minimum": 0,
-          "minLength": 0,
-          "description": "Maximum number of retry attempts. Value of 0 means no retries are performed"
-        },
-        "jitter": {
-          "type": ["number","string"],
-          "minimum": 0.0,
-          "maximum": 1.0,
-          "description": "If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format)"
-        }
-      },
-      "required": [
-        "expression"
       ]
     },
     "functionref": {
@@ -466,9 +458,9 @@
           "type": "string",
           "description": "Amount of time (ISO 8601 format) to delay"
         },
-        "onError": {
+        "onErrors": {
           "type": "array",
-          "description": "OnError Definition",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -567,17 +559,9 @@
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
         },
-        "retry": {
+        "onErrors": {
           "type": "array",
-          "description": "Retry Definition",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/retry"
-          }
-        },
-        "onError": {
-          "type": "array",
-          "description": "States error handling definitions",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -692,17 +676,9 @@
             "$ref": "#/definitions/action"
           }
         },
-        "retry": {
+        "onErrors": {
           "type": "array",
-          "description": "Retry Definition",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/retry"
-          }
-        },
-        "onError": {
-          "type": "array",
-          "description": "States error handling definitions",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -816,17 +792,9 @@
           "minLength": 0,
           "description": "Used when completionType is set to 'n_of_m' to specify the 'N' value"
         },
-        "retry": {
+        "onErrors": {
           "type": "array",
-          "description": "Retry Definition",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/retry"
-          }
-        },
-        "onError": {
-          "type": "array",
-          "description": "States error handling definitions",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -931,9 +899,9 @@
             "$ref": "#/definitions/eventcondition"
           }
         },
-        "onError": {
+        "onErrors": {
           "type": "array",
-          "description": "States error handling definitions",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -1014,9 +982,9 @@
             "$ref": "#/definitions/datacondition"
           }
         },
-        "onError": {
+        "onErrors": {
           "type": "array",
-          "description": "States error handling definitions",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -1238,9 +1206,9 @@
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
         },
-        "onError": {
+        "onErrors": {
           "type": "array",
-          "description": "States error handling definitions",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -1444,17 +1412,9 @@
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
         },
-        "retry": {
+        "onErrors": {
           "type": "array",
-          "description": "Retry Definition",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/retry"
-          }
-        },
-        "onError": {
-          "type": "array",
-          "description": "States error handling definitions",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -1603,17 +1563,9 @@
           "description": "State data filter definition",
           "$ref": "#/definitions/statedatafilter"
         },
-        "retry": {
+        "onErrors": {
           "type": "array",
-          "description": "States retry definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/retry"
-          }
-        },
-        "onError": {
-          "type": "array",
-          "description": "States error handling definitions",
+          "description": "States error handling and retries definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"

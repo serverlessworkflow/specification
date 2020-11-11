@@ -891,10 +891,9 @@ states:
 #### Description
 
 In this example we show off the states error handling capability. The workflow data input that's passed in contains
-missing order information that causes the function in the "ProvisionOrder" state to throw a runtime exception. With the "onError" expression we
-can transition the workflow to different error handling states depending on the error thrown. Each type of error
-in this example is handled by simple delay states, each including an error data filter which sets the exception info as their
-data output. If no error is caught the workflow can transition to the "ApplyOrder" state.
+missing order information that causes the function in the "ProvisionOrder" state to throw a runtime exception. With the "onErrors" definition we
+can transition the workflow to different error handling states. Each type of error
+in this example is handled by simple delay states. If no errors are encountered the workflow can transition to the "ApplyOrder" state.
 
 Workflow data is assumed to me:
 
@@ -956,32 +955,32 @@ The data output of the workflow contains the information of the exception caught
           }
        }
     ],
-    "onError": [
-       {
-         "expression": "{{ $.exceptions[?(@.name == 'MissingOrderIdException')] }}",
-         "transition": {
-           "nextState": "MissingId"
-         }
-       },
-       {
-         "expression": "{{ $.exceptions[?(@.name == 'MissingOrderItemException')] }}",
-         "transition": {
-           "nextState": "MissingItem"
-         }
-       },
-       {
-        "expression": "{{ $.exceptions[?(@.name == 'MissingOrderQuantityException')] }}",
-        "transition": {
-          "nextState": "MissingQuantity"
-        }
-       }
-    ],
     "stateDataFilter": {
        "dataOutputPath": "{{ $.exceptions }}"
     },
     "transition": {
        "nextState":"ApplyOrder"
-    }
+    },
+    "onErrors": [
+       {
+         "error": "Missing order id",
+         "transition": {
+           "nextState": "MissingId"
+         }
+       },
+       {
+         "error": "Missing order item",
+         "transition": {
+           "nextState": "MissingItem"
+         }
+       },
+       {
+        "error": "Missing order quantity",
+        "transition": {
+          "nextState": "MissingQuantity"
+        }
+       }
+    ]
 },
 {
    "name": "MissingId",
@@ -1041,20 +1040,20 @@ states:
       refName: provisionOrderFunction
       parameters:
         order: "{{ $.order }}"
-  onError:
-  - expression: "{{ $.exceptions[?(@.name == 'MissingOrderIdException')] }}"
-    transition:
-      nextState: MissingId
-  - expression: "{{ $.exceptions[?(@.name == 'MissingOrderItemException')] }}"
-    transition:
-      nextState: MissingItem
-  - expression: "{{ $.exceptions[?(@.name == 'MissingOrderQuantityException')] }}"
-    transition:
-      nextState: MissingQuantity
   stateDataFilter:
     dataOutputPath: "{{ $.exceptions }}"
   transition:
     nextState: ApplyOrder
+  onErrors:
+  - error: Missing order id
+    transition:
+      nextState: MissingId
+  - error: Missing order item
+    transition:
+      nextState: MissingItem
+  - error: Missing order quantity
+    transition:
+      nextState: MissingQuantity
 - name: MissingId
   type: subflow
   workflowId: handleMissingIdExceptionWorkflow
@@ -1156,12 +1155,9 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
           }
       }
       ],
-      "onError": [
+      "onErrors": [
       {
-        "expression": "{{ $.exceptions[0] }}",
-        "errorDataFilter": {
-          "dataOutputPath": "{{ $.exception }}"
-        },
+        "error": "*",
         "transition": {
           "nextState": "SubmitError"
         }
@@ -1307,10 +1303,8 @@ states:
         name: "{{ $.job.name }}"
     actionDataFilter:
       dataResultsPath: "{{ $.jobuid }}"
-  onError:
-  - expression: "{{ $.exceptions[0] }}"
-    errorDataFilter:
-      dataOutputPath: "{{ $.exception }}"
+  onErrors:
+  - error: "*"
     transition:
       nextState: SubmitError
   stateDataFilter:

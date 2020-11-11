@@ -696,6 +696,11 @@ functions:
   metadata:
     image: python:alpine3.6
     command: python
+retries:
+- name: All workflow errors retry strategy
+  maxAttempts: 10
+  multiplier: PT2M
+  delay: PT1M
 states:
 - name: retry-backoff
   type: operation
@@ -707,11 +712,11 @@ states:
       parameters:
         args:
         - import random; import sys; exit_code = random.choice([0, 1, 1]); sys.exit(exit_code)
-  retry:
-  - expression: "{{ $.[?(@.exitcode == '1')] }}"
-    maxAttempts: 10
-    multiplier: PT2M
-    interval: PT1M
+  onErrors:
+  - error: "*"
+    retryRef: All workflow errors retry strategy
+    end:
+      kind: default
   end:
     kind: default
 ```
@@ -829,10 +834,11 @@ states:
 [Argo Example](https://github.com/argoproj/argo/tree/master/examples#exit-handlers)
 
 *Note*: With Serverless Workflow specification we can handle Argos "onExit" functionality
-in couple of ways. One is the "onError" functionality to catch errors and transition to the 
-"error" part of the workflow. Another is to send an event at the end of workflow execution 
+in couple of ways. One is the "onErrors" functionality to define errors and transition to the parts
+of workflow which is capable of handling the errors. 
+Another is to send an event at the end of workflow execution 
 which includes the workflow status. This event can then trigger execution other workflows
-that can handle each status. For this example we use the "onError" definition.
+that can handle each status. For this example we use the "onErrors" definition.
 
 <table>
 <tr>
@@ -919,12 +925,10 @@ states:
       refName: intentional-fail-function
       parameters:
         args: echo intentional failure; exit 1
-  onError:
-  - expression: "{{ $.errors[0] }}"
-    errorDataFilter:
-      dataOutputPath: "{{ $.exit-code }}"
-  transition:
-    nextState: send-email-state
+  onErrors:
+  - error: "*"
+    transition:
+      nextState: send-email-state
 - name: send-email-state
   type: operation
   actions:
