@@ -25,15 +25,16 @@ Cloud Native Sandbox level project on July 14, 2020.
     - [Meeting Minutes](#Meeting-Minutes)
 - [Repository Structure](#Repository-Structure)
 
-
 ## Releases
 
-|| Latest Release | Working Draft |
-| :--- | :--- | :--- |
-| **Core Specification:** | | |
-| Serverless Workflow| [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) | [master](specification.md)  |
-| **Additional Documentation:** | | |
-| Model JSON Schema | [v0.1](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/schema/serverless-workflow-schema-v01.json) | [master](schema/workflow.json) |
+| | Latest Release | Working Draft | 
+| --- |  --- | --- |
+| **Core Specification** | |
+| Serverless Workflow | [v0.5](https://github.com/serverlessworkflow/specification/tree/0.5.x) | [master](https://github.com/serverlessworkflow/specification) |
+| **Additional Components** | |
+| Java SDK | [1.0.0.Final](https://github.com/serverlessworkflow/sdk-java/releases/tag/1.0.0.Final) | [2.0.0-SNAPSHOT](https://github.com/serverlessworkflow/sdk-java) |
+| GO SDK |  | [master](https://github.com/serverlessworkflow/sdk-go) |
+| VSCode Extension | [1.3.0](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension) | [1.4.0](https://github.com/serverlessworkflow/vscode-extension) |
 
 ## SDKs
 
