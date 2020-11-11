@@ -33,7 +33,7 @@ Cloud Native Sandbox level project on July 14, 2020.
 | Serverless Workflow | [v0.5](https://github.com/serverlessworkflow/specification/releases) | [master](https://github.com/serverlessworkflow/specification) |
 | **Additional Components** | |
 | Java SDK | [1.0.0.Final](https://github.com/serverlessworkflow/sdk-java/releases) | [2.0.0-SNAPSHOT](https://github.com/serverlessworkflow/sdk-java) |
-| GO SDK |  | [master](https://github.com/serverlessworkflow/sdk-go) |
+| GO SDK | [v1.0.0](https://github.com/serverlessworkflow/sdk-go/releases)  | [v2.0.0](https://github.com/serverlessworkflow/sdk-go) |
 | VSCode Extension | [1.3.0](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension) | [1.4.0](https://github.com/serverlessworkflow/vscode-extension) |
 
 ## SDKs
