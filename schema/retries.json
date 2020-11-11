@@ -1,0 +1,54 @@
+{
+  "$id": "https://serverlessworkflow.org/core/retries.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Serverless Workflow specification - retries schema",
+  "type": "object",
+  "retries": {
+    "type": "array",
+    "description": "Workflow Retry definitions. Define retry strategies that can be referenced in states onError definitions",
+    "items": {
+      "type": "object",
+      "$ref": "#/definitions/retrydef"
+    },
+    "minItems": 1
+  },
+  "required": [
+    "retries"
+  ],
+  "definitions": {
+    "retrydef": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique retry strategy name",
+          "minLength": 1
+        },
+        "delay": {
+          "type": "string",
+          "description": "Time delay between retry attempts (ISO 8601 duration format)"
+        },
+        "multiplier": {
+          "type": "string",
+          "description": "Multiplier value by which interval increases during each attempt (ISO 8601 time format)"
+        },
+        "maxAttempts": {
+          "type": ["integer","string"],
+          "minimum": 1,
+          "minLength": 0,
+          "description": "Maximum number of retry attempts."
+        },
+        "jitter": {
+          "type": ["number","string"],
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format)"
+        }
+      },
+      "required": [
+        "name",
+        "maxAttempts"
+      ]
+    }
+  }
+}
