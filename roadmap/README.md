@@ -1,6 +1,4 @@
-# Roadmap
-
-The Serverless Workflow Roadmap.
+# Serverless Workflow Roadmap
 
 _Note: Items in tables for each milestone do not imply an order of implementation._
 
@@ -12,7 +10,12 @@ _Status description:_
 | :--: | :--: |  :--: | :--: |
 | ✔ | ✏️ | 🚩 | ❗️|
 
-## v0.1 (Released April 1 2020)
+## Releases
+
+- [v0.1 released April 2020](#v01)
+- [v0.5 released November 2020](#v05)
+
+## <a name="v01"></a> v0.1
 
 | Status | Description | Comments |
 | :--: | --- |  --- |
@@ -38,13 +41,10 @@ _Status description:_
 | ✔️| Update workflow start definition | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
 | ✔️| Prepare github branch and docs for v0.1 | [branch](https://github.com/cncf/wg-serverless/tree/v0.1/workflow/spec) |
 
-## v0.5
+## <a name="v05"></a> v0.5
 
 | Status | Description | Comments |
 | --- | --- |  --- |
-| 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) | |
-| 🚩 | Decide on state/task/stage/step naming convention | [issue link](https://github.com/cncf/wg-serverless/issues/127) |
-| ✏️ | Finish specification primer document | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) |
 | ✔ | Update Switch State | [spec doc](../specification.md) |
 | ✔ | Rename Relay to Inject state | [spec doc](../specification.md) |
 | ✔️| Update waitForCompletion property of Parallel State | [spec doc](../specification.md) |
