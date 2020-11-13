@@ -434,7 +434,7 @@ forces non-workflow-specific information such as service authentication to be ad
 
 To avoid these issues, the Serverless Workflow specification mandates that details about 
 services and their operations be described using the [OpenAPI Specification](https://www.openapis.org/) specification.
-OpanAPI is a language-agnostic standard that describes discovery of RESTful services. It is perfectly suited
+OpenAPI is a language-agnostic standard that describes discovery of RESTful services. It is perfectly suited
 for defining every detail about how RESTful services and their operations should be invoked.
 It allows Servlerless Workflow markup to describe RESTful services in a portable 
 way, as well as workflow runtimes to utilize OpenAPI tooling and APIs to invoke those services.
