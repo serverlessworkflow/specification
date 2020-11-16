@@ -2993,11 +2993,11 @@ output of the state to transition from includes an user with the title "MANAGER"
 {  
 "functions": [
   {
-   "name": "doLowRistOperationFunction",
+   "name": "doLowRiskOperationFunction",
    "operation": "file://myapi.json#lowRisk"
   },
   {
-   "name": "doHighRistOperationFunction",
+   "name": "doHighRiskOperationFunction",
    "operation": "file://myapi.json#highRisk"
   }
 ],
@@ -3012,7 +3012,7 @@ output of the state to transition from includes an user with the title "MANAGER"
    "actions":[  
     {  
      "functionRef":{
-        "refName": "doLowRistOperationFunction"
+        "refName": "doLowRiskOperationFunction"
      }
     }
     ],
@@ -3031,7 +3031,7 @@ output of the state to transition from includes an user with the title "MANAGER"
    "actions":[  
     {  
      "functionRef":{
-       "refName": "doHighRistOperationFunction"
+       "refName": "doHighRiskOperationFunction"
      }
     }
    ]
@@ -3045,9 +3045,9 @@ output of the state to transition from includes an user with the title "MANAGER"
 
 ```yaml
 functions:
-- name: doLowRistOperationFunction
+- name: doLowRiskOperationFunction
   operation: file://myapi.json#lowRisk
-- name: doHighRistOperationFunction
+- name: doHighRiskOperationFunction
   operation: file://myapi.json#highRisk
 states:
 - start:
@@ -3057,7 +3057,7 @@ states:
   actionMode: Sequential
   actions:
   - functionRef:
-      refName: doLowRistOperationFunction
+      refName: doLowRiskOperationFunction
   transition:
     nextState: highRiskState
     expression: "{{ $.users[?(@.title == 'MANAGER')] }}"
@@ -3068,7 +3068,7 @@ states:
   actionMode: Sequential
   actions:
   - functionRef:
-      refName: doHighRistOperationFunction
+      refName: doHighRiskOperationFunction
 ```
 
 </td>
