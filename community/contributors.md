@@ -34,6 +34,7 @@ If you are participating insome way, please add your information via pull reques
   * Tihomir Surdilovic
   * Ricardo Zanini 
   * Lucas Caparelli
+  * Paul Morie
   
 * **Camunda**
   * Mauricio Salatino
