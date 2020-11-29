@@ -1,7 +1,7 @@
 # Community Contributors
 
 This list acknowledges community contributors to the Serverless Workflow 
-specification. 
+project. 
 
 We welcome everyone to join our community and contribute. 
 For more information on how, please reference the ['how to contribute'](contributing.md) doc.
