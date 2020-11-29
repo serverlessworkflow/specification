@@ -1648,6 +1648,11 @@ There are two types of conditions for switch states:
 
 These are exclusive, meaning that a switch state can define one or the other condition type, but not both.
 
+At times multiple defined conditions can be evaluated to `true` by runtime implementations.
+Conditions defined first take precedence over conditions defined later. This is backed by the fact that arrays/sequences
+are orderd in both JSON and YAML. For example, let's say there are two `true` conditions: A and B, defined in that order.
+Because A was defined first, its transition will be executed, not B's.
+
 In case of data-based conditions definition, switch state controls workflow transitions based on the states data.
 If no defined conditions can be matched, the state transitions is taken based on the `default` property.
 This property can be either a `transition` to another workflow state, or an `end` definition meaning a workflow end.
