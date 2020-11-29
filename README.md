@@ -62,19 +62,20 @@ would like to ensure that is has a dedicated point of contact.
 
 ## Community
 
-We have an growing community working together to build a dynamic serverless workflow
-ecosystem. Community contributions are welcome and much needed to foster specification growth.
+We have a growing community working together to build a community-driven and vendor-neutral
+workflow ecosystem. Community contributions are welcome and much needed to foster project growth.
 
-See [here](community/contributors.md) for the list of all community members that have contributed to the specification.
+See [here](community/contributors.md) for the list of community members that have contributed to the specification.
 
 To learn how to contribute to the specification reference the ['how to contribute'](contributing.md) doc.
   
 ### Communication
 
+- Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) -  #serverless-workflow
+- [Weekly project meetings](#Meetings)
+- Project Maintainers Email: [cncf-serverlessws-maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
 - Serverless WG Email: [cncf-wg-serverless](mailto:cncf-wg-serverless@lists.cncf.io)
 - Serverless WG Subscription: [https://lists.cncf.io/g/cncf-wg-serverless](https://lists.cncf.io/g/cncf-wg-serverless)
-- Project Maintainers Email: [cncf-serverlessws-maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
-- Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) -  #serverless-workflow
 
 ### Code of Conduct
 
