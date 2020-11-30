@@ -1,17 +1,21 @@
-# Contributors
+# Community Contributors
 
-We welcome you to join us! This list acknowledges those who contribute to
-this specification whether it be via GitHub pull request or in Serverless
-Work Group meeting discussion.
+This list acknowledges community contributors to the Serverless Workflow 
+project. 
 
-If you are participating insome way, please add your information via pull request.
+We welcome everyone to join our community and contribute. 
+For more information on how, please reference the ['how to contribute'](contributing.md) doc.
+
+We try to add every contributor here, but if for some reason we missed 
+adding your name, feel free to add it via pull request to this document or let 
+us know in chat or team meeting.
+
+* **Independent**
+  * Louis Fourie
 
 * **Huawei**
   * Cathy Hong Zhang
   * Farhad Sunavala
-  
-* **Independent**
-  * Louis Fourie
 
 * **Fujitsu**
   * Naohiro Tamura
