@@ -3914,7 +3914,7 @@ It's important to understand that compensation with workflows is not the same as
 a transaction (a strict undo). Compensating a workflow state which has successfully completed 
 might involve multiple logical steps and thus is part of the overall business logic that must be 
 defined within the workflow itself. To explain this let's use our previous example and say that when our
-customer made the item purchase, our workflow has sent her/him a confirmation email. In the case we need to 
+customer made the item purchase, our workflow has sent her/him a confirmation email. In the case, to 
 compensate this purchase, we cannot just "undo" the confirmation email sent. Instead, we want to 
 send a second email to the customer which includes purchase cancellation information.
 
@@ -4161,7 +4161,7 @@ When workflow execution encounters our "End" state, compensation has to be perfo
 So if we look just at the workflow execution flow, the same workflow could be seen as:
 
 <p align="center">
-<img src="media/spec/compensation-exec2.png" height="400px" alt="Compensation Execution Example 2"/>
+<img src="media/spec/compensation-exec2.png" height="200px" alt="Compensation Execution Example 2"/>
 </p> 
 
 Workflow data management does not change during compensation. In our example when compensation is triggered, 
