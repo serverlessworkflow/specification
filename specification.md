@@ -1438,7 +1438,7 @@ For more information, refer to the [Workflow Error Handling](#Workflow-Error-Han
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | expression | JsonPath expression. Must return a result for the transition to be valid | string | no |
-| [compensateBefore](#Workflow-Compensation) | If set to `true`, triggers workflow compensation when before this transition is taken. Default is `false` | boolean | no |
+| [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation when before this transition is taken. Default is `false` | boolean | no |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Events to be produced when this transition happens | array | no |
 | [nextState](#Transitions) | State to transition to next | string | yes |
 
@@ -2861,7 +2861,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 | --- | --- | --- | --- |
 | kind | End kind ("default", "terminate", or "event") | enum | yes |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. If `kind` is "event", define what type of event to produce | array | yes only if `kind` is "event" |
-| [compensateBefore](#Workflow-Compensation) | If set to `true`, triggers workflow compensation when before workflow executin completes. Default is `false` | boolean | no |
+| [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation when before workflow executin completes. Default is `false` | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2994,7 +2994,7 @@ Events can be produced during state transitions. The `produceEvents` property of
 to reference one or more defined `produced` events in the workflow [events definitions](#Event-Definition).
 For each of the produced events you can select what parts of state data to be the event payload.
 
-Transitions can trigger compensation via their `compensateBefore` property. See the [Workflow Compensation](#Workflow-Compensation)
+Transitions can trigger compensation via their `compensate` property. See the [Workflow Compensation](#Workflow-Compensation)
 section for more information.
 
 #### Restricting Transitions based on state output
@@ -4079,7 +4079,7 @@ Let's take a look at each:
 ```json
 {
   "transition": {
-      "compensateBefore": true,
+      "compensate": true,
       "nextState": "NextWorkflowState"
   }
 }
@@ -4089,14 +4089,14 @@ Let's take a look at each:
 
 ```yaml
 transition:
-  compensateBefore: true
+  compensate: true
   nextState: NextWorkflowState
 ```
 </td>
 </tr>
 </table>
 
-Transitions can trigger compensations by specifying the `compensateBefore` property and setting it to `true`.
+Transitions can trigger compensations by specifying the `compensate` property and setting it to `true`.
 This means that before the transition is executed (workflow continues its execution to the "NextWorkflowState" in this example),
 workflow compensation must be performed. 
 
@@ -4113,7 +4113,7 @@ workflow compensation must be performed.
 ```json
 {
   "end": {
-    "compensateBefore": true,
+    "compensate": true,
     "kind":"default"
   }
 }
@@ -4123,14 +4123,14 @@ workflow compensation must be performed.
 
 ```yaml
 end:
-  compensateBefore: true
+  compensate: true
   kind: default
 ```
 </td>
 </tr>
 </table>
 
-End definitions can trigger compensations by specifying the `compensateBefore` property and setting it to `true`.
+End definitions can trigger compensations by specifying the `compensate` property and setting it to `true`.
 This means that before workflow finishes its execution workflow compensation must be performed. Note that 
 in case when the end definition has its "kind" set to "event", compensation must be performed before 
 producing the specified events and ending workflow execution.
@@ -4147,7 +4147,7 @@ Let's take a look at the following workflow image:
 <img src="media/spec/compensation-exec.png" height="400px" alt="Compensation Execution Example"/>
 </p> 
 
-In this example lets say our workflow execution is at the "End" state which defines the `compensateBefore` property to true
+In this example lets say our workflow execution is at the "End" state which defines the `compensate` property to true
 as shown in the previous section. States with a red border, namely "A", "B", "D" and "E" are states which have so far
 been executed successfully. State "C" has not been executed during workflow execution in our example.
 
@@ -4164,7 +4164,7 @@ So if we look just at the workflow execution flow, the same workflow could be se
 <img src="media/spec/compensation-exec2.png" height="200px" alt="Compensation Execution Example 2"/>
 </p> 
 
-Workflow data management does not change during compensation. In our example when compensation is triggered, 
+In our example when compensation is triggered, 
 the current workflow data is passed as input to the "D1" state, the first compensation state for our example. 
 It state data output is then passed as state data input to "B1", and so on.
 

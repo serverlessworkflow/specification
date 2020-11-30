@@ -223,7 +223,7 @@
           "description": "Name of state to transition to",
           "minLength": 1
         },
-        "compensateBefore": {
+        "compensate": {
           "type": "boolean",
           "default": false,
           "description": "If set to true, triggers workflow compensation when before this transition is taken. Default is false"
@@ -1972,7 +1972,7 @@
             "$ref": "#/definitions/produceeventdef"
           }
         },
-        "compensateBefore": {
+        "compensate": {
           "type": "boolean",
           "default": false,
           "description": "If set to true, triggers workflow compensation when before workflow executin completes. Default is false"
