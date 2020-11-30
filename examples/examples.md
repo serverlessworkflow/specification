@@ -19,6 +19,7 @@
 - [Check Inbox Periodically (Cron-based Workflow start)](#Check-Inbox-Periodically)
 - [Event-based service invocation (Event triggered actions)](#Event-Based-Service-Invocation)
 - [Reusing Function and Event Definitions](#Reusing-Function-And-Event-Definitions)
+- [New Patient Onboarding (Error checking and Retries)](#New-Patient-Onboarding)
 
 ### Hello World Example
 
@@ -2817,3 +2818,183 @@ states:
 </td>
 </tr>
 </table>
+
+### New Patient Onboarding
+
+#### Description
+
+In this example we want to use a workflow to onboard a new patient (at a hospital for example).
+To onboard a patient our workflow is invoked via a "NewPatientEvent" event. This events payload contains the
+patient information, for example:
+
+```json
+{
+  "name": "John",
+  "condition": "chest pains"
+}
+```
+
+When this event is received we want to create a new workflow instance and invoke three services
+sequentially. The first service we want to invoke is responsible to store patient information,
+second is to assign a doctor to a patient given the patient condition, and third to assign a 
+new appoitment with the patient and the assigned doctor.
+
+In addition, in this example we need to handle a possible situation where one or all of the needed 
+services are not available (the server returns a http 503 (Service Unavailable) error). If our workflow
+catches this error, we want to try to recover from this by issuing retries for the particular 
+service invocation that caused the error up to 10 times with three seconds in-between retries.
+If the retries are not successful, we want to just gracefully end workflow execution.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-patientonboarding.png" height="400px" alt="Patient Onboarding Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "id": "patientonboarding",
+  "name": "Patient Onboarding Workflow",
+  "version": "1.0",
+  "states": [
+    {
+      "name": "Onboard",
+      "type": "event",
+      "start": {
+        "kind": "default"
+      },
+      "onEvents": [
+        {
+          "eventRefs": [
+            "NewPatientEvent"
+          ],
+          "actions": [
+            {
+              "functionRef": {
+                "refName": "StorePatient"
+              }
+            },
+            {
+              "functionRef": {
+                "refName": "AssignDoctor"
+              }
+            },
+            {
+              "functionRef": {
+                "refName": "ScheduleAppt"
+              }
+            }
+          ]
+        }
+      ],
+      "onErrors": [
+        {
+          "error": "ServiceNotAvailable",
+          "code": "503",
+          "retryRef": "ServicesNotAvailableRetryStrategy",
+          "end": {
+            "kind":"default"
+          }
+        }
+      ],
+      "end": {
+        "kind": "default"
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "StorePatient",
+      "type": "new.patients.event",
+      "source": "newpatient/+"
+    }
+  ],
+  "functions": [
+    {
+      "name": "StoreNewPatientInfo",
+      "operation": "api/services.json#addPatient"
+    },
+    {
+      "name": "AssignDoctor",
+      "operation": "api/services.json#assignDoctor"
+    },
+    {
+      "name": "ScheduleAppt",
+      "operation": "api/services.json#scheduleAppointment"
+    }
+  ],
+  "retries": [
+    {
+      "name": "ServicesNotAvailableRetryStrategy",
+      "delay": "PT3S",
+      "maxAttempts": 10
+    }
+  ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: patientonboarding
+name: Patient Onboarding Workflow
+version: '1.0'
+states:
+- name: Onboard
+  type: event
+  start:
+    kind: default
+  onEvents:
+  - eventRefs:
+    - NewPatientEvent
+    actions:
+    - functionRef:
+        refName: StorePatient
+    - functionRef:
+        refName: AssignDoctor
+    - functionRef:
+        refName: ScheduleAppt
+  onErrors:
+  - error: ServiceNotAvailable
+    code: '503'
+    retryRef: ServicesNotAvailableRetryStrategy
+    end:
+      kind: default
+  end:
+    kind: default
+events:
+- name: StorePatient
+  type: new.patients.event
+  source: newpatient/+
+functions:
+- name: StoreNewPatientInfo
+  operation: api/services.json#addPatient
+- name: AssignDoctor
+  operation: api/services.json#assignDoctor
+- name: ScheduleAppt
+  operation: api/services.json#scheduleAppointment
+retries:
+- name: ServicesNotAvailableRetryStrategy
+  delay: PT3S
+  maxAttempts: 10
+```
+
+</td>
+</tr>
+</table>
+
+#### Workflow Demo
+
+This example is used in our Serverless Workflow Hands-on series videos [#1](https://www.youtube.com/watch?v=0gmpuGLP-_o)
+and [#2](https://www.youtube.com/watch?v=6A6OYp5nygg).
