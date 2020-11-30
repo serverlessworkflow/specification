@@ -1438,7 +1438,7 @@ For more information, refer to the [Workflow Error Handling](#Workflow-Error-Han
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | expression | JsonPath expression. Must return a result for the transition to be valid | string | no |
-| compensateBefore | If set to `true`, triggers workflow compensation when before this transition is taken. Default is `false` | boolean | no |
+| [compensateBefore](#Workflow-Compensation) | If set to `true`, triggers workflow compensation when before this transition is taken. Default is `false` | boolean | no |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Events to be produced when this transition happens | array | no |
 | [nextState](#Transitions) | State to transition to next | string | yes |
 
@@ -2861,7 +2861,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 | --- | --- | --- | --- |
 | kind | End kind ("default", "terminate", or "event") | enum | yes |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. If `kind` is "event", define what type of event to produce | array | yes only if `kind` is "event" |
-| compensateBefore | If set to `true`, triggers workflow compensation when before workflow executin completes. Default is `false` | boolean | no |
+| [compensateBefore](#Workflow-Compensation) | If set to `true`, triggers workflow compensation when before workflow executin completes. Default is `false` | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
