@@ -222,6 +222,11 @@
           "type": "string",
           "description": "Name of state to transition to",
           "minLength": 1
+        },
+        "compensateBefore": {
+          "type": "boolean",
+          "default": false,
+          "description": "If set to true, triggers workflow compensation when before this transition is taken. Default is false"
         }
       },
       "required": [
@@ -480,46 +485,72 @@
           "format": "uri",
           "description": "URI to JSON Schema that state data output adheres to"
         },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
+        },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "timeDelay",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "timeDelay",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "timeDelay",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "timeDelay",
-            "end"
-          ]
+      "if": {
+        "properties": {
+          "usedForCompensation": {
+            "const": true
+          }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "name",
+          "type",
+          "timeDelay"
+        ]
+      },
+      "else": {
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "timeDelay",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "timeDelay",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "timeDelay",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "timeDelay",
+              "end"
+            ]
+          }
+        ]
+      }
     },
     "eventstate": {
       "type": "object",
@@ -588,6 +619,11 @@
         "end": {
           "$ref": "#/definitions/end",
           "description": "State end definition"
+        },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
@@ -698,50 +734,77 @@
           "format": "uri",
           "description": "URI to JSON Schema that state data output adheres to"
         },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
+        },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "actionMode",
-            "actions",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "actionMode",
-            "actions",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "actionMode",
-            "actions",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "actionMode",
-            "actions",
-            "end"
-          ]
+      "if": {
+        "properties": {
+          "usedForCompensation": {
+            "const": true
+          }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "name",
+          "type",
+          "actionMode",
+          "actions"
+        ]
+      },
+      "else": {
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "actionMode",
+              "actions",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "actionMode",
+              "actions",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "actionMode",
+              "actions",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "actionMode",
+              "actions",
+              "end"
+            ]
+          }
+        ]
+      }
     },
     "parallelstate": {
       "type": "object",
@@ -814,47 +877,73 @@
           "format": "uri",
           "description": "URI to JSON Schema that state data output adheres to"
         },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
+        },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "branches",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "branches",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "branches",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "branches",
-            "transition",
-            "end"
-          ]
+      "if": {
+        "properties": {
+          "usedForCompensation": {
+            "const": true
+          }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "name",
+          "type",
+          "branches"
+        ]
+      },
+      "else": {
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "branches",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "branches",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "branches",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "branches",
+              "transition",
+              "end"
+            ]
+          }
+        ]
+      }
     },
     "switchstate": {
       "oneOf": [
@@ -925,29 +1014,56 @@
           "format": "uri",
           "description": "URI to JSON Schema that state data output adheres to"
         },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
+        },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "eventConditions",
-            "default"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "eventConditions",
-            "default"
-          ]
+      "if": {
+        "properties": {
+          "usedForCompensation": {
+            "const": true
+          }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "name",
+          "type",
+          "eventConditions",
+          "default"
+        ]
+      },
+      "else": {
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "eventConditions",
+              "default"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "eventConditions",
+              "default"
+            ]
+          }
+        ]
+      }
     },
     "databasedswitch": {
       "type": "object",
@@ -1003,6 +1119,11 @@
           "type": "string",
           "format": "uri",
           "description": "URI to JSON Schema that state data output adheres to"
+        },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
@@ -1228,46 +1349,72 @@
           "format": "uri",
           "description": "URI to JSON Schema that state data output adheres to"
         },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
+        },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "workflowId",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "workflowId",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "workflowId",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "workflowId",
-            "end"
-          ]
+      "if": {
+        "properties": {
+          "usedForCompensation": {
+            "const": true
+          }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "name",
+          "type",
+          "workflowId"
+        ]
+      },
+      "else": {
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "workflowId",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "workflowId",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "workflowId",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "workflowId",
+              "end"
+            ]
+          }
+        ]
+      }
     },
     "injectstate": {
       "type": "object",
@@ -1316,42 +1463,72 @@
           "format": "uri",
           "description": "URI to JSON Schema that state data output adheres to"
         },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
+        },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "end"
-          ]
+      "if": {
+        "properties": {
+          "usedForCompensation": {
+            "const": true
+          }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "name",
+          "type",
+          "data"
+        ]
+      },
+      "else": {
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "data",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "data",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "data",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "data",
+              "end"
+            ]
+          }
+        ]
+      }
     },
     "foreachstate": {
       "type": "object",
@@ -1434,96 +1611,124 @@
           "format": "uri",
           "description": "URI to JSON Schema that state data output adheres to"
         },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
+        },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "inputCollection",
-            "inputParameter",
-            "workflowId",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "inputCollection",
-            "inputParameter",
-            "workflowId",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "inputCollection",
-            "inputParameter",
-            "workflowId",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "inputCollection",
-            "inputParameter",
-            "workflowId",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "inputCollection",
-            "inputParameter",
-            "actions",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "inputCollection",
-            "inputParameter",
-            "actions",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "inputCollection",
-            "inputParameter",
-            "actions",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "inputCollection",
-            "inputParameter",
-            "actions",
-            "transition"
-          ]
+      "if": {
+        "properties": {
+          "usedForCompensation": {
+            "const": true
+          }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "name",
+          "type",
+          "inputCollection",
+          "inputParameter",
+          "workflowId"
+        ]
+      },
+      "else": {
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "inputCollection",
+              "inputParameter",
+              "workflowId",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "inputCollection",
+              "inputParameter",
+              "workflowId",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "inputCollection",
+              "inputParameter",
+              "workflowId",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "inputCollection",
+              "inputParameter",
+              "workflowId",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "inputCollection",
+              "inputParameter",
+              "actions",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "inputCollection",
+              "inputParameter",
+              "actions",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "inputCollection",
+              "inputParameter",
+              "actions",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "inputCollection",
+              "inputParameter",
+              "actions",
+              "transition"
+            ]
+          }
+        ]
+      }
     },
     "callbackstate": {
       "type": "object",
@@ -1593,54 +1798,82 @@
           "$ref": "#/definitions/end",
           "description": "State end definition"
         },
+        "compensatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
+        },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "action",
-            "eventRef",
-            "timeout",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "action",
-            "eventRef",
-            "timeout",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "action",
-            "eventRef",
-            "timeout",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "action",
-            "eventRef",
-            "timeout",
-            "transition"
-          ]
+      "if": {
+        "properties": {
+          "usedForCompensation": {
+            "const": true
+          }
         }
-      ]
+      },
+      "then": {
+        "required": [
+          "name",
+          "type",
+          "action",
+          "eventRef",
+          "timeout"
+        ]
+      },
+      "else": {
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "action",
+              "eventRef",
+              "timeout",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "action",
+              "eventRef",
+              "timeout",
+              "transition"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "action",
+              "eventRef",
+              "timeout",
+              "end"
+            ]
+          },
+          {
+            "required": [
+              "start",
+              "name",
+              "type",
+              "action",
+              "eventRef",
+              "timeout",
+              "transition"
+            ]
+          }
+        ]
+      }
     },
     "start": {
       "type": "object",
@@ -1738,6 +1971,11 @@
             "type": "object",
             "$ref": "#/definitions/produceeventdef"
           }
+        },
+        "compensateBefore": {
+          "type": "boolean",
+          "default": false,
+          "description": "If set to true, triggers workflow compensation when before workflow executin completes. Default is false"
         }
       },
       "if": {

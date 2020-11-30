@@ -21,6 +21,7 @@ This document is a working draft.
   - [Workflow Error Handling](#Workflow-Error-Handling)
     - [Defining Errors](#Defining-Errors)
     - [Defining Retries](#Defining-Retries)
+  - [Workflow Compensation](#Workflow-Compensation)
   - [Workflow Metadata](#Workflow-Metadata)
 - [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
@@ -822,6 +823,7 @@ The following is a detailed description of each of the defined states.
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -1436,6 +1438,7 @@ For more information, refer to the [Workflow Error Handling](#Workflow-Error-Han
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | expression | JsonPath expression. Must return a result for the transition to be valid | string | no |
+| compensateBefore | If set to `true`, triggers workflow compensation when before this transition is taken. Default is `false` | boolean | no |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Events to be produced when this transition happens | array | no |
 | [nextState](#Transitions) | State to transition to next | string | yes |
 
@@ -1495,6 +1498,8 @@ Transitions allow you to move from one state (control-logic block) to another. F
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes (if end is not defined) |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
 | [dataOutputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data output adheres to | string | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
@@ -1570,6 +1575,8 @@ Once all actions have been performed, a transition to another state can occur.
 | default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
 | [dataOutputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data output adheres to | string | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 
@@ -1785,6 +1792,8 @@ The `eventDataFilter` property can be used to filter event when it is received.
 | [transition](#Transitions) | Next transition of the workflow after the delay | object | yes (if end is not defined) |
 | [dataInputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data input adheres to | string | no |
 | [dataOutputSchema](#Information-Passing-Between-States) | URI to JSON Schema that state data output adheres to | string | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) |If this state an end state | object | no |
 
@@ -1844,6 +1853,8 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes (if end is not defined) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
@@ -2051,6 +2062,8 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is not defined) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
@@ -2124,12 +2137,14 @@ Referenced workflows must declare their own [function](#Function-Definition) and
 | id | Unique state id | string | no |
 | name | State name | string | yes |
 | type | State type | string | yes |
-| data | JSON object which can be set as state's data input and can be manipulated via filter | object | no |
+| data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is set to false) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
@@ -2356,6 +2371,8 @@ This allows you to test if your workflow behaves properly for cases when there a
 | [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes (if end is not defined) |
 | dataInputSchema | URI to JSON Schema that state data input adheres to | string | no |
 | dataOutputSchema | URI to JSON Schema that state data output adheres to | string | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
@@ -2592,6 +2609,8 @@ The results of each parallel action execution are stored as elements in the stat
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
+| [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2842,6 +2861,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 | --- | --- | --- | --- |
 | kind | End kind ("default", "terminate", or "event") | enum | yes |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. If `kind` is "event", define what type of event to produce | array | yes only if `kind` is "event" |
+| compensateBefore | If set to `true`, triggers workflow compensation when before workflow executin completes. Default is `false` | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2973,6 +2993,9 @@ So the options for next state transitions are:
 Events can be produced during state transitions. The `produceEvents` property of the `transition` definitions allows you
 to reference one or more defined `produced` events in the workflow [events definitions](#Event-Definition).
 For each of the produced events you can select what parts of state data to be the event payload.
+
+Transitions can trigger compensation via their `compensateBefore` property. See the [Workflow Compensation](#Workflow-Compensation)
+section for more information.
 
 #### Restricting Transitions based on state output
 
@@ -3879,6 +3902,286 @@ when the particular event or events it defines are consumed. In case of an error
 execution of the state, runtimes should not create a new instance of this workflow, or 
 wait for the defined event or events again. In these cases only the states actions should be retried
 and the received event information used for all of the issued retries.
+
+### Workflow Compensation
+
+Compensation deals with undoing or reversing the work of one or more states which have 
+already successfully completed. For example, let's say that we have charged a customer $100 for an item 
+purchase. If later the customer decides to cancel this purchase we need to undo this. One way of 
+doing that is to credit the customer $100.
+
+It's important to understand that compensation with workflows is not the same as for example rolling back
+a transaction (a strict undo). Compensating a workflow state which has successfully completed 
+might involve multiple logical steps and thus is part of the overall business logic that must be 
+defined within the workflow itself. To explain this let's use our previous example and say that when our
+customer made the item purchase, our workflow has sent her/him a confirmation email. In the case we need to 
+compensate this purchase, we cannot just "undo" the confirmation email sent. Instead, we want to 
+send a second email to the customer which includes purchase cancellation information.
+
+Compensation in Serverless Workflow must be explicitly defined by the workflow control flow logic.
+It cannot be dynamically triggered by initial workflow data, event payloads, results of service invocations, or 
+errors.
+
+#### Defining Compensation
+
+Each workflow state can define how it should be compensated via its `compensatedBy` property.
+This property references another workflow state (by it's unique name) which is responsible for the actual compensation.
+
+States referenced by `compensatedBy` must obey following rules:
+* They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
+* They cannot be an [event state](#Event-State)
+* They cannot define an [start definition](#Start-definition). If they do, it should be ignored
+* They cannot define an [end definition](#End-definition). If they do, it should be ignored
+* They must define the `usedForCompensation` property and set it to `true`
+* They can transition only to states which also have their `usedForCompensation` property and set to `true`
+* They cannot themselves set their `compensatedBy` property to true (compensation is not recursive)
+ 
+Runtime implementations should raise compile time / parsing exceptions for all the cases mentioned above. 
+
+Let's take a look at an example workflow state which defines its `compensatedBy` property, and the compensation
+state it references:
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+ {
+ "states": [
+      {
+          "name": "NewItemPurchase",
+          "type": "event",
+          "onEvents": [
+            {
+              "eventRefs": [
+                "NewPurchase"
+              ],
+              "actions": [
+                {
+                  "functionRef": {
+                    "refName": "DebitCustomerFunction",
+                    "parameters": {
+                        "customerid": "{{ $.purchase.customerid }}",
+                        "amount": "{{ $.purchase.amount }}"
+                    }
+                  }
+                },
+                {
+                  "functionRef": {
+                    "refName": "SendPurchaseConfirmationEmailFunction",
+                    "parameters": {
+                        "customerid": "{{ $.purchase.customerid }}"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "compensatedBy": "CancelPurchase",
+          "transition": {
+              "nextState": "SomeNextWorkflowState"
+          }
+      },
+      {
+        "name": "CancelPurchase",
+        "type": "operation",
+        "usedForCompensation": true,
+        "actions": [
+            {
+              "functionRef": {
+                "refName": "CreditCustomerFunction",
+                "parameters": {
+                    "customerid": "{{ $.purchase.customerid }}",
+                    "amount": "{{ $.purchase.amount }}"
+                }
+              }
+            },
+            {
+              "functionRef": {
+                "refName": "SendPurchaseCancellationEmailFunction",
+                "parameters": {
+                    "customerid": "{{ $.purchase.customerid }}"
+                }
+              }
+            }
+          ]
+    }
+ ]
+ }
+```
+</td>
+<td valign="top">
+
+```yaml
+states:
+- name: NewItemPurchase
+  type: event
+  onEvents:
+  - eventRefs:
+    - NewPurchase
+    actions:
+    - functionRef:
+        refName: DebitCustomerFunction
+        parameters:
+          customerid: "{{ $.purchase.customerid }}"
+          amount: "{{ $.purchase.amount }}"
+    - functionRef:
+        refName: SendPurchaseConfirmationEmailFunction
+        parameters:
+          customerid: "{{ $.purchase.customerid }}"
+  compensatedBy: CancelPurchase
+  transition:
+    nextState: SomeNextWorkflowState
+- name: CancelPurchase
+  type: operation
+  usedForCompensation: true
+  actions:
+  - functionRef:
+      refName: CreditCustomerFunction
+      parameters:
+        customerid: "{{ $.purchase.customerid }}"
+        amount: "{{ $.purchase.amount }}"
+  - functionRef:
+      refName: SendPurchaseCancellationEmailFunction
+      parameters:
+        customerid: "{{ $.purchase.customerid }}"
+```
+</td>
+</tr>
+</table>
+
+In this example our "NewItemPurchase" [event state](#Event-state) waits for a "NewPurchase" event and then 
+debits the customer and sends them a purchase confirmation email. It defines that it's compensated by the 
+"CancelPurchase" [operation state](#Operation-state) which performs two actions, namely credits back the 
+purchase amount to customer and sends them a purchase cancellation email.
+
+#### Triggering Compensation
+
+As previously mentioned, compensation must be explicitly triggered by the workflows control-flow logic. 
+This can be done via [transition](#Transition-definition) and [end](#End-definition) definitions.
+
+Let's take a look at each:
+
+1. Compensation triggered on transition:
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "transition": {
+      "compensateBefore": true,
+      "nextState": "NextWorkflowState"
+  }
+}
+```
+</td>
+<td valign="top">
+
+```yaml
+transition:
+  compensateBefore: true
+  nextState: NextWorkflowState
+```
+</td>
+</tr>
+</table>
+
+Transitions can trigger compensations by specifying the `compensateBefore` property and setting it to `true`.
+This means that before the transition is executed (workflow continues its execution to the "NextWorkflowState" in this example),
+workflow compensation must be performed. 
+
+2. Compensation triggered by end definition:
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "end": {
+    "compensateBefore": true,
+    "kind":"default"
+  }
+}
+```
+</td>
+<td valign="top">
+
+```yaml
+end:
+  compensateBefore: true
+  kind: default
+```
+</td>
+</tr>
+</table>
+
+End definitions can trigger compensations by specifying the `compensateBefore` property and setting it to `true`.
+This means that before workflow finishes its execution workflow compensation must be performed. Note that 
+in case when the end definition has its "kind" set to "event", compensation must be performed before 
+producing the specified events and ending workflow execution.
+
+#### Compensation Execution Details
+
+Now that we have seen how to define and trigger compensation, we need to go into details on how compensation should be executed.
+Compensation is performed on all already successfully completed states (that define `compensatedBy`) in **reverse** order.
+Compensation is always done in sequential order, and should not be executed in parallel.
+
+Let's take a look at the following workflow image:
+
+<p align="center">
+<img src="media/spec/compensation-exec.png" height="400px" alt="Compensation Execution Example"/>
+</p> 
+
+In this example lets say our workflow execution is at the "End" state which defines the `compensateBefore` property to true
+as shown in the previous section. States with a red border, namely "A", "B", "D" and "E" are states which have so far
+been executed successfully. State "C" has not been executed during workflow execution in our example.
+
+When workflow execution encounters our "End" state, compensation has to be performed. This is done in **reverse** order:
+1. State "E" is not compensated as it does not define a `compensatedBy` state
+2. State "D" is compensated by executing compensation "D1"
+3. State "B" is compensated by executing "B1" and then "B2"
+4. State C is not compensated as it was never active during workflow execution
+5. State A is not comped as it does not define a `compensatedBy` state
+
+So if we look just at the workflow execution flow, the same workflow could be seen as:
+
+<p align="center">
+<img src="media/spec/compensation-exec2.png" height="400px" alt="Compensation Execution Example 2"/>
+</p> 
+
+Workflow data management does not change during compensation. In our example when compensation is triggered, 
+the current workflow data is passed as input to the "D1" state, the first compensation state for our example. 
+It state data output is then passed as state data input to "B1", and so on.
+
+#### Compensation and Active States
+
+In some cases when compensation is triggered, some states such as [Parallel](#Parallel-State) and [ForEach](#ForEach-State)
+states can still be "active", meaning they still might have some async executions that are being performed.
+
+If compensation needs to performed on such still active states, the state execution must be first cancelled.
+After it is cancelled, compensation should be performed.
+
+#### Unrecoverable errors during compensation
+
+States that are marked as `usedForCompensation` can define [error handling](#Workflow-Error-Handling) via their
+`onErrors` property just like any other workflow states. In case of unrecoverable errors during their execution
+(errors not explicitly handled),
+workflow execution should be stopped, which is the same behaviour as when not using compensation as well. 
 
 ### Workflow Metadata
 
