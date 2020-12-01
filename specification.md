@@ -1348,7 +1348,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | name | Unique retry strategy name | string | yes |
 | delay | Time delay between retry attempts (ISO 8601 duration format) | string | no |
 | multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
-| maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or integer | no |
+| maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or number | no |
 | jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format) | float or string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -1838,7 +1838,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | type | State type | string | yes |
 | [branches](#parallel-state-branch) | List of branches for this parallel state| array | yes |
 | completionType | Option types on how to complete branch execution. | enum | no |
-| n | Used when branchCompletionType is set to `n_of_m` to specify the `n` value. | string or integer | no |
+| n | Used when branchCompletionType is set to `n_of_m` to specify the `n` value. | string or number | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes (if end is not defined) |
@@ -2348,7 +2348,7 @@ This allows you to test if your workflow behaves properly for cases when there a
 | inputCollection | JsonPath expression selecting an array element of the states data | string | yes |
 | outputCollection | JsonPath expression specifying an array element of the states data to add the results of each iteration | string | no |
 | iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
-| max | Specifies how upper bound on how many iterations may run in parallel | string or integer | no |
+| max | Specifies how upper bound on how many iterations may run in parallel | string or number | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if subflowId is not defined |
 | workflowId | Unique Id of a workflow to be executed for each of the elements of inputCollection | string | yes if actions is not defined |
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |

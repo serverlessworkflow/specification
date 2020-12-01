@@ -787,7 +787,7 @@
           "default": "and"
         },
         "n": {
-          "type": ["integer","string"],
+          "type": ["number","string"],
           "minimum": 0.0,
           "minLength": 0,
           "description": "Used when completionType is set to 'n_of_m' to specify the 'N' value"
@@ -1392,7 +1392,7 @@
           "description": "Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array"
         },
         "max": {
-          "type": ["integer","string"],
+          "type": ["number","string"],
           "minimum": 0.0,
           "minLength": 0,
           "description": "Specifies how upper bound on how many iterations may run in parallel"
