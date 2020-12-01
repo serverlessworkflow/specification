@@ -395,8 +395,6 @@ By setting workflow scope to "private"
 you can make sure that their instances can only be created via references from "parent"
 workflows.
 
-tihomir
-
 #### Function Definition
 
 | Parameter | Description | Type | Required |
