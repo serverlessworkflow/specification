@@ -245,6 +245,7 @@ which would set the workflow version to `1.0.0`.
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
 | schemaVersion | Workflow schema version | string | no |
+| scope | Defines the scope of this workflow. Can be either "public" or "private". Default is "public" | string | no |
 | [dataInputSchema](#Workflow-Data-Input) | URI to JSON Schema that workflow data input adheres to | string | no |
 | [dataOutputSchema](#Workflow-data-output) | URI to JSON Schema that workflow data output adheres to | string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
@@ -381,6 +382,20 @@ The `retries` property can be either an in-line [retry](#Retry-Definition) defin
 a resource containing an array of [retry](#Retry-Definition) definition. 
 Referenced resource can be used by multiple workflow definitions. For more information about 
 using and referencing retry definitions see the [Workflow Error Handling](#Workflow-Error-Handling) section.
+
+The `scope` property defines the visibility of the workflow. The default value of this property
+is "public", meaning there are no restrictions on instances creation of this workflow.
+It's instances can be triggered by outside events, service calls, and they can be publicly exposed to users
+(as service endpoints for example). 
+Workflow scope can also be declared as "private" meaning they can only
+be instantiated internally (are not publicly exposed). A good use case for private workflow scope are
+workflows referenced by [SubFlow](#SubFlow-State) states, and/or workflows referenced 
+by [Parallel state](#Parallel-State) [branches](#parallel-state-branch). 
+By setting workflow scope to "private"
+you can make sure that their instances can only be created via references from "parent"
+workflows.
+
+tihomir
 
 #### Function Definition
 

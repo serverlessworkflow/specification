@@ -30,6 +30,15 @@
           "description": "Serverless Workflow schema version",
           "minLength": 1
         },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "default": "public",
+          "description": "Defines the scope of this workflow. Can be either 'public' or 'private'. Default is 'public'"
+        },
         "dataInputSchema": {
           "type": "string",
           "format": "uri",
