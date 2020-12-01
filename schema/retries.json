@@ -34,7 +34,7 @@
         },
         "maxAttempts": {
           "type": ["integer","string"],
-          "minimum": 1,
+          "minimum": 1.0,
           "minLength": 0,
           "description": "Maximum number of retry attempts."
         },
