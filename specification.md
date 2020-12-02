@@ -385,14 +385,14 @@ using and referencing retry definitions see the [Workflow Error Handling](#Workf
 
 The `scope` property defines the visibility of the workflow. The default value of this property
 is "public", meaning there are no restrictions on instances creation of this workflow.
-It's instances can be triggered by outside events, service calls, and they can be publicly exposed to users
+It's instances can be triggered by outside events, and it can be publicly exposed to users
 (as service endpoints for example). 
-Workflow scope can also be declared as "private" meaning they can only
-be instantiated internally (are not publicly exposed). A good use case for private workflow scope are
-workflows referenced by [SubFlow](#SubFlow-State) states, and/or workflows referenced 
-by [Parallel state](#Parallel-State) [branches](#parallel-state-branch). 
+Workflow scope can also be declared as "private" meaning it can only
+be instantiated internally (is not publicly exposed). A good use case for private workflow scope are
+workflows referenced by [SubFlow](#SubFlow-State) states, and/or referenced 
+by [Parallel states](#Parallel-State) [branches](#parallel-state-branch). 
 By setting workflow scope to "private"
-you can make sure that their instances can only be created via references from "parent"
+you can enforce that their instances can only be created via references from "parent"
 workflows.
 
 #### Function Definition
