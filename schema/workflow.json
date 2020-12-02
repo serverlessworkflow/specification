@@ -1975,7 +1975,7 @@
         "compensate": {
           "type": "boolean",
           "default": false,
-          "description": "If set to true, triggers workflow compensation when before workflow executin completes. Default is false"
+          "description": "If set to true, triggers workflow compensation before workflow execution completes. Default is false"
         }
       },
       "if": {
