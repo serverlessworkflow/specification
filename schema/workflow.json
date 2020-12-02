@@ -788,7 +788,7 @@
         },
         "n": {
           "type": ["number","string"],
-          "minimum": 0.0,
+          "minimum": 0,
           "minLength": 0,
           "description": "Used when completionType is set to 'n_of_m' to specify the 'N' value"
         },
@@ -1393,7 +1393,7 @@
         },
         "max": {
           "type": ["number","string"],
-          "minimum": 0.0,
+          "minimum": 0,
           "minLength": 0,
           "description": "Specifies how upper bound on how many iterations may run in parallel"
         },
