@@ -4,7 +4,7 @@ This list acknowledges community contributors to the Serverless Workflow
 project. 
 
 We welcome everyone to join our community and contribute. 
-For more information on how, please reference the ['how to contribute'](contributing.md) doc.
+For more information on how, please reference the ['how to contribute'](../contributing.md) doc.
 
 We try to add every contributor here, but if for some reason we missed 
 adding your name, feel free to add it via pull request to this document or let 
