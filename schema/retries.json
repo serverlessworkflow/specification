@@ -34,15 +34,15 @@
         },
         "maxAttempts": {
           "type": ["number","string"],
-          "minimum": 1.0,
+          "minimum": 1,
           "minLength": 0,
           "description": "Maximum number of retry attempts."
         },
         "jitter": {
           "type": ["number","string"],
-          "minimum": 0.0,
-          "maximum": 1.0,
-          "description": "If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format)"
+          "minimum": 0,
+          "maximum": 1,
+          "description": "If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0 and 1). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format)"
         }
       },
       "required": [
