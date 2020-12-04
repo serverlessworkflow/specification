@@ -9,6 +9,7 @@ State machines/Workflows have a long history in software design and development.
 - [Huawei FunctionGraph workflow definition](#Huawei-FunctionGraph-workflow-definition)
 - [Flogo](#Flogo)
 - [Alibaba FunctionFlow](#Alibaba-FunctionFlow)
+- [Common Workflow Language](#Common-Workflow-Language)
 
 ## Workflow Patterns
 The research of the [Workflow Patterns Initiative](http://www.workflowpatterns.com/) provides a thorough examination of the various perspectives (control flow, data, resource, and exception handling) that need to be supported by a workflow language.
@@ -19,7 +20,7 @@ The research of the [Workflow Patterns Initiative](http://www.workflowpatterns.c
 
 <details>
   <summary>BPMN model</summary>
-  
+
   BPMN provides the following entities to define workflows:
 
 - Tasks: Orchestrate interactions between systems and people
@@ -30,12 +31,12 @@ The research of the [Workflow Patterns Initiative](http://www.workflowpatterns.c
   - Condition Events
   - Message Event: Enable communication between different workflow instances
     - Throw
-    - Catch  
-  - Timer Events  
+    - Catch
+  - Timer Events
 - Gateways: Enable fork/join behaviors based on certain condition
   - Exclusive
   - Parallel
-  - Complex  
+  - Complex
 - Aggregation: Provide a mechanism to deal with complexity when workflows become to large to understand
   - Embedded Sub Process
   - Call Activity
@@ -98,7 +99,7 @@ The [BPMN specification](https://www.omg.org/spec/BPMN/) provides XML Schemas fo
 - name
 - description
 - action or workflow, otherwise it's a no-op
-- input (constructs action/subworkflow input parameters from the context of the task) 
+- input (constructs action/subworkflow input parameters from the context of the task)
 - publish (decides which action/subworkflow outputs are put into the context)
 - publish-on-error
 - with-items (processes items of a collection, i.e. the action/workflow executes multiple times)
@@ -164,6 +165,10 @@ step types:
   - iterationMapping (to define branching)
 
   </details>
+
+## Common Workflow Language
+
+The [Common Workflow Language (CWL)](https://www.commonwl.org/) is an open standard for describing analysis workflows and tools in a way that makes them portable and scalable across a variety of software and hardware environments, from workstations to cluster, cloud, and high performance computing (HPC) environments. CWL is designed to meet the needs of data-intensive science, such as Bioinformatics, Medical Imaging, Astronomy, High Energy Physics, and Machine Learning.
 
 ## Others
 
