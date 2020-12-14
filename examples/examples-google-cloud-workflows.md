@@ -793,9 +793,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
                     }
                 }
             ],
-            "transition": {
-                "nextState": "EvaluateAResults"
-            }
+            "transition": { "nextState": "EvaluateAResults" }
         },
         {
             "name": "EvaluateAResults",
@@ -804,28 +802,21 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
                 {
                     "name": "Less than 10",
                     "condition": "{{ $.body[?(@.SomeField < 10)] }}",
-                    "transition": {
-                        "nextState": "CallSmall"
-                    }
+                    "transition": { "nextState": "CallSmall" }
                 },
                 {
                     "name": "Less than 100",
                     "condition": "{{ $.body[?(@.SomeField < 100)] }}",
-                    "transition": {
-                        "nextState": "CallMedium"
-                    }
+                    "transition": { "nextState": "CallMedium" }
                 }
             ],
             "default": {
-                "transition": {
-                    "nextState": "CallLarge"
-                }
+                "transition": { "nextState": "CallLarge" }
             }
         },
         {
             "name": "CallSmall",
             "type":"operation",
-            "start": { "kind": "default" },
             "actions": [
                 {
                     "functionRef": {
@@ -838,7 +829,6 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
         {
             "name": "CallMedium",
             "type":"operation",
-            "start": { "kind": "default" },
             "actions": [
                 {
                     "functionRef": {
@@ -851,7 +841,6 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
         {
             "name": "CallLarge",
             "type":"operation",
-            "start": { "kind": "default" },
             "actions": [
                 {
                     "functionRef": {
