@@ -60,6 +60,9 @@ us know in chat or team meeting.
     
 * **Oracle Cloud Infrastructure**
     * Kay Singh
-    * Jorgen Johnson      
+    * Jorgen Johnson     
+    
+* **Sophos**
+    * Matt Nicholls 
     
 
