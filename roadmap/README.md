@@ -80,6 +80,7 @@ _Status description:_
 | Status | Description | Comments |
 | --- | --- |  --- |
 | ✔️| Adding Workflow Compensation capabilities (cmp [Compensating Transaction](https://docs.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), [SAGA pattern](https://microservices.io/patterns/data/saga.html)) | [spec doc](../specification.md) |
+| ✔️| Adding comparison examples with Google Cloud Workflow language| [examples doc](../examples/examples-google-cloud-workflows.md) |
 | 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
