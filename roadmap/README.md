@@ -79,7 +79,15 @@ _Status description:_
 
 | Status | Description | Comments |
 | --- | --- |  --- |
-| 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) | |
-| 🚩 | Decide on state/task/stage/step naming convention | [issue link](https://github.com/cncf/wg-serverless/issues/127) |
-| ✏️ | Finish specification primer document | [wiki](https://github.com/serverlessworkflow/specification/wiki) |
-| ✔️| Adding Workflow Compensation capabilities | [spec doc](../specification.md) |
+| ✔️| Adding Workflow Compensation capabilities (cmp [Compensating Transaction](https://docs.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), [SAGA pattern](https://microservices.io/patterns/data/saga.html)) | [spec doc](../specification.md) |
+| 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
+| 🚩 | Workflow invocation bindings |  |
+| 🚩 | CE Subscriptions & Discovery |  |
+| 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
+| 🚩 | Uniqueness constraint for workflows | [issue](https://github.com/serverlessworkflow/specification/issues/146) |
+| 🚩 | Function invocations (GRPC) |  |
+| 🚩 | OpenAPI endpoint selection |  |
+| 🚩 | Data triggers |  |
+| 🚩 | JSON schema checks |  |
+| 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
+| ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
