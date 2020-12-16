@@ -92,7 +92,7 @@ languages.
             "type": "inject",
             "start": { "kind": "default" },
             "data": {
-                "outputVar": "{{ Hello $.firstName $.lastName }}"
+                "outputVar": "Hello {{ $.firstName }} {{ $.lastName }}"
             },
             "stateDataFilter": {
                 "dataOutputPath": "{{ $.outputVar }}"
