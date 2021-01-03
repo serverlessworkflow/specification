@@ -1792,40 +1792,25 @@
       }
     },
     "start": {
-      "type": "object",
-      "description": "State start definition",
-      "properties": {
-        "kind": {
-          "type": "string",
-          "enum": [
-            "default",
-            "scheduled"
-          ],
-          "description": "Kind of start definition"
+      "anyOf": [
+        {
+          "type": "boolean",
+          "description": "State start definition",
+          "default": true
         },
-        "schedule": {
-          "description": "If kind is 'scheduled', define when the time/repeating intervals at which workflow instances can/should be started",
-          "$ref": "#/definitions/schedule"
+        {
+          "type": "object",
+          "description": "State start definition",
+          "properties": {
+            "schedule": {
+              "description": "Define the time/repeating intervals at which workflow instances can/should be started",
+              "$ref": "#/definitions/schedule"
+            }
+          },
+          "required": [
+          ]
         }
-      },
-      "if": {
-        "properties": {
-          "kind": {
-            "const": "scheduled"
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "kind",
-          "schedule"
-        ]
-      },
-      "else": {
-        "required": [
-          "kind"
-        ]
-      }
+      ]
     },
     "schedule": {
       "type": "object",
@@ -1863,50 +1848,39 @@
       ]
     },
     "end": {
-      "type": "object",
-      "description": "State end definition",
-      "properties": {
-        "kind": {
-          "type": "string",
-          "enum": [
-            "default",
-            "terminate",
-            "event"
-          ],
-          "description": "Kind of end definition"
-        },
-        "produceEvents": {
-          "type": "array",
-          "description": "Used if kind is event. Array of events to be produced",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/produceeventdef"
-          }
-        },
-        "compensate": {
+      "anyOf": [
+        {
           "type": "boolean",
-          "default": false,
-          "description": "If set to true, triggers workflow compensation before workflow execution completes. Default is false"
+          "description": "State end definition",
+          "default": true
+        },
+        {
+          "type": "object",
+          "description": "State end definition",
+          "properties": {
+            "terminate": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true, completes all execution flows in the given workflow instance"
+            },
+            "produceEvents": {
+              "type": "array",
+              "description": "Used if kind is event. Array of events to be produced",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/produceeventdef"
+              }
+            },
+            "compensate": {
+              "type": "boolean",
+              "default": false,
+              "description": "If set to true, triggers workflow compensation before workflow execution completes. Default is false"
+            }
+          },
+          "required": [
+          ]
         }
-      },
-      "if": {
-        "properties": {
-          "kind": {
-            "const": "event"
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "kind",
-          "produceEvents"
-        ]
-      },
-      "else": {
-        "required": [
-          "kind"
-        ]
-      }
+      ]
     },
     "produceeventdef": {
       "type": "object",

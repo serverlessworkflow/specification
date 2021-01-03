@@ -62,15 +62,11 @@ data output, which is:
   {  
      "name":"Hello State",
      "type":"inject",
-     "start": {
-       "kind": "default"
-     },
+     "start": true,
      "data": {
         "result": "Hello World!"
      },
-     "end": {
-        "kind": "default"
-     }
+     "end": true
   }
 ]
 }
@@ -87,12 +83,10 @@ description: Inject Hello World
 states:
 - name: Hello State
   type: inject
-  start:
-    kind: default
+  start: true
   data:
     result: Hello World!
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -156,9 +150,7 @@ Which is added to the states data and becomes the workflow data output.
   {  
      "name":"Greet",
      "type":"operation",
-     "start": {
-       "kind": "default"
-     },
+     "start": true,
      "actions":[  
         {  
            "functionRef": {
@@ -172,9 +164,7 @@ Which is added to the states data and becomes the workflow data output.
            }
         }
      ],
-     "end": {
-       "kind": "default"
-     }
+     "end": true
   }
 ]
 }
@@ -194,8 +184,7 @@ functions:
 states:
 - name: Greet
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: greetingFunction
@@ -203,8 +192,7 @@ states:
         name: "{{ $.person.name }}"
     actionDataFilter:
       dataResultsPath: "{{ $.greeting }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -312,9 +300,7 @@ filters what is selected to be the state data output which then becomes the work
   {  
      "name":"Greet",
      "type":"event",
-     "start": {
-       "kind": "default"
-     },
+     "start": true,
      "onEvents": [{
          "eventRefs": ["GreetingEvent"],
          "eventDataFilter": {
@@ -334,9 +320,7 @@ filters what is selected to be the state data output which then becomes the work
      "stateDataFilter": {
         "dataOutputPath": "{{ $.payload.greeting }}"
      },
-     "end": {
-       "kind": "default"
-     }
+     "end": true
   }
 ]
 }
@@ -360,8 +344,7 @@ functions:
 states:
 - name: Greet
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - GreetingEvent
@@ -374,8 +357,7 @@ states:
           name: "{{ $.greet.name }}"
   stateDataFilter:
     dataOutputPath: "{{ $.payload.greeting }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -434,9 +416,7 @@ result of the workflow execution.
 "states":[  
 {
  "name":"Solve",
- "start": {
-  "kind": "default"
-},
+ "start": true,
  "type":"foreach",
  "inputCollection": "{{ $.expressions }}",
  "iterationParam": "singleexpression",
@@ -454,9 +434,7 @@ result of the workflow execution.
  "stateDataFilter": {
     "dataOutputPath": "{{ $.results }}"
  },
- "end": {
-   "kind": "default"
- }
+ "end": true
 }
 ]
 }
@@ -475,8 +453,7 @@ functions:
   operation: http://myapis.org/mapthapis.json#solveExpression
 states:
 - name: Solve
-  start:
-    kind: default
+  start: true
   type: foreach
   inputCollection: "{{ $.expressions }}"
   iterationParam: singleexpression
@@ -488,8 +465,7 @@ states:
         expression: "{{ $.singleexpression }}"
   stateDataFilter:
     dataOutputPath: "{{ $.results }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -530,9 +506,7 @@ to finish execution before it can transition (end workflow execution in this cas
   {  
      "name": "ParallelExec",
      "type": "parallel",
-     "start": {
-       "kind": "default"
-     },
+     "start": true,
      "completionType": "and",
      "branches": [
         {
@@ -544,9 +518,7 @@ to finish execution before it can transition (end workflow execution in this cas
           "workflowId": "longdelayworkflowid"
         }
      ],
-     "end": {
-       "kind": "default"
-     }
+     "end": true
   }
 ]
 }
@@ -563,16 +535,14 @@ description: Executes two branches in parallel
 states:
 - name: ParallelExec
   type: parallel
-  start:
-    kind: default
+  start: true
   completionType: and
   branches:
   - name: ShortDelayBranch
     workflowId: shortdelayworkflowid
   - name: LongDelayBranch
     workflowId: longdelayworkflowid
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -630,9 +600,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
   {  
      "name":"CheckVisaStatus",
      "type":"switch",
-     "start": {
-        "kind": "default"
-     },
+     "start": true,
      "eventConditions": [
         {
           "eventRef": "visaApprovedEvent",
@@ -658,25 +626,19 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
     "name": "HandleApprovedVisa",
     "type": "subflow",
     "workflowId": "handleApprovedVisaWorkflowID",
-    "end": {
-      "kind": "default"
-    }
+    "end": true
   },
   {
       "name": "HandleRejectedVisa",
       "type": "subflow",
       "workflowId": "handleRejectedVisaWorkflowID",
-      "end": {
-        "kind": "default"
-      }
+      "end": true
   },
   {
       "name": "HandleNoVisaDecision",
       "type": "subflow",
       "workflowId": "handleNoVisaDecisionWorkfowId",
-      "end": {
-        "kind": "default"
-      }
+      "end": true
   }
 ]
 }
@@ -700,8 +662,7 @@ events:
 states:
 - name: CheckVisaStatus
   type: switch
-  start:
-    kind: default
+  start: true
   eventConditions:
   - eventRef: visaApprovedEvent
     transition:
@@ -716,18 +677,15 @@ states:
 - name: HandleApprovedVisa
   type: subflow
   workflowId: handleApprovedVisaWorkflowID
-  end:
-    kind: default
+  end: true
 - name: HandleRejectedVisa
   type: subflow
   workflowId: handleRejectedVisaWorkflowID
-  end:
-    kind: default
+  end: true
 - name: HandleNoVisaDecision
   type: subflow
   workflowId: handleNoVisaDecisionWorkfowId
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -787,9 +745,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
       {  
          "name":"CheckApplication",
          "type":"switch",
-         "start": {
-            "kind": "default"
-         },
+         "start": true,
          "dataConditions": [
             {
               "condition": "{{ $.applicants[?(@.age >= 18)] }}",
@@ -814,9 +770,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
         "name": "StartApplication",
         "type": "subflow",
         "workflowId": "startApplicationWorkflowId",
-        "end": {
-          "kind": "default"
-        }
+        "end": true
       },
       {  
         "name":"RejectApplication",
@@ -832,9 +786,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
               }
            }
         ],
-        "end": {
-          "kind": "default"
-        }
+        "end": true
     }
    ]
 }
@@ -854,8 +806,7 @@ functions:
 states:
 - name: CheckApplication
   type: switch
-  start:
-    kind: default
+  start: true
   dataConditions:
   - condition: "{{ $.applicants[?(@.age >= 18)] }}"
     transition:
@@ -869,8 +820,7 @@ states:
 - name: StartApplication
   type: subflow
   workflowId: startApplicationWorkflowId
-  end:
-    kind: default
+  end: true
 - name: RejectApplication
   type: operation
   actionMode: sequential
@@ -879,8 +829,7 @@ states:
       refName: sendRejectionEmailFunction
       parameters:
         applicant: "{{ $.applicant }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -942,9 +891,7 @@ The data output of the workflow contains the information of the exception caught
   {  
     "name":"ProvisionOrder",
     "type":"operation",
-    "start": {
-      "kind": "default"
-    },
+    "start": true,
     "actionMode":"sequential",
     "actions":[  
        {  
@@ -987,33 +934,25 @@ The data output of the workflow contains the information of the exception caught
    "name": "MissingId",
    "type": "subflow",
    "workflowId": "handleMissingIdExceptionWorkflow",
-   "end": {
-     "kind": "default"
-   }
+   "end": true
 },
 {
    "name": "MissingItem",
    "type": "subflow",
    "workflowId": "handleMissingItemExceptionWorkflow",
-   "end": {
-     "kind": "default"
-   }
+   "end": true
 },
 {
    "name": "MissingQuantity",
    "type": "subflow",
    "workflowId": "handleMissingQuantityExceptionWorkflow",
-   "end": {
-     "kind": "default"
-   }
+   "end": true
 },
 {
    "name": "ApplyOrder",
    "type": "subflow",
    "workflowId": "applyOrderWorkflowId",
-   "end": {
-     "kind": "default"
-   }
+   "end": true
 }
 ]
 }
@@ -1033,8 +972,7 @@ functions:
 states:
 - name: ProvisionOrder
   type: operation
-  start:
-    kind: default
+  start: true
   actionMode: sequential
   actions:
   - functionRef:
@@ -1058,23 +996,19 @@ states:
 - name: MissingId
   type: subflow
   workflowId: handleMissingIdExceptionWorkflow
-  end:
-    kind: default
+  end: true
 - name: MissingItem
   type: subflow
   workflowId: handleMissingItemExceptionWorkflow
-  end:
-    kind: default
+  end: true
 - name: MissingQuantity
   type: subflow
   workflowId: handleMissingQuantityExceptionWorkflow
-  end:
-    kind: default
+  end: true
 - name: ApplyOrder
   type: subflow
   workflowId: applyOrderWorkflowId
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -1139,9 +1073,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
     {  
       "name":"SubmitJob",
       "type":"operation",
-      "start": {
-         "kind": "default"
-      },
+      "start": true,
       "actionMode":"sequential",
       "actions":[  
       {  
@@ -1175,9 +1107,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       "name": "SubmitError",
       "type": "subflow",
       "workflowId": "handleJobSubmissionErrorWorkflow",
-      "end": {
-        "kind": "default"
-      }
+      "end": true
   },
   {
       "name": "WaitForCompletion",
@@ -1248,9 +1178,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
         }
       }
       ],
-      "end": {
-        "kind": "default"
-      }
+      "end": true
   },
   {  
     "name":"JobFailed",
@@ -1266,9 +1194,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
         }
     }
     ],
-    "end": {
-      "kind": "default"
-    }
+    "end": true
   }
   ]
 }
@@ -1294,8 +1220,7 @@ functions:
 states:
 - name: SubmitJob
   type: operation
-  start:
-    kind: default
+  start: true
   actionMode: sequential
   actions:
   - functionRef:
@@ -1315,8 +1240,7 @@ states:
 - name: SubmitError
   type: subflow
   workflowId: handleJobSubmissionErrorWorkflow
-  end:
-    kind: default
+  end: true
 - name: WaitForCompletion
   type: delay
   timeDelay: PT5S
@@ -1356,8 +1280,7 @@ states:
       refName: reportJobSuceeded
       parameters:
         name: "{{ $.jobuid }}"
-  end:
-    kind: default
+  end: true
 - name: JobFailed
   type: operation
   actionMode: sequential
@@ -1366,8 +1289,7 @@ states:
       refName: reportJobFailed
       parameters:
         name: "{{ $.jobuid }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -1474,9 +1396,7 @@ CloudEvent upon completion of the workflow could look like:
 {
     "name": "ProvisionOrdersState",
     "type": "foreach",
-    "start": {
-       "kind": "default"
-    },
+    "start": true,
     "inputCollection": "{{ $.orders }}",
     "iterationParam": "singleorder",
     "outputCollection": "{{ $.provisionedOrders }}",
@@ -1491,7 +1411,6 @@ CloudEvent upon completion of the workflow could look like:
         }
     ],
     "end": {
-        "kind": "event",
         "produceEvents": [{
             "eventRef": "provisioningCompleteEvent",
             "data": "{{ $.provisionedOrders }}"
@@ -1519,8 +1438,7 @@ functions:
 states:
 - name: ProvisionOrdersState
   type: foreach
-  start:
-    kind: default
+  start: true
   inputCollection: "{{ $.orders }}"
   iterationParam: singleorder
   outputCollection: "{{ $.provisionedOrders }}"
@@ -1530,7 +1448,6 @@ states:
       parameters:
         order: "{{ $.singleorder }}"
   end:
-    kind: event
     produceEvents:
     - eventRef: provisioningCompleteEvent
       data: "{{ $.provisionedOrders }}"
@@ -1643,9 +1560,7 @@ have the matching patient id.
 {
 "name": "MonitorVitals",
 "type": "event",
-"start": {
-    "kind": "default"
-},
+"start": true,
 "exclusive": true,
 "onEvents": [{
         "eventRefs": ["HighBodyTemperature"],
@@ -1682,7 +1597,7 @@ have the matching patient id.
     }
 ],
 "end": {
-    "kind": "terminate"
+    "terminate": true
 }
 }]
 }
@@ -1721,8 +1636,7 @@ functions:
 states:
 - name: MonitorVitals
   type: event
-  start:
-    kind: default
+  start: true
   exclusive: true
   onEvents:
   - eventRefs:
@@ -1747,7 +1661,7 @@ states:
         parameters:
           patientid: "{{ $.patientId }}"
   end:
-    kind: terminate
+    terminate: true
 ```
 
 </td>
@@ -1831,9 +1745,7 @@ when all three of these events happened (in no particular order).
 {
     "name": "FinalizeApplication",
     "type": "event",
-    "start": {
-       "kind": "default"
-    },
+    "start": true,
     "exclusive": false,
     "onEvents": [
         {
@@ -1855,7 +1767,7 @@ when all three of these events happened (in no particular order).
         }
     ],
     "end": {
-        "kind": "terminate"
+        "terminate": true
     }
 }
 ]
@@ -1891,8 +1803,7 @@ functions:
 states:
 - name: FinalizeApplication
   type: event
-  start:
-    kind: default
+  start: true
   exclusive: false
   onEvents:
   - eventRefs:
@@ -1905,7 +1816,7 @@ states:
         parameters:
           student: "{{ $.applicantId }}"
   end:
-    kind: terminate
+    terminate: true
 ```
 
 </td>
@@ -2029,9 +1940,7 @@ And for denied credit check, for example:
         {
             "name": "CheckCredit",
             "type": "callback",
-            "start": {
-               "kind": "default"
-            },
+            "start": true,
             "action": {
                 "functionRef": {
                     "refName": "callCreditCheckMicroservice",
@@ -2073,9 +1982,7 @@ And for denied credit check, for example:
             "name": "StartApplication",
             "type": "subflow",
             "workflowId": "startApplicationWorkflowId",
-            "end": {
-                "kind": "default"
-            }
+            "end": true
         },
         {
             "name": "RejectApplication",
@@ -2091,9 +1998,7 @@ And for denied credit check, for example:
                     }
                 }
             ],
-            "end": {
-                "kind": "default"
-            }
+            "end": true
         }
     ]
 }
@@ -2121,8 +2026,7 @@ events:
 states:
 - name: CheckCredit
   type: callback
-  start:
-    kind: default
+  start: true
   action:
     functionRef:
       refName: callCreditCheckMicroservice
@@ -2147,8 +2051,7 @@ states:
 - name: StartApplication
   type: subflow
   workflowId: startApplicationWorkflowId
-  end:
-    kind: default
+  end: true
 - name: RejectApplication
   type: operation
   actionMode: sequential
@@ -2157,8 +2060,7 @@ states:
       refName: sendRejectionEmailFunction
       parameters:
         applicant: "{{ $.customer }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -2237,7 +2139,6 @@ Bidding is done via an online application and bids are received as events are as
           "name": "StoreCarAuctionBid",
           "type": "event",
           "start": {
-              "kind": "scheduled",
               "schedule": {
                 "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
               }
@@ -2256,9 +2157,7 @@ Bidding is done via an online application and bids are received as events are as
                 }]
             }
           ],
-          "end": {
-              "kind": "terminate"
-          }
+          "end": true
         }
     ]
 }
@@ -2283,7 +2182,6 @@ states:
 - name: StoreCarAuctionBid
   type: event
   start:
-    kind: scheduled
     schedule:
       interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
   exclusive: true
@@ -2295,8 +2193,7 @@ states:
         refName: StoreBidFunction
         parameters:
           bid: "{{ $.bid }}"
-  end:
-    kind: terminate
+  end: true
 ```
 
 </td>
@@ -2367,7 +2264,6 @@ The results of the inbox service called is expected to be for example:
         "name": "CheckInbox",
         "type": "operation",
         "start": {
-            "kind": "scheduled",
             "schedule": {
                 "cron": "0 0/15 * * * ?"
             }
@@ -2399,9 +2295,7 @@ The results of the inbox service called is expected to be for example:
                 }
             }
         ],
-        "end": {
-            "kind": "default"
-        }
+        "end": true
     }
 ]
 }
@@ -2424,7 +2318,6 @@ states:
 - name: CheckInbox
   type: operation
   start:
-    kind: scheduled
     schedule:
       cron: 0 0/15 * * * ?
   actionMode: sequential
@@ -2442,8 +2335,7 @@ states:
       refName: sendTextFunction
       parameters:
         message: "{{ $.singlemessage }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -2518,9 +2410,7 @@ For this example we assume that the workflow instance is started given the follo
         {
             "name": "MakeVetAppointmentState",
             "type": "operation",
-            "start": {
-                "kind": "default"
-            },
+            "start": true,
             "actions": [
                 {
                     "name": "MakeAppointmentAction",
@@ -2535,9 +2425,7 @@ For this example we assume that the workflow instance is started given the follo
                     "timeout": "PT15M"
                 }
             ],
-            "end": {
-                "kind": "default"
-            }
+            "end": true
         }
     ]
 }
@@ -2561,8 +2449,7 @@ events:
 states:
 - name: MakeVetAppointmentState
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - name: MakeAppointmentAction
     eventRef:
@@ -2572,8 +2459,7 @@ states:
     actionDataFilter:
       dataResultsPath: "{{ $.appointmentInfo }}"
     timeout: PT15M
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -2716,7 +2602,6 @@ In our workflow definition then we can reference these files rather than definin
         }
       ],
       "end": {
-        "kind": "event",
         "produceEvents": [
           {
             "eventRef": "ConfirmationCompletedEvent",
@@ -2739,7 +2624,6 @@ In our workflow definition then we can reference these files rather than definin
         }
       ],
       "end": {
-        "kind": "event",
         "produceEvents": [
           {
             "eventRef": "ConfirmationCompletedEvent",
@@ -2797,7 +2681,6 @@ states:
       parameters:
         applicant: "{{ $.customer }}"
   end:
-    kind: event
     produceEvents:
     - eventRef: ConfirmationCompletedEvent
       data: "{{ $.payment }}"
@@ -2809,7 +2692,6 @@ states:
       parameters:
         applicant: "{{ $.customer }}"
   end:
-    kind: event
     produceEvents:
     - eventRef: ConfirmationCompletedEvent
       data: "{{ $.payment }}"
@@ -2870,9 +2752,7 @@ If the retries are not successful, we want to just gracefully end workflow execu
     {
       "name": "Onboard",
       "type": "event",
-      "start": {
-        "kind": "default"
-      },
+      "start": true,
       "onEvents": [
         {
           "eventRefs": [
@@ -2902,14 +2782,10 @@ If the retries are not successful, we want to just gracefully end workflow execu
           "error": "ServiceNotAvailable",
           "code": "503",
           "retryRef": "ServicesNotAvailableRetryStrategy",
-          "end": {
-            "kind":"default"
-          }
+          "end": true
         }
       ],
-      "end": {
-        "kind": "default"
-      }
+      "end": true
     }
   ],
   "events": [
@@ -2953,8 +2829,7 @@ version: '1.0'
 states:
 - name: Onboard
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - NewPatientEvent
@@ -2969,10 +2844,8 @@ states:
   - error: ServiceNotAvailable
     code: '503'
     retryRef: ServicesNotAvailableRetryStrategy
-    end:
-      kind: default
-  end:
-    kind: default
+    end: true
+  end: true
 events:
 - name: StorePatient
   type: new.patients.event

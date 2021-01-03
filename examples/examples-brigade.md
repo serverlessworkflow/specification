@@ -78,8 +78,7 @@ functions:
 states:
 - name: GreetingState
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - execEvent
@@ -99,8 +98,7 @@ states:
         refName: consoleLogFunction
         parameters:
           log: done
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -159,8 +157,7 @@ functions:
 states:
 - name: GreetingState
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - execEvent
@@ -184,8 +181,7 @@ states:
   - error: "*"
     transition:
       nextState: HandleErrorState
-  end:
-    kind: default
+  end: true
 - name: HandleErrorState
   type: operation
   actions:
@@ -194,8 +190,7 @@ states:
       refName: consoleLogFunction
       parameters:
         log: Caught Exception $.exception
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -244,8 +239,7 @@ functions:
 states:
 - name: GreetingState
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - execEvent
@@ -263,8 +257,7 @@ states:
         refName: consoleLogFunction
         parameters:
           log: "**** I'm a GitHub 'push' handler"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -330,8 +323,7 @@ functions:
 states:
 - name: FirstGreetGroup
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - execEvent
@@ -361,8 +353,7 @@ states:
       refName: echoFunction
       parameters:
         message: bye-again
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -409,8 +400,7 @@ functions:
 states:
 - name: LogEventData
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - execEvent
@@ -427,8 +417,7 @@ states:
         refName: consoleFunction
         parameters:
           log: ">>> project $event.data.project.name clones the repo at by $.event.data.repo.cloneURL"
-  end:
-    kind: default
+  end: true
 
 ```
 
@@ -492,8 +481,7 @@ functions:
 states:
 - name: ExecActionsAndStoreResults
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - execEvent
@@ -520,8 +508,7 @@ states:
         parameters:
           destination: "{{ $.event.destination }}"
           value: "{{ $.helloResult }} {{ $.worldResults }}"
-  end:
-    kind: default
+  end: true
 
 ```
 
@@ -581,8 +568,7 @@ functions:
 states:
 - name: ExecEventState
   type: event
-  start:
-    kind: default
+  start: true
   onEvents:
   - eventRefs:
     - execEvent
@@ -613,8 +599,7 @@ states:
         refName: consoleLogFunction
         parameters:
           log: fired $.nextEvent.data.type caused by $.nextEvent.data.cause.event
-  end:
-    kind: default
+  end: true
 ```
 
 </td>

@@ -831,9 +831,7 @@ The following is a detailed description of each of the defined states.
 {
 "name": "MonitorVitals",
 "type": "event",
-"start": {
-    "kind": "default"
-},
+"start": true,
 "exclusive": true,
 "onEvents": [{
         "eventRefs": ["HighBodyTemperature"],
@@ -870,7 +868,7 @@ The following is a detailed description of each of the defined states.
     }
 ],
 "end": {
-    "kind": "terminate"
+    "terminate": true
 }
 }
 ```
@@ -881,8 +879,7 @@ The following is a detailed description of each of the defined states.
 ```yaml
 name: MonitorVitals
 type: event
-start:
-  kind: default
+start: true
 exclusive: true
 onEvents:
 - eventRefs:
@@ -907,7 +904,7 @@ onEvents:
       parameters:
         patientid: "{{ $.patientId }}"
 end:
-  kind: terminate
+  terminate: true
 ```
 
 </td>
@@ -1088,7 +1085,7 @@ between arrival of specified events. To give an example, consider the following:
         }
     ],
     "end": {
-        "kind": "terminate"
+        "terminate": true
     }
 }
 ]
@@ -1556,9 +1553,7 @@ Transitions allow you to move from one state (control-logic block) to another. F
             }
         }
     ],
-    "end": {
-        "kind": "default"
-    }
+    "end": true
 }
 ```
 
@@ -1574,8 +1569,7 @@ actions:
     refName: sendRejectionEmailFunction
     parameters:
       applicant: "{{ $.customer }}"
-end:
-  kind: default
+end: true
 ```
 
 </td>
@@ -1620,9 +1614,7 @@ Once all actions have been performed, a transition to another state can occur.
 {  
      "name":"CheckVisaStatus",
      "type":"switch",
-     "start": {
-        "kind": "default"
-     },
+     "start": true,
      "eventConditions": [
         {
           "eventRef": "visaApprovedEvent",
@@ -1652,8 +1644,7 @@ Once all actions have been performed, a transition to another state can occur.
 ```yaml
 name: CheckVisaStatus
 type: switch
-start:
-  kind: default
+start: true
 eventConditions:
 - eventRef: visaApprovedEvent
   transition:
@@ -1897,9 +1888,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
  {  
      "name":"ParallelExec",
      "type":"parallel",
-     "start": {
-       "kind": "default"
-     },
+     "start": true,
      "completionType": "and",
      "branches": [
         {
@@ -1929,9 +1918,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
           ]
         }
      ],
-     "end": {
-       "kind": "default"
-     }
+     "end": true
 }
 ```
 
@@ -1941,8 +1928,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
 ```yaml
 name: ParallelExec
 type: parallel
-start:
-  kind: default
+start: true
 completionType: and
 branches:
 - name: Branch1
@@ -1957,8 +1943,7 @@ branches:
       refName: functionNameTwo
       parameters:
         order: "{{ $.someParam }}"
-end:
-  kind: default
+end: true
 ```
 
 </td>
@@ -2106,9 +2091,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
     "name": "HandleApprovedVisa",
     "type": "subflow",
     "workflowId": "handleApprovedVisaWorkflowID",
-    "end": {
-      "kind": "default"
-    }
+    "end": true
 }
 ```
 
@@ -2119,8 +2102,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 name: HandleApprovedVisa
 type: subflow
 workflowId: handleApprovedVisaWorkflowID
-end:
-  kind: default
+end: true
 ```
 
 </td>
@@ -2185,9 +2167,7 @@ Referenced workflows must declare their own [function](#Function-Definition) and
 {  
      "name":"Hello",
      "type":"inject",
-     "start": {
-       "kind": "default"
-     },
+     "start": true,
      "data": {
         "result": "Hello"
      },
@@ -2203,8 +2183,7 @@ Referenced workflows must declare their own [function](#Function-Definition) and
 ```yaml
 name: Hello
 type: inject
-start:
-  kind: default
+start: true
 data:
   result: Hello
 transition:
@@ -2412,9 +2391,7 @@ This allows you to test if your workflow behaves properly for cases when there a
 {
     "name": "ProvisionOrdersState",
     "type": "foreach",
-    "start": {
-       "kind": "default"
-    },
+    "start": true,
     "inputCollection": "{{ $.orders }}",
     "iterationParam": "singleorder",
     "outputCollection": "{{ $.provisionresults }}",
@@ -2437,8 +2414,7 @@ This allows you to test if your workflow behaves properly for cases when there a
 ```yaml
 name: ProvisionOrdersState
 type: foreach
-start:
-  kind: default
+start: true
 inputCollection: "{{ $.orders }}"
 iterationParam: "singleorder"
 outputCollection: "{{ $.provisionresults }}"
@@ -2526,7 +2502,7 @@ and our workflow is defined as:
   ],
   "states": [
   {
-      "start": { "kind":  "default" },
+      "start": true,
       "name":"SendConfirmState",
       "type":"foreach",
       "inputCollection": "{{ $.orders[?(@.completed == true)] }}",
@@ -2542,7 +2518,7 @@ and our workflow is defined as:
          }
        }
       }],
-      "end": { "kind": "default" }
+      "end": true
   }]
 }
 ```
@@ -2558,8 +2534,7 @@ functions:
 - name: sendConfirmationFunction
   operation: file://confirmationapi.json#sendOrderConfirmation
 states:
-- start:
-    kind: default
+- start: true
   name: SendConfirmState
   type: foreach
   inputCollection: "{{ $.orders[?(@.completed == true)] }}"
@@ -2571,8 +2546,7 @@ states:
       parameters:
         orderNumber: "{{ $.completedorder.orderNumber }}"
         email: "{{ $.completedorder.email }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -2647,9 +2621,7 @@ The results of each parallel action execution are stored as elements in the stat
 {
         "name": "CheckCredit",
         "type": "callback",
-        "start": {
-           "kind": "default"
-        },
+        "start": true,
         "action": {
             "functionRef": {
                 "refName": "callCreditCheckMicroservice",
@@ -2672,8 +2644,7 @@ The results of each parallel action execution are stored as elements in the stat
 ```yaml
 name: CheckCredit
 type: callback
-start:
-  kind: default
+start: true
 action:
   functionRef:
     refName: callCreditCheckMicroservice
@@ -2715,10 +2686,12 @@ If the defined callback event has not been received during this time period, the
 
 #### Start Definition
 
+Can be either `boolean` or `object` type. 
+If `object` type it has the following structure:
+
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| kind | End kind ("default", "scheduled") | enum | yes |
-| [schedule](#Schedule-Definition) | If kind is "scheduled", define time/repeating intervals at which workflow instances can/should be started | object | yes only if kind is "scheduled" |
+| [schedule](#Schedule-Definition) | If kind is "scheduled", define time/repeating intervals at which workflow instances can/should be started | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2733,7 +2706,6 @@ If the defined callback event has not been received during this time period, the
 
 ```json
 {
-  "kind": "scheduled",
   "schedule": {
     "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
   }
@@ -2744,7 +2716,6 @@ If the defined callback event has not been received during this time period, the
 <td valign="top">
 
 ```yaml
-kind: scheduled
 schedule:
   interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
 ```
@@ -2755,13 +2726,14 @@ schedule:
 
 </details>
 
-Any state can declare to be the start state of the workflow, meaning that when a workflow instance is created it will be the initial
+Any state can declare to be the start state of the workflow, meaning when a workflow instance is created it will be the initial
 state to be executed. A workflow definition can declare one workflow start state.
 
-The start definition provides a `kind` property, which describes the starting options:
-
-- **default** - The start state is always "active" and there are no restrictions imposed on its execution.
-- **scheduled** - Scheduled start states have two different choices. You can define time-based intervals during which workflow instances are **allowed**
+The start definition can be either `boolean` or `object` type.
+If `boolean` type, when set to `true`, there are no restrictions imposed on its execution.
+If `object` type, it provides the ability to set the `scheduled` property.
+The `scheduled` property allows to define scheduled workflow instances. 
+Scheduled starts have two different choices. You can define time-based intervals during which workflow instances are **allowed**
 to be created, or cron-based repeating times at which a workflow instance **should** be created. 
 
 Defining a schedule for the start definition allows you to set time intervals during which workflow instances can be created, or 
@@ -2876,10 +2848,13 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 
 #### End Definition
 
+Can be either `boolean` or `object` type. 
+If `object` type it has the following structure:
+
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| kind | End kind ("default", "terminate", or "event") | enum | yes |
-| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. If `kind` is "event", define what type of event to produce | array | yes only if `kind` is "event" |
+| terminate | If true, completes all execution flows in the given workflow instance | boolean | no |
+| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. If `kind` is "event", define what type of event to produce | array | no |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before workflow execution completes. Default is `false` | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2895,7 +2870,6 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 
 ```json
 {
-    "kind": "event",
     "produceEvents": [{
         "eventRef": "provisioningCompleteEvent",
         "data": "{{ $.provisionedOrders }}"
@@ -2907,7 +2881,6 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 <td valign="top">
 
 ```yaml
-kind: event
 produceEvents:
 - eventRef: provisioningCompleteEvent
   data: "{{ $.provisionedOrders }}"
@@ -2919,14 +2892,21 @@ produceEvents:
 
 </details>
 
-Any state with the exception of the [Switch](#Switch-State) state can declare to be the end state of the workflow, meaning that after the execution of this state is completed, workflow execution ends. Switch states require a transition to happen after their execution, thus cannot be workflow end states.
+Any state with the exception of the [Switch](#Switch-State) state can declare to be the end state of the workflow, meaning after the execution of this state is completed, workflow execution ends. 
+Switch states require a transition to happen after their execution, thus cannot be workflow end states.
+
+The end definition can be either `boolean` or `object` type.
+If `boolean` type, when set to `true`, there are no restrictions imposed on its execution.
+If `object` type, it provides the ability to set the [`produceEvents`](#ProducedEvent-Definition) `terminate`, and `compensate` properties.
 
 The end definitions provides different ways to complete workflow execution, which is set by the `kind` property:
 
-- **default** - Default workflow execution completion; no other special behavior.
-- **terminate** - Completes all execution flows in the given workflow instance. All activities/actions being executed
-are completed. If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the entire workflow instance is terminated.
-- **event** - Workflow executions completes, and one or moreCloudEvents can be produced.
+The `terminate` property, if set to `true`, completes all execution flows in the given workflow instance. 
+All activities/actions being executed are completed. 
+If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the entire workflow instance is terminated.
+
+The [`produceEvents`](#ProducedEvent-Definition) allows to define events which should be produced
+by the workflow instance before workflow stops its execution.
 
 #### ProducedEvent Definition
 
@@ -3050,9 +3030,7 @@ output of the state to transition from includes an user with the title "MANAGER"
 ],
 "states":[  
   {  
-   "start": {
-     "kind": "default"
-   },
+   "start": true,
    "name":"lowRiskState",
    "type":"operation",
    "actionMode":"Sequential",
@@ -3071,9 +3049,7 @@ output of the state to transition from includes an user with the title "MANAGER"
   {  
    "name":"highRiskState",
    "type":"operation",
-   "end": {
-     "kind": "default"
-   },
+   "end": true,
    "actionMode":"Sequential",
    "actions":[  
     {  
@@ -3097,8 +3073,7 @@ functions:
 - name: doHighRiskOperationFunction
   operation: file://myapi.json#highRisk
 states:
-- start:
-    kind: default
+- start: true
   name: lowRiskState
   type: operation
   actionMode: Sequential
@@ -3110,8 +3085,7 @@ states:
     expression: "{{ $.users[?(@.title == 'MANAGER')] }}"
 - name: highRiskState
   type: operation
-  end:
-    kind: default
+  end: true
   actionMode: Sequential
   actions:
   - functionRef:
@@ -3490,9 +3464,7 @@ and then lets us know how to greet this customer in different languages. We coul
     }],
     "states":[
         {
-            "start": {
-               "kind": "default"
-            },
+            "start": true,
             "name": "WaitForCustomerToArrive",
             "type": "event",
             "onEvents": [{
@@ -3519,9 +3491,7 @@ and then lets us know how to greet this customer in different languages. We coul
                 "dataInputPath": "{{ $.hello }} ",
                 "dataOutputPath": "{{ $.finalCustomerGreeting }}"
             },
-            "end": {
-              "kind": "default"
-            }
+            "end": true
         }
     ]
 }
@@ -4132,8 +4102,7 @@ workflow compensation must be performed.
 ```json
 {
   "end": {
-    "compensate": true,
-    "kind":"default"
+    "compensate": true
   }
 }
 ```
@@ -4143,7 +4112,6 @@ workflow compensation must be performed.
 ```yaml
 end:
   compensate: true
-  kind: default
 ```
 </td>
 </tr>
@@ -4151,7 +4119,7 @@ end:
 
 End definitions can trigger compensations by specifying the `compensate` property and setting it to `true`.
 This means that before workflow finishes its execution workflow compensation must be performed. Note that 
-in case when the end definition has its "kind" set to "event", compensation must be performed before 
+in case when the end definition has its `produceEvents` property set, compensation must be performed before 
 producing the specified events and ending workflow execution.
 
 #### Compensation Execution Details
