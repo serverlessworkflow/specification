@@ -5,7 +5,6 @@
 - [ ] Specification
 - [ ] Schema
 - [ ] Examples
-- [ ] Usecases
 - [ ] Extensions
 - [ ] Roadmap
 - [ ] Use Cases
