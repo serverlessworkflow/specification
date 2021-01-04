@@ -1792,7 +1792,7 @@
       }
     },
     "start": {
-      "anyOf": [
+      "oneOf": [
         {
           "type": "boolean",
           "description": "State start definition",
@@ -1848,7 +1848,7 @@
       ]
     },
     "end": {
-      "anyOf": [
+      "oneOf": [
         {
           "type": "boolean",
           "description": "State end definition",
