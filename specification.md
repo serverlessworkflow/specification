@@ -97,6 +97,8 @@ for event-driven, serverless applications.
 ### Workflow Data
 
 Serverless Workflow data is represented in [JSON](https://www.json.org/json-en.html) format.
+Workflow data must maintain a valid JSON structure throughout workflow execution.
+
 Data flow during workflow execution can be divided into:
 
 - [Workfow data input](#Workflow-data-input)
@@ -3109,13 +3111,11 @@ The default should be that if this happens workflow execution should halt and a 
 
 #### Workflow Data Input
 
-The initial data input into a workflow instance must be a valid [JSON object](https://tools.ietf.org/html/rfc7159#section-4).
-If no input is provided the default data input is the empty object:
+The initial data input into a workflow instance must be valid [JSON](https://tools.ietf.org/html/rfc7159).
+If no initial input is provided a default one should be assumed, namely an empty JSON object:
 
 ```json
-{
-
-}
+{ }
 ```
 
 Workflow data input is passed to the workflow's [start state](#Start-Definition) state as data input.
