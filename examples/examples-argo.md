@@ -699,8 +699,9 @@ functions:
 retries:
 - name: All workflow errors retry strategy
   maxAttempts: 10
-  multiplier: PT2M
-  delay: PT1M
+  delay: PT1S
+  maxDelay: PT1M
+  multiplier: 2
 states:
 - name: retry-backoff
   type: operation

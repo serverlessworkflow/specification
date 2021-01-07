@@ -613,7 +613,8 @@ to interested parties via events (CloudEvents specification format), which we ar
             "name": "ServiceNotAvailableRetry",
             "maxAttempts": 5,
             "delay": "PT2S",
-            "multiplier": "PT2S"
+            "maxDelay": "PT60S",
+            "multiplier": 2
         }
     ]
 }

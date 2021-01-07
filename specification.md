@@ -1349,8 +1349,10 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | --- | --- | --- | --- |
 | name | Unique retry strategy name | string | yes |
 | delay | Time delay between retry attempts (ISO 8601 duration format) | string | no |
-| multiplier | Multiplier value by which interval increases during each attempt (ISO 8601 time format). For example: "PT3S" meaning the second attempt interval is increased by 3 seconds, the third interval by 6 seconds and so on | string | no |
 | maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or number | no |
+| maxDelay | Maximum amount of delay between retry attempts (ISO 8601 duration format) | string | no |
+| increment | Static duration which will be added to the delay between successive retries (ISO 8601 duration format) | string | no |
+| multiplier | Float value by which the delay is multiplied before each attempt. For example: "1.2" meaning that each successive delay is 20% longer than the previous delay.  For example, if delay is 'PT10S', then the delay between the first and second attempts will be 10 seconds, and the delay before the third attempt will be 12 seconds. | float or string | no |
 | jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format) | float or string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -1395,7 +1397,20 @@ defined workflow state errors.
 The `name` property specifies the unique name of the retry definition (strategy). This unique name 
 can be refered by workflow states [error definitions](#Error-Definition).
 
-The `delay` property specifies the time delay between retry attempts (ISO 8601 duration format).
+The `delay` property specifies the initial time delay between retry attempts (ISO 8601 duration format).
+
+The `increment` property specifies a static duration which will be added to the delay between successive retries.
+To explain this better, let's say we have the following retry definition:
+```json
+{
+  "name": "Timeout Errors Strategy",
+  "delay": "PT10S",
+  "increment": "PT2S",
+  "maxAttempts": 4
+}
+```
+which means that we will retry up to 4 times after waiting with increasing delay between attempts; 
+in this example 10, 12, 14, and 16 seconds between retries.  
 
 The `multiplier` property specifies the value by which the interval time is increased for each of the retry attempts.
 To explain this better, let's say we have the following retry definition:
@@ -1403,13 +1418,13 @@ To explain this better, let's say we have the following retry definition:
 ```json
 {
   "name": "Timeout Errors Strategy",
-  "delay": "PT1M",
-  "multiplier": "PT2M",
+  "delay": "PT10S",
+  "multiplier": 2,
   "maxAttempts": 4
 }
 ```
 which means that we will retry up to 4 times after waiting with increasing delay between attempts; 
-in this example 1, 3 (1 + 2), 5 (1 + 2 + 2), and 7 (1 + 2 + 2 + 2) minutes between retries.  
+in this example 10, 20, 40, and 80 seconds between retries.  
 
 The `maxAttempts` property determines the maximum number of retry attempts allowed and is a positive integer value.
 
@@ -1430,6 +1445,28 @@ will be added or subtracted from the delay.
 Alternatively, `jitter` may be defined as an absolute value specified as an ISO
 8601 duration. This way, the maximum amount of random time added is fixed and
 will not increase as new attempts are made.
+
+The `maxDelay` property determines the maximum amount of delay that is desired between retry attempts, and is applied 
+after `increment`, `multiplier`, and `jitter` are applied.
+
+To explain this better, let's say we have the following retry definition:
+
+```json
+{
+  "name": "Timeout Errors Strategy",
+  "delay": "PT10S",
+  "maxDelay": "PT100S",
+  "multiplier": 4,
+  "jitter": "PT1S",
+  "maxAttempts": 4
+}
+```
+which means that we will retry up to 4 times after waiting with increasing delay between attempts; 
+in this example we might observe the following series of delays:
+* 11s (min(`maxDelay`, (`delay` +/- rand(`jitter`)) => min(100, 10 + 1))
+* 43s (min(`maxDelay`, (11s * `multiplier`) +/- rand(`jitter`)) => min(100, (11 * 4) - 1))
+* 100s (min(`maxDelay`, (43s * `multiplier`) +/- rand(`jitter`)) => min(100, (43 * 4) + 0))
+* 100s (min(`maxDelay`, (100s * `multiplier`) +/- rand(`jitter`)) => min(100, (100 * 4) - 1))  
 
 For more information, refer to the [Workflow Error Handling](#Workflow-Error-Handling) sections.
 
