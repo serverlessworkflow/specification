@@ -1924,12 +1924,9 @@
           "description":  "Repeating interval (cron expression) describing when the workflow starting state should be triggered"
         },
         "directInvoke": {
-          "description": "Define if workflow instances can be created outside of the defined interval/cron",
-          "type": "string",
-          "enum": [
-            "allow",
-            "deny"
-          ]
+          "description": "Defines if workflow instances can be created outside of the interval/cron interval",
+          "type": "boolean",
+          "default": false
         },
         "timezone": {
           "type": "string",
@@ -1939,14 +1936,12 @@
       "oneOf": [
         {
           "required": [
-            "interval",
-            "directInvoke"
+            "interval"
           ]
         },
         {
           "required": [
-            "cron",
-            "directInvoke"
+            "cron"
           ]
         }
       ]

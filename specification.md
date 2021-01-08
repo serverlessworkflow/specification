@@ -2773,7 +2773,7 @@ the needed events at the defined times to trigger workflow instance creation.
 | --- | --- | --- | --- |
 | interval | Time interval describing when the workflow starting state is active. (ISO 8601 time interval format). | string | yes if `cron` not defined |
 | cron | Repeating interval (cron expression) describing when the workflow starting state should be triggered | string | yes if `interval` not defined |
-| directInvoke | Define if workflow instances can be created outside of the defined interval/cron | enum | yes |
+| directInvoke | Defines if workflow instances can be created outside of the interval/cron interval. Default value is `false` | boolean | no |
 | timezone | Timezone name (for example "America/Los_Angeles") used to evaluate the cron expression against. Not used for `interval` property as timezone can be specified there directly. If not specified, should default to local machine timezone | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2790,7 +2790,7 @@ the needed events at the defined times to trigger workflow instance creation.
 ```json
 {
    "cron": "0 0/15 * * * ?",
-   "directInvoke": "allow"
+   "directInvoke": true
 }
 ```
 
@@ -2799,7 +2799,7 @@ the needed events at the defined times to trigger workflow instance creation.
 
 ```yaml
 cron: 0 0/15 * * * ?
-directInvoke: allow
+directInvoke: true
 ```
 
 </td>
