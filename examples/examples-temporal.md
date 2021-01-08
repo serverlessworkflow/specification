@@ -49,7 +49,7 @@ where as in Serverless Workflow a wrapper is not used and RESTful function invoc
 
 ### Hello Activity
 
-[Google Cloud Workflows Example](https://github.com/GoogleCloudPlatform/workflows-samples/blob/main/src/args.workflows.json)
+[Full Temporal Example](https://github.com/temporalio/samples-java/blob/master/src/main/java/io/temporal/samples/hello/HelloActivity.java)
 
 <table>
 <tr>
