@@ -422,6 +422,7 @@ which would set the workflow version to `1.0.0`.
 | version | Workflow version | string | no |
 | schemaVersion | Workflow schema version | string | no |
 | [dataSchema](#DataSchema-Definition) | Workflow data schema. Allows to set expected structure of workflow data input and output | object | no |
+| execTimeout | Limits execution time of a workflow instance. Expressed with ISO 8601 duration format | string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
@@ -478,6 +479,25 @@ Following figure describes the main workflow definition blocks.
 <p align="center">
 <img src="media/spec/workflowdefinitionblocks.png" height="300px" alt="Serverless Workflow Definitions Blocks"/>
 </p>
+
+The `id` property defines the unique workflow identifier.
+
+The `name` property is the workflow logical name. 
+
+The `description` property can be used to give further information about the workflow.
+
+The `version` property can be used to provide a specific workflow version.
+
+The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
+to validate this workflow markup. If not provided the latest released schema version is assumed.
+
+The `execTimeout` property defines a time duration (ISO 8601 duration format) which you can use
+to limit the execution time of one instance of the workflow. If execution of a workflow instance 
+is started, and `execTimeout` is reached before its completion, that workflow instances 
+execution should stop immediately.
+For example an `execTimeout` value of "PT1M" defines that if an instance of this workflow is created,
+as has not finished execution within one minute, its execution must complete no matter what workflow
+state might be active at that time.
 
 The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
 a resource containing an array of [functions](#Function-Definition) definition. 

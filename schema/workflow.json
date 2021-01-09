@@ -33,6 +33,11 @@
         "dataSchema": {
           "$ref": "#/definitions/dataschema"
         },
+        "execTimeout": {
+          "type": "string",
+          "description": "Limits execution time of a workflow instance. Expressed with ISO 8601 duration format",
+          "minLength": 1
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         },
@@ -120,6 +125,11 @@
         },
         "dataSchema": {
           "$ref": "#/definitions/dataschema"
+        },
+        "execTimeout": {
+          "type": "string",
+          "description": "Limits execution time of a workflow instance. Expressed with ISO 8601 duration format",
+          "minLength": 1
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
