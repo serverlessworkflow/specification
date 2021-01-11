@@ -90,14 +90,14 @@ languages.
         {
             "name": "Set Output",
             "type": "inject",
-            "start": { "kind": "default" },
+            "start": true,
             "data": {
                 "outputVar": "Hello {{ $.firstName }} {{ $.lastName }}"
             },
             "stateDataFilter": {
                 "dataOutputPath": "{{ $.outputVar }}"
              },
-            "end": { "kind": "default" }
+            "end": true
         }
     ]
 }
@@ -197,7 +197,7 @@ instance is created. See the Serverless Workflow ["Workflow Data"](../specificat
         {
             "name": "DoConcat",
             "type": "inject",
-            "start": { "kind": "default" },
+            "start": true,
             "data": {
                 "array": [
                     "foo",
@@ -208,7 +208,7 @@ instance is created. See the Serverless Workflow ["Workflow Data"](../specificat
             "stateDataFilter": {
                 "dataOutputPath": "{{ concat($.array.[*]) }}"
              },
-            "end": { "kind": "default" }
+            "end": true
         }
     ]
 }
@@ -288,7 +288,7 @@ it just complicates things and is not needed.
         {
             "name": "DoStop",
             "type": "operation",
-            "start": { "kind": "default" },
+            "start": true,
             "actions": [
                 {
                     "functionRef": {
@@ -301,7 +301,7 @@ it just complicates things and is not needed.
                     }
                 }
             ],
-            "end": { "kind": "default" }
+            "end": true
         }
     ],
     "functions": [
@@ -418,7 +418,7 @@ as service invocations, where as Google Workflow uses the "call" keyword.
         {
             "name": "DoPublish",
             "type": "operation",
-            "start": { "kind": "default" },
+            "start": true,
             "actions": [
                 {
                     "functionRef": {
@@ -436,7 +436,6 @@ as service invocations, where as Google Workflow uses the "call" keyword.
                     "error": "PubSub Topic not found",
                     "code": "404",
                     "end": {
-                        "kind": "event",
                         "produceEvents": [
                             {
                                 "eventRef": "TopicError",
@@ -449,7 +448,6 @@ as service invocations, where as Google Workflow uses the "call" keyword.
                     "error": "Error authenticating to PubSub",
                     "code": "403",
                     "end": {
-                        "kind": "event",
                         "produceEvents": [
                             {
                                 "eventRef": "TopicError",
@@ -461,7 +459,6 @@ as service invocations, where as Google Workflow uses the "call" keyword.
                 {
                     "error": "*",
                     "end": {
-                        "kind": "event",
                         "produceEvents": [
                             {
                                 "eventRef": "TopicError",
@@ -471,7 +468,7 @@ as service invocations, where as Google Workflow uses the "call" keyword.
                     }
                 }
             ],
-            "end": { "kind": "default" }
+            "end": true
         }
     ],
     "functions": [
@@ -583,7 +580,7 @@ to interested parties via events (CloudEvents specification format), which we ar
         {
             "name": "ReadItem",
             "type": "operation",
-            "start": { "kind": "default" },
+            "start": true,
             "actions": [
                 {
                     "functionRef": {
@@ -596,10 +593,10 @@ to interested parties via events (CloudEvents specification format), which we ar
                     "error": "Service Not Available",
                     "code": "500",
                     "retryRef": "ServiceNotAvailableRetry",
-                    "end": { "kind": "default" }
+                    "end": true
                 }
             ],
-            "end": { "kind": "default" }
+            "end": true
         }
     ],
     "functions": [
@@ -688,9 +685,9 @@ error handlers in the "retry" statement as an expression/variable.
         {
             "name": "CallSub",
             "type":"subflow",
-            "start": { "kind": "default" },
+            "start": true,
             "workflowId": "calledsubflow",
-            "end": { "kind": "default" }
+            "end": true
         }
     ]
 }
@@ -786,7 +783,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
         {
             "name": "CallA",
             "type":"operation",
-            "start": { "kind": "default" },
+            "start": true,
             "actions": [
                 {
                     "functionRef": {
@@ -825,7 +822,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
                     }
                 }
             ],
-            "end": { "kind": "default" }
+            "end": true
         },
         {
             "name": "CallMedium",
@@ -837,7 +834,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
                     }
                 }
             ],
-            "end": { "kind": "default" }
+            "end": true
         },
         {
             "name": "CallLarge",
@@ -849,7 +846,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
                     }
                 }
             ],
-            "end": { "kind": "default" }
+            "end": true
         }
     ],
     "functions": [

@@ -151,8 +151,7 @@ functions:
 states:
 - name: MonitorVitals
   type: event
-  start:
-    kind: default
+  start: true
   exclusive: true
   onEvents:
   - eventRefs:
@@ -176,8 +175,7 @@ states:
         refName: callPulmonologist
         parameters:
           patientid: "{{ $.patientId }}"
-  end:
-    kind: terminate
+  end: true
 ```
 
 </td>

@@ -84,6 +84,7 @@ _Status description:_
 | ✔️| Updates to retry functionality | [retries: exponential backoff & max backoff](https://github.com/serverlessworkflow/specification/issues/137) [retries: max-attempts & interval](https://github.com/serverlessworkflow/specification/issues/136)|
 | ✔️| Update "directInvoke" property type | [spec doc](../specification.md) |
 | ✔️| Data schema input/output update | [spec doc](../specification.md) |
+| ✔️| Updating start and end state definitions| [spec doc](../specification.md) |
 | 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |

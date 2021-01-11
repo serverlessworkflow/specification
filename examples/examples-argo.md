@@ -85,15 +85,13 @@ functions:
 states:
 - name: whalesay
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: whalesayimage
       parameters:
         message: "{{ $.message }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -171,8 +169,7 @@ functions:
 states:
 - name: hello1
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: whalesayimage
@@ -196,8 +193,7 @@ states:
         refName: whalesayimage
         parameters:
           message: hello2b
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -275,8 +271,7 @@ functions:
 states:
 - name: A
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: echo
@@ -304,15 +299,13 @@ states:
     nextState: D
 - name: D
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: echo
       parameters:
         message: D
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -422,8 +415,7 @@ functions:
 states:
 - name: generate
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: gen-random-int-bash
@@ -438,8 +430,7 @@ states:
       refName: printmessagefunc
       parameters:
         message: "{{ $.results }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -503,8 +494,7 @@ functions:
 states:
 - name: injectdata
   type: inject
-  start:
-    kind: default
+  start: true
   data:
     greetings:
     - hello world
@@ -521,8 +511,7 @@ states:
       refName: whalesay
       parameters:
         message: "{{ $.greeting }}"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -606,8 +595,7 @@ functions:
 states:
 - name: flip-coin
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: flip-coin-function
@@ -631,8 +619,7 @@ states:
       refName: echo
     actionDataFilter:
       dataResultsPath: it was heads
-  end:
-    kind: default
+  end: true
 - name: show-results-tails
   type: operation
   actions:
@@ -640,8 +627,7 @@ states:
       refName: echo
     actionDataFilter:
       dataResultsPath: it was tails
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -705,8 +691,7 @@ retries:
 states:
 - name: retry-backoff
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: flip-coin-function
@@ -716,10 +701,8 @@ states:
   onErrors:
   - error: "*"
     retryRef: All workflow errors retry strategy
-    end:
-      kind: default
-  end:
-    kind: default
+    end: true
+  end: true
 ```
 
 </td>
@@ -796,8 +779,7 @@ functions:
 states:
 - name: flip-coin-state
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: flip-coin-function
@@ -821,8 +803,7 @@ states:
       refName: heads-function
       parameters:
         args: echo "it was heads"
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
@@ -919,8 +900,7 @@ functions:
 states:
 - name: intentional-fail-state
   type: operation
-  start:
-    kind: default
+  start: true
   actions:
   - functionRef:
       refName: intentional-fail-function
@@ -955,8 +935,7 @@ states:
       refName: celebrate-cry-function
       parameters:
         args: echo hooray!
-  end:
-    kind: default
+  end: true
 - name: cry-state
   type: operation
   actions:
@@ -964,8 +943,7 @@ states:
       refName: celebrate-cry-function
       parameters:
         args: echo boohoo!
-  end:
-    kind: default
+  end: true
 ```
 
 </td>
