@@ -33,10 +33,8 @@
         "dataSchema": {
           "$ref": "#/definitions/dataschema"
         },
-        "execTimeout": {
-          "type": "string",
-          "description": "Limits execution time of a workflow instance. Expressed with ISO 8601 duration format",
-          "minLength": 1
+        "execWindow": {
+          "$ref": "#/definitions/execwindow"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
@@ -209,12 +207,31 @@
         },
         "validUntil": {
           "type": "string",
-          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid",
+          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid"
+        }
+      }
+    },
+    "execwindow": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "type": "string",
+          "description": "Amount of time (ISO 8601 format) in the execution window",
+          "minLength": 1
+        },
+        "interrupt": {
+          "type": "boolean",
+          "description": "If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted.",
+          "default": false
+        },
+        "workflowId": {
+          "type": "string",
+          "description": "Unique Id of a workflow to be executed before workflow instance is terminated",
           "minLength": 1
         }
       },
       "required": [
-        "expression"
+        "time"
       ]
     },
     "transition": {
@@ -1857,13 +1874,13 @@
       "properties": {
         "interval": {
           "type": "string",
-          "description":  "Time interval (ISO 8601 format) describing when the workflow starting state is active"
+          "description":  "Time interval (ISO 8601 format) describing when workflow instances can be created."
         },
         "cron": {
           "$ref": "#/definitions/crondef"
         },
         "directInvoke": {
-          "description": "Defines if workflow instances can be created outside of the interval/cron interval",
+          "description": "Define if workflow instances can be created outside of the defined interval/cron",
           "type": "boolean",
           "default": false
         },

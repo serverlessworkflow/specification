@@ -422,7 +422,7 @@ which would set the workflow version to `1.0.0`.
 | version | Workflow version | string | no |
 | schemaVersion | Workflow schema version | string | no |
 | [dataSchema](#DataSchema-Definition) | Workflow data schema. Allows to set expected structure of workflow data input and output | object | no |
-| execTimeout | Limits execution time of a workflow instance. Expressed with ISO 8601 duration format | string | no |
+| [execWindow](#ExecWindow-Definition) | Defines the execution time window for a workflow instance | object | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
@@ -491,13 +491,8 @@ The `version` property can be used to provide a specific workflow version.
 The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
 to validate this workflow markup. If not provided the latest released schema version is assumed.
 
-The `execTimeout` property defines a time duration (ISO 8601 duration format) which you can use
-to limit the execution time of one instance of the workflow. If execution of a workflow instance 
-is started, and `execTimeout` is reached before its completion, that workflow instances 
-execution should stop immediately.
-For example an `execTimeout` value of "PT1M" defines that if an instance of this workflow is created,
-as has not finished execution within one minute, its execution must complete no matter what workflow
-state might be active at that time.
+The `execWindow` property is used to define execution timeout criteria for a workflow instance.
+For more information about this property and its use cases see the [execWindow definition](#ExecWindow-Definition) section.
 
 The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
 a resource containing an array of [functions](#Function-Definition) definition. 
@@ -576,6 +571,112 @@ The `retries` property can be either an in-line [retry](#Retry-Definition) defin
 a resource containing an array of [retry](#Retry-Definition) definition. 
 Referenced resource can be used by multiple workflow definitions. For more information about 
 using and referencing retry definitions see the [Workflow Error Handling](#Workflow-Error-Handling) section.
+
+#### ExecWindow Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| time | Amount of time (ISO 8601 format) in the execution window | string | yes |
+| interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted. Default is `false`  | boolean | no |
+| workflowId | Unique Id of a workflow to be executed before workflow instance is terminated | string | no |
+
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{  
+   "time": "PT2M",
+   "workflowId": "createandsendreport"
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+time: PT2M
+workflowId: createandsendreport
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+The `time` property defines the total amount of time in the execution window. Once a workflow instance is created,
+and the amount of the defined time is reached, the workflow instance needs to be terminated.
+
+The `interrupt` property defines if the currently running instance should be allowed to finish its current 
+execution flow before it needs to be terminated. If set to `true`, the current instance execution must stop immediately.
+
+The `workflowId` property defines an unique id of a sub-workflow which should be executed before the workflow instance
+is terminated.
+
+`ExecWindow` allows us to solve interesting use cases, especially within the IoT (Internet of Things) domain.
+Let's say that we have a sensor that reads temperature values in our living room every 2 minutes. 
+Our workflow acts upon these events, the first one starting a workflow instance, and every consecutive one 
+being correlated to the same instance (given the correlation id being the room name, namely "livingroom" for example).
+After every hour of collecting and processing this data, we want to build a report for all the so far collected temperatures. 
+
+For this example we could define our events in the workflow as:
+
+```json
+{  
+  ...
+  "events": [
+   {  
+     "name": "TemperatureEvent",
+     "type": "roomtemp",
+     "source": "tempsensor",
+     "correlation": [
+      { 
+        "contextAttributeName": "roomid"
+      } 
+     ]
+   }
+  ],
+  ...
+}
+```
+
+Without `execWindow` it would be pretty hard to solve this business problem with control-flow logic alone.
+With it however it becomes pretty easy. Let's look at our sample workflow definition:
+
+```json
+{  
+  ...
+  "name": "Living Room Temperature Collection Workflow",
+  "execWindow": {
+     "time": "PT1H",
+     "workflowId": "sendLivingRoomTempReport"
+  },
+  "states": [
+    ... control-flow logic for collecting and processing room temp event data...
+  ],
+  "events": [
+    ...
+  ],
+  "functions": [
+    ...
+  ]
+}
+```
+
+Here we define the `execWindow` `time` property to "PT1H" meaning that after 1 hour of our workflow instance 
+collecting living room temperature data, we want to stop collecting data, and build our report by invoking the 
+"sendlivingroomtempreport" sub-workflow, before terminating the workflow instance. After the defined 
+amount of time, the very next living room temperature event will create a new instance of our workflow
+which will then again start collecting these events for 1 hour, build the report and terminate its execution, and so on.
 
 #### Function Definition
 
@@ -2988,26 +3089,20 @@ directInvoke: true
 
 </details>
 
-The interval property uses the ISO 8601 time interval format to describe when the starting state is active.
+The `interval` property uses the ISO 8601 time interval format to describe when workflow instances can be created.
 There is a number of ways to express the time interval:
 
-1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning this start state is active
-from March 20th 2020 at 1PM UTC until May 11th 2021 at 3:30pm UTC.
-2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning this start state is active
-from March 20th 2020 at 1pm UTC and will stay active for 1 year, 2 months, 10 days 2 hours and 30 minutes.
-3. **Duration** + **End**: Defines the duration and an end, for example: "P1Y2M10DT2H30M/2020-05-11T15:30:00Z", meaning that this start state is active for
-1 year, 2 months, 10 days 2 hours and 30 minutes, or until May 11th 2020 at 3:30PM UTC, whichever comes first.
-4. **Duration**: Defines the duration only, for example: ""P1Y2M10DT2H30M"", meaning this start state is active for 1 year, 2 months, 10 days 2 hours and 30 minutes.
-Implementations have to provide the context in this case on when the duration should start to be counted, as it may be the workflow deployment time or the first time this workflow instance is created, for example.
-
-A case to consider here is when an [Event](#Event-State) state is also a workflow start state and the schedule definition is defined. Let's say we have a starting exclusive [Event](#Event-State) state
-that waits to consume event "X", meaning that the workflow instance should be created when event "X" occurs. If we also define
-a specific interval in the start schedule definition, the "waiting" for event "X" should only be started when the starting state becomes active.
-
-Once a workflow instance is created, the start state schedule can be ignored for that particular workflow instance. States should from then on rely on their timeout properties, for example, to restrict the waiting time of incoming events, function executions, etc.  
+1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning workflow intances can be
+created from March 20th 2020 at 1PM UTC until May 11th 2021 at 3:30pm UTC.
+2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning workflow instances can be created
+from March 20th 2020 at 1pm UTC and continue to do so for 1 year, 2 months, 10 days 2 hours and 30 minutes.
+3. **Duration** + **End**: Defines the duration and an end, for example: "P1Y2M10DT2H30M/2020-05-11T15:30:00Z", meaning that workflow instances can be created from
+when the first instance is created until 1 year, 2 months, 10 days 2 hours and 30 minutes from that time, or until May 11th 2020 at 3:30PM UTC, whichever comes first.
+4. **Duration**: Defines the duration only, for example: ""P1Y2M10DT2H30M"", meaning workflow instances can be created for 1 year, 2 months, 10 days 2 hours and 30 minutes
+from the time the first instance is created.
 
 The `cron` property uses a [cron expression](http://crontab.org/) 
-to describe a repeating interval upon which the state becomes active and a new workflow instance is created.
+to describe a repeating interval upon which a workflow instance should be created.
 For more information see the [cron definition](#Cron-Definition) section.
 
 The `timezone` property is used to define a time zone name to evaluate the cron expression against. If not specified, it should default to the local
