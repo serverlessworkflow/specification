@@ -85,6 +85,7 @@ _Status description:_
 | ✔️| Update "directInvoke" property type | [spec doc](../specification.md) |
 | ✔️| Data schema input/output update | [spec doc](../specification.md) |
 | ✔️| Updating start and end state definitions| [spec doc](../specification.md) |
+| ✔️| Update cron definition (adding deadline parameter)| [spec doc](../specification.md) |
 | 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
