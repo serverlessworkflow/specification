@@ -28,9 +28,20 @@
           "type": "string",
           "description": "Time delay between retry attempts (ISO 8601 duration format)"
         },
-        "multiplier": {
+        "maxDelay": {
           "type": "string",
-          "description": "Multiplier value by which interval increases during each attempt (ISO 8601 time format)"
+          "description": "Maximum time delay between retry attempts (ISO 8601 duration format)"
+        },
+        "increment": {
+          "type": "string",
+          "description": "Static value by which the delay increases during each attempt (ISO 8601 time format)"
+        },
+        "multiplier": {
+          "type": ["number", "string"],
+          "minimum": 0,
+          "minLength": 1,
+          "multipleOf": 0.01,
+          "description": "Numeric value, if specified the delay between retries is multiplied by this value."
         },
         "maxAttempts": {
           "type": ["number","string"],
