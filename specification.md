@@ -1447,7 +1447,7 @@ Alternatively, `jitter` may be defined as an absolute value specified as an ISO
 will not increase as new attempts are made.
 
 The `maxDelay` property determines the maximum amount of delay that is desired between retry attempts, and is applied 
-after `increment`, `multiplier`, and `jitter` are applied.
+after `increment`, `multiplier`, and `jitter`.
 
 To explain this better, let's say we have the following retry definition:
 

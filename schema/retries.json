@@ -37,9 +37,11 @@
           "description": "Static value by which the delay increases during each attempt (ISO 8601 time format)"
         },
         "multiplier": {
-          "type": ["number","string"],
+          "type": ["number", "string"],
           "minimum": 0,
-          "description": "Float value, if specified the delay between retries is multiplied by this value."
+          "minLength": 1,
+          "multipleOf": 0.01,
+          "description": "Numeric value, if specified the delay between retries is multiplied by this value."
         },
         "maxAttempts": {
           "type": ["number","string"],
