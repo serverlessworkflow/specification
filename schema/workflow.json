@@ -189,6 +189,24 @@
     "states"
   ],
   "definitions": {
+    "crondef": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "Repeating interval (cron expression) describing when the workflow instance should be created",
+          "minLength": 1
+        },
+        "deadline": {
+          "type": "string",
+          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation should be stopped",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "expression"
+      ]
+    },
     "transition": {
       "type": "object",
       "properties": {
@@ -1821,8 +1839,7 @@
           "description":  "Time interval (ISO 8601 format) describing when the workflow starting state is active"
         },
         "cron": {
-          "type": "string",
-          "description":  "Repeating interval (cron expression) describing when the workflow starting state should be triggered"
+          "$ref": "#/definitions/crondef"
         },
         "directInvoke": {
           "description": "Defines if workflow instances can be created outside of the interval/cron interval",

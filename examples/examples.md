@@ -2265,7 +2265,9 @@ The results of the inbox service called is expected to be for example:
         "type": "operation",
         "start": {
             "schedule": {
-                "cron": "0 0/15 * * * ?"
+                "cron": {
+                   "expression": "0 0/15 * * * ?"
+                }
             }
         },
         "actionMode": "sequential",
@@ -2319,7 +2321,8 @@ states:
   type: operation
   start:
     schedule:
-      cron: 0 0/15 * * * ?
+      cron:
+        expression: 0 0/15 * * * ?
   actionMode: sequential
   actions:
   - functionRef:
