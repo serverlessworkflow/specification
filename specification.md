@@ -2855,7 +2855,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | expression | Repeating interval (cron expression) describing when the workflow instance should be created | string | yes |
-| deadline | Specific date and time (ISO 8601 format) when the cron expression invocation should be stopped | string | no |
+| validUntil | Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2871,7 +2871,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 ```json
 {
     "expression": "0 15,30,45 * ? * *",
-    "deadline": "2021-11-05T08:15:30-05:00"
+    "validUntil": "2021-11-05T08:15:30-05:00"
 }
 ```
 
@@ -2880,7 +2880,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 
 ```yaml
 expression: 0 15,30,45 * ? * *
-deadline: '2021-11-05T08:15:30-05:00'
+validUntil: '2021-11-05T08:15:30-05:00'
 ```
 
 </td>
@@ -2892,22 +2892,22 @@ deadline: '2021-11-05T08:15:30-05:00'
 The `expression` property is a a [cron expression](http://crontab.org/) which defines 
 when a workflow instance should be created.
 
-The `deadline` property defines a date and time (using ISO 8601 format). When the 
-`deadline` is reached, the cron expression for instances creations of this workflow 
-should be stopped.
+The `validUntil` property defines a date and time (using ISO 8601 format). When the 
+`validUntil` time is reached, the cron expression for instances creations of this workflow 
+should should no longer be valid.
 
 For example let's say we have to following cron definitions:
 
 ```json
 {
     "expression": "0 15,30,45 * ? * *",
-    "deadline": "2021-11-05T08:15:30-05:00"
+    "validUntil": "2021-11-05T08:15:30-05:00"
 }
 ```
 
 This tells the runtime engine to create an instance of this workflow every hour 
 at minutes 15, 30 and 45. This is to be done until November 5, 2021, 8:15:30 am, US Eastern Standard Time
-as defined by the `deadline` property value.
+as defined by the `validUntil` property value.
 
 #### End Definition
 

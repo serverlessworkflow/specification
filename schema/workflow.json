@@ -197,9 +197,9 @@
           "description": "Repeating interval (cron expression) describing when the workflow instance should be created",
           "minLength": 1
         },
-        "deadline": {
+        "validUntil": {
           "type": "string",
-          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation should be stopped",
+          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid",
           "minLength": 1
         }
       },
