@@ -130,7 +130,7 @@ public class HelloActivity {
 ```json
 {
   "id": "HelloActivityRetry",
-  "name": "Hello Activity With Retries Workflow",
+  "name": "Hello Activity Workflow",
   "version": "1.0",
   "states": [
     {
@@ -606,8 +606,8 @@ public class HelloActivityRetry {
 
 ```json
 {
-  "id": "HelloActivity",
-  "name": "Hello Activity Workflow",
+  "id": "HelloActivityRetry",
+  "name": "Hello Activity with Retries Workflow",
   "version": "1.0",
   "states": [
     {
