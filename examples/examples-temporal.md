@@ -22,7 +22,8 @@ written in Java.
 All Temporal examples used in this document are available in their [samples-java](https://github.com/temporalio/samples-java)
 Github repository. Note that in this document we only show the Temporal workflow Java code which is relevant to 
 the actual workflow implementation. Language constructs like imports are not included, but full examples can be found 
-in the repo mentioned above. 
+in the repo mentioned above. The latest version of Temporal as of the time of writing this 
+document is [1.5.1](https://github.com/temporalio/temporal/releases/tag/v1.5.1). 
 
 We hope that these examples will give you a good start for comparing and contrasting the two workflow
 languages.
