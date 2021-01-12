@@ -2779,8 +2779,8 @@ the needed events at the defined times to trigger workflow instance creation.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| interval | Time interval describing when the workflow starting state is active. (ISO 8601 time interval format). | string | yes if `cron` not defined |
-| cron | Repeating interval (cron expression) describing when the workflow starting state should be triggered | string | yes if `interval` not defined |
+| interval | Time interval describing when the workflow instance can be created (ISO 8601 time interval format). | string | yes if `cron` not defined |
+| [cron](#Cron-Definition) | Define expression (cron) when the workflow instance should be created | object | yes if `interval` not defined |
 | directInvoke | Defines if workflow instances can be created outside of the interval/cron interval. Default value is `false` | boolean | no |
 | timezone | Timezone name (for example "America/Los_Angeles") used to evaluate the cron expression against. Not used for `interval` property as timezone can be specified there directly. If not specified, should default to local machine timezone | string | no |
 
@@ -2797,7 +2797,9 @@ the needed events at the defined times to trigger workflow instance creation.
 
 ```json
 {
-   "cron": "0 0/15 * * * ?",
+   "cron": {
+      "expression": "0 0/15 * * * ?"
+   },
    "directInvoke": true
 }
 ```
@@ -2806,7 +2808,8 @@ the needed events at the defined times to trigger workflow instance creation.
 <td valign="top">
 
 ```yaml
-cron: 0 0/15 * * * ?
+cron:
+  expression: 0 0/15 * * * ?
 directInvoke: true
 ```
 
@@ -2836,6 +2839,7 @@ Once a workflow instance is created, the start state schedule can be ignored for
 
 The `cron` property uses a [cron expression](http://crontab.org/) 
 to describe a repeating interval upon which the state becomes active and a new workflow instance is created.
+For more information see the [cron definition](#Cron-Definition) section.
 
 The `timezone` property is used to define a time zone name to evaluate the cron expression against. If not specified, it should default to the local
 machine time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezone names.
@@ -2845,6 +2849,65 @@ defining cron-based scheduled starts for the runtime implementations would mean 
 the needed events at the defined times to trigger workflow instance creation.
 
 The `directInvoke` property defines if workflow instances are allowed to be created outside of the defined interval or cron expression.
+
+#### Cron Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| expression | Repeating interval (cron expression) describing when the workflow instance should be created | string | yes |
+| validUntil | Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+    "expression": "0 15,30,45 * ? * *",
+    "validUntil": "2021-11-05T08:15:30-05:00"
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+expression: 0 15,30,45 * ? * *
+validUntil: '2021-11-05T08:15:30-05:00'
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+The `expression` property is a a [cron expression](http://crontab.org/) which defines 
+when a workflow instance should be created.
+
+The `validUntil` property defines a date and time (using ISO 8601 format). When the 
+`validUntil` time is reached, the cron expression for instances creations of this workflow 
+should should no longer be valid.
+
+For example let's say we have to following cron definitions:
+
+```json
+{
+    "expression": "0 15,30,45 * ? * *",
+    "validUntil": "2021-11-05T08:15:30-05:00"
+}
+```
+
+This tells the runtime engine to create an instance of this workflow every hour 
+at minutes 15, 30 and 45. This is to be done until November 5, 2021, 8:15:30 am, US Eastern Standard Time
+as defined by the `validUntil` property value.
 
 #### End Definition
 
