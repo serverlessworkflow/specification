@@ -86,6 +86,7 @@ _Status description:_
 | ✔️| Data schema input/output update | [spec doc](../specification.md) |
 | ✔️| Updating start and end state definitions| [spec doc](../specification.md) |
 | ✔️| Update cron definition (adding validUntil parameter)| [spec doc](../specification.md) |
+| ✔️| Add reusable expression function definitions| [spec doc](../specification.md) |
 | 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |

@@ -210,10 +210,6 @@
     "transition": {
       "type": "object",
       "properties": {
-        "expression": {
-          "type": "string",
-          "description": "JsonPath expression. Evaluates to true if returns non-empty result"
-        },
         "produceEvents": {
           "type": "array",
           "description": "Array of events to be produced",

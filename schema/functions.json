@@ -26,8 +26,17 @@
         },
         "operation": {
           "type": "string",
-          "description": "Combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. For example 'https://petstore.swagger.io/v2/swagger.json#getPetById'",
+          "description": "If type `rest`, combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. If type is `expression` defines the workflow expression.",
           "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "description": "Defines the function type. Is either `rest` or `expression`. Default is `rest`",
+          "enum": [
+            "rest",
+            "expression"
+          ],
+          "default": "rest"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
