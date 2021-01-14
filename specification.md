@@ -61,7 +61,19 @@ onto many different container/cloud platforms, expecting the same execution resu
 
 For more information on the history, development and design rationale behind the specification, see the [Serverless Workflow Wiki](https://github.com/serverlessworkflow/specification/wiki).
 
+### Focus on standards
+
+<p align="center">
+<img src="media/spec/spec-parts.png" height="350" alt="Serverless Workflow Specification Focus On Standards"/>
+</p>
+
+Serverless Workflow language takes advantage of well established and known standards such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/) specifications.
+
 ## Project Components
+
+<p align="center">
+<img src="media/spec/spec-overview.png" height="400px" alt="Serverless Workflow Specification Overview"/>
+</p>
 
 The specification has multiple components:
 
@@ -75,10 +87,6 @@ The specification has multiple components:
   Some example workflow extensions include Key Performance Indicators (KPIs), Simulation, Tracing, etc.
 * Technology Compatibility Kit (TCK) to be used as a specification conformance tool for runtime implementations.
 
-<p align="center">
-<img src="media/spec/spec-overview.png" height="400px" alt="Serverless Workflow Specification Overview"/>
-</p>
-
 ## Specification Details
 
 Following sections provide detailed descriptions of all parts of the Serverless Workflow language. 
@@ -91,12 +99,6 @@ The Serverless Workflow language is composed of:
 * [Event definitions](#Event-Definition): Reusable declarations of events that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
 * [Retry definitions](#Retry-Definition): Reusable retry definitions. Can specify retry strategies for service invocations during workflow execution.
 * [State definitions](#State-Definition): Definition of states, the building blocks of workflow `control flow logic`. States can reference the reusable function, event and retry definitions.
-
-It makes use of widely known and established specifications such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/).
-
-<p align="center">
-<img src="media/spec/spec-parts.png" height="400px" alt="Serverless Workflow Specification Components"/>
-</p>
 
 ### Workflow Data
 
