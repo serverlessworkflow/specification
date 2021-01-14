@@ -2,8 +2,8 @@
 
 ## Abstract
 
-A specification that defines a vendor-neutral and declarative workflow language that
-targets the serverless computing technology domain.
+A specification that defines a vendor-neutral and declarative workflow language,
+targeting the serverless computing technology domain.
  
 ## Status of this document
 
@@ -39,7 +39,7 @@ A key component of workflows is the domain-specific language (DSL) we use to mod
 business logic and solutions. Selecting the appropriate workflow language for our business and technology domains is 
 a very important decision to be consider. 
 
-Serverless Workflow focuses on defining a `vendor-neutral`, `platform-independent`, and `declarative` workflow
+Serverless Workflow focuses on defining a **vendor-neutral**, **platform-independent**, and **declarative** workflow
 language that targets the serverless computing technology domain. 
 It can be used to significantly bridge the gap between your unique business domain and the target technology domain.
 
@@ -146,7 +146,7 @@ way, as well as workflow runtimes to utilize OpenAPI tooling and APIs to invoke 
 
 The workflow markup allows defining non-restful services and their operations using the `metadata` property
 of [functions definitions](#Function-Definition). Note that using the function definitions `metadata` to add proprietary
-information about service execution can break the portability of the workflow langugage, meaning your
+information about service execution can break the portability of the workflow language, meaning your
 workflow model may not be executable on different platforms that do not understand it.
 
 Here is an example function definition for a service operation. 
@@ -182,6 +182,10 @@ For example:
   }]
 }
 ```
+
+Note that the referenced function definition type in this case must be `rest` (default type). 
+If the referenced function definition type is `expression`, this should be regarded as 
+an error during parsing of the workflow definition.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
@@ -253,7 +257,11 @@ Our expression function definitions can now be referenced by workflow states whe
 }
 ```
 
-Expression functions must declare their `type` parameter to be "expression". 
+Expression functions must declare their `type` parameter to be `expression`. 
+
+Note that the used function definition type in this case must be `expression` . 
+If the referenced function definition type is `rest` (default), this should be regarded as 
+an error during parsing of the workflow definition.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
@@ -598,9 +606,9 @@ The `name` property defines an unique name of the function definition.
 The `type` property defines the function type. Its value can be either `rest` or `expression`. Default value is `rest`.
 
 Depending on the function `type`, the `operation` property can be:
-* If `type` is "rest", a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'. 
+* If `type` is `rest`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'. 
   For example `https://petstore.swagger.io/v2/swagger.json#getPetById`. 
-* If `type` is "expression", defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
+* If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
 
 The [`metadata`](#Workflow-Metadata) property allows users to define custom information to function definitions.
 This allows you for example to define functions that describe of a command executions on a Docker image:
