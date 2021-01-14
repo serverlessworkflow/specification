@@ -2,8 +2,9 @@
 
 ## Abstract
 
-A specification that defines a vendor-neutral and declarative workflow language.
-
+A specification that defines a vendor-neutral and declarative workflow language that
+targets the serverless computing technology domain.
+ 
 ## Status of this document
 
 This document is a working draft.
