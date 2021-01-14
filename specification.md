@@ -64,7 +64,7 @@ For more information on the history, development and design rationale behind the
 ### Focus on standards
 
 <p align="center">
-<img src="media/spec/spec-parts.png" height="350" alt="Serverless Workflow Specification Focus On Standards"/>
+<img src="media/spec/spec-parts.png" width="500" alt="Serverless Workflow Specification Focus On Standards"/>
 </p>
 
 Serverless Workflow language takes advantage of well established and known standards such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/) specifications.
