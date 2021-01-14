@@ -122,7 +122,7 @@ Reference the following sections to learn more about workflow functions:
 * [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
 
-### Using Functions For-RESTful Service Invocations
+### Using Functions For RESTful Service Invocations
 
 [Functions](#Function-Definition) can be used to describe services and their operations that need to be invoked during 
 workflow execution. They can be referenced by states [action definitions](#Action-Definition)] to clearly 
