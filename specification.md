@@ -19,7 +19,8 @@ You can find the specification roadmap [here](roadmap/README.md).
 - [Overview](#Overview)
 - [Project Components](#Project-Components)
 - [Specification Details](#Specification-Details)
-  - [Workflow Language Components](#Workflow-Language-Components)
+  - [Core Concepts](#Core-Concepts)
+  - [Workflow Model](#Workflow-Model)
   - [Workflow Data](#Workflow-Data)
   - [Workflow Functions](#Workflow-Functions)
   - [Workflow Expressions](#Workflow-Functions)
@@ -98,7 +99,49 @@ The specification has multiple components:
 
 Following sections provide detailed descriptions of all parts of the Serverless Workflow language. 
 
-### Workflow Language Components
+### Core Concepts
+
+This section describes some of the core Serverless Workflow concepts:
+
+### Workflow Definition
+
+A workflow definition is a single artefact written in the Serverless Workflow 
+language. It consists of a set of [workflow model](#Workflow-Model) constructs,
+and defines a blueprint used by runtimes for its execution. 
+
+A business solution can be composed of any number of related workflow definitions.
+Their relationships are explicitly modelled with the Serverless Workflow language (for example
+by using [SubFlow](#SubFlow-State) states).
+
+Runtimes can initialize workflow definitions for some particular set of data inputs or events
+which forms [workflow instances](#Workflow-Instance).
+
+### Workflow Instance
+
+A workflow instance represents a single workflow execution according to the given 
+workflow definition. The should be kept isolated, but 
+still be able to have access to other running instances (via events for example). 
+
+Depending on their workflow definition, workflow instances can be short-lived or 
+can execute for days, weeks, or longer.
+
+Each workflow instances should have its unique identifier, which should remain 
+unchanged throughout its execution.
+
+Workflow definitions can describe how/when workflow instances should be created via
+the workflow state [start definition](#Start-Definition).
+For example, instance creation can be defined for some set of data, but other ways are also possible;
+you can enforce instance creations upon arrival of certain
+events with a starting [EventState](#Event-State), as well
+on a defined [schedule](#Start-Definition). 
+
+Workflow instance termination is also explicitly decribed within the workflow definition. 
+By default they should be terminated once there are no active workflow paths (all active
+paths reach a state containing the default [end definition](#End-Definition)). Other ways, such as 
+using the `terminate` property of the [end definition](#End-Definition) to terminate instance execution,
+or defining an [execution timeout](#ExecTimeout-Definition) are also possible.
+
+### Workflow Model
 
 The Serverless Workflow language is composed of:
 
@@ -2956,12 +2999,20 @@ If the defined callback event has not been received during this time period, the
 
 #### Start Definition
 
-Can be either `boolean` or `object` type. 
-If `object` type it has the following structure:
+Can be either `boolean` or `object` type. If type boolean, must be set to `true`, for example:
+
+```json
+"start": true
+```
+In this case it is assumed that the `adHoc` property has its default value of `false` and the `schedule`
+property is not defined.
+
+If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [schedule](#Schedule-Definition) | If kind is "scheduled", define time/repeating intervals at which workflow instances can/should be started | object | no |
+| adhoc | If "true", starting state becomes active again once all of execution paths complete, unless instance is terminated via a "terminate end definition". If "false" (default), starting state does not become active once it is executed. | boolean | no |
+| [schedule](#Schedule-Definition) | Define the time/repeating intervals at which workflow instances can/should be started | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2996,20 +3047,22 @@ schedule:
 
 </details>
 
-Any state can declare to be the start state of the workflow, meaning when a workflow instance is created it will be the initial
-state to be executed. A workflow definition can declare one workflow start state.
+Start definition explicitly defines how/when workflow instances should be created.
+
+Any workflow state can declare to be the starting workflow, meaning when a workflow instance is created it will be the initial
+state to be executed. A workflow definition can declare one single workflow starting state.
 
 The start definition can be either `boolean` or `object` type.
+
 If `boolean` type, when set to `true`, there are no restrictions imposed on its execution.
-If `object` type, it provides the ability to set the `scheduled` property.
-The `scheduled` property allows to define scheduled workflow instances. 
+
+If `object` type, it provides the ability to set the `adhoc` and `scheduled` properties.
+
+The `scheduled` property allows to define scheduled workflow instance creation. 
 Scheduled starts have two different choices. You can define time-based intervals during which workflow instances are **allowed**
 to be created, or cron-based repeating times at which a workflow instance **should** be created. 
 
-Defining a schedule for the start definition allows you to set time intervals during which workflow instances can be created, or 
-periodic times at which workflow instance should be created.  
-
-One use case for the interval-based schedule is the following. Let's say
+To better explain interval-based scheduled starts, et's say
 we have a workflow that orchestrates an online auction and should be "available" only from when the auction starts until it ends. 
 Customer bids should only be allowed during this time interval. Bids made before or after the defined time interval should not be allowed.
 
@@ -3044,6 +3097,19 @@ One thing to discuss when dealing with cron-based scheduled starts is when the s
 Event states define that workflow instances are triggered by the existence of the defined event(s). 
 Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
+
+The `adhoc` property defines what happens with the workflow instance once all of its execution paths complete (and workflow execution
+is not explicitly terminated by using the `terminate` property of the [state end definition](#End-Definition)).
+
+By default, as decribed in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
+active paths being executed. By setting `adhoc` to `true`, you can bypass this default behavior. In this case
+once there are no active workflow starting states, instead of terminating the instance, the instance should be kept
+alive and the workflow starting state should become active again. In this scenario you must pay close attention
+to the state [end definition](#End-Definition) as the only way to terminate a workflow instance when `adhoc` is set to `true`
+is by explicitly ending an execution path with the end definition `terminate` property, or by using the workflow [execution timeout](#ExecTimeout-Definition) definition.
+
+Some use-cases for setting `adhoc` to `true` involve data batch processing or processing of event streams.
+You can reference the [specification examples](#Examples) to see the `adhoc` property in action.
 
 #### Schedule Definition
 
