@@ -3062,7 +3062,7 @@ The `scheduled` property allows to define scheduled workflow instance creation.
 Scheduled starts have two different choices. You can define time-based intervals during which workflow instances are **allowed**
 to be created, or cron-based repeating times at which a workflow instance **should** be created. 
 
-To better explain interval-based scheduled starts, et's say
+To better explain interval-based scheduled starts, let's say
 we have a workflow that orchestrates an online auction and should be "available" only from when the auction starts until it ends. 
 Customer bids should only be allowed during this time interval. Bids made before or after the defined time interval should not be allowed.
 
@@ -3102,8 +3102,8 @@ The `adhoc` property defines what happens with the workflow instance once all of
 is not explicitly terminated by using the `terminate` property of the [state end definition](#End-Definition)).
 
 By default, as decribed in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
-active paths being executed. By setting `adhoc` to `true`, you can bypass this default behavior. In this case
-once there are no active workflow starting states, instead of terminating the instance, the instance should be kept
+active execution paths. By setting `adhoc` to `true`, you can bypass this default behavior. In this case
+once there are no active workflow execution paths, instead of terminating the instance, the instance should be kept
 alive and the workflow starting state should become active again. In this scenario you must pay close attention
 to the state [end definition](#End-Definition) as the only way to terminate a workflow instance when `adhoc` is set to `true`
 is by explicitly ending an execution path with the end definition `terminate` property, or by using the workflow [execution timeout](#ExecTimeout-Definition) definition.
