@@ -234,14 +234,14 @@ Our expression function definitions can now be referenced by workflow states whe
      "dataConditions": [
         {
           "name": "Applicant is adult",
-          "condition": "{{ func(isAdult) }}",
+          "condition": "{{ 'isAdult' }}",
           "transition": {
             "nextState": "ApproveApplication"
           }
         },
         {
           "name": "Applicant is minor",
-          "condition": "{{ func(isMinor) }}",
+          "condition": "{{ 'isMinor' }}",
           "transition": {
             "nextState": "RejectApplication"
           }
@@ -286,16 +286,17 @@ Where `expression` can be either an in-line expression using the  [JsonPath](htt
 or a reference to a defined [expression function definition](#Using-Functions-For-Expression-Evaluation).
 
 To reference a defined [expression function definition](#Using-Functions-For-Expression-Evaluation)
-the expression must have the following syntax:
+the expression must only contain the defined expression name, for example:
 
 ```text
-{{ func(definedExpressionName) }}
+{{ 'myExprName' }}
 ```
 
-where `func` is a reserved keyword that declares that it is referencing a defined expression function, and
-`definedExpressionName` is the unique name of the referenced expression function.
+where `myExprName` is the unique name of the defined expression function, and it must be enclosed in
+single quotes.
+ 
 
-To show an example of this, let's say we have the following JSON state data:
+To show some expression examples, let's say we have the following JSON state data:
 
 ```json
 {
@@ -323,13 +324,13 @@ To show an example of this, let's say we have the following JSON state data:
 }
 ```
 
-In our workflow model we can define our workflow expression function:
+In our workflow model we can define our reusable expression function:
 
 ```json
 {
 "functions": [
   { 
-    "name": "haveAdultApplicant",
+    "name": "Is Adult Applicant",
     "operation": "$..[?(@.age >= 18)]",
     "type": "expression"
   }
@@ -337,7 +338,7 @@ In our workflow model we can define our workflow expression function:
 }
 ```
 
-We can use an inline  expression inside a string type parameter to get the applicant name:
+We can use an inline expression inside a string type parameter to get the applicant name:
 
 ```json
 {
@@ -347,7 +348,8 @@ We can use an inline  expression inside a string type parameter to get the appli
 
 This would set the value of `paramName` to `Hello John Doe`.
 
-Expressions can also be used to select a portion of the JSON data, this is in particularly useful for data filters. For example:
+Expressions can also be used to select a portion of the JSON data, this is in particularly useful for data filters. 
+For example let's use another inline expression:
 
 ```json
 {
@@ -376,11 +378,11 @@ Would set the data output of the particular state to:
 In this case JsonPath expressions can also be used. 
 The expression should evaluate to true, if the result contains a subset of the JSON data, and false if it is empty. 
 
-In the following example we want reference the previously defined "haveAdultApplicant" expression function
+In the following example we want reference the previously defined "Is Adult Applicant" expression function:
 
 ```json
 {
-      "condition": "{{ func(haveAdultApplicant) }}",
+      "condition": "{{ 'Is Adult Applicant' }}",
       "transition": {
         "nextState": "StartApplication"
       }
