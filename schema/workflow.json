@@ -33,8 +33,8 @@
         "dataSchema": {
           "$ref": "#/definitions/dataschema"
         },
-        "execWindow": {
-          "$ref": "#/definitions/execwindow"
+        "execTimeout": {
+          "$ref": "#/definitions/exectimeout"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
@@ -124,8 +124,8 @@
         "dataSchema": {
           "$ref": "#/definitions/dataschema"
         },
-        "execWindow": {
-          "$ref": "#/definitions/execwindow"
+        "execTimeout": {
+          "$ref": "#/definitions/exectimeout"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
@@ -209,12 +209,12 @@
         }
       }
     },
-    "execwindow": {
+    "exectimeout": {
       "type": "object",
       "properties": {
-        "time": {
+        "interval": {
           "type": "string",
-          "description": "Amount of time (ISO 8601 format) in the execution window",
+          "description": "Timeout interval (ISO 8601 duration format)",
           "minLength": 1
         },
         "interrupt": {

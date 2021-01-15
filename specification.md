@@ -422,7 +422,7 @@ which would set the workflow version to `1.0.0`.
 | version | Workflow version | string | no |
 | schemaVersion | Workflow schema version | string | no |
 | [dataSchema](#DataSchema-Definition) | Workflow data schema. Allows to set expected structure of workflow data input and output | object | no |
-| [execWindow](#ExecWindow-Definition) | Defines the execution time window for a workflow instance | object | no |
+| [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
@@ -491,8 +491,8 @@ The `version` property can be used to provide a specific workflow version.
 The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
 to validate this workflow markup. If not provided the latest released schema version is assumed.
 
-The `execWindow` property is used to define execution timeout criteria for a workflow instance.
-For more information about this property and its use cases see the [execWindow definition](#ExecWindow-Definition) section.
+The `execTimeout` property is used to define execution timeout for a workflow instance.
+For more information about this property and its use cases see the [execTimeout definition](#ExecTimeout-Definition) section.
 
 The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
 a resource containing an array of [functions](#Function-Definition) definition. 
@@ -572,12 +572,12 @@ a resource containing an array of [retry](#Retry-Definition) definition.
 Referenced resource can be used by multiple workflow definitions. For more information about 
 using and referencing retry definitions see the [Workflow Error Handling](#Workflow-Error-Handling) section.
 
-#### ExecWindow Definition
+#### ExecTimeout Definition
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| time | Amount of time (ISO 8601 format) in the execution window | string | yes |
-| interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted. Default is `false`  | boolean | no |
+| interval | Timeout interval (ISO 8601 duration format) | string | yes |
+| interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is stopped immediately. Default is `false`  | boolean | no |
 | workflowId | Unique Id of a workflow to be executed before workflow instance is terminated | string | no |
 
 
@@ -613,16 +613,16 @@ workflowId: createandsendreport
 
 </details>
 
-The `time` property defines the total amount of time in the execution window. Once a workflow instance is created,
-and the amount of the defined time is reached, the workflow instance needs to be terminated.
+The `interval` property defines the time interval of the execution timeout. Once a workflow instance is created,
+and the amount of the defined time is reached, the workflow instance should be terminated.
 
 The `interrupt` property defines if the currently running instance should be allowed to finish its current 
-execution flow before it needs to be terminated. If set to `true`, the current instance execution must stop immediately.
+execution flow before it needs to be terminated. If set to `true`, the current instance execution should stopped immediately.
 
 The `workflowId` property defines an unique id of a sub-workflow which should be executed before the workflow instance
 is terminated.
 
-`ExecWindow` allows us to solve interesting use cases, especially within the IoT (Internet of Things) domain.
+`ExecTimeout` allows us to solve interesting use cases, especially within the IoT (Internet of Things) domain.
 Let's say that we have a sensor that reads temperature values in our living room every 2 minutes. 
 Our workflow acts upon these events, the first one starting a workflow instance, and every consecutive one 
 being correlated to the same instance (given the correlation id being the room name, namely "livingroom" for example).
@@ -649,15 +649,15 @@ For this example we could define our events in the workflow as:
 }
 ```
 
-Without `execWindow` it would be pretty hard to solve this business problem with control-flow logic alone.
-With it however it becomes pretty easy. Let's look at our sample workflow definition:
+Without `execTimeout` it would be pretty hard to solve this business problem with control-flow logic alone.
+With it, however, it becomes pretty easy. Let's look at our sample workflow definition:
 
 ```json
 {  
   ...
   "name": "Living Room Temperature Collection Workflow",
-  "execWindow": {
-     "time": "PT1H",
+  "execTimeout": {
+     "interval": "PT1H",
      "workflowId": "sendLivingRoomTempReport"
   },
   "states": [
@@ -672,11 +672,11 @@ With it however it becomes pretty easy. Let's look at our sample workflow defini
 }
 ```
 
-Here we define the `execWindow` `time` property to "PT1H" meaning that after 1 hour of our workflow instance 
-collecting living room temperature data, we want to stop collecting data, and build our report by invoking the 
-"sendlivingroomtempreport" sub-workflow, before terminating the workflow instance. After the defined 
-amount of time, the very next living room temperature event will create a new instance of our workflow
-which will then again start collecting these events for 1 hour, build the report and terminate its execution, and so on.
+Here we define the `execTimeout` `time` property to "PT1H", meaning that after 1 hour of the workflow instance 
+collecting living room temperature data, we want to stop collecting it. Then we build our report by invoking the 
+"sendlivingroomtempreport" sub-workflow before terminating the workflow instance. After the defined 
+amount of time, the very next living room temperature event will create a new workflow instance
+which will again start collecting these events for 1 hour, build the report and terminate its execution.
 
 #### Function Definition
 
