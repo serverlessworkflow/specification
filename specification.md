@@ -119,8 +119,8 @@ which forms [workflow instances](#Workflow-Instance).
 ### Workflow Instance
 
 A workflow instance represents a single workflow execution according to the given 
-workflow definition. The should be kept isolated, but 
-still be able to have access to other running instances (via events for example). 
+workflow definition. Instances should be kept isolated, but 
+still be able to have access to other running instances. 
 
 Depending on their workflow definition, workflow instances can be short-lived or 
 can execute for days, weeks, or longer.
@@ -131,16 +131,19 @@ unchanged throughout its execution.
 Workflow definitions can describe how/when workflow instances should be created via
 the workflow state [start definition](#Start-Definition).
 For example, instance creation can be defined for some set of data, but other ways are also possible;
-you can enforce instance creations upon arrival of certain
-events with a starting [EventState](#Event-State), as well
+you can enforce instance creations upon arrival of certain events with a starting [EventState](#Event-State), as well
 on a defined [schedule](#Start-Definition). 
 
-Workflow instance termination is also explicitly decribed within the workflow definition. 
+Workflow instance termination is also explicitly decribed in the workflow definition. 
 By default they should be terminated once there are no active workflow paths (all active
 paths reach a state containing the default [end definition](#End-Definition)). Other ways, such as 
 using the `terminate` property of the [end definition](#End-Definition) to terminate instance execution,
 or defining an [execution timeout](#ExecTimeout-Definition) are also possible.
 
+This default behavior can be changed by setting the `adhoc` property of the states [start definition](#Start-Definition) to `true`.
+In this case the only way to terminate a workflow instance is for its control flow to explicitly end with a "terminate" [end definition](#End-Definition),
+or if the defined [`execTimeout`](#ExecTimeout-Definition) time is reached.
+ 
 ### Workflow Model
 
 The Serverless Workflow language is composed of:
@@ -2957,7 +2960,7 @@ If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| adhoc | If "true", a starting event state state (if there is one) becomes active again once all of execution paths complete, unless instance is terminated via a "terminate end definition". If "false" (default), starting state does not become active once it is executed. | boolean | no |
+| adhoc | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
 | [schedule](#Schedule-Definition) | Define the time/repeating intervals at which workflow instances can/should be started | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3045,18 +3048,15 @@ Event states define that workflow instances are triggered by the existence of th
 Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
 
-The `adhoc` property is useful when we have a workflow definition with a starting [Event state](#Event-State).
-When this is the case, it defines what happens with the workflow instance once all of its execution paths complete (and workflow execution
-is not explicitly terminated by using the `terminate` property of the [state end definition](#End-Definition)).
-If the workflow definition includes a starting state which is not an Event state, the `adhoc` property can be ignored.
-It's main purpose is to allow handling of event streams.
+The `adhoc` property allows you to change the default behavior of workflow instances.
+By default, as described in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
+active execution paths, one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
+its [`execTimeout`](#ExecTimeout Definition) time is reached. 
 
-By default, as decribed in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
-active execution paths. By setting `adhoc` to `true`, you can bypass this default behavior. In this case
-once there are no active workflow execution paths, instead of terminating the instance, the instance should be kept
-alive and the starting Event-state should become active again. In this scenario you must pay close attention
-to the state [end definition](#End-Definition) as the only way to terminate a workflow instance when `adhoc` is set to `true`
-is by explicitly ending an execution path with the [end definition](#End-Definition) `terminate` property, or by using the workflow [execution timeout](#ExecTimeout-Definition) definition.
+Setting the `adhoc` property to "true" allows you change this default behavior in that a workflow instance
+created from this workflow definition can only be terminated if one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
+its [`execTimeout`](#ExecTimeout Definition) time is reached. 
+This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
 
 You can reference the [specification examples](#Examples) to see the `adhoc` property in action.
 

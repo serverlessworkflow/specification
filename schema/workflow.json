@@ -1858,7 +1858,7 @@
             "adhoc": {
               "type": "boolean",
               "default": false,
-              "description": "If 'true', starting event state (if there is one) becomes active again once all instance execution paths complete, unless instance is terminated via a 'terminate' end definition"
+              "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
             },
             "schedule": {
               "description": "Define the time/repeating intervals at which workflow instances can/should be started",
