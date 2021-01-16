@@ -229,7 +229,7 @@
         }
       },
       "required": [
-        "time"
+        "interval"
       ]
     },
     "transition": {
