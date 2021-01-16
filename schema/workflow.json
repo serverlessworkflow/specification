@@ -986,8 +986,7 @@
           "description": "State type"
         },
         "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
+          "$ref": "#/definitions/start"
         },
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
@@ -1856,6 +1855,11 @@
           "type": "object",
           "description": "State start definition",
           "properties": {
+            "adhoc": {
+              "type": "boolean",
+              "default": false,
+              "description": "If 'true', starting event state (if there is one) becomes active again once all instance execution paths complete, unless instance is terminated via a 'terminate' end definition"
+            },
             "schedule": {
               "description": "Define the time/repeating intervals at which workflow instances can/should be started",
               "$ref": "#/definitions/schedule"
@@ -1918,7 +1922,7 @@
             },
             "produceEvents": {
               "type": "array",
-              "description": "Used if kind is event. Array of events to be produced",
+              "description": "Defines events that should be produced",
               "items": {
                 "type": "object",
                 "$ref": "#/definitions/produceeventdef"
@@ -1927,7 +1931,7 @@
             "compensate": {
               "type": "boolean",
               "default": false,
-              "description": "If set to true, triggers workflow compensation before workflow execution completes. Default is false"
+              "description": "If set to true, triggers workflow compensation. Default is false"
             }
           },
           "required": [

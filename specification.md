@@ -665,62 +665,6 @@ execution flow before it needs to be terminated. If set to `true`, the current i
 The `workflowId` property defines an unique id of a sub-workflow which should be executed before the workflow instance
 is terminated.
 
-`ExecTimeout` allows us to solve interesting use cases, especially within the IoT (Internet of Things) domain.
-Let's say that we have a sensor that reads temperature values in our living room every 2 minutes. 
-Our workflow acts upon these events, the first one starting a workflow instance, and every consecutive one 
-being correlated to the same instance (given the correlation id being the room name, namely "livingroom" for example).
-After every hour of collecting and processing this data, we want to build a report for all the so far collected temperatures. 
-
-For this example we could define our events in the workflow as:
-
-```json
-{  
-  ...
-  "events": [
-   {  
-     "name": "TemperatureEvent",
-     "type": "roomtemp",
-     "source": "tempsensor",
-     "correlation": [
-      { 
-        "contextAttributeName": "roomid"
-      } 
-     ]
-   }
-  ],
-  ...
-}
-```
-
-Without `execTimeout` it would be pretty hard to solve this business problem with control-flow logic alone.
-With it, however, it becomes pretty easy. Let's look at our sample workflow definition:
-
-```json
-{  
-  ...
-  "name": "Living Room Temperature Collection Workflow",
-  "execTimeout": {
-     "interval": "PT1H",
-     "workflowId": "sendLivingRoomTempReport"
-  },
-  "states": [
-    ... control-flow logic for collecting and processing room temp event data...
-  ],
-  "events": [
-    ...
-  ],
-  "functions": [
-    ...
-  ]
-}
-```
-
-Here we define the `execTimeout` `time` property to "PT1H", meaning that after 1 hour of the workflow instance 
-collecting living room temperature data, we want to stop collecting it. Then we build our report by invoking the 
-"sendlivingroomtempreport" sub-workflow before terminating the workflow instance. After the defined 
-amount of time, the very next living room temperature event will create a new workflow instance
-which will again start collecting these events for 1 hour, build the report and terminate its execution.
-
 #### Function Definition
 
 | Parameter | Description | Type | Required |
@@ -2186,7 +2130,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | name | State name | string | yes |
 | type | State type | string | yes |
 | [branches](#parallel-state-branch) | List of branches for this parallel state| array | yes |
-| completionType | Option types on how to complete branch execution. | enum | no |
+| completionType | Option types on how to complete branch execution. Default is "and" | enum | no |
 | n | Used when branchCompletionType is set to `n_of_m` to specify the `n` value. | string or number | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
@@ -2278,11 +2222,12 @@ end: true
 </details>
 
 Parallel state defines a collection of `branches` that are executed in parallel.
-
-Branches contain set of actions that need to be performed or a reference to another workflow that needs to be executed. 
+A parallel state can be seen a state which splits up the current workflow instance execution path
+into multiple ones, one for each of each branch. These execution paths are performed in parallel
+and are joined back into the current execution path depending on the defined `completionType` parameter value.
 
 The "completionType" enum specifies the different ways of completing branch execution:
-* and: All branches must complete execution before state can perform its transition
+* and: All branches must complete execution before state can perform its transition. This is the default value in case this parameter is not defined in the parallel state definition.
 * xor: State can transition when one of the branches completes execution
 * n_of_m: State can transition once `n` number of branches have completed execution. In this case you should also
 specify the `n` property to define this number.
@@ -2746,15 +2691,16 @@ actions:
 </table>
 
 </details>
+ForEach states can be used to execute [actions](#Action-Definition), or a [sub-workflow](#SubFlow-State) for 
+each element of a data set.
 
-ForEach states can be used to execute a defined actions, or execute a sub-workflow for each element of a data array.
 Each iteration of the ForEach state should be executed in parallel.
 
 You can use the `max` property to set the upper bound on how many iterations may run in parallel. The default
 of the `max` property is zero, which places no limit on number of parallel executions.
 
 The `inputCollection` property is a JsonPath expression which selects an array in the states data. All iterations 
-of are done against the data elements of this array. This array must exist.
+are done against data elements of this array. This array must exist.
 
 The `outputCollection` property is a JsonPath expression which selects an array in the state data where the results
 of each iteration should be added to. If this array does not exist, it should be created.
@@ -3004,14 +2950,14 @@ Can be either `boolean` or `object` type. If type boolean, must be set to `true`
 ```json
 "start": true
 ```
-In this case it is assumed that the `adHoc` property has its default value of `false` and the `schedule`
+In this case it's assumed that the `adHoc` property has its default value of `false` and the `schedule`
 property is not defined.
 
 If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| adhoc | If "true", starting state becomes active again once all of execution paths complete, unless instance is terminated via a "terminate end definition". If "false" (default), starting state does not become active once it is executed. | boolean | no |
+| adhoc | If "true", a starting event state state (if there is one) becomes active again once all of execution paths complete, unless instance is terminated via a "terminate end definition". If "false" (default), starting state does not become active once it is executed. | boolean | no |
 | [schedule](#Schedule-Definition) | Define the time/repeating intervals at which workflow instances can/should be started | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3048,6 +2994,7 @@ schedule:
 </details>
 
 Start definition explicitly defines how/when workflow instances should be created.
+A workflow definition must include one state that defines the start definition. 
 
 Any workflow state can declare to be the starting workflow, meaning when a workflow instance is created it will be the initial
 state to be executed. A workflow definition can declare one single workflow starting state.
@@ -3098,17 +3045,19 @@ Event states define that workflow instances are triggered by the existence of th
 Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
 
-The `adhoc` property defines what happens with the workflow instance once all of its execution paths complete (and workflow execution
+The `adhoc` property is useful when we have a workflow definition with a starting [Event state](#Event-State).
+When this is the case, it defines what happens with the workflow instance once all of its execution paths complete (and workflow execution
 is not explicitly terminated by using the `terminate` property of the [state end definition](#End-Definition)).
+If the workflow definition includes a starting state which is not an Event state, the `adhoc` property can be ignored.
+It's main purpose is to allow handling of event streams.
 
 By default, as decribed in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
 active execution paths. By setting `adhoc` to `true`, you can bypass this default behavior. In this case
 once there are no active workflow execution paths, instead of terminating the instance, the instance should be kept
-alive and the workflow starting state should become active again. In this scenario you must pay close attention
+alive and the starting Event-state should become active again. In this scenario you must pay close attention
 to the state [end definition](#End-Definition) as the only way to terminate a workflow instance when `adhoc` is set to `true`
-is by explicitly ending an execution path with the end definition `terminate` property, or by using the workflow [execution timeout](#ExecTimeout-Definition) definition.
+is by explicitly ending an execution path with the [end definition](#End-Definition) `terminate` property, or by using the workflow [execution timeout](#ExecTimeout-Definition) definition.
 
-Some use-cases for setting `adhoc` to `true` involve data batch processing or processing of event streams.
 You can reference the [specification examples](#Examples) to see the `adhoc` property in action.
 
 #### Schedule Definition
@@ -3241,13 +3190,20 @@ as defined by the `validUntil` property value.
 
 #### End Definition
 
-Can be either `boolean` or `object` type. 
-If `object` type it has the following structure:
+Can be either `boolean` or `object` type. If type boolean, must be set to `true`, for example:
+
+```json
+"end": true
+```
+In this case it's assumed that the `terminate` property has its default value of `false`, and the `produceEvents` and 
+`compensate` properties are not defined.
+
+If the end definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| terminate | If true, completes all execution flows in the given workflow instance | boolean | no |
-| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. If `kind` is "event", define what type of event to produce | array | no |
+| terminate | If true, terminates workflow instance execution | boolean | no |
+| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Defines events that should be produced. | array | no |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before workflow execution completes. Default is `false` | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3263,6 +3219,7 @@ If `object` type it has the following structure:
 
 ```json
 {
+    "terminate": true,
     "produceEvents": [{
         "eventRef": "provisioningCompleteEvent",
         "data": "{{ $.provisionedOrders }}"
@@ -3274,9 +3231,11 @@ If `object` type it has the following structure:
 <td valign="top">
 
 ```yaml
+terminate: true
 produceEvents:
 - eventRef: provisioningCompleteEvent
   data: "{{ $.provisionedOrders }}"
+
 ```
 
 </td>
@@ -3285,21 +3244,24 @@ produceEvents:
 
 </details>
 
-Any state with the exception of the [Switch](#Switch-State) state can declare to be the end state of the workflow, meaning after the execution of this state is completed, workflow execution ends. 
-Switch states require a transition to happen after their execution, thus cannot be workflow end states.
+End definitions are used to explicitly define execution completion of a workflow instance or workflow execution path.
+A workflow definition must include at least one [workflow state](#State Definition).
+Note that [Switch states](#Switch-State) cannot declare to be workflow end states. Switch states must end
+their execution followed by a transition another workflow state, given their conditional evaluation.
 
-The end definition can be either `boolean` or `object` type.
-If `boolean` type, when set to `true`, there are no restrictions imposed on its execution.
-If `object` type, it provides the ability to set the [`produceEvents`](#ProducedEvent-Definition) `terminate`, and `compensate` properties.
 
-The end definitions provides different ways to complete workflow execution, which is set by the `kind` property:
-
-The `terminate` property, if set to `true`, completes all execution flows in the given workflow instance. 
-All activities/actions being executed are completed. 
+The `terminate` property, if set to `true`, completes the workflow instance execution, this any other active 
+execution paths.
 If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the entire workflow instance is terminated.
 
 The [`produceEvents`](#ProducedEvent-Definition) allows to define events which should be produced
 by the workflow instance before workflow stops its execution.
+
+It's important to mention that if the workflow `adhoc` property of the [start definition](#Start-Definition) 
+in the workflow starting Event state is set to `true`, the only way to complete execution of the workflow instance 
+is if workflow execution reaches a state that defines an end definition with `terminate` property set to `true`,
+or, if the [execution timeout](#ExecTimeout-Definition) property is defined, the time defined in its `interval`
+is reached beforehand.
 
 #### ProducedEvent Definition
 
@@ -4281,7 +4243,7 @@ errors.
 Each workflow state can define how it should be compensated via its `compensatedBy` property.
 This property references another workflow state (by it's unique name) which is responsible for the actual compensation.
 
-States referenced by `compensatedBy` must obey following rules:
+States referenced by `compensatedBy` (as well as any other states that they transition to) must obey following rules:
 * They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
 * They cannot be an [event state](#Event-State)
 * They cannot define an [start definition](#Start-definition). If they do, it should be ignored
@@ -4290,7 +4252,8 @@ States referenced by `compensatedBy` must obey following rules:
 * They can transition only to states which also have their `usedForCompensation` property and set to `true`
 * They cannot themselves set their `compensatedBy` property to true (compensation is not recursive)
  
-Runtime implementations should raise compile time / parsing exceptions for all the cases mentioned above. 
+Runtime implementations should raise compile time / parsing exceptions if any of the rules mentioned above are 
+not obeyed in the workflow definition. 
 
 Let's take a look at an example workflow state which defines its `compensatedBy` property, and the compensation
 state it references:
