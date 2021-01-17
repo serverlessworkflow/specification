@@ -134,13 +134,13 @@ For example, instance creation can be defined for some set of data, but other wa
 you can enforce instance creations upon arrival of certain events with a starting [EventState](#Event-State), as well
 on a defined [schedule](#Start-Definition). 
 
-Workflow instance termination is also explicitly decribed in the workflow definition. 
-By default they should be terminated once there are no active workflow paths (all active
+Workflow instance termination is also explicitly described in the workflow definition. 
+By default instances should be terminated once there are no active workflow paths (all active
 paths reach a state containing the default [end definition](#End-Definition)). Other ways, such as 
 using the `terminate` property of the [end definition](#End-Definition) to terminate instance execution,
 or defining an [execution timeout](#ExecTimeout-Definition) are also possible.
 
-This default behavior can be changed by setting the `adhoc` property of the states [start definition](#Start-Definition) to `true`.
+This default behavior can be changed by setting the `keepActive` workflow property to `true`.
 In this case the only way to terminate a workflow instance is for its control flow to explicitly end with a "terminate" [end definition](#End-Definition),
 or if the defined [`execTimeout`](#ExecTimeout-Definition) time is reached.
  
@@ -469,6 +469,7 @@ which would set the workflow version to `1.0.0`.
 | schemaVersion | Workflow schema version | string | no |
 | [dataSchema](#DataSchema-Definition) | Workflow data schema. Allows to set expected structure of workflow data input and output | object | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
+| keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
@@ -618,13 +619,25 @@ a resource containing an array of [retry](#Retry-Definition) definition.
 Referenced resource can be used by multiple workflow definitions. For more information about 
 using and referencing retry definitions see the [Workflow Error Handling](#Workflow-Error-Handling) section.
 
+The `keepActive` property allows you to change the default behavior of workflow instances.
+By default, as described in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
+active execution paths, one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
+its [`execTimeout`](#ExecTimeout Definition) time is reached. 
+
+Setting the `keepActive` property to "true" allows you change this default behavior in that a workflow instance
+created from this workflow definition can only be terminated if one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
+its [`execTimeout`](#ExecTimeout Definition) time is reached. 
+This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
+
+You can reference the [specification examples](#Examples) to see the `keepActive` property in action.
+
 #### ExecTimeout Definition
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | interval | Timeout interval (ISO 8601 duration format) | string | yes |
 | interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is stopped immediately. Default is `false`  | boolean | no |
-| workflowId | Unique Id of a workflow to be executed before workflow instance is terminated | string | no |
+| runBefore | Name of a workflow state to be executed before workflow instance is terminated | string | no |
 
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -641,7 +654,7 @@ using and referencing retry definitions see the [Workflow Error Handling](#Workf
 ```json
 {  
    "time": "PT2M",
-   "workflowId": "createandsendreport"
+   "runBefore": "createandsendreport"
 }
 ```
 
@@ -650,7 +663,7 @@ using and referencing retry definitions see the [Workflow Error Handling](#Workf
 
 ```yaml
 time: PT2M
-workflowId: createandsendreport
+runBefore: createandsendreport
 ```
 
 </td>
@@ -663,10 +676,20 @@ The `interval` property defines the time interval of the execution timeout. Once
 and the amount of the defined time is reached, the workflow instance should be terminated.
 
 The `interrupt` property defines if the currently running instance should be allowed to finish its current 
-execution flow before it needs to be terminated. If set to `true`, the current instance execution should stopped immediately.
+execution flow before it needs to be terminated. If set to `true`, the current instance execution should stop immediately.
 
-The `workflowId` property defines an unique id of a sub-workflow which should be executed before the workflow instance
-is terminated.
+The `runBefore` property defines a name of a workflow state to be executed before workflow instance is terminated.
+States referenced by `runBefore` (as well as any other states that they transition to) must obey following rules:
+* They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
+* They cannot be states marked for compensation (have their `usedForCompensation` property and set to `true`)
+* They cannot define an [start definition](#Start-Definition). If they do, it should be ignored
+* If it is a single state, it must define an [end definition](#End-Definition), if it transitions to other states,
+at last one must define it.
+* They can transition only to states are also not part of the main control flow logic (and are not marked 
+for compensation).
+ 
+Runtime implementations should raise compile time / parsing exceptions if any of the rules mentioned above are 
+not obeyed in the workflow definition. 
 
 #### Function Definition
 
@@ -2953,14 +2976,12 @@ Can be either `boolean` or `object` type. If type boolean, must be set to `true`
 ```json
 "start": true
 ```
-In this case it's assumed that the `adHoc` property has its default value of `false` and the `schedule`
-property is not defined.
+In this case it's assumed that the `schedule`property is not defined.
 
 If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| adhoc | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
 | [schedule](#Schedule-Definition) | Define the time/repeating intervals at which workflow instances can/should be started | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3006,7 +3027,7 @@ The start definition can be either `boolean` or `object` type.
 
 If `boolean` type, when set to `true`, there are no restrictions imposed on its execution.
 
-If `object` type, it provides the ability to set the `adhoc` and `scheduled` properties.
+If `object` type, it provides the ability to set the`scheduled` properties.
 
 The `scheduled` property allows to define scheduled workflow instance creation. 
 Scheduled starts have two different choices. You can define time-based intervals during which workflow instances are **allowed**
@@ -3047,18 +3068,6 @@ One thing to discuss when dealing with cron-based scheduled starts is when the s
 Event states define that workflow instances are triggered by the existence of the defined event(s). 
 Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
-
-The `adhoc` property allows you to change the default behavior of workflow instances.
-By default, as described in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
-active execution paths, one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
-its [`execTimeout`](#ExecTimeout Definition) time is reached. 
-
-Setting the `adhoc` property to "true" allows you change this default behavior in that a workflow instance
-created from this workflow definition can only be terminated if one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
-its [`execTimeout`](#ExecTimeout Definition) time is reached. 
-This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
-
-You can reference the [specification examples](#Examples) to see the `adhoc` property in action.
 
 #### Schedule Definition
 
@@ -3257,11 +3266,11 @@ If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the 
 The [`produceEvents`](#ProducedEvent-Definition) allows to define events which should be produced
 by the workflow instance before workflow stops its execution.
 
-It's important to mention that if the workflow `adhoc` property of the [start definition](#Start-Definition) 
-in the workflow starting Event state is set to `true`, the only way to complete execution of the workflow instance 
+It's important to mention that if the workflow `keepActive` property is set to`true`, 
+the only way to complete execution of the workflow instance 
 is if workflow execution reaches a state that defines an end definition with `terminate` property set to `true`,
 or, if the [execution timeout](#ExecTimeout-Definition) property is defined, the time defined in its `interval`
-is reached beforehand.
+is reached.
 
 #### ProducedEvent Definition
 

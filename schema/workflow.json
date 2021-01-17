@@ -36,6 +36,11 @@
         "execTimeout": {
           "$ref": "#/definitions/exectimeout"
         },
+        "keepActive": {
+          "type": "boolean",
+          "default": false,
+          "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         },
@@ -126,6 +131,11 @@
         },
         "execTimeout": {
           "$ref": "#/definitions/exectimeout"
+        },
+        "keepActive": {
+          "type": "boolean",
+          "default": false,
+          "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
@@ -222,9 +232,9 @@
           "description": "If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted.",
           "default": false
         },
-        "workflowId": {
+        "runBefore": {
           "type": "string",
-          "description": "Unique Id of a workflow to be executed before workflow instance is terminated",
+          "description": "Name of a workflow state to be executed before workflow instance is terminated",
           "minLength": 1
         }
       },
@@ -1855,17 +1865,13 @@
           "type": "object",
           "description": "State start definition",
           "properties": {
-            "adhoc": {
-              "type": "boolean",
-              "default": false,
-              "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
-            },
             "schedule": {
               "description": "Define the time/repeating intervals at which workflow instances can/should be started",
               "$ref": "#/definitions/schedule"
             }
           },
           "required": [
+            "schedule"
           ]
         }
       ]
