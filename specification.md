@@ -195,8 +195,10 @@ In addition to defining RESTful service operations, workflow [functions definiti
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference
-them by their logical name through workflow states where expression evaluations are required, thus making them
+them by their logical name through workflow states where expression evaluation is required, thus making them
 reusable definitions.
+
+Expression expression functions must declare their `type` parameter to be `expression`. 
 
 Let's take at an example of such definitions:
 
@@ -234,14 +236,14 @@ Our expression function definitions can now be referenced by workflow states whe
      "dataConditions": [
         {
           "name": "Applicant is adult",
-          "condition": "{{ 'isAdult' }}",
+          "condition": "{{ fn(isAdult) }}",
           "transition": {
             "nextState": "ApproveApplication"
           }
         },
         {
           "name": "Applicant is minor",
-          "condition": "{{ 'isMinor' }}",
+          "condition": "{{ fn(isMinor) }}",
           "transition": {
             "nextState": "RejectApplication"
           }
@@ -256,8 +258,6 @@ Our expression function definitions can now be referenced by workflow states whe
 ]
 }
 ```
-
-Expression functions must declare their `type` parameter to be `expression`. 
 
 Note that the used function definition type in this case must be `expression` . 
 If the referenced function definition type is `rest` (default), this should be regarded as 
@@ -286,15 +286,14 @@ Where `expression` can be either an in-line expression using the  [JsonPath](htt
 or a reference to a defined [expression function definition](#Using-Functions-For-Expression-Evaluation).
 
 To reference a defined [expression function definition](#Using-Functions-For-Expression-Evaluation)
-the expression must only contain the defined expression name, for example:
+the expression must have the following format, for example:
 
 ```text
-{{ 'myExprName' }}
+{{ fn(myExprName) }}
 ```
 
-where `myExprName` is the unique name of the defined expression function, and it must be enclosed in
-single quotes.
- 
+The reserved keyword "fn" denotes a reference to an expression function definition,
+and `myExprName` is the unique name of the defined expression function. 
 
 To show some expression examples, let's say we have the following JSON state data:
 
@@ -330,7 +329,7 @@ In our workflow model we can define our reusable expression function:
 {
 "functions": [
   { 
-    "name": "Is Adult Applicant",
+    "name": "IsAdultApplicant",
     "operation": "$..[?(@.age >= 18)]",
     "type": "expression"
   }
@@ -378,11 +377,11 @@ Would set the data output of the particular state to:
 In this case JsonPath expressions can also be used. 
 The expression should evaluate to true, if the result contains a subset of the JSON data, and false if it is empty. 
 
-In the following example we want reference the previously defined "Is Adult Applicant" expression function:
+In the following example we want reference the previously defined "IsAdultApplicant" expression function:
 
 ```json
 {
-      "condition": "{{ 'Is Adult Applicant' }}",
+      "condition": "{{ fn(IsAdultApplicant) }}",
       "transition": {
         "nextState": "StartApplication"
       }
