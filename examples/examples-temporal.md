@@ -268,9 +268,6 @@ public class HelloActivity {
   "id": "HelloCron",
   "name": "Hello Activity with Cron Workflow",
   "version": "1.0",
-  "execTimeout": {
-    "timeout": "PT1M" 
-  },
   "states": [
     {
       "name": "GreetingState",
