@@ -6,3 +6,4 @@ Following example documents are available:
 * [Argo comparisons examples](examples-argo.md)
 * [Brigade comparisons examples](examples-brigade.md)
 * [Google Cloud Workflow comparison examples](examples-google-cloud-workflows.md)
+* [Temporal comparison examples](examples-temporal.md)
