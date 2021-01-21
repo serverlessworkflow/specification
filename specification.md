@@ -2,9 +2,9 @@
 
 ## Abstract
 
-A specification for defining declarative workflow models
-that orchestrate event-driven, serverless applications.
-
+A specification that defines a vendor-neutral and declarative workflow language,
+targeting the serverless computing technology domain.
+ 
 ## Status of this document
 
 This document is a working draft.
@@ -12,11 +12,12 @@ This document is a working draft.
 ## Table of Contents
 
 - [Overview](#Overview)
-- [Specification Goals](#Specification-Goals)
+- [Project Components](#Project-Components)
 - [Specification Details](#Specification-Details)
-  - [Workflow Model](#Workflow-Model)
+  - [Workflow Language Components](#Workflow-Language-Components)
   - [Workflow Data](#Workflow-Data)
-  - [Workflow Data Expressions](#Workflow-Data-Expressions)
+  - [Workflow Functions](#Workflow-Functions)
+  - [Workflow Expressions](#Workflow-Functions)
   - [Workflow Definition](#Workflow-Definition)
   - [Workflow Error Handling](#Workflow-Error-Handling)
     - [Defining Errors](#Defining-Errors)
@@ -31,73 +32,79 @@ This document is a working draft.
 
 ## Overview
 
-Workflows have become a key component for orchestration and execution management of event-driven microservices
-(serverless applications).
+Workflows allow us to capture and organize business requirements in an unified manner.
+They can bridge the gap between how we express and model business logic.
 
-The lack of a common way to define and model workflows means that developers must constantly re-learn 
+A key component of workflows is the domain-specific language (DSL) we use to model our 
+business logic and solutions. Selecting the appropriate workflow language for our business and technology domains is 
+a very important decision to be consider. 
+
+Serverless Workflow focuses on defining a **vendor-neutral**, **platform-independent**, and **declarative** workflow
+language that targets the serverless computing technology domain. 
+It can be used to significantly bridge the gap between your unique business domain and the target technology domain.
+
+### Why we need a specification?
+
+The lack of a common way to define and model workflows means that we must constantly re-learn 
 how to write them. This also limits the potential for common libraries, tooling and 
-infrastructure to aid modeling and execution of workflows across different cloud/container platforms.
+infrastructure to aid workflow modeling and execution across different platforms.
 Portability as well as productivity that can be achieved from workflow orchestration is hindered overall.
 
-Serverless Workflow specification focuses on defining a `vendor-neutral`, `platform-independent`, and
-`declarative` workflow model which can be used across multiple cloud/container platforms. 
-This allows users to move their workflow definitions from one cloud/container platform to another and 
-expect the exact same, defined, execution steps to be performed on each. 
+Serverless Workflow addresses the need for a community-driven, vendor-neutral and a platform-independent
+workflow language specification that targets the serverless computing technology domain.
 
-For more information on the history, development and design rationale behind the specification, see the [Serverless Workflow Wiki](https://github.com/serverlessworkflow/specification/wiki).
-
-## Specification Goals
-
-The specification provides a [Workflow JSON Schema](schema/workflow.json)
-which defines the structure of the workflow model. This allows workflow models to be defined in both
-[JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats. Both are considered specification compliant
-if they validate against the defined schema.
-
-The specification also provides Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
-and we plan to add them for more languages in the future.
-
-In addition, the specification provides a set of [Workflow Extensions](extensions/README.md) which 
-allow users to define additional, non-execution-related workflow information. This information can be used to improve
-workflow performance. 
-Some example workflow extensions include Key Performance Indicators (KPIs), Simulation, Tracing, etc 
-
-We are also working on a Technology Compatibility Kit (TCK) to be used as a specification conformance
-tool for runtime implementations.
-
-The specification relies on runtime implementations to adopt the defined workflow model and provide execution semantics.
-
-<p align="center">
-<img src="media/spec/spec-overview.png" height="400px" alt="Serverless Workflow Specification Overview"/>
-</p>
-
-With all this in place the specification goals focus on portability and vendor-neutrality. Using the workflow model
-defined by the specification allows users to orchestrate event-driven microservices
-on may different runtimes and cloud/container platforms.
+Having and using a specification-based workflow language allows us to model our worflows once and deploy them 
+onto many different container/cloud platforms, expecting the same execution results.
 
 <p align="center">
 <img src="media/spec/spec-goals.png" height="400px" alt="Serverless Workflow Specification Goals"/>
 </p>
 
+For more information on the history, development and design rationale behind the specification, see the [Serverless Workflow Wiki](https://github.com/serverlessworkflow/specification/wiki).
+
+### Focus on standards
+
+<p align="center">
+<img src="media/spec/spec-parts.png" width="600" alt="Serverless Workflow Specification Focus On Standards"/>
+</p>
+
+Serverless Workflow language takes advantage of well established and known standards such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/) specifications.
+
+## Project Components
+
+<p align="center">
+<img src="media/spec/spec-overview.png" height="400px" alt="Serverless Workflow Specification Overview"/>
+</p>
+
+The specification has multiple components:
+
+* Definitions of the workflow language. This is defined via the [Workflow JSON Schema](schema/workflow.json). You can use both 
+[JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats to model your workflows.
+* Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
+  and we plan to add them for more languages in the future.
+* Set of [Workflow Extensions](extensions/README.md) which 
+  allow users to define additional, non-execution-related workflow information. This information can be used to improve
+  workflow performance. 
+  Some example workflow extensions include Key Performance Indicators (KPIs), Simulation, Tracing, etc.
+* Technology Compatibility Kit (TCK) to be used as a specification conformance tool for runtime implementations.
+
 ## Specification Details
 
-Following sections provide a detailed descriptions of all parts of the workflow model. 
+Following sections provide detailed descriptions of all parts of the Serverless Workflow language. 
 
-### Workflow Model
+### Workflow Language Components
 
-The Serverless Workflow model is composed of: 
+The Serverless Workflow language is composed of:
 
-* [Function](#Function-Definition) definitions. Declare services that need to be invoked during workflow execution. 
-* [Event](#Event-Definition) definitions. Declare events that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
-* [State](#State-Definition) and [transition](#Transitions) definitions. States define the workflow `control flow logic`, manage workflow data, and can reference defined functions and events. 
-Transitions define the connections between workflow states.
-
-Serverless Workflow model defines a declarative language that can be used to model both simple and complex orchestrations
-for event-driven, serverless applications.
+* [Function definitions](#Function-Definition): Reusable functions that can declare services that need to be invoked, or expressions to be evaluated.
+* [Event definitions](#Event-Definition): Reusable declarations of events that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
+* [Retry definitions](#Retry-Definition): Reusable retry definitions. Can specify retry strategies for service invocations during workflow execution.
+* [State definitions](#State-Definition): Definition of states, the building blocks of workflow `control flow logic`. States can reference the reusable function, event and retry definitions.
 
 ### Workflow Data
 
 Serverless Workflow data is represented in [JSON](https://www.json.org/json-en.html) format.
-Data flow during workflow execution can be divided into:
+Data flow during workflow execution is composed of:
 
 - [Workfow data input](#Workflow-data-input)
 - [Event data](#Event-data)
@@ -106,64 +113,247 @@ Data flow during workflow execution can be divided into:
 - [State Data filtering](#State-data-filtering)
 - [Workflow data output](#Workflow-data-output)
 
-### Workflow Data Expressions
+### Workflow Functions
 
-Workflow model parameters may use expressions to access the JSON data. 
+Workflow [functions](#Function-Definition) are reusable definitions for RESTful service invocations and/or expression evaluation.
+They can be referenced by their domain-specific names inside workflow [states](#State-Definition).
+
+Reference the following sections to learn more about workflow functions:
+* [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
+* [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
+
+### Using Functions For RESTful Service Invocations
+
+[Functions](#Function-Definition) can be used to describe services and their operations that need to be invoked during 
+workflow execution. They can be referenced by states [action definitions](#Action-Definition)] to clearly 
+define when the service operations should be invoked during workflow execution, as well as the data parameters
+passed to them if needed.
+
+Note that with Serverless Workflow we can also define service invocations via events.
+To learn more about that, please reference the [event definitions](#Event-Definition) section, 
+as well as the [actions definitions](#Action-Definition) [eventRef](#EventRef-Definition) property.
+ 
+Because of an overall lack of a common way to describe different services and their operations,
+workflow markups typically chose to define custom function definitions.
+This approach often runs into issues such as lack of markup portability, limited capabilities, as well as 
+forces non-workflow-specific information such as service authentication to be added inside workflow markup.
+
+To avoid these issues, the Serverless Workflow specification mandates that details about 
+RESTful services and their operations be described using the [OpenAPI Specification](https://www.openapis.org/) specification.
+OpenAPI is a language-agnostic standard that describes discovery of RESTful services.
+This allows Serverless Workflow language to describe RESTful services in a portable 
+way, as well as workflow runtimes to utilize OpenAPI tooling and APIs to invoke service operations.
+
+The workflow markup allows defining non-restful services and their operations using the `metadata` property
+of [functions definitions](#Function-Definition). Note that using the function definitions `metadata` to add proprietary
+information about service execution can break the portability of the workflow language, meaning your
+workflow model may not be executable on different platforms that do not understand it.
+
+Here is an example function definition for a service operation. 
+
+```json
+{
+"functions": [
+  {
+    "name": "sendOrderConfirmation",
+    "operation": "file://confirmationapi.json#sendOrderConfirmation"
+  }
+]
+}
+```
+
+It can, as previously mentioned be referenced during workflow execution when invocation of this service is desired. 
+For example:
+
+```json
+{
+"states": [
+  {
+      "name":"SendConfirmState",
+      "type":"operation",
+      "start": true,
+      "actions":[  
+       {  
+       "functionRef": {
+         "refName": "sendOrderConfirmation"
+       }
+      }],
+      "end": true
+  }]
+}
+```
+
+Note that the referenced function definition type in this case must be `rest` (default type). 
+If the referenced function definition type is `expression`, this should be regarded as 
+an error during parsing of the workflow definition.
+
+For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
+### Using Functions For Expression Evaluation
+
+In addition to defining RESTful service operations, workflow [functions definitions](#Function-Definition)
+can also be used to define expressions that should be evaluated during workflow execution.
+
+Defining expressions as part of function definitions has the benefit of being able to reference
+them by their logical name through workflow states where expression evaluation is required, thus making them
+reusable definitions.
+
+Expression expression functions must declare their `type` parameter to be `expression`. 
+
+Let's take at an example of such definitions:
+
+```json
+{
+"functions": [
+  {
+    "name": "isAdult",
+    "operation": "$.[?(@.age >= 18)]",
+    "type": "expression"
+  },
+  {
+    "name": "isMinor",
+    "operation": "$.[?(@.age < 18)]",
+    "type": "expression"
+  }
+]
+}
+```
+
+Here we define two reusable expression functions. Expressions in Serverless Workflow
+are evaluated against the workflow data. Note that different data filters play a big role as to which parts of the 
+workflow data are selected. Reference the 
+[State Data Filtering](#State-Data-Filtering) section for more information on this.
+
+Our expression function definitions can now be referenced by workflow states when they need to be evaluated. For example:
+
+```json
+{
+"states":[  
+  {  
+     "name":"CheckApplicant",
+     "type":"switch",
+     "start": true,
+     "dataConditions": [
+        {
+          "name": "Applicant is adult",
+          "condition": "{{ fn(isAdult) }}",
+          "transition": {
+            "nextState": "ApproveApplication"
+          }
+        },
+        {
+          "name": "Applicant is minor",
+          "condition": "{{ fn(isMinor) }}",
+          "transition": {
+            "nextState": "RejectApplication"
+          }
+        }
+     ],
+     "default": {
+        "transition": {
+           "nextState": "RejectApplication"
+        }
+     }
+  }
+]
+}
+```
+
+Note that the used function definition type in this case must be `expression` . 
+If the referenced function definition type is `rest` (default), this should be regarded as 
+an error during parsing of the workflow definition.
+
+For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
+For more information about workflow expressions, reference the [Workflow Expressions](#Workflow-Expressions) section.
+
+### Workflow Expressions
+
+Workflow model parameters can use expressions to filter workflow/state JSON data.
+
 Note that different data filters play a big role as to which parts of the states data are selected. Reference the 
-[State Data Filtering](#State-Data-Filtering) section for more information about data state data filters.
+[State Data Filtering](#State-Data-Filtering) section for more information about state data filters.
 
 All expressions must follow the [JsonPath](https://github.com/json-path/JsonPath) format and can be evaluated with a JsonPath expression evaluator. 
-JsonPath expressions can select and extract the workflow JSON data. 
 
-All expressions are written inside double braces:
+Expressions have the following format:
 
 ```text
 {{ expression }}
 ```
 
-Expressions should be resolved and the results returned exactly where the expression is written.
+Where `expression` can be either an in-line expression using the  [JsonPath](https://github.com/json-path/JsonPath) format
+or a reference to a defined [expression function definition](#Using-Functions-For-Expression-Evaluation).
 
-To show some expression examples, let's say that we have the following JSON data:
+To reference a defined [expression function definition](#Using-Functions-For-Expression-Evaluation)
+the expression must have the following format, for example:
+
+```text
+{{ fn(myExprName) }}
+```
+
+The reserved keyword "fn" denotes a reference to an expression function definition,
+and `myExprName` is the unique name of the defined expression function. 
+
+To show some expression examples, let's say we have the following JSON state data:
 
 ```json
 {
-  "firstName": "John",
-  "lastName" : "Doe",
-  "age"      : 26,
-  "address"  : {
-    "streetAddress": "Naist street",
-    "city"         : "Nara",
-    "postalCode"   : "630-0192"
-  },
-  "phoneNumbers": [
+    "applicants": [
     {
-      "type"  : "iPhone",
-      "number": "0123-4567-8888"
-    },
-    {
-      "type"  : "home",
-      "number": "0123-4567-8910"
+      "name": "John Doe",
+      "age"      : 26,
+      "address"  : {
+        "streetAddress": "Naist street",
+        "city"         : "Nara",
+        "postalCode"   : "630-0192"
+      },
+      "phoneNumbers": [
+        {
+          "type"  : "iPhone",
+          "number": "0123-4567-8888"
+        },
+        {
+          "type"  : "home",
+          "number": "0123-4567-8910"
+        }
+      ]
     }
-  ]
+    ]
 }
 ```
 
-We can use an expression inside a string type parameter, for example:
+In our workflow model we can define our reusable expression function:
 
 ```json
 {
-    "paramName": "Hello {{ $.firstName }} {{ $.lastName }}"
+"functions": [
+  { 
+    "name": "IsAdultApplicant",
+    "operation": "$..[?(@.age >= 18)]",
+    "type": "expression"
+  }
+]
 }
 ```
 
-would set the value of `paramName` to `Hello John Doe`.
+We can use an inline expression inside a string type parameter to get the applicant name:
 
-Expressions can also be used to select a portion of the JSON data, this is in particularly useful for data filters. For example:
+```json
+{
+    "paramName": "Hello {{ $.applicants[0].name }}"
+}
+```
+
+This would set the value of `paramName` to `Hello John Doe`.
+
+Expressions can also be used to select a portion of the JSON data, this is in particularly useful for data filters. 
+For example let's use another inline expression:
 
 ```json
 {
    "stateDataFilter": {
-       "dataOutputPath": "{{ $.phoneNumbers }}"
+       "dataOutputPath": "{{ $.applicants.phoneNumbers }}"
    }
 }
 ```
@@ -186,29 +376,19 @@ Would set the data output of the particular state to:
 [Switch state](#Switch-State) [conditions](#switch-state-dataconditions) require for expressions to be resolved to a boolean value (true / false).
 In this case JsonPath expressions can also be used. 
 The expression should evaluate to true, if the result contains a subset of the JSON data, and false if it is empty. 
-For example:
+
+In the following example we want reference the previously defined "IsAdultApplicant" expression function:
 
 ```json
 {
-      "name": "Eighteen or older",
-      "condition": "{{ $.applicants[?(@.age >= 18)] }}",
+      "condition": "{{ fn(IsAdultApplicant) }}",
       "transition": {
         "nextState": "StartApplication"
       }
 }
 ```
 
-In this case the condition would be evaluated to true if it returns a non-empty subset of the queried data.
-
-JsonPath also includes a limited set of built-in functions that can be used inside expressions. For example the expression
-
-```json
-{
-   "phoneNums" : "{{ $.phoneNumbers.length() }}"
-}
-```
-
-would set the value of `phoneNums` to `2`.
+In this example the condition would be evaluated to true if it returns a non-empty subset of the expression results.
 
 As previously mentioned, expressions are evaluated against certain subsets of data. For example 
 the `parameters` param of the [functionRef definition](#FunctionRef-Definition) can evaluate expressions 
@@ -224,7 +404,7 @@ For example let's say that we have a workflow data input of:
 }
 ```
 
-we can then define a workflow definition:
+we can use this expression in the workflow "version" parameter:
 
 ```json
 {
@@ -386,7 +566,8 @@ using and referencing retry definitions see the [Workflow Error Handling](#Workf
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | Combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. For example 'https://petstore.swagger.io/v2/swagger.json#getPetById' | string | no |
+| operation | If type `rest`, combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. If type is `expression` defines the workflow expression. | string | no |
+| type | Defines the function type. Is either `rest` or `expression`. Default is `rest` | enum | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -421,38 +602,17 @@ operation: https://hellworldservice.api.com/api.json#helloWorld
 
 </details>
 
-Function definitions describe services and their operations that need to be invoked during workflow execution.
-They can be referenced by states [action definitions](#Action-Definition)]. 
-
-Note that function definitions focus on defining services which are not invoked via events. 
-To define services that are invoked via events, please reference the [event definitions](#Event-Definition) section, as well as the [actions definitions](#Action-Definition) [eventRef](#EventRef-Definition) property.
- 
-Because of an overall lack of a common way to describe different services and their operations,
-workflow markups typically chose to define custom function definitions.
-This approach often runs into issues such as lack of markup portability, limited capabilities, as well as 
-forces non-workflow-specific information such as service authentication to be added inside workflow markup.
-
-To avoid these issues, the Serverless Workflow specification mandates that details about 
-services and their operations be described using the [OpenAPI Specification](https://www.openapis.org/) specification.
-OpenAPI is a language-agnostic standard that describes discovery of RESTful services. It is perfectly suited
-for defining every detail about how RESTful services and their operations should be invoked.
-It allows Servlerless Workflow markup to describe RESTful services in a portable 
-way, as well as workflow runtimes to utilize OpenAPI tooling and APIs to invoke those services.
-
-The workflow markup still supports defining non-restful services and their operations using the `metadata` property
-of function definitions. It can however not guarantee its portability on the markup level.
-Runtimes can utilize the function definition `metadata` information to invoke non-restful service operations.
-
 The `name` property defines an unique name of the function definition.
 
-The `operation` property is a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'. 
-For example `https://petstore.swagger.io/v2/swagger.json#getPetById`. 
-In this example "getPetById" is the OpenAPI ["operationId"](https://swagger.io/docs/specification/paths-and-operations/)
-property in the services OpenAPI definition document which uniquely identifies a specific service operation that needs to be invoked.
+The `type` property defines the function type. Its value can be either `rest` or `expression`. Default value is `rest`.
 
-The [`metadata`](#Workflow-Metadata) property allows users to define custom information to the custom definitions.
-This allows runtimes to define services and their operations that cannot be described via OpenAPI.
-An example of such definition could be defining invocation of a command on an image, for example:
+Depending on the function `type`, the `operation` property can be:
+* If `type` is `rest`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'. 
+  For example `https://petstore.swagger.io/v2/swagger.json#getPetById`. 
+* If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
+
+The [`metadata`](#Workflow-Metadata) property allows users to define custom information to function definitions.
+This allows you for example to define functions that describe of a command executions on a Docker image:
 
 ```yaml
 functions:
@@ -461,6 +621,8 @@ functions:
     image: docker/whalesay
     command: cowsay
 ```
+
+Note that using metadata for cases such as above heavily reduces the portability of your workflow markup.
 
 Function definitions themselves do not define data input parameters. Parameters can be 
 defined via the `parameters` property in [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
@@ -1461,7 +1623,6 @@ For more information, refer to the [Workflow Error Handling](#Workflow-Error-Han
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| expression | JsonPath expression. Must return a result for the transition to be valid | string | no |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before this transition is taken. Default is `false` | boolean | no |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Events to be produced when this transition happens | array | no |
 | [nextState](#Transitions) | State to transition to next | string | yes |
@@ -1479,7 +1640,6 @@ For more information, refer to the [Workflow Error Handling](#Workflow-Error-Han
 
 ```json
 {
-   "expression": "{{ $.result }}",
    "produceEvents": [{
        "eventRef": "produceResultEvent",
        "data": "{{ $.result.data }}"
@@ -1492,7 +1652,6 @@ For more information, refer to the [Workflow Error Handling](#Workflow-Error-Han
 <td valign="top">
 
 ```yaml
-expression: "{{ $.result }}"
 produceEvents:
 - eventRef: produceResultEvent
   data: "{{ $.result.data }}"
