@@ -604,22 +604,16 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
      "eventConditions": [
         {
           "eventRef": "visaApprovedEvent",
-          "transition": {
-            "nextState": "HandleApprovedVisa"
-          }
+          "transition": "HandleApprovedVisa"
         },
         {
           "eventRef": "visaRejectedEvent",
-          "transition": {
-            "nextState": "HandleRejectedVisa"
-          }
+          "transition": "HandleRejectedVisa"
         }
      ],
      "eventTimeout": "PT1H",
      "default": {
-        "transition": {
-         "nextState": "HandleNoVisaDecision"
-        }
+        "transition": "HandleNoVisaDecision"
      }
   },
   {
@@ -665,15 +659,12 @@ states:
   start: true
   eventConditions:
   - eventRef: visaApprovedEvent
-    transition:
-      nextState: HandleApprovedVisa
+    transition: HandleApprovedVisa
   - eventRef: visaRejectedEvent
-    transition:
-      nextState: HandleRejectedVisa
+    transition: HandleRejectedVisa
   eventTimeout: PT1H
   default:
-    transition:
-      nextState: HandleNoVisaDecision
+    transition: HandleNoVisaDecision
 - name: HandleApprovedVisa
   type: subflow
   workflowId: handleApprovedVisaWorkflowID
@@ -749,21 +740,15 @@ If the applicants age is over 18 we start the application (subflow state). Other
          "dataConditions": [
             {
               "condition": "{{ $.applicants[?(@.age >= 18)] }}",
-              "transition": {
-                "nextState": "StartApplication"
-              }
+              "transition": "StartApplication"
             },
             {
               "condition": "{{ $.applicants[?(@.age < 18)] }}",
-              "transition": {
-                "nextState": "RejectApplication"
-              }
+              "transition": "RejectApplication"
             }
          ],
          "default": {
-            "transition": {
-               "nextState": "RejectApplication"
-            }
+            "transition": "RejectApplication"
          }
       },
       {
@@ -809,14 +794,11 @@ states:
   start: true
   dataConditions:
   - condition: "{{ $.applicants[?(@.age >= 18)] }}"
-    transition:
-      nextState: StartApplication
+    transition: StartApplication
   - condition: "{{ $.applicants[?(@.age < 18)] }}"
-    transition:
-      nextState: RejectApplication
+    transition: RejectApplication
   default:
-    transition:
-      nextState: RejectApplication
+    transition: RejectApplication
 - name: StartApplication
   type: subflow
   workflowId: startApplicationWorkflowId
@@ -906,27 +888,19 @@ The data output of the workflow contains the information of the exception caught
     "stateDataFilter": {
        "dataOutputPath": "{{ $.exceptions }}"
     },
-    "transition": {
-       "nextState":"ApplyOrder"
-    },
+    "transition": "ApplyOrder",
     "onErrors": [
        {
          "error": "Missing order id",
-         "transition": {
-           "nextState": "MissingId"
-         }
+         "transition": "MissingId"
        },
        {
          "error": "Missing order item",
-         "transition": {
-           "nextState": "MissingItem"
-         }
+         "transition": "MissingItem"
        },
        {
         "error": "Missing order quantity",
-        "transition": {
-          "nextState": "MissingQuantity"
-        }
+        "transition": "MissingQuantity"
        }
     ]
 },
@@ -981,18 +955,14 @@ states:
         order: "{{ $.order }}"
   stateDataFilter:
     dataOutputPath: "{{ $.exceptions }}"
-  transition:
-    nextState: ApplyOrder
+  transition: ApplyOrder
   onErrors:
   - error: Missing order id
-    transition:
-      nextState: MissingId
+    transition: MissingId
   - error: Missing order item
-    transition:
-      nextState: MissingItem
+    transition: MissingItem
   - error: Missing order quantity
-    transition:
-      nextState: MissingQuantity
+    transition: MissingQuantity
 - name: MissingId
   type: subflow
   workflowId: handleMissingIdExceptionWorkflow
@@ -1091,17 +1061,13 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       "onErrors": [
       {
         "error": "*",
-        "transition": {
-          "nextState": "SubmitError"
-        }
+        "transition": "SubmitError"
       }
       ],
       "stateDataFilter": {
           "dataOutputPath": "{{ $.jobuid }}"
       },
-      "transition": {
-          "nextState":"WaitForCompletion"
-      }
+      "transition": "WaitForCompletion"
   },
   {
       "name": "SubmitError",
@@ -1113,9 +1079,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       "name": "WaitForCompletion",
       "type": "delay",
       "timeDelay": "PT5S",
-      "transition": {
-        "nextState":"GetJobStatus"
-      }
+      "transition": "GetJobStatus"
   },
   {  
       "name":"GetJobStatus",
@@ -1137,9 +1101,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       "stateDataFilter": {
           "dataOutputPath": "{{ $.jobstatus }}"
       },
-      "transition": {
-          "nextState":"DetermineCompletion"
-      }
+      "transition": "DetermineCompletion"
   },
   {  
     "name":"DetermineCompletion",
@@ -1147,21 +1109,15 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
     "dataConditions": [
       {
         "condition": "{{ $[?(@.jobstatus == 'SUCCEEDED')] }}",
-        "transition": {
-          "nextState": "JobSucceeded"
-        }
+        "transition": "JobSucceeded"
       },
       {
         "condition": "{{ $[?(@.jobstatus == 'FAILED')] }}",
-        "transition": {
-          "nextState": "JobFailed"
-        }
+        "transition": "JobFailed"
       }
     ],
     "default": {
-      "transition": {
-         "nextState": "WaitForCompletion"
-       }
+      "transition": "WaitForCompletion"
     }
   },
   {  
@@ -1231,12 +1187,11 @@ states:
       dataResultsPath: "{{ $.jobuid }}"
   onErrors:
   - error: "*"
-    transition:
-      nextState: SubmitError
+    transition: SubmitError
+
   stateDataFilter:
     dataOutputPath: "{{ $.jobuid }}"
-  transition:
-    nextState: WaitForCompletion
+  transition: WaitForCompletion
 - name: SubmitError
   type: subflow
   workflowId: handleJobSubmissionErrorWorkflow
@@ -1244,8 +1199,7 @@ states:
 - name: WaitForCompletion
   type: delay
   timeDelay: PT5S
-  transition:
-    nextState: GetJobStatus
+  transition: GetJobStatus
 - name: GetJobStatus
   type: operation
   actionMode: sequential
@@ -1258,20 +1212,16 @@ states:
       dataResultsPath: "{{ $.jobstatus }}"
   stateDataFilter:
     dataOutputPath: "{{ $.jobstatus }}"
-  transition:
-    nextState: DetermineCompletion
+  transition: DetermineCompletion
 - name: DetermineCompletion
   type: switch
   dataConditions:
   - condition: "{{ $[?(@.jobstatus == 'SUCCEEDED')] }}"
-    transition:
-      nextState: JobSucceeded
+    transition: JobSucceeded
   - condition: "{{ $[?(@.jobstatus == 'FAILED')] }}"
-    transition:
-      nextState: JobFailed
+    transition: JobFailed
   default:
-    transition:
-      nextState: WaitForCompletion
+    transition: WaitForCompletion
 - name: JobSucceeded
   type: operation
   actionMode: sequential
@@ -1951,9 +1901,7 @@ And for denied credit check, for example:
             },
             "eventRef": "CreditCheckCompletedEvent",
             "timeout": "PT15M",
-            "transition": {
-                "nextState": "EvaluateDecision"
-            }
+            "transition": "EvaluateDecision"
         },
         {
             "name": "EvaluateDecision",
@@ -1961,21 +1909,15 @@ And for denied credit check, for example:
             "dataConditions": [
                 {
                     "condition": "{{ $.creditCheck[?(@.decision == 'Approved')] }}",
-                    "transition": {
-                        "nextState": "StartApplication"
-                    }
+                    "transition": "StartApplication"
                 },
                 {
                     "condition": "{{ $.creditCheck[?(@.decision == 'Denied')] }}",
-                    "transition": {
-                        "nextState": "RejectApplication"
-                    }
+                    "transition": "RejectApplication"
                 }
             ],
             "default": {
-               "transition": {
-                 "nextState": "RejectApplication"
-                }
+               "transition": "RejectApplication"
             }
         },
         {
@@ -2034,20 +1976,16 @@ states:
         customer: "{{ $.customer }}"
   eventRef: CreditCheckCompletedEvent
   timeout: PT15M
-  transition:
-    nextState: EvaluateDecision
+  transition: EvaluateDecision
 - name: EvaluateDecision
   type: switch
   dataConditions:
   - condition: "{{ $.creditCheck[?(@.decision == 'Approved')] }}"
-    transition:
-      nextState: StartApplication
+    transition: StartApplication
   - condition: "{{ $.creditCheck[?(@.decision == 'Denied')] }}"
-    transition:
-      nextState: RejectApplication
+    transition: RejectApplication
   default:
-    transition:
-      nextState: RejectApplication
+    transition: RejectApplication
 - name: StartApplication
   type: subflow
   workflowId: startApplicationWorkflowId
@@ -2273,14 +2211,10 @@ The results of the inbox service called is expected to be for example:
         "actionMode": "sequential",
         "actions": [
             {
-                "functionRef": {
-                    "refName": "checkInboxFunction"
-                }
+                "functionRef": "checkInboxFunction"
             }
         ],
-        "transition": {
-            "nextState": "SendTextForHighPriority"
-        }
+        "transition": "SendTextForHighPriority"
     },
     {
         "name": "SendTextForHighPriority",
@@ -2325,10 +2259,8 @@ states:
         expression: 0 0/15 * * * ?
   actionMode: sequential
   actions:
-  - functionRef:
-      refName: checkInboxFunction
-  transition:
-    nextState: SendTextForHighPriority
+  - functionRef: checkInboxFunction
+  transition: SendTextForHighPriority
 - name: SendTextForHighPriority
   type: foreach
   inputCollection: "{{ $.messages }}"
@@ -2564,9 +2496,7 @@ In our workflow definition then we can reference these files rather than definin
           ]
         }
       ],
-      "transition": {
-        "nextState": "ConfirmBasedOnFunds"
-      }
+      "transition": "ConfirmBasedOnFunds"
     },
     {
       "name": "ConfirmBasedOnFunds",
@@ -2574,21 +2504,15 @@ In our workflow definition then we can reference these files rather than definin
       "dataConditions": [
         {
           "condition": "{{ $.funds[?(@.available == 'true')] }}",
-          "transition": {
-            "nextState": "SendPaymentSuccess"
-          }
+          "transition": "SendPaymentSuccess"
         },
         {
           "condition": "{{ $.funds[?(@.available == 'false')] }}",
-          "transition": {
-            "nextState": "SendInsufficientResults"
-          }
+          "transition": "SendInsufficientResults"
         }
       ],
       "default": {
-        "transition": {
-          "nextState": "SendPaymentSuccess"
-        }
+        "transition": "SendPaymentSuccess"
       }
     },
     {
@@ -2662,20 +2586,16 @@ states:
         parameters:
           account: "{{ $.accountId }}"
           paymentamount: "{{ $.payment.amount }}"
-  transition:
-    nextState: ConfirmBasedOnFunds
+  transition: ConfirmBasedOnFunds
 - name: ConfirmBasedOnFunds
   type: switch
   dataConditions:
   - condition: "{{ $.funds[?(@.available == 'true')] }}"
-    transition:
-      nextState: SendPaymentSuccess
+    transition: SendPaymentSuccess
   - condition: "{{ $.funds[?(@.available == 'false')] }}"
-    transition:
-      nextState: SendInsufficientResults
+    transition: SendInsufficientResults
   default:
-    transition:
-      nextState: SendPaymentSuccess
+    transition: SendPaymentSuccess
 - name: SendPaymentSuccess
   type: operation
   actions:
@@ -2763,19 +2683,13 @@ If the retries are not successful, we want to just gracefully end workflow execu
           ],
           "actions": [
             {
-              "functionRef": {
-                "refName": "StorePatient"
-              }
+              "functionRef": "StorePatient"
             },
             {
-              "functionRef": {
-                "refName": "AssignDoctor"
-              }
+              "functionRef": "AssignDoctor"
             },
             {
-              "functionRef": {
-                "refName": "ScheduleAppt"
-              }
+              "functionRef": "ScheduleAppt"
             }
           ]
         }
@@ -2837,12 +2751,9 @@ states:
   - eventRefs:
     - NewPatientEvent
     actions:
-    - functionRef:
-        refName: StorePatient
-    - functionRef:
-        refName: AssignDoctor
-    - functionRef:
-        refName: ScheduleAppt
+    - functionRef: StorePatient
+    - functionRef: AssignDoctor
+    - functionRef: ScheduleAppt
   onErrors:
   - error: ServiceNotAvailable
     code: '503'

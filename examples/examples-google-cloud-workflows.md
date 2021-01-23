@@ -583,9 +583,7 @@ to interested parties via events (CloudEvents specification format), which we ar
             "start": true,
             "actions": [
                 {
-                    "functionRef": {
-                        "refName": "ReadItemFromApi"
-                    }
+                    "functionRef": "ReadItemFromApi"
                 }
             ],
             "onErrors": [
@@ -786,12 +784,10 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
             "start": true,
             "actions": [
                 {
-                    "functionRef": {
-                        "refName": "callFunctionA"
-                    }
+                    "functionRef": "callFunctionA"
                 }
             ],
-            "transition": { "nextState": "EvaluateAResults" }
+            "transition": "EvaluateAResults"
         },
         {
             "name": "EvaluateAResults",
@@ -800,16 +796,16 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
                 {
                     "name": "Less than 10",
                     "condition": "{{ $.body[?(@.SomeField < 10)] }}",
-                    "transition": { "nextState": "CallSmall" }
+                    "transition": "CallSmall"
                 },
                 {
                     "name": "Less than 100",
                     "condition": "{{ $.body[?(@.SomeField < 100)] }}",
-                    "transition": { "nextState": "CallMedium" }
+                    "transition": "CallMedium"
                 }
             ],
             "default": {
-                "transition": { "nextState": "CallLarge" }
+                "transition": "CallLarge"
             }
         },
         {
@@ -817,9 +813,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
             "type":"operation",
             "actions": [
                 {
-                    "functionRef": {
-                        "refName": "callFunctionSmall"
-                    }
+                    "functionRef": "callFunctionSmall"
                 }
             ],
             "end": true
@@ -829,9 +823,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
             "type":"operation",
             "actions": [
                 {
-                    "functionRef": {
-                        "refName": "callFunctionMedium"
-                    }
+                    "functionRef": "callFunctionMedium"
                 }
             ],
             "end": true
@@ -841,9 +833,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
             "type":"operation",
             "actions": [
                 {
-                    "functionRef": {
-                        "refName": "callFunctionMedium"
-                    }
+                    "functionRef": "callFunctionMedium"
                 }
             ],
             "end": true

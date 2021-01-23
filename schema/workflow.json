@@ -208,29 +208,39 @@
       ]
     },
     "transition": {
-      "type": "object",
-      "properties": {
-        "produceEvents": {
-          "type": "array",
-          "description": "Array of events to be produced",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/produceeventdef"
-          }
-        },
-        "nextState": {
+      "oneOf": [
+        {
           "type": "string",
           "description": "Name of state to transition to",
           "minLength": 1
         },
-        "compensate": {
-          "type": "boolean",
-          "default": false,
-          "description": "If set to true, triggers workflow compensation when before this transition is taken. Default is false"
+        {
+          "type": "object",
+          "description": "Function Reference",
+          "properties": {
+            "nextState": {
+              "type": "string",
+              "description": "Name of state to transition to",
+              "minLength": 1
+            },
+            "produceEvents": {
+              "type": "array",
+              "description": "Array of events to be produced before the transition happens",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/produceeventdef"
+              }
+            },
+            "compensate": {
+              "type": "boolean",
+              "default": false,
+              "description": "If set to true, triggers workflow compensation when before this transition is taken. Default is false"
+            }
+          },
+          "required": [
+            "nextState"
+          ]
         }
-      },
-      "required": [
-        "nextState"
       ]
     },
     "error": {
@@ -320,8 +330,30 @@
           "description": "Unique action definition name"
         },
         "functionRef": {
-          "description": "References a reusable function definition",
-          "$ref": "#/definitions/functionref"
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Name of the referenced function",
+              "minLength": 1
+            },
+            {
+              "type": "object",
+              "description": "Function Reference",
+              "properties": {
+                "refName": {
+                  "type": "string",
+                  "description": "Name of the referenced function"
+                },
+                "parameters": {
+                  "type": "object",
+                  "description": "Function parameters"
+                }
+              },
+              "required": [
+                "refName"
+              ]
+            }
+          ]
         },
         "eventRef": {
           "description": "References a 'trigger' and 'result' reusable event definitions",
@@ -346,23 +378,6 @@
             "eventRef"
           ]
         }
-      ]
-    },
-    "functionref": {
-      "type": "object",
-      "description": "Function Reference",
-      "properties": {
-        "refName": {
-          "type": "string",
-          "description": "Name of the referenced function"
-        },
-        "parameters": {
-          "type": "object",
-          "description": "Function parameters"
-        }
-      },
-      "required": [
-        "refName"
       ]
     },
     "eventref": {

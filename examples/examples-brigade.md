@@ -179,8 +179,7 @@ states:
           log: done
   onErrors:
   - error: "*"
-    transition:
-      nextState: HandleErrorState
+    transition: HandleErrorState
   end: true
 - name: HandleErrorState
   type: operation
@@ -338,8 +337,7 @@ states:
         refName: echoFunction
         parameters:
           message: goodbye
-  transition:
-    nextState: SecondGreetGroup
+  transition: SecondGreetGroup
 - name: SecondGreetGroup
   type: operation
   actions:
