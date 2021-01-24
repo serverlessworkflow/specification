@@ -7,7 +7,12 @@ targeting the serverless computing technology domain.
  
 ## Status of this document
 
-This document is a working draft.
+This document represents the current state of the specification.
+It includes all features so far released 
+as well as all features planned to be added in the next release.
+
+You can find all specification releases [here](https://github.com/serverlessworkflow/specification/releases).
+You can find the specification roadmap [here](roadmap/README.md).
 
 ## Table of Contents
 
