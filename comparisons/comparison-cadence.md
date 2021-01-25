@@ -16,10 +16,9 @@ Serverless Workflow DSL.
 This can hopefully help compare and contrast the two workflow languages and give a better understanding of both.
 
 Given that Cadence provides SDKs in multiple programming languages, in this document we will focus only on Cadence workflows
-written in Go.
+written in Java.
 
 All Cadence examples used in this document are available in their [cadence-samples](https://github.com/uber-common/cadence-samples)
-Github repository. Note that in this document we only show the Cadence examples in Go.
 
 We hope that these examples will give you a good start for comparing and contrasting the two workflow
 languages.
