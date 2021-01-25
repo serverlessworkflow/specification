@@ -1,4 +1,4 @@
-# Serverless Workflow Roadmap
+# Specification Roadmap
 
 _Note: Items in tables for each milestone do not imply an order of implementation._
 
@@ -12,35 +12,35 @@ _Status description:_
 
 ## Releases
 
-- [v0.1 released April 2020](#v01)
+- [Roadmap for next planned release](#v06)
 - [v0.5 released November 2020](#v05)
-- [v0.6 release date TBD](#v06)
+- [v0.1 released April 2020](#v01)
 
-## <a name="v01"></a> v0.1
+## <a name="v06"></a> Next planned release
 
 | Status | Description | Comments |
-| :--: | --- |  --- |
-| ✔ | Establish governance, contributing guidelines and initial stakeholder | [governance doc](https://github.com/cncf/wg-serverless/tree/v0.1/workflow/spec/governance)  |
-| ✔ | Define specification goals | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Define specification functional scope | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Include set of use-cases for Serverless Workflow | [usecases doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/usecases.md) |
-| ✔ | Include set of examples for Serverless Workflow | [examples doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/examples.md) |
-| ✔ | Define specification JSON Schema | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Add SubFlow state | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Add Relay state | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Add ForEach state | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Update Event state| [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Define Workflow data input/output | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Update state data filtering | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Clearly define workflow info passing | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Add Workflow error handling | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Add reusable function definitions | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Add support for YAML definitions | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Update workflow end definition | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Add Callback state | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔ | Add workflow metadata | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔️| Update workflow start definition | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
-| ✔️| Prepare github branch and docs for v0.1 | [branch](https://github.com/cncf/wg-serverless/tree/v0.1/workflow/spec) |
+| --- | --- |  --- |
+| ✔️| Adding Workflow Compensation capabilities (cmp [Compensating Transaction](https://docs.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), [SAGA pattern](https://microservices.io/patterns/data/saga.html)) | [spec doc](../specification.md) |
+| ✔️| Adding comparison examples with Google Cloud Workflow language| [examples doc](../examples/examples-google-cloud-workflows.md) |
+| ✔️| Updates to retry functionality | [retries: exponential backoff & max backoff](https://github.com/serverlessworkflow/specification/issues/137) [retries: max-attempts & interval](https://github.com/serverlessworkflow/specification/issues/136)|
+| ✔️| Update "directInvoke" property type | [spec doc](../specification.md) |
+| ✔️| Data schema input/output update | [spec doc](../specification.md) |
+| ✔️| Updating start and end state definitions| [spec doc](../specification.md) |
+| ✔️| Update cron definition (adding validUntil parameter)| [spec doc](../specification.md) |
+| ✔️| Adding comparison examples with Temporal | [examples doc](../examples/examples.md) |
+| ✔️| Simplified functionRef and transition properties | [spec doc](../specification.md) |
+| 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
+| 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
+| 🚩 | Workflow invocation bindings |  |
+| 🚩 | CE Subscriptions & Discovery |  |
+| 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
+| 🚩 | Uniqueness constraint for workflows | [issue](https://github.com/serverlessworkflow/specification/issues/146) |
+| 🚩 | Function invocations (GRPC) |  |
+| 🚩 | OpenAPI endpoint selection |  |
+| 🚩 | Data triggers |  |
+| 🚩 | JSON schema checks |  |
+| 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
+| ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
 
 ## <a name="v05"></a> v0.5
 
@@ -75,27 +75,29 @@ _Status description:_
 | ✔️| Enforce use of OpenAPI specification in function definitions for portability | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.5.x/specification.md) |
 | ✔️| Update workflow Error Handling | [spec doc](../specification.md) |
 
-## <a name="v06"></a> v0.6
+
+## <a name="v01"></a> v0.1
 
 | Status | Description | Comments |
-| --- | --- |  --- |
-| ✔️| Adding Workflow Compensation capabilities (cmp [Compensating Transaction](https://docs.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), [SAGA pattern](https://microservices.io/patterns/data/saga.html)) | [spec doc](../specification.md) |
-| ✔️| Adding comparison examples with Google Cloud Workflow language| [examples doc](../examples/examples-google-cloud-workflows.md) |
-| ✔️| Updates to retry functionality | [retries: exponential backoff & max backoff](https://github.com/serverlessworkflow/specification/issues/137) [retries: max-attempts & interval](https://github.com/serverlessworkflow/specification/issues/136)|
-| ✔️| Update "directInvoke" property type | [spec doc](../specification.md) |
-| ✔️| Data schema input/output update | [spec doc](../specification.md) |
-| ✔️| Updating start and end state definitions| [spec doc](../specification.md) |
-| ✔️| Update cron definition (adding validUntil parameter)| [spec doc](../specification.md) |
-| ✔️| Adding comparison examples with Temporal | [examples doc](../examples/examples.md) |
-| ✔️| Simplified functionRef and transition properties | [spc doc](../specification.md) |
-| 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
-| 🚩 | Workflow invocation bindings |  |
-| 🚩 | CE Subscriptions & Discovery |  |
-| 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
-| 🚩 | Uniqueness constraint for workflows | [issue](https://github.com/serverlessworkflow/specification/issues/146) |
-| 🚩 | Function invocations (GRPC) |  |
-| 🚩 | OpenAPI endpoint selection |  |
-| 🚩 | Data triggers |  |
-| 🚩 | JSON schema checks |  |
-| 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
-| ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
+| :--: | --- |  --- |
+| ✔ | Establish governance, contributing guidelines and initial stakeholder | [governance doc](https://github.com/cncf/wg-serverless/tree/v0.1/workflow/spec/governance)  |
+| ✔ | Define specification goals | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Define specification functional scope | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Include set of use-cases for Serverless Workflow | [usecases doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/usecases.md) |
+| ✔ | Include set of examples for Serverless Workflow | [examples doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/examples.md) |
+| ✔ | Define specification JSON Schema | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Add SubFlow state | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Add Relay state | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Add ForEach state | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Update Event state| [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Define Workflow data input/output | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Update state data filtering | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Clearly define workflow info passing | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Add Workflow error handling | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Add reusable function definitions | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Add support for YAML definitions | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Update workflow end definition | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Add Callback state | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔ | Add workflow metadata | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔️| Update workflow start definition | [spec doc](https://github.com/cncf/wg-serverless/blob/v0.1/workflow/spec/spec.md) |
+| ✔️| Prepare github branch and docs for v0.1 | [branch](https://github.com/cncf/wg-serverless/tree/v0.1/workflow/spec) |
