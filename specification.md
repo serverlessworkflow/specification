@@ -32,6 +32,7 @@ You can find the specification roadmap [here](roadmap/README.md).
 - [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
 - [Examples](#Examples)
+- [Comparison to other workflow languages](#Comparison-to-other-workflow-languages)
 - [References](#References)
 - [License](#License)
 
@@ -4421,7 +4422,12 @@ You can find different Serverless Workflow use cases [here](usecases/README.md).
 
 ## Examples
 
-You can find different Serverless Workflow examples [here](examples/README.md).
+You can find many Serverless Workflow examples [here](examples/README.md).
+
+## Comparison to other workflow languages
+
+You can find info how the Serverless Workflow language compares with
+ other workflow languages [here](comparisons/README.md).
 
 ## References
 
