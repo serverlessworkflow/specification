@@ -174,9 +174,7 @@ For example:
       "start": true,
       "actions":[  
        {  
-       "functionRef": {
-         "refName": "sendOrderConfirmation"
-       }
+       "functionRef": "sendOrderConfirmation"
       }],
       "end": true
   }]
@@ -237,22 +235,16 @@ Our expression function definitions can now be referenced by workflow states whe
         {
           "name": "Applicant is adult",
           "condition": "{{ fn(isAdult) }}",
-          "transition": {
-            "nextState": "ApproveApplication"
-          }
+          "transition": "ApproveApplication"
         },
         {
           "name": "Applicant is minor",
           "condition": "{{ fn(isMinor) }}",
-          "transition": {
-            "nextState": "RejectApplication"
-          }
+          "transition": "RejectApplication"
         }
      ],
      "default": {
-        "transition": {
-           "nextState": "RejectApplication"
-        }
+        "transition": "RejectApplication"
      }
   }
 ]
@@ -382,9 +374,7 @@ In the following example we want reference the previously defined "IsAdultApplic
 ```json
 {
       "condition": "{{ fn(IsAdultApplicant) }}",
-      "transition": {
-        "nextState": "StartApplication"
-      }
+      "transition": "StartApplication"
 }
 ```
 
@@ -1333,6 +1323,17 @@ Possible invocation timeouts should be handled via the states [onErrors](#Workfl
 
 #### FunctionRef Definition
 
+`FunctionRef` definition can have two types, either `string` or `object`.
+If `string`, it defines the name of the referenced [function](#Function-Definition).
+This can be used as a short-cut definition when you don't need to define any parameters, for example:
+
+```json
+"functionRef": "myFunction"
+```
+
+If you need to define parameters in your `functionRef` definition, you can define 
+it with its `object` type which has the following properties:
+
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | refName | Name of the referenced [function](#Function-Definition) | string | yes |
@@ -1373,8 +1374,9 @@ parameters:
 
 </details>
 
-Used by actions to reference a defined serverless function by its unique name. Parameters are values passed to the
-function. They can include either static values or reference the states data input.
+The `refName` property is the name of the referenced [function](#Function-Definition).
+The `parameters` property defines the parameters you can pass as input parameters to the referenced function.
+Values of the `parameters` property can be either static values, or an expression.
 
 #### EventRef Definition
 
@@ -1453,9 +1455,7 @@ to the trigger/produced event.
 ```json
 {
    "error": "Item not in inventory",
-   "transition": {
-     "nextState": "IssueRefundToCustomer"
-   }
+   "transition": "IssueRefundToCustomer"
 }
 ```
 
@@ -1464,8 +1464,7 @@ to the trigger/produced event.
 
 ```yaml
 error: Item not in inventory
-transition:
-  nextState: IssueRefundToCustomer
+transition: IssueRefundToCustomer
 ```
 
 </td>
@@ -1621,11 +1620,22 @@ For more information, refer to the [Workflow Error Handling](#Workflow-Error-Han
 
 #### Transition Definition
 
+`Transition` definition can have two types, either `string` or `object`.
+If `string`, it defines the name of the state to transition to.
+This can be used as a short-cut definition when you don't need to define any other parameters, for example:
+
+```json
+"transition": "myNextState"
+```
+
+If you need to define additional parameters in your `transition` definition, you can define 
+it with its `object` type which has the following properties:
+
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
+| [nextState](#Transitions) | Name of the state to transition to next | string | yes |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before this transition is taken. Default is `false` | boolean | no |
-| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Events to be produced when this transition happens | array | no |
-| [nextState](#Transitions) | State to transition to next | string | yes |
+| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Events to be produced before the transition takes place | array | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1663,6 +1673,10 @@ nextState: EvalResultState
 </table>
 
 </details>
+
+The `nextState` property defines the name of the state to transition to next.
+The `compensate` property allows you to trigger [compensation](#Workflow-Compensation) before the transition (if set to true).
+The `produceEvents` property allows you to define a list of events to produce before the transition happens.
 
 Transitions allow you to move from one state (control-logic block) to another. For more information see the
 [Transitions section](#Transitions) section.
@@ -1777,22 +1791,16 @@ Once all actions have been performed, a transition to another state can occur.
      "eventConditions": [
         {
           "eventRef": "visaApprovedEvent",
-          "transition": {
-            "nextState": "HandleApprovedVisa"
-          }
+          "transition": "HandleApprovedVisa"
         },
         {
           "eventRef": "visaRejectedEvent",
-          "transition": {
-            "nextState": "HandleRejectedVisa"
-          }
+          "transition": "HandleRejectedVisa"
         }
      ],
      "eventTimeout": "PT1H",
      "default": {
-        "transition": {
-          "nextState": "HandleNoVisaDecision"
-        }
+        "transition": "HandleNoVisaDecision"
      }
 }
 ```
@@ -1806,15 +1814,12 @@ type: switch
 start: true
 eventConditions:
 - eventRef: visaApprovedEvent
-  transition:
-    nextState: HandleApprovedVisa
+  transition: HandleApprovedVisa
 - eventRef: visaRejectedEvent
-  transition:
-    nextState: HandleRejectedVisa
+  transition: HandleRejectedVisa
 eventTimeout: PT1H
 default:
-  transition:
-    nextState: HandleNoVisaDecision
+  transition: HandleNoVisaDecision
 ```
 
 </td>
@@ -1868,9 +1873,7 @@ If events defined in event-based conditions do not arrive before the states `eve
 {
       "name": "Eighteen or older",
       "condition": "{{ $.applicants[?(@.age >= 18)] }}",
-      "transition": {
-        "nextState": "StartApplication"
-      }
+      "transition": "StartApplication"
 }
 ```
 
@@ -1880,8 +1883,7 @@ If events defined in event-based conditions do not arrive before the states `eve
 ```yaml
 name: Eighteen or older
 condition: "{{ $.applicants[?(@.age >= 18)] }}"
-transition:
-  nextState: StartApplication
+transition: StartApplication
 ```
 
 </td>
@@ -1923,9 +1925,7 @@ to decide what to do, transition to another workflow state, or end workflow exec
 {
       "name": "Visa approved",
       "eventRef": "visaApprovedEvent",
-      "transition": {
-        "nextState": "HandleApprovedVisa"
-      }
+      "transition": "HandleApprovedVisa"
 }
 ```
 
@@ -1935,8 +1935,7 @@ to decide what to do, transition to another workflow state, or end workflow exec
 ```yaml
 name: Visa approved
 eventRef: visaApprovedEvent
-transition:
-  nextState: HandleApprovedVisa
+transition: HandleApprovedVisa
 ```
 
 </td>
@@ -1987,9 +1986,7 @@ The `eventDataFilter` property can be used to filter event when it is received.
       "name": "WaitForCompletion",
       "type": "delay",
       "timeDelay": "PT5S",
-      "transition": {
-        "nextState":"GetJobStatus"
-      }
+      "transition": "GetJobStatus"
 }
 ```
 
@@ -2000,8 +1997,7 @@ The `eventDataFilter` property can be used to filter event when it is received.
 name: WaitForCompletion
 type: delay
 timeDelay: PT5S
-transition:
-  nextState: GetJobStatus
+transition: GetJobStatus
 ```
 
 </td>
@@ -2330,9 +2326,7 @@ Referenced workflows must declare their own [function](#Function-Definition) and
      "data": {
         "result": "Hello"
      },
-     "transition": {
-       "nextState": "World"
-     }
+     "transition": "World"
 }
 ```
 
@@ -2345,8 +2339,7 @@ type: inject
 start: true
 data:
   result: Hello
-transition:
-  nextState: World
+transition: World
 ```
 
 </td>
@@ -2385,9 +2378,7 @@ as data output to the transition state:
         "age": 40
       }
    },
-   "transition": {
-      "nextState": "GreetPersonState"
-   }
+   "transition": "GreetPersonState"
   }
   ```
 
@@ -2403,8 +2394,7 @@ as data output to the transition state:
       lname: Doe
       address: 1234 SomeStreet
       age: 40
-  transition:
-    nextState: GreetPersonState
+  transition: GreetPersonState
 ```
 
 </td>
@@ -2467,9 +2457,7 @@ You can also use the filter property to filter the state data after data is inje
      "stateDataFilter": {
         "dataOutputPath": "{{ $.people[?(@.age < 40)] }}"
      },
-     "transition": {
-        "nextState": "GreetPersonState"
-     }
+     "transition": "GreetPersonState"
     }
 ```
 
@@ -2495,8 +2483,7 @@ You can also use the filter property to filter the state data after data is inje
       age: 30
   stateDataFilter:
     dataOutputPath: "{{ $.people[?(@.age < 40)] }}"
-  transition:
-    nextState: GreetPersonState
+  transition: GreetPersonState
 ```
 
 </td>
@@ -2791,9 +2778,7 @@ The results of each parallel action execution are stored as elements in the stat
         },
         "eventRef": "CreditCheckCompletedEvent",
         "timeout": "PT15M",
-        "transition": {
-            "nextState": "EvaluateDecision"
-        }
+        "transition": "EvaluateDecision"
 }
 ```
 
@@ -2811,8 +2796,7 @@ action:
       customer: "{{ $.customer }}"
 eventRef: CreditCheckCompletedEvent
 timeout: PT15M
-transition:
-  nextState: EvaluateDecision
+transition: EvaluateDecision
 ```
 
 </td>
@@ -3197,8 +3181,6 @@ Serverless workflow states can have one or more incoming and outgoing transition
 Each state can define a `transition` definition that is used to determine which
 state to transition to next.
 
-To define a transition, set the `nextState` property in your transition definitions.
-
 Implementers can choose to use the states `name` property
 for determining the transition; however, we realize that in most cases this is not an
 optimal solution that can lead to ambiguity. This is why each state also include an "id"
@@ -3258,9 +3240,7 @@ output of the state to transition from includes an user with the title "MANAGER"
    "actionMode":"Sequential",
    "actions":[  
     {  
-     "functionRef":{
-        "refName": "doLowRiskOperationFunction"
-     }
+     "functionRef": "doLowRiskOperationFunction"
     }
     ],
     "transition": {
@@ -3275,9 +3255,7 @@ output of the state to transition from includes an user with the title "MANAGER"
    "actionMode":"Sequential",
    "actions":[  
     {  
-     "functionRef":{
-       "refName": "doHighRiskOperationFunction"
-     }
+     "functionRef": "doHighRiskOperationFunction"
     }
    ]
   }
@@ -3300,8 +3278,7 @@ states:
   type: operation
   actionMode: Sequential
   actions:
-  - functionRef:
-      refName: doLowRiskOperationFunction
+  - functionRef: doLowRiskOperationFunction
   transition:
     nextState: highRiskState
     expression: "{{ $.users[?(@.title == 'MANAGER')] }}"
@@ -3310,8 +3287,7 @@ states:
   end: true
   actionMode: Sequential
   actions:
-  - functionRef:
-      refName: doHighRiskOperationFunction
+  - functionRef: doHighRiskOperationFunction
 ```
 
 </td>
@@ -3484,9 +3460,7 @@ we can define a state filter:
   "stateDataFilter": {
     "dataInputPath": "{{ $.fruits }}"
   },
-  "transition": {
-     "nextState": "someNextState"
-  }
+  "transition": "someNextState"
 }
 ```
 
@@ -3509,9 +3483,7 @@ The first way would be to use both "dataInputPath", and "dataOutputPath":
     "dataInputPath": "{{ $.vegetables }}",
     "dataOutputPath": "{{ $.[?(@.veggieLike)] }}"
   },
-  "transition": {
-     "nextState": "someNextState"
-  }
+  "transition": "someNextState"
 }
 ```
 
@@ -3531,9 +3503,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
   "stateDataFilter": {
     "dataInputPath": "{{ $.vegetables.[?(@.veggieLike)] }}"
   },
-  "transition": {
-     "nextState": "someNextState"
-  }
+  "transition": "someNextState"
 }
 ```
 
@@ -3603,9 +3573,7 @@ We can use an action data filter to filter only the breads data:
 {
 "actions":[  
     {  
-       "functionRef": {
-          "refName": "breadAndPastaTypesFunction"
-       },
+       "functionRef": "breadAndPastaTypesFunction",
        "actionDataFilter": {
           "dataResultsPath": "{{ $.breads }}"
        }
@@ -3924,15 +3892,11 @@ Let's take a look at an example of each of these two cases:
 "onErrors": [
   {
     "error": "Item not in inventory",
-    "transition": {
-      "nextState": "ReimburseCustomer"
-    }
+    "transition": "ReimburseCustomer"
   },
   {
     "error": "*",
-    "transition": {
-      "nextState": "handleAnyOtherError"
-    }
+    "transition": "handleAnyOtherError"
   }
 ]
 }
@@ -3944,11 +3908,9 @@ Let's take a look at an example of each of these two cases:
 ```yaml
 onErrors:
 - error: Item not in inventory
-  transition:
-    nextState: ReimburseCustomer
+  transition: ReimburseCustomer
 - error: "*"
-  transition:
-    nextState: handleAnyOtherError
+  transition: handleAnyOtherError
 ```
 
 </td>
@@ -3973,9 +3935,7 @@ On the other hand the following example shows how to handle "all" errors with th
 "onErrors": [
   {
     "error": "*",
-    "transition": {
-      "nextState": "handleAllErrors"
-    }
+    "transition": "handleAllErrors"
   }
 ]
 }
@@ -3987,8 +3947,7 @@ On the other hand the following example shows how to handle "all" errors with th
 ```yaml
 onErrors:
 - error: "*"
-  transition:
-    nextState: handleAllErrors
+  transition: handleAllErrors
 ```
 
 </td>
@@ -4068,9 +4027,7 @@ Different states now can use this retry strategy defined. For example:
   {
     "error": "Inventory service timeout",
     "retryRef": "Service Call Timeout Retry Strategy",
-    "transition": {
-      "nextState": "ReimburseCustomer"
-    }
+    "transition": "ReimburseCustomer"
   }
 ]
 }
@@ -4083,8 +4040,7 @@ Different states now can use this retry strategy defined. For example:
 onErrors:
 - error: Inventory service timeout
   retryRef: Service Call Timeout Retry Strategy
-  transition:
-    nextState: ReimburseCustomer
+  transition: ReimburseCustomer
 ```
 
 </td>
@@ -4193,9 +4149,7 @@ state it references:
             }
           ],
           "compensatedBy": "CancelPurchase",
-          "transition": {
-              "nextState": "SomeNextWorkflowState"
-          }
+          "transition": "SomeNextWorkflowState"
       },
       {
         "name": "CancelPurchase",
@@ -4245,8 +4199,7 @@ states:
         parameters:
           customerid: "{{ $.purchase.customerid }}"
   compensatedBy: CancelPurchase
-  transition:
-    nextState: SomeNextWorkflowState
+  transition: SomeNextWorkflowState
 - name: CancelPurchase
   type: operation
   usedForCompensation: true

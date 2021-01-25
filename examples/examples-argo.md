@@ -175,8 +175,7 @@ states:
       refName: whalesayimage
       parameters:
         message: hello1
-  transition:
-    nextState: parallelhello
+  transition: parallelhello
 - name: parallelhello
   type: parallel
   completionType: and
@@ -277,8 +276,7 @@ states:
       refName: echo
       parameters:
         message: A
-  transition:
-    nextState: parallelecho
+  transition: parallelecho
 - name: parallelecho
   type: parallel
   completionType: and
@@ -295,8 +293,7 @@ states:
         refName: echo
         parameters:
           message: C
-  transition:
-    nextState: D
+  transition: D
 - name: D
   type: operation
   start: true
@@ -396,17 +393,12 @@ functions:
   metadata:
     image: python:alpine3.6
     command: python
-    source: | 
-      import random 
-      i = random.randint(1, 100) 
-      print(i)
+    source: "import random \ni = random.randint(1, 100) \nprint(i)\n"
 - name: gen-random-int-javascript
   metadata:
     image: node:9.1-alpine
     command: node
-    source: |
-      var rand = Math.floor(Math.random() * 100); 
-      console.log(rand);
+    source: "var rand = Math.floor(Math.random() * 100); \nconsole.log(rand);\n"
 - name: printmessagefunc
   metadata:
     image: alpine:latest
@@ -417,12 +409,10 @@ states:
   type: operation
   start: true
   actions:
-  - functionRef:
-      refName: gen-random-int-bash
+  - functionRef: gen-random-int-bash
     actionDataFilter:
       dataResultsPath: "{{ $.results }}"
-  transition:
-    nextState: print-message
+  transition: print-message
 - name: print-message
   type: operation
   actions:
@@ -499,8 +489,7 @@ states:
     greetings:
     - hello world
     - goodbye world
-  transition:
-    nextState: printgreetings
+  transition: printgreetings
 - name: printgreetings
   type: foreach
   inputCollection: "{{ $.greetings }}"
@@ -597,34 +586,28 @@ states:
   type: operation
   start: true
   actions:
-  - functionRef:
-      refName: flip-coin-function
+  - functionRef: flip-coin-function
     actionDataFilter:
       dataResultsPath: "{{ $.flip.result }}"
-  transition:
-    nextState: show-flip-results
+  transition: show-flip-results
 - name: show-flip-results
   type: switch
   dataConditions:
   - condition: "{{ $.flip[?(@.result == 'heads')] }}"
-    transition:
-      nextState: show-results-heads
+    transition: show-results-heads
   - condition: "{{ $.flip[?(@.result == 'tails')] }}"
-    transition:
-      nextState: show-results-tails
+    transition: show-results-tails
 - name: show-results-heads
   type: operation
   actions:
-  - functionRef:
-      refName: echo
+  - functionRef: echo
     actionDataFilter:
       dataResultsPath: it was heads
   end: true
 - name: show-results-tails
   type: operation
   actions:
-  - functionRef:
-      refName: echo
+  - functionRef: echo
     actionDataFilter:
       dataResultsPath: it was tails
   end: true
@@ -781,21 +764,17 @@ states:
   type: operation
   start: true
   actions:
-  - functionRef:
-      refName: flip-coin-function
+  - functionRef: flip-coin-function
     actionDataFilter:
       dataResultsPath: "{{ $.steps.flip-coin.outputs.result }}" 
-  transition:
-    nextState: flip-coin-check
+  transition: flip-coin-check
 - name: flip-coin-check
   type: switch
   dataConditions:
   - condition: "{{ $.steps.flip-coin.outputs[?(@.result == 'tails')] }}"
-    transition:
-      nextState: flip-coin-state
+    transition: flip-coin-state
   - condition: "{{ $.steps.flip-coin.outputs[?(@.result == 'heads')] }}"
-    transition:
-      nextState: heads-state
+    transition: heads-state
 - name: heads-state
   type: operation
   actions:
@@ -908,8 +887,7 @@ states:
         args: echo intentional failure; exit 1
   onErrors:
   - error: "*"
-    transition:
-      nextState: send-email-state
+    transition: send-email-state
 - name: send-email-state
   type: operation
   actions:
@@ -917,17 +895,14 @@ states:
       refName: send-email-function
       parameters:
         args: 'echo send e-mail: $.workflow.name $.exit-code'
-  transition:
-    nextState: emo-state
+  transition: emo-state
 - name: emo-state
   type: switch
   dataConditions:
   - condition: "{{ $[?(@.exit_code == '1')] }}"
-    transition:
-      nextState: celebrate-state
+    transition: celebrate-state
   - condition: "{{ $[?(@.exit_code != '1')] }}"
-    transition:
-      nextState: cry-state
+    transition: cry-state
 - name: celebrate-state
   type: operation
   actions:
