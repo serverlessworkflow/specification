@@ -27,9 +27,9 @@ _Status description:_
 | ✔️| Data schema input/output update | [spec doc](../specification.md) |
 | ✔️| Updating start and end state definitions| [spec doc](../specification.md) |
 | ✔️| Update cron definition (adding validUntil parameter)| [spec doc](../specification.md) |
-| ✔️| Adding comparison examples with Temporal | [comparison doc](../examples/comparisons/README.md) |
+| ✔️| Adding comparison examples with Temporal | [comparison doc](../comparisons/README.md) |
 | ✔️| Simplified functionRef and transition properties | [spec doc](../specification.md) |
-| ✔️| Adding comparison examples with Cadence | [comparison doc](../examples/comparisons/README.md) |
+| ✔️| Adding comparison examples with Cadence | [comparison doc](../comparisons/README.md) |
 | 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
