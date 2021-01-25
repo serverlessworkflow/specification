@@ -31,7 +31,6 @@ _Status description:_
 | ✔️| Simplified functionRef and transition properties | [spec doc](../specification.md) |
 | ✔️| Adding comparison examples with Cadence | [comparison doc](../examples/comparisons/README.md) |
 | 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
-| 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
