@@ -150,4 +150,5 @@ documents:
 | [media](media) | Includes all images used in spec docs |
 | [extensions](extensions/README.md) | Information on spec extensions |
 | [examples](examples) | Specification examples |
+| [comparisons](comparisons) | Comparisons of Serverless Workflow with other workflow DSLs |
 | [community](community) | Contains info on the spec community |
