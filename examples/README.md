@@ -3287,10 +3287,10 @@ We fist define our top-level workflow for this example:
                 "eventRefs": ["CarTurnedOnEvent"]
              }
           ],
-          "transition": "CheckVitals"
+          "transition": "DoCarVitalsChecks"
        },
        {
-          "name": "CheckVitals",
+          "name": "DoCarVitalsChecks",
           "type": "subflow",
           "workflowId": "vitalscheck",
           "repeat": {
@@ -3328,8 +3328,8 @@ states:
   onEvents:
   - eventRefs:
     - CarTurnedOnEvent
-  transition: CheckVitals
-- name: CheckVitals
+  transition: DoCarVitalsChecks
+- name: DoCarVitalsChecks
   type: subflow
   workflowId: vitalscheck
   repeat:
