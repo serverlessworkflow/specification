@@ -3247,12 +3247,12 @@ functions:
 
 #### Description
 
-In this example we want to automate a workflow which checks all our car tires vital signs while our car is driving. 
+In this example we want to automate a workflow which checks all our car vital signs while our car is driving. 
 The workflow should start when we receive the "carOn" event and stop when the "carOff" event is consumed.
-While the car is driving our workflow should repeatedly check tire vitals every 2 minutes.
+While the car is driving our workflow should repeatedly check the vitals every 2 minutes.
 
 For this example we use the workflow [SubFlow](../specification.md#SubFlow-State) state and its 
-[repeat definition](../specification.md#Repeat-Definition) to repeat execution of the tires check.
+[repeat definition](../specification.md#Repeat-Definition) to repeat execution of the vitals checks.
 
 #### Workflow Diagram
 
@@ -3274,8 +3274,8 @@ We fist define our top-level workflow for this example:
 
 ```json
 {
-    "id": "checktirevitals",
-    "name": "Check Tire Vitals Workflow",
+    "id": "checkcarvitals",
+    "name": "Check Car Vitals Workflow",
     "version": "1.0",
     "states": [
        {
@@ -3287,12 +3287,12 @@ We fist define our top-level workflow for this example:
                 "eventRefs": ["CarTurnedOnEvent"]
              }
           ],
-          "transition": "StartCheckingTireVitals"
+          "transition": "CheckVitals"
        },
        {
-          "name": "CheckTireVitals",
+          "name": "CheckVitals",
           "type": "subflow",
-          "workflowId": "tirevitalscheck",
+          "workflowId": "vitalscheck",
           "repeat": {
              "stopOnEvents": ["CarTurnedOffEvent"]
           },
@@ -3318,8 +3318,8 @@ We fist define our top-level workflow for this example:
 <td valign="top">
 
 ```yaml
-id: checktirevitals
-name: Check Tire Vitals Workflow
+id: checkcarvitals
+name: Check Car Vitals Workflow
 version: '1.0'
 states:
 - name: WhenCarIsOn
@@ -3328,10 +3328,10 @@ states:
   onEvents:
   - eventRefs:
     - CarTurnedOnEvent
-  transition: CheckTireVitals
-- name: StartCheckingTireVitals
+  transition: CheckVitals
+- name: CheckVitals
   type: subflow
-  workflowId: tirevitalscheck
+  workflowId: vitalscheck
   repeat:
     stopOnEvents:
     - CarTurnedOffEvent
@@ -3349,7 +3349,7 @@ events:
 </tr>
 </table>
 
-And then our reusable sub-workflow which performs the checking of our car tires:
+And then our reusable sub-workflow which performs the checking of our car vitals:
 
 <table>
 <tr>
@@ -3361,8 +3361,8 @@ And then our reusable sub-workflow which performs the checking of our car tires:
 
 ```json
 {
-   "id": "tirevitalscheck",
-   "name": "Tire Vitals Check",
+   "id": "vitalscheck",
+   "name": "Car Vitals Check",
    "version": "1.0",
    "states": [
       {
@@ -3446,8 +3446,8 @@ And then our reusable sub-workflow which performs the checking of our car tires:
 <td valign="top">
 
 ```yaml
-id: tirevitalscheck
-name: Tire Vitals Check
+id: vitalscheck
+name: Car Vitals Check
 version: '1.0'
 states:
 - name: CheckVitals
