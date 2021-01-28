@@ -19,7 +19,8 @@ You can find the specification roadmap [here](roadmap/README.md).
 - [Overview](#Overview)
 - [Project Components](#Project-Components)
 - [Specification Details](#Specification-Details)
-  - [Workflow Language Components](#Workflow-Language-Components)
+  - [Core Concepts](#Core-Concepts)
+  - [Workflow Model](#Workflow-Model)
   - [Workflow Data](#Workflow-Data)
   - [Workflow Functions](#Workflow-Functions)
   - [Workflow Expressions](#Workflow-Functions)
@@ -98,7 +99,52 @@ The specification has multiple components:
 
 Following sections provide detailed descriptions of all parts of the Serverless Workflow language. 
 
-### Workflow Language Components
+### Core Concepts
+
+This section describes some of the core Serverless Workflow concepts:
+
+### Workflow Definition
+
+A workflow definition is a single artefact written in the Serverless Workflow 
+language. It consists of a set of [workflow model](#Workflow-Model) constructs,
+and defines a blueprint used by runtimes for its execution. 
+
+A business solution can be composed of any number of related workflow definitions.
+Their relationships are explicitly modelled with the Serverless Workflow language (for example
+by using [SubFlow](#SubFlow-State) states).
+
+Runtimes can initialize workflow definitions for some particular set of data inputs or events
+which forms [workflow instances](#Workflow-Instance).
+
+### Workflow Instance
+
+A workflow instance represents a single workflow execution according to the given 
+workflow definition. Instances should be kept isolated, but 
+still be able to have access to other running instances. 
+
+Depending on their workflow definition, workflow instances can be short-lived or 
+can execute for days, weeks, or longer.
+
+Each workflow instances should have its unique identifier, which should remain 
+unchanged throughout its execution.
+
+Workflow definitions can describe how/when workflow instances should be created via
+the workflow state [start definition](#Start-Definition).
+For example, instance creation can be defined for some set of data, but other ways are also possible;
+you can enforce instance creations upon arrival of certain events with a starting [EventState](#Event-State), as well
+on a defined [schedule](#Start-Definition). 
+
+Workflow instance termination is also explicitly described in the workflow definition. 
+By default instances should be terminated once there are no active workflow paths (all active
+paths reach a state containing the default [end definition](#End-Definition)). Other ways, such as 
+using the `terminate` property of the [end definition](#End-Definition) to terminate instance execution,
+or defining an [execution timeout](#ExecTimeout-Definition) are also possible.
+
+This default behavior can be changed by setting the `keepActive` workflow property to `true`.
+In this case the only way to terminate a workflow instance is for its control flow to explicitly end with a "terminate" [end definition](#End-Definition),
+or if the defined [`execTimeout`](#ExecTimeout-Definition) time is reached.
+ 
+### Workflow Model
 
 The Serverless Workflow language is composed of:
 
@@ -422,6 +468,8 @@ which would set the workflow version to `1.0.0`.
 | version | Workflow version | string | no |
 | schemaVersion | Workflow schema version | string | no |
 | [dataSchema](#DataSchema-Definition) | Workflow data schema. Allows to set expected structure of workflow data input and output | object | no |
+| [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
+| keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
@@ -478,6 +526,20 @@ Following figure describes the main workflow definition blocks.
 <p align="center">
 <img src="media/spec/workflowdefinitionblocks.png" height="300px" alt="Serverless Workflow Definitions Blocks"/>
 </p>
+
+The `id` property defines the unique workflow identifier.
+
+The `name` property is the workflow logical name. 
+
+The `description` property can be used to give further information about the workflow.
+
+The `version` property can be used to provide a specific workflow version.
+
+The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
+to validate this workflow markup. If not provided the latest released schema version is assumed.
+
+The `execTimeout` property is used to define execution timeout for a workflow instance.
+For more information about this property and its use cases see the [execTimeout definition](#ExecTimeout-Definition) section.
 
 The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
 a resource containing an array of [functions](#Function-Definition) definition. 
@@ -556,6 +618,78 @@ The `retries` property can be either an in-line [retry](#Retry-Definition) defin
 a resource containing an array of [retry](#Retry-Definition) definition. 
 Referenced resource can be used by multiple workflow definitions. For more information about 
 using and referencing retry definitions see the [Workflow Error Handling](#Workflow-Error-Handling) section.
+
+The `keepActive` property allows you to change the default behavior of workflow instances.
+By default, as described in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
+active execution paths, one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
+its [`execTimeout`](#ExecTimeout Definition) time is reached. 
+
+Setting the `keepActive` property to "true" allows you change this default behavior in that a workflow instance
+created from this workflow definition can only be terminated if one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
+its [`execTimeout`](#ExecTimeout Definition) time is reached. 
+This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
+
+You can reference the [specification examples](#Examples) to see the `keepActive` property in action.
+
+#### ExecTimeout Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| interval | Timeout interval (ISO 8601 duration format) | string | yes |
+| interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is stopped immediately. Default is `false`  | boolean | no |
+| runBefore | Name of a workflow state to be executed before workflow instance is terminated | string | no |
+
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{  
+   "time": "PT2M",
+   "runBefore": "createandsendreport"
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+time: PT2M
+runBefore: createandsendreport
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+The `interval` property defines the time interval of the execution timeout. Once a workflow instance is created,
+and the amount of the defined time is reached, the workflow instance should be terminated.
+
+The `interrupt` property defines if the currently running instance should be allowed to finish its current 
+execution flow before it needs to be terminated. If set to `true`, the current instance execution should stop immediately.
+
+The `runBefore` property defines a name of a workflow state to be executed before workflow instance is terminated.
+States referenced by `runBefore` (as well as any other states that they transition to) must obey following rules:
+* They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
+* They cannot be states marked for compensation (have their `usedForCompensation` property and set to `true`)
+* They cannot define an [start definition](#Start-Definition). If they do, it should be ignored
+* If it is a single state, it must define an [end definition](#End-Definition), if it transitions to other states,
+at last one must define it.
+* They can transition only to states are also not part of the main control flow logic (and are not marked 
+for compensation).
+ 
+Runtime implementations should raise compile time / parsing exceptions if any of the rules mentioned above are 
+not obeyed in the workflow definition. 
 
 #### Function Definition
 
@@ -2022,7 +2156,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | name | State name | string | yes |
 | type | State type | string | yes |
 | [branches](#parallel-state-branch) | List of branches for this parallel state| array | yes |
-| completionType | Option types on how to complete branch execution. | enum | no |
+| completionType | Option types on how to complete branch execution. Default is "and" | enum | no |
 | n | Used when branchCompletionType is set to `n_of_m` to specify the `n` value. | string or number | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
@@ -2114,11 +2248,12 @@ end: true
 </details>
 
 Parallel state defines a collection of `branches` that are executed in parallel.
-
-Branches contain set of actions that need to be performed or a reference to another workflow that needs to be executed. 
+A parallel state can be seen a state which splits up the current workflow instance execution path
+into multiple ones, one for each of each branch. These execution paths are performed in parallel
+and are joined back into the current execution path depending on the defined `completionType` parameter value.
 
 The "completionType" enum specifies the different ways of completing branch execution:
-* and: All branches must complete execution before state can perform its transition
+* and: All branches must complete execution before state can perform its transition. This is the default value in case this parameter is not defined in the parallel state definition.
 * xor: State can transition when one of the branches completes execution
 * n_of_m: State can transition once `n` number of branches have completed execution. In this case you should also
 specify the `n` property to define this number.
@@ -2582,15 +2717,16 @@ actions:
 </table>
 
 </details>
+ForEach states can be used to execute [actions](#Action-Definition), or a [sub-workflow](#SubFlow-State) for 
+each element of a data set.
 
-ForEach states can be used to execute a defined actions, or execute a sub-workflow for each element of a data array.
 Each iteration of the ForEach state should be executed in parallel.
 
 You can use the `max` property to set the upper bound on how many iterations may run in parallel. The default
 of the `max` property is zero, which places no limit on number of parallel executions.
 
 The `inputCollection` property is a JsonPath expression which selects an array in the states data. All iterations 
-of are done against the data elements of this array. This array must exist.
+are done against data elements of this array. This array must exist.
 
 The `outputCollection` property is a JsonPath expression which selects an array in the state data where the results
 of each iteration should be added to. If this array does not exist, it should be created.
@@ -2835,12 +2971,18 @@ If the defined callback event has not been received during this time period, the
 
 #### Start Definition
 
-Can be either `boolean` or `object` type. 
-If `object` type it has the following structure:
+Can be either `boolean` or `object` type. If type boolean, must be set to `true`, for example:
+
+```json
+"start": true
+```
+In this case it's assumed that the `schedule`property is not defined.
+
+If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [schedule](#Schedule-Definition) | If kind is "scheduled", define time/repeating intervals at which workflow instances can/should be started | object | no |
+| [schedule](#Schedule-Definition) | Define the time/repeating intervals at which workflow instances can/should be started | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2875,20 +3017,23 @@ schedule:
 
 </details>
 
-Any state can declare to be the start state of the workflow, meaning when a workflow instance is created it will be the initial
-state to be executed. A workflow definition can declare one workflow start state.
+Start definition explicitly defines how/when workflow instances should be created.
+A workflow definition must include one state that defines the start definition. 
+
+Any workflow state can declare to be the starting workflow, meaning when a workflow instance is created it will be the initial
+state to be executed. A workflow definition can declare one single workflow starting state.
 
 The start definition can be either `boolean` or `object` type.
+
 If `boolean` type, when set to `true`, there are no restrictions imposed on its execution.
-If `object` type, it provides the ability to set the `scheduled` property.
-The `scheduled` property allows to define scheduled workflow instances. 
+
+If `object` type, it provides the ability to set the`scheduled` properties.
+
+The `scheduled` property allows to define scheduled workflow instance creation. 
 Scheduled starts have two different choices. You can define time-based intervals during which workflow instances are **allowed**
 to be created, or cron-based repeating times at which a workflow instance **should** be created. 
 
-Defining a schedule for the start definition allows you to set time intervals during which workflow instances can be created, or 
-periodic times at which workflow instance should be created.  
-
-One use case for the interval-based schedule is the following. Let's say
+To better explain interval-based scheduled starts, let's say
 we have a workflow that orchestrates an online auction and should be "available" only from when the auction starts until it ends. 
 Customer bids should only be allowed during this time interval. Bids made before or after the defined time interval should not be allowed.
 
@@ -2968,26 +3113,20 @@ directInvoke: true
 
 </details>
 
-The interval property uses the ISO 8601 time interval format to describe when the starting state is active.
+The `interval` property uses the ISO 8601 time interval format to describe when workflow instances can be created.
 There is a number of ways to express the time interval:
 
-1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning this start state is active
-from March 20th 2020 at 1PM UTC until May 11th 2021 at 3:30pm UTC.
-2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning this start state is active
-from March 20th 2020 at 1pm UTC and will stay active for 1 year, 2 months, 10 days 2 hours and 30 minutes.
-3. **Duration** + **End**: Defines the duration and an end, for example: "P1Y2M10DT2H30M/2020-05-11T15:30:00Z", meaning that this start state is active for
-1 year, 2 months, 10 days 2 hours and 30 minutes, or until May 11th 2020 at 3:30PM UTC, whichever comes first.
-4. **Duration**: Defines the duration only, for example: ""P1Y2M10DT2H30M"", meaning this start state is active for 1 year, 2 months, 10 days 2 hours and 30 minutes.
-Implementations have to provide the context in this case on when the duration should start to be counted, as it may be the workflow deployment time or the first time this workflow instance is created, for example.
-
-A case to consider here is when an [Event](#Event-State) state is also a workflow start state and the schedule definition is defined. Let's say we have a starting exclusive [Event](#Event-State) state
-that waits to consume event "X", meaning that the workflow instance should be created when event "X" occurs. If we also define
-a specific interval in the start schedule definition, the "waiting" for event "X" should only be started when the starting state becomes active.
-
-Once a workflow instance is created, the start state schedule can be ignored for that particular workflow instance. States should from then on rely on their timeout properties, for example, to restrict the waiting time of incoming events, function executions, etc.  
+1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning workflow intances can be
+created from March 20th 2020 at 1PM UTC until May 11th 2021 at 3:30pm UTC.
+2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning workflow instances can be created
+from March 20th 2020 at 1pm UTC and continue to do so for 1 year, 2 months, 10 days 2 hours and 30 minutes.
+3. **Duration** + **End**: Defines the duration and an end, for example: "P1Y2M10DT2H30M/2020-05-11T15:30:00Z", meaning that workflow instances can be created from
+when the first instance is created until 1 year, 2 months, 10 days 2 hours and 30 minutes from that time, or until May 11th 2020 at 3:30PM UTC, whichever comes first.
+4. **Duration**: Defines the duration only, for example: ""P1Y2M10DT2H30M"", meaning workflow instances can be created for 1 year, 2 months, 10 days 2 hours and 30 minutes
+from the time the first instance is created.
 
 The `cron` property uses a [cron expression](http://crontab.org/) 
-to describe a repeating interval upon which the state becomes active and a new workflow instance is created.
+to describe a repeating interval upon which a workflow instance should be created.
 For more information see the [cron definition](#Cron-Definition) section.
 
 The `timezone` property is used to define a time zone name to evaluate the cron expression against. If not specified, it should default to the local
@@ -3060,13 +3199,20 @@ as defined by the `validUntil` property value.
 
 #### End Definition
 
-Can be either `boolean` or `object` type. 
-If `object` type it has the following structure:
+Can be either `boolean` or `object` type. If type boolean, must be set to `true`, for example:
+
+```json
+"end": true
+```
+In this case it's assumed that the `terminate` property has its default value of `false`, and the `produceEvents` and 
+`compensate` properties are not defined.
+
+If the end definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| terminate | If true, completes all execution flows in the given workflow instance | boolean | no |
-| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. If `kind` is "event", define what type of event to produce | array | no |
+| terminate | If true, terminates workflow instance execution | boolean | no |
+| produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Defines events that should be produced. | array | no |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before workflow execution completes. Default is `false` | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3082,6 +3228,7 @@ If `object` type it has the following structure:
 
 ```json
 {
+    "terminate": true,
     "produceEvents": [{
         "eventRef": "provisioningCompleteEvent",
         "data": "{{ $.provisionedOrders }}"
@@ -3093,9 +3240,11 @@ If `object` type it has the following structure:
 <td valign="top">
 
 ```yaml
+terminate: true
 produceEvents:
 - eventRef: provisioningCompleteEvent
   data: "{{ $.provisionedOrders }}"
+
 ```
 
 </td>
@@ -3104,21 +3253,24 @@ produceEvents:
 
 </details>
 
-Any state with the exception of the [Switch](#Switch-State) state can declare to be the end state of the workflow, meaning after the execution of this state is completed, workflow execution ends. 
-Switch states require a transition to happen after their execution, thus cannot be workflow end states.
+End definitions are used to explicitly define execution completion of a workflow instance or workflow execution path.
+A workflow definition must include at least one [workflow state](#State Definition).
+Note that [Switch states](#Switch-State) cannot declare to be workflow end states. Switch states must end
+their execution followed by a transition another workflow state, given their conditional evaluation.
 
-The end definition can be either `boolean` or `object` type.
-If `boolean` type, when set to `true`, there are no restrictions imposed on its execution.
-If `object` type, it provides the ability to set the [`produceEvents`](#ProducedEvent-Definition) `terminate`, and `compensate` properties.
 
-The end definitions provides different ways to complete workflow execution, which is set by the `kind` property:
-
-The `terminate` property, if set to `true`, completes all execution flows in the given workflow instance. 
-All activities/actions being executed are completed. 
+The `terminate` property, if set to `true`, completes the workflow instance execution, this any other active 
+execution paths.
 If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the entire workflow instance is terminated.
 
 The [`produceEvents`](#ProducedEvent-Definition) allows to define events which should be produced
 by the workflow instance before workflow stops its execution.
+
+It's important to mention that if the workflow `keepActive` property is set to`true`, 
+the only way to complete execution of the workflow instance 
+is if workflow execution reaches a state that defines an end definition with `terminate` property set to `true`,
+or, if the [execution timeout](#ExecTimeout-Definition) property is defined, the time defined in its `interval`
+is reached.
 
 #### ProducedEvent Definition
 
@@ -4100,7 +4252,7 @@ errors.
 Each workflow state can define how it should be compensated via its `compensatedBy` property.
 This property references another workflow state (by it's unique name) which is responsible for the actual compensation.
 
-States referenced by `compensatedBy` must obey following rules:
+States referenced by `compensatedBy` (as well as any other states that they transition to) must obey following rules:
 * They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
 * They cannot be an [event state](#Event-State)
 * They cannot define an [start definition](#Start-definition). If they do, it should be ignored
@@ -4109,7 +4261,8 @@ States referenced by `compensatedBy` must obey following rules:
 * They can transition only to states which also have their `usedForCompensation` property and set to `true`
 * They cannot themselves set their `compensatedBy` property to true (compensation is not recursive)
  
-Runtime implementations should raise compile time / parsing exceptions for all the cases mentioned above. 
+Runtime implementations should raise compile time / parsing exceptions if any of the rules mentioned above are 
+not obeyed in the workflow definition. 
 
 Let's take a look at an example workflow state which defines its `compensatedBy` property, and the compensation
 state it references:

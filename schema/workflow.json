@@ -33,6 +33,14 @@
         "dataSchema": {
           "$ref": "#/definitions/dataschema"
         },
+        "execTimeout": {
+          "$ref": "#/definitions/exectimeout"
+        },
+        "keepActive": {
+          "type": "boolean",
+          "default": false,
+          "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         },
@@ -121,6 +129,14 @@
         "dataSchema": {
           "$ref": "#/definitions/dataschema"
         },
+        "execTimeout": {
+          "$ref": "#/definitions/exectimeout"
+        },
+        "keepActive": {
+          "type": "boolean",
+          "default": false,
+          "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         },
@@ -199,12 +215,31 @@
         },
         "validUntil": {
           "type": "string",
-          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid",
+          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid"
+        }
+      }
+    },
+    "exectimeout": {
+      "type": "object",
+      "properties": {
+        "interval": {
+          "type": "string",
+          "description": "Timeout interval (ISO 8601 duration format)",
+          "minLength": 1
+        },
+        "interrupt": {
+          "type": "boolean",
+          "description": "If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted.",
+          "default": false
+        },
+        "runBefore": {
+          "type": "string",
+          "description": "Name of a workflow state to be executed before workflow instance is terminated",
           "minLength": 1
         }
       },
       "required": [
-        "expression"
+        "interval"
       ]
     },
     "transition": {
@@ -961,8 +996,7 @@
           "description": "State type"
         },
         "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
+          "$ref": "#/definitions/start"
         },
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
@@ -1837,6 +1871,7 @@
             }
           },
           "required": [
+            "schedule"
           ]
         }
       ]
@@ -1847,13 +1882,13 @@
       "properties": {
         "interval": {
           "type": "string",
-          "description":  "Time interval (ISO 8601 format) describing when the workflow starting state is active"
+          "description":  "Time interval (ISO 8601 format) describing when workflow instances can be created."
         },
         "cron": {
           "$ref": "#/definitions/crondef"
         },
         "directInvoke": {
-          "description": "Defines if workflow instances can be created outside of the interval/cron interval",
+          "description": "Define if workflow instances can be created outside of the defined interval/cron",
           "type": "boolean",
           "default": false
         },
@@ -1893,7 +1928,7 @@
             },
             "produceEvents": {
               "type": "array",
-              "description": "Used if kind is event. Array of events to be produced",
+              "description": "Defines events that should be produced",
               "items": {
                 "type": "object",
                 "$ref": "#/definitions/produceeventdef"
@@ -1902,7 +1937,7 @@
             "compensate": {
               "type": "boolean",
               "default": false,
-              "description": "If set to true, triggers workflow compensation before workflow execution completes. Default is false"
+              "description": "If set to true, triggers workflow compensation. Default is false"
             }
           },
           "required": [

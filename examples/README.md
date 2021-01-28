@@ -22,6 +22,8 @@ Provides Serverless Workflow language examples
 - [Event-based service invocation (Event triggered actions)](#Event-Based-Service-Invocation)
 - [Reusing Function and Event Definitions](#Reusing-Function-And-Event-Definitions)
 - [New Patient Onboarding (Error checking and Retries)](#New-Patient-Onboarding)
+- [Purchase order deadline (ExecTimeout)](#Purchase-order-deadline)
+- [Accumulate room readings and create timely reports (ExecTimeout and KeepActive)](#Accumulate-room-readings)
 
 ### Hello World Example
 
@@ -2787,3 +2789,455 @@ retries:
 
 This example is used in our Serverless Workflow Hands-on series videos [#1](https://www.youtube.com/watch?v=0gmpuGLP-_o)
 and [#2](https://www.youtube.com/watch?v=6A6OYp5nygg).
+
+
+### Purchase order deadline
+
+#### Description
+
+In this example our workflow processes purchase orders. An order event triggers instance of our workflow.
+To complete the created order, our workflow must first wait for an order confirmation event (correlated to the 
+order id), and then wait for the shipment sent event (also correlated to initial order id).
+We do not want to place an exact timeout limit for waiting for the confirmation and shipment events,
+as this might take a different amount of time depending on the size of the order. However we do have the requirement
+that a total amount of time for the order to be confirmed, once its created, is 30 days.
+If the created order is not completed within 30 days it needs to be automatically closed.
+
+This example shows the use of the workflow [execTimeout definition](../specification.md#ExecTimeout-Definition).
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-purchaseorderdeadline.png" height="400px" alt="Purchase Order Deadline Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "id": "order",
+  "name": "Purchase Order Workflow",
+  "version": "1.0",
+  "execTimeout": {
+    "interval": "PT30D",
+    "interrupt": true,
+    "runBefore": "CancelOrder"
+  },
+  "states": [
+    {
+      "name": "StartNewOrder",
+      "type": "event",
+      "start": true,
+      "onEvents": [
+        {
+          "eventRefs": ["OrderCreatedEvent"],
+          "actions": [
+            {
+              "functionRef": {
+                "refName": "LogNewOrderCreated"
+              }
+            }
+          ]
+        }
+      ],
+      "transition": {
+        "nextState": "WaitForOrderConfirmation"
+      }
+    },
+    {
+      "name": "WaitForOrderConfirmation",
+      "type": "event",
+      "onEvents": [
+        {
+          "eventRefs": ["OrderConfirmedEvent"],
+          "actions": [
+            {
+              "functionRef": {
+                "refName": "LogOrderConfirmed"
+              }
+            }
+          ]
+        }
+      ],
+      "transition": {
+        "nextState": "WaitOrderShipped"
+      }
+    },
+    {
+      "name": "WaitOrderShipped",
+      "type": "event",
+      "onEvents": [
+        {
+          "eventRefs": ["ShipmentSentEvent"],
+          "actions": [
+            {
+              "functionRef": {
+                "refName": "LogOrderShipped"
+              }
+            }
+          ]
+        }
+      ],
+      "end": {
+        "terminate": true,
+        "produceEvents": [
+          {
+            "eventRef": "OrderFinishedEvent"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CancelOrder",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "CancelOrder"
+          }
+        }
+      ],
+      "end": {
+        "terminate": true,
+        "produceEvents": [
+          {
+            "eventRef": "OrderCancelledEvent"
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "OrderCreatedEvent",
+      "type": "my.company.orders",
+      "source": "/orders/new",
+      "correlation": [
+        {
+          "contextAttributeName": "orderid"
+        }
+      ]
+    },
+    {
+      "name": "OrderConfirmedEvent",
+      "type": "my.company.orders",
+      "source": "/orders/confirmed",
+      "correlation": [
+        {
+          "contextAttributeName": "orderid"
+        }
+      ]
+    },
+    {
+      "name": "ShipmentSentEvent",
+      "type": "my.company.orders",
+      "source": "/orders/shipped",
+      "correlation": [
+        {
+          "contextAttributeName": "orderid"
+        }
+      ]
+    },
+    {
+      "name": "OrderFinishedEvent",
+      "type": "my.company.orders",
+      "kind": "produced"
+    },
+    {
+      "name": "OrderCancelledEvent",
+      "type": "my.company.orders",
+      "kind": "produced"
+    }
+  ],
+  "functions": [
+    {
+      "name": "LogNewOrderCreated",
+      "operation": "http.myorg.io/ordersservices.json#logcreated"
+    },
+    {
+      "name": "LogOrderConfirmed",
+      "operation": "http.myorg.io/ordersservices.json#logconfirmed"
+    },
+    {
+      "name": "LogOrderShipped",
+      "operation": "http.myorg.io/ordersservices.json#logshipped"
+    },
+    {
+      "name": "CancelOrder",
+      "operation": "http.myorg.io/ordersservices.json#calcelorder"
+    }
+  ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: order
+name: Purchase Order Workflow
+version: '1.0'
+execTimeout:
+  interval: PT30D
+  interrupt: true
+  runBefore: CancelOrder
+states:
+- name: StartNewOrder
+  type: event
+  start: true
+  onEvents:
+  - eventRefs:
+    - OrderCreatedEvent
+    actions:
+    - functionRef:
+        refName: LogNewOrderCreated
+  transition:
+    nextState: WaitForOrderConfirmation
+- name: WaitForOrderConfirmation
+  type: event
+  onEvents:
+  - eventRefs:
+    - OrderConfirmedEvent
+    actions:
+    - functionRef:
+        refName: LogOrderConfirmed
+  transition:
+    nextState: WaitOrderShipped
+- name: WaitOrderShipped
+  type: event
+  onEvents:
+  - eventRefs:
+    - ShipmentSentEvent
+    actions:
+    - functionRef:
+        refName: LogOrderShipped
+  end:
+    terminate: true
+    produceEvents:
+    - eventRef: OrderFinishedEvent
+- name: CancelOrder
+  type: operation
+  actions:
+  - functionRef:
+      refName: CancelOrder
+  end:
+    terminate: true
+    produceEvents:
+    - eventRef: OrderCancelledEvent
+events:
+- name: OrderCreatedEvent
+  type: my.company.orders
+  source: "/orders/new"
+  correlation:
+  - contextAttributeName: orderid
+- name: OrderConfirmedEvent
+  type: my.company.orders
+  source: "/orders/confirmed"
+  correlation:
+  - contextAttributeName: orderid
+- name: ShipmentSentEvent
+  type: my.company.orders
+  source: "/orders/shipped"
+  correlation:
+  - contextAttributeName: orderid
+- name: OrderFinishedEvent
+  type: my.company.orders
+  kind: produced
+- name: OrderCancelledEvent
+  type: my.company.orders
+  kind: produced
+functions:
+- name: LogNewOrderCreated
+  operation: http.myorg.io/ordersservices.json#logcreated
+- name: LogOrderConfirmed
+  operation: http.myorg.io/ordersservices.json#logconfirmed
+- name: LogOrderShipped
+  operation: http.myorg.io/ordersservices.json#logshipped
+- name: CancelOrder
+  operation: http.myorg.io/ordersservices.json#calcelorder
+```
+
+</td>
+</tr>
+</table>
+
+### Accumulate room readings
+
+#### Description
+
+In this example we have two IoT sensors for each room in our house. One reads temperature values
+and the other humidity values of each room. We get these measurements for each of our rooms 
+as CloudEvents. We can correlate events send by our sensors by the room it is in.
+
+For the example we want to accumulate the temperature and humidity values for each and send hourly reports 
+to the home owner for each room.
+
+**Note:** In this example each rooms measurements will be accumulated by a single workflow instance per room.
+Once we receive events for 1 hour (per room) each of the room-based workflow instances will create the report. Events
+consumed after the report is created will trigger a new instance of our workflow (again, per room), accumulate 
+the data for an hour, send report, and so on.                                                                                                     
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-accumulateroomreadings.png" height="400px" alt="Accumulate Room Readings Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "id": "roomreadings",
+  "name": "Room Temp and Humidity Workflow",
+  "version": "1.0",
+  "execTimeout": {
+    "interval": "PT1H",
+    "runBefore": "GenerateReport"
+  },
+  "keepActive": true,
+  "states": [
+    {
+      "name": "ConsumeReading",
+      "type": "event",
+      "start": true,
+      "onEvents": [
+        {
+          "eventRefs": ["TemperatureEvent", "HumidityEvent"],
+          "actions": [
+            {
+              "functionRef": {
+                "refName": "LogReading"
+              }
+            }
+          ],
+          "eventDataFilter": {
+            "dataOutputPath": "$.readings"
+          }
+        }
+      ],
+      "end": true
+    },
+    {
+      "name": "GenerateReport",
+      "type": "operation",
+      "actions": [
+        {
+          "functionRef": {
+            "refName": "ProduceReport",
+            "parameters": {
+              "data": "$.readings"
+            }
+          }
+        }
+      ],
+      "end": {
+        "terminate": true
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "TemperatureEvent",
+      "type": "my.home.sensors",
+      "source": "/home/rooms/+",
+      "correlation": [
+        {
+          "contextAttributeName": "roomId"
+        }
+      ]
+    },
+    {
+      "name": "HumidityEvent",
+      "type": "my.home.sensors",
+      "source": "/home/rooms/+",
+      "correlation": [
+        {
+          "contextAttributeName": "roomId"
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "LogReading",
+      "operation": "http.myorg.io/ordersservices.json#logreading"
+    },
+    {
+      "name": "ProduceReport",
+      "operation": "http.myorg.io/ordersservices.json#produceReport"
+    }
+  ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: roomreadings
+name: Room Temp and Humidity Workflow
+version: '1.0'
+execTimeout:
+  interval: PT1H
+  runBefore: GenerateReport
+keepActive: true
+states:
+- name: ConsumeReading
+  type: event
+  start: true
+  onEvents:
+  - eventRefs:
+    - TemperatureEvent
+    - HumidityEvent
+    actions:
+    - functionRef:
+        refName: LogReading
+    eventDataFilter:
+      dataOutputPath: "$.readings"
+  end: true
+- name: GenerateReport
+  type: operation
+  actions:
+  - functionRef:
+      refName: ProduceReport
+      parameters:
+        data: "$.readings"
+  end:
+    terminate: true
+events:
+- name: TemperatureEvent
+  type: my.home.sensors
+  source: "/home/rooms/+"
+  correlation:
+  - contextAttributeName: roomId
+- name: HumidityEvent
+  type: my.home.sensors
+  source: "/home/rooms/+"
+  correlation:
+  - contextAttributeName: roomId
+functions:
+- name: LogReading
+  operation: http.myorg.io/ordersservices.json#logreading
+- name: ProduceReport
+  operation: http.myorg.io/ordersservices.json#produceReport
+```
+
+</td>
+</tr>
+</table>
