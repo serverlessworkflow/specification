@@ -467,7 +467,6 @@ which would set the workflow version to `1.0.0`.
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
 | schemaVersion | Workflow schema version | string | no |
-| [dataSchema](#DataSchema-Definition) | Workflow data schema. Allows to set expected structure of workflow data input and output | object | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
@@ -971,53 +970,6 @@ says that these events must all have a context attribute named "department" with
 This allows developers to write orchestration workflows that are specifically targeted to patients that are in the hospital urgent care unit, 
 for example.
 
-#### DataSchema Definition
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| input | URI to JSON Schema that workflow/state data input should adhere to | string | no |
-| output | URI to JSON Schema that workflow/state data output should adhere to | string | no |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{  
-   "input": "http://myschemas.io/inputschema.json",
-   "output": "http://myschemas.io/outputschema.json"
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-input: http://myschemas.io/inputschema.json
-output: http://myschemas.io/outputschema.json
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-DataSchema definition allows you to reference an input and/or output [JSON Schema](https://json-schema.org/).
-It can be used to describe the expected structure of workflow data input and data output.
-If used within a workflow state, it can be used to describe the expected structure of the state 
-data input and data output.
-
-The `input` property is an URI to a JSON Schema describing the expected structure of the data input.
-The `output` property is an URI to a JSON Schema describing the expected structure of the data output.
-
 #### Correlation Definition
 
 | Parameter | Description | Type | Required |
@@ -1100,7 +1052,6 @@ The following is a detailed description of each of the defined states.
 | [onEvents](#eventstate-onevents) | Define the events to be consumed and one or more actions to be performed | array | yes |
 | [timeout](#eventstate-timeout) | Time period to wait for incoming events (ISO 8601 format). For example: "PT15M" (wait 15 minutes), or "P2DT3H4M" (wait 2 days, 3 hours and 4 minutes)| string | no |
 | [stateDataFilter](#state-data-filter) | State data filter definition| object | no |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
@@ -1833,7 +1784,6 @@ Transitions allow you to move from one state (control-logic block) to another. F
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes (if end is not defined) |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -1906,7 +1856,6 @@ Once all actions have been performed, a transition to another state can occur.
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | eventTimeout | If eventConditions is used, defines the time period to wait for events (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | yes only if eventConditions is defined |
 | default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2104,7 +2053,6 @@ The `eventDataFilter` property can be used to filter event when it is received.
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after the delay | object | yes (if end is not defined) |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
@@ -2161,7 +2109,6 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes (if end is not defined) |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2364,7 +2311,6 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is not defined) |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2440,7 +2386,6 @@ Referenced workflows must declare their own [function](#Function-Definition) and
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is set to false) |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
@@ -2656,7 +2601,6 @@ This allows you to test if your workflow behaves properly for cases when there a
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes (if end is not defined) |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2886,7 +2830,6 @@ The results of each parallel action execution are stored as elements in the stat
 | [eventDataFilter](#event-data-filter) | Callback event data filter definition | object | no |
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [dataSchema](#DataSchema-Definition) | State data schema. Allows to set expected structure of the states data input and output | object | no |
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes |
 | [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
@@ -3473,11 +3416,6 @@ Workflow data input is passed to the workflow's [start state](#Start-Definition)
 <img src="media/spec/workflowdatainput.png" height="350px" alt="Workflow data input"/>
 </p>
 
-In order to define the structure of expected workflow data input you can use the workflow
-[`dataSchema`](#DataSchema-Definition) `input` property. This property allows you to link to a [JSON Schema](https://json-schema.org/) definition
-that describes the expected workflow data input. It can be used for documentation purposes or implementations may
-decide to strictly enforce it.
-
 #### Event Data
 
 [Event states](#Event-State) wait for arrival of defined CloudEvents, and when consumed perform a number of defined actions.
@@ -3519,11 +3457,6 @@ There are two of rules to consider here:
 <p align="center">
 <img src="media/spec/basic-state-data-passing.png" height="350px" alt="Basic state data passing"/>
 </p>
-
-In order to define the structure of expected state data input and output you can use the workflow
-["dataSchema"](#DataSchema-Definition) property. It allows you to link to [JSON Schema](https://json-schema.org/) definitions
-that describe the expected states data input/output. It can be used for documentation purposes or implementations may
-decide to strictly enforce it.
 
 #### State Data Filtering
 
@@ -3986,11 +3919,6 @@ transitions to the next one or ends workflow execution (end state) can be consid
 Once a workflow instance reaches an end state (where the `end` property is defined) and the workflow finishes its execution
 the data output of that result state becomes the workflow data output. This output can be logged or indexed depending on the
 implementation details.
-
-In order to define the structure of expected workflow data output you can use the workflow
-[`dataSchema`](#DataSchema-Definition) `output` property. This property allows you to link to [JSON Schema](https://json-schema.org/) definition
-that describes the expected workflow data output. It can be used for documentation purposes or implementations may
-decide to strictly enforce it.
 
 ### Workflow Error Handling
 
