@@ -2308,6 +2308,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | type |State type | string | yes |
 | waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
 | workflowId |Sub-workflow unique id | boolean | no |
+| [repeat](#Repeat-Definition) | SubFlow state repeat exec definition | object | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is not defined) |
@@ -2365,16 +2366,24 @@ Reusable workflow are referenced by their `id` property via the SubFlow states`w
 Each referenced workflow receives the SubFlow states data as workflow data input.
 
 The `waitForCompletion` property defines if the SubFlow state should wait until the referenced reusable workflow
-has completed its execution. 
-
-If `waitForCompletion` is "true", SubFlow state execution must wait until the referenced workflow has completed its execution.
+has completed its execution. If it's set to "true" (default value), SubFlow state execution must wait until the referenced workflow has completed its execution.
 In this case the workflow data output of the referenced workflow can and should be merged with the SubFlow states state data.
-
-If `waitForCompletion` is set to "false" the parent workflow can continue its execution while the referenced workflow 
+If it's set to "false" the parent workflow can continue its execution while the referenced sub-workflow 
 is being executed. For this case, the referenced (child) workflow data output cannot be merged with the SubFlow states
 state data (as by the time its completion the parent workflow execution has already continued).
 
-Referenced workflows must declare their own [function](#Function-Definition) and [event](#Event-Definition) definitions.
+The `repeat` property defines the SubFlow states repeated execution (looping) behavior. This allows you to specify that 
+the sub-workflow should be executed multiple times repeatedly.
+If the `repeat` property is defined, the `waitForCompletion` should be assumed have the value of `true`.
+If the workflow explicitly triggers [compensation](#Workflow Compensation) and the SubFlow state 
+was executed and defines its compensation state, it should be compensated once, no matter how many times
+its exection was executed as defined by the `repeat` property.
+After each execution of the SubFlow state, if `repeat` is defined, the SubFlow state data at the end of the 
+one execution should become the state data of the next execution.
+
+For more information about the `repeat` property see the [Repeat Definition](#Repeat-Definition) section.
+
+Referenced sub-workflows must declare their own [function](#Function-Definition) and [event](#Event-Definition) definitions.
 
 #### Inject State
 
@@ -2911,6 +2920,81 @@ The callback event payload is merged with the Callback state data and can be fil
 The Callback state `timeout` property defines a time period from the action execution until the callback event should be received.
 
 If the defined callback event has not been received during this time period, the state should transition to the next state or end workflow execution if it is an end state.
+
+#### Repeat Definition
+
+| Parameter | Description | Type | Required | 
+| --- | --- | --- | --- |
+| [expression](#Workflow-Expressions) | Data Expression evaluated against state data. SubFlow will repeat execution as long as this expression is true or until the max property count is reached  | string | no |
+| checkBefore | If set to `true` (default value) the expression is evaluated before each repeat execution, if set to false the expression is evaluated after each repeat execution | boolean | no |
+| max | Sets the maximum amount of repeat executions | integer | no |
+| continueOnError | If set to `true` repeats executions in a case unhandled errors propagate from the sub-workflow to this state | boolean | no |
+| stopOnEvents | List referencing defined consumed workflow events. SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached | array | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "max": 10,
+  "continueOnError": true
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+max: 10
+continueOnError: true
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Repeat definition can be used in [SubFlow](#SubFlow-State) states to define repeated execution (looping).
+
+The `expression` parameter is a [workflow expression](#Workflow-Expressions). It is 
+evaluated against SubFlow states data. 
+SubFlow state should repeat its execution as long as this expression evaluates to `true` (the expression returns a non-empty result),
+or until the `max` property limit is reached. This parameter allows you to stop repeat execution based on data.
+
+The `checkBefore` property can be used to decide if the `expression` evaluation should be done before or after 
+each SubFlow state execution. Default value of this property is `true`.
+
+The `max` property sets the maximum count of repeat executions. It should be a positive integer value.
+Runtime implementations must define an internal repeat/loop counter which is incremented for each of the 
+SubFlow state repeated executions. If this counter reaches the max value, repeated executions should end.
+
+The `continueOnError` property defines if repeated executions should continue or not in case unhandled errors are propagated
+by the sub-workflow to the SubFlow state. Default value of this property is `false`.
+Unhandled errors are errors which are not explicitly handled by the sub-workflow, and the SubFlow state 
+via its [`onErrors`](##Error-Definition) definition.
+
+If `continueOnError` is set to `false` (default value), and an unhandled error occurs, it should be handled 
+as any other unhandled workflow error, meaning repeat execution shall stop and workflow should stop its exception.
+
+If an error occurs which propagates to the SubFlow state, and is handled explicitly by the 
+SubFlow states [`onErrors`](#Error-Definition) definition, the control flow must take the path of the error handling definition
+and repeat execution must halt.
+
+An alternative way to limit repeat executions is via the `stopOnEvents` property. It contains a list of one or more 
+defined consumed workflow events (referened by the unique event name). When `stopOnEvents` is defined,
+SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached.
+
+
+
 
 #### Start Definition
 
