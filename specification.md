@@ -2377,7 +2377,7 @@ the sub-workflow should be executed multiple times repeatedly.
 If the `repeat` property is defined, the `waitForCompletion` should be assumed have the value of `true`.
 If the workflow explicitly triggers [compensation](#Workflow Compensation) and the SubFlow state 
 was executed and defines its compensation state, it should be compensated once, no matter how many times
-its exection was executed as defined by the `repeat` property.
+its was executed as defined by the `repeat` property.
 After each execution of the SubFlow state, if `repeat` is defined, the SubFlow state data at the end of the 
 one execution should become the state data of the next execution.
 
@@ -2980,7 +2980,7 @@ SubFlow state repeated executions. If this counter reaches the max value, repeat
 The `continueOnError` property defines if repeated executions should continue or not in case unhandled errors are propagated
 by the sub-workflow to the SubFlow state. Default value of this property is `false`.
 Unhandled errors are errors which are not explicitly handled by the sub-workflow, and the SubFlow state 
-via its [`onErrors`](##Error-Definition) definition.
+via its [`onErrors`](#Error-Definition) definition.
 
 If `continueOnError` is set to `false` (default value), and an unhandled error occurs, it should be handled 
 as any other unhandled workflow error, meaning repeat execution shall stop and workflow should stop its exception.
@@ -2992,9 +2992,6 @@ and repeat execution must halt.
 An alternative way to limit repeat executions is via the `stopOnEvents` property. It contains a list of one or more 
 defined consumed workflow events (referened by the unique event name). When `stopOnEvents` is defined,
 SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached.
-
-
-
 
 #### Start Definition
 

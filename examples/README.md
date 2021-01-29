@@ -3247,7 +3247,7 @@ functions:
 
 #### Description
 
-In this example we want to automate a workflow which checks all our car vital signs while our car is driving. 
+In this example we need to check car vital signs while our car is driving. 
 The workflow should start when we receive the "carOn" event and stop when the "carOff" event is consumed.
 While the car is driving our workflow should repeatedly check the vitals every 2 minutes.
 
