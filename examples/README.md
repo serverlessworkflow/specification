@@ -24,6 +24,7 @@ Provides Serverless Workflow language examples
 - [New Patient Onboarding (Error checking and Retries)](#New-Patient-Onboarding)
 - [Purchase order deadline (ExecTimeout)](#Purchase-order-deadline)
 - [Accumulate room readings and create timely reports (ExecTimeout and KeepActive)](#Accumulate-room-readings)
+- [Car vitals checks (SubFlow state Repeat)](#Car-Vitals-Checks)
 
 ### Hello World Example
 
@@ -3236,6 +3237,256 @@ functions:
   operation: http.myorg.io/ordersservices.json#logreading
 - name: ProduceReport
   operation: http.myorg.io/ordersservices.json#produceReport
+```
+
+</td>
+</tr>
+</table>
+
+### Car Vitals Checks
+
+#### Description
+
+In this example we need to check car vital signs while our car is driving. 
+The workflow should start when we receive the "carOn" event and stop when the "carOff" event is consumed.
+While the car is driving our workflow should repeatedly check the vitals every 2 minutes.
+
+For this example we use the workflow [SubFlow](../specification.md#SubFlow-State) state and its 
+[repeat definition](../specification.md#Repeat-Definition) to repeat execution of the vitals checks.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-checkcarvitals.png" height="550px" alt="Check Car Vitals Example"/>
+</p>
+
+#### Workflow Definition
+
+We fist define our top-level workflow for this example:
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+    "id": "checkcarvitals",
+    "name": "Check Car Vitals Workflow",
+    "version": "1.0",
+    "states": [
+       {
+          "name": "WhenCarIsOn",
+          "type": "event",
+          "start": true,
+          "onEvents": [
+             {
+                "eventRefs": ["CarTurnedOnEvent"]
+             }
+          ],
+          "transition": "DoCarVitalsChecks"
+       },
+       {
+          "name": "DoCarVitalsChecks",
+          "type": "subflow",
+          "workflowId": "vitalscheck",
+          "repeat": {
+             "stopOnEvents": ["CarTurnedOffEvent"]
+          },
+          "end": true
+       }
+    ],
+    "events": [
+        {
+            "name": "CarTurnedOnEvent",
+            "type": "car.events",
+            "source": "my/car/start"
+        },
+        {
+            "name": "CarTurnedOffEvent",
+            "type": "car.events",
+            "source": "my/car/start"
+        }
+    ]
+ }
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: checkcarvitals
+name: Check Car Vitals Workflow
+version: '1.0'
+states:
+- name: WhenCarIsOn
+  type: event
+  start: true
+  onEvents:
+  - eventRefs:
+    - CarTurnedOnEvent
+  transition: DoCarVitalsChecks
+- name: DoCarVitalsChecks
+  type: subflow
+  workflowId: vitalscheck
+  repeat:
+    stopOnEvents:
+    - CarTurnedOffEvent
+  end: true
+events:
+- name: CarTurnedOnEvent
+  type: car.events
+  source: my/car/start
+- name: CarTurnedOffEvent
+  type: car.events
+  source: my/car/start
+```
+
+</td>
+</tr>
+</table>
+
+And then our reusable sub-workflow which performs the checking of our car vitals:
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+   "id": "vitalscheck",
+   "name": "Car Vitals Check",
+   "version": "1.0",
+   "states": [
+      {
+         "name": "CheckVitals",
+         "type": "operation",
+         "start": true,
+         "actions": [
+            {
+               "functionRef": "checkTirePressure"
+            },
+            {
+               "functionRef": "checkOilPressure"
+            },
+            {
+               "functionRef": "checkCoolantLevel"
+            },
+            {
+               "functionRef": "checkBattery"
+            }
+         ],
+         "transition": "EvaluateChecks"
+      },
+      {
+         "name": "EvaluateChecks",
+         "type": "switch",
+         "dataConditions": [
+            {
+               "name": "Some Evaluations failed",
+               "condition": "$.evaluations[?(@.check == 'failed')]",
+               "end": {
+                  "produceEvents": [
+                     {
+                        "eventRef": "DisplayFailedChecksOnDashboard",
+                        "data": "{{ $.evaluations }}"
+                     }
+                  ]
+                  
+               }
+            }
+         ],
+         "default": {
+            "transition": "WaitTwoMinutes"
+         }
+      },
+      {
+         "name": "WaitTwoMinutes",
+         "type": "delay",
+         "timeDelay": "PT2M",
+         "end": true
+      }
+   ],
+   "events": [
+      {
+         "name": "DisplayFailedChecksOnDashboard",
+         "kind": "produced",
+         "type": "my.car.events"
+      }
+   ],
+   "functions": [
+      {
+         "name": "checkTirePressure",
+         "operation": "mycarservices.json#checktirepressure"
+      },
+      {
+         "name": "checkOilPressure",
+         "operation": "mycarservices.json#checkoilpressure"
+      },
+      {
+         "name": "checkCoolantLevel",
+         "operation": "mycarservices.json#checkcoolantlevel"
+      },
+      {
+         "name": "checkBattery",
+         "operation": "mycarservices.json#checkbattery"
+      }
+   ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: vitalscheck
+name: Car Vitals Check
+version: '1.0'
+states:
+- name: CheckVitals
+  type: operation
+  start: true
+  actions:
+  - functionRef: checkTirePressure
+  - functionRef: checkOilPressure
+  - functionRef: checkCoolantLevel
+  - functionRef: checkBattery
+  transition: EvaluateChecks
+- name: EvaluateChecks
+  type: switch
+  dataConditions:
+  - name: Some Evaluations failed
+    condition: "$.evaluations[?(@.check == 'failed')]"
+    end:
+      produceEvents:
+      - eventRef: DisplayFailedChecksOnDashboard
+        data: "{{ $.evaluations }}"
+  default:
+    transition: WaitTwoMinutes
+- name: WaitTwoMinutes
+  type: delay
+  timeDelay: PT2M
+  end: true
+events:
+- name: DisplayFailedChecksOnDashboard
+  kind: produced
+  type: my.car.events
+functions:
+- name: checkTirePressure
+  operation: mycarservices.json#checktirepressure
+- name: checkOilPressure
+  operation: mycarservices.json#checkoilpressure
+- name: checkCoolantLevel
+  operation: mycarservices.json#checkcoolantlevel
+- name: checkBattery
+  operation: mycarservices.json#checkbattery
 ```
 
 </td>

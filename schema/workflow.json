@@ -1307,6 +1307,10 @@
           "type": "string",
           "description": "Sub-workflow unique id"
         },
+        "repeat": {
+          "$ref": "#/definitions/repeat",
+          "description": "SubFlow state repeat exec definition"
+        },
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1980,6 +1984,39 @@
         }
       },
       "required": []
+    },
+    "repeat": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string",
+          "description": "Expression evaluated against SubFlow state data. SubFlow will repeat execution as long as this expression is true or until the max property count is reached",
+          "minLength": 1
+        },
+        "checkBefore": {
+          "type": "boolean",
+          "description": "If true, the expression is evaluated before each repeat execution, if false the expression is evaluated after each repeat execution",
+          "default": true
+        },
+        "max": {
+          "type": "integer",
+          "description": "Sets the maximum amount of repeat executions",
+          "minimum": 0
+        },
+        "continueOnError": {
+          "type": "boolean",
+          "description": "If true, repeats executions in a case unhandled errors propagate from the sub-workflow to this state",
+          "default": false
+        },
+        "stopOnEvents": {
+          "type" : "array",
+          "description": "List referencing defined consumed workflow events. SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }
