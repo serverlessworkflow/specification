@@ -60,7 +60,7 @@ Portability as well as productivity that can be achieved from workflow orchestra
 Serverless Workflow addresses the need for a community-driven, vendor-neutral and a platform-independent
 workflow language specification that targets the serverless computing technology domain.
 
-Having and using a specification-based workflow language allows us to model our worflows once and deploy them 
+Having and using a specification-based workflow language allows us to model our workflows once and deploy them 
 onto many different container/cloud platforms, expecting the same execution results.
 
 <p align="center">
@@ -105,12 +105,12 @@ This section describes some of the core Serverless Workflow concepts:
 
 ### Workflow Definition
 
-A workflow definition is a single artefact written in the Serverless Workflow 
+A workflow definition is a single artifact written in the Serverless Workflow 
 language. It consists of a set of [workflow model](#Workflow-Model) constructs,
 and defines a blueprint used by runtimes for its execution. 
 
 A business solution can be composed of any number of related workflow definitions.
-Their relationships are explicitly modelled with the Serverless Workflow language (for example
+Their relationships are explicitly modeled with the Serverless Workflow language (for example
 by using [SubFlow](#SubFlow-State) states).
 
 Runtimes can initialize workflow definitions for some particular set of data inputs or events
@@ -1634,7 +1634,7 @@ Defines the states retry policy (strategy). This is an explicit definition and c
 defined workflow state errors.
 
 The `name` property specifies the unique name of the retry definition (strategy). This unique name 
-can be refered by workflow states [error definitions](#Error-Definition).
+can be referred by workflow states [error definitions](#Error-Definition).
 
 The `delay` property specifies the initial time delay between retry attempts (ISO 8601 duration format).
 
@@ -1926,7 +1926,7 @@ These are exclusive, meaning that a switch state can define one or the other con
 
 At times multiple defined conditions can be evaluated to `true` by runtime implementations.
 Conditions defined first take precedence over conditions defined later. This is backed by the fact that arrays/sequences
-are orderd in both JSON and YAML. For example, let's say there are two `true` conditions: A and B, defined in that order.
+are ordered in both JSON and YAML. For example, let's say there are two `true` conditions: A and B, defined in that order.
 Because A was defined first, its transition will be executed, not B's.
 
 In case of data-based conditions definition, switch state controls workflow transitions based on the states data.
@@ -2691,7 +2691,7 @@ It should contain the unique element of the `inputCollection` array and passed a
 The `actions` property defines actions to be executed in each state iteration.
 
 If actions are not defined, you can specify the `workflowid` to reference a workflow id which needs to be executed
-for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow wher the foreach state
+for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow where the foreach state
 is defined.
 
 Let's take a look at an example:
@@ -2990,7 +2990,7 @@ SubFlow states [`onErrors`](#Error-Definition) definition, the control flow must
 and repeat execution must halt.
 
 An alternative way to limit repeat executions is via the `stopOnEvents` property. It contains a list of one or more 
-defined consumed workflow events (referened by the unique event name). When `stopOnEvents` is defined,
+defined consumed workflow events (referenced by the unique event name). When `stopOnEvents` is defined,
 SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached.
 
 #### Start Definition
@@ -3140,7 +3140,7 @@ directInvoke: true
 The `interval` property uses the ISO 8601 time interval format to describe when workflow instances can be created.
 There is a number of ways to express the time interval:
 
-1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning workflow intances can be
+1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning workflow instances can be
 created from March 20th 2020 at 1PM UTC until May 11th 2021 at 3:30pm UTC.
 2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning workflow instances can be created
 from March 20th 2020 at 1pm UTC and continue to do so for 1 year, 2 months, 10 days 2 hours and 30 minutes.
@@ -3946,7 +3946,7 @@ the entire state data as the data available to functions that should be executed
 specifies that results of all functions executed in this action should be placed back to the state data as part
 of a new "finalCustomerGreeting" object.
 
-The action then calls the "greetingFunction" function passing in as parameters the spanish greeting and the name of the customer that arrived.
+The action then calls the "greetingFunction" function passing in as parameters the Spanish greeting and the name of the customer that arrived.
 
 We assume that for this example "greetingFunction" returns:
 
@@ -4126,7 +4126,7 @@ onErrors:
 Retries are related to errors. When certain errors are encountered we might want to retry the states execution.
 
 We can define retries within the workflow states [error definitions](#Defining-Errors).
-This is done by defining the [retry stragy](#Retry-Definition) as the workflow top-level parameter using its `retries` array, and then
+This is done by defining the [retry strategy](#Retry-Definition) as the workflow top-level parameter using its `retries` array, and then
 adding a `retryRef` parameter to the error definition which references this retry strategy for a specific error. 
 
 If a defined retry for the defined error is successful, the defined workflow control flow logic of the state
@@ -4511,7 +4511,7 @@ After it is cancelled, compensation should be performed.
 States that are marked as `usedForCompensation` can define [error handling](#Workflow-Error-Handling) via their
 `onErrors` property just like any other workflow states. In case of unrecoverable errors during their execution
 (errors not explicitly handled),
-workflow execution should be stopped, which is the same behaviour as when not using compensation as well. 
+workflow execution should be stopped, which is the same behavior as when not using compensation as well. 
 
 ### Workflow Metadata
 
