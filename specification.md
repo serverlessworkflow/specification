@@ -44,7 +44,7 @@ They can bridge the gap between how we express and model business logic.
 
 A key component of workflows is the domain-specific language (DSL) we use to model our 
 business logic and solutions. Selecting the appropriate workflow language for our business and technology domains is 
-a very important decision to be consider. 
+a very important decision to be considered. 
 
 Serverless Workflow focuses on defining a **vendor-neutral**, **platform-independent**, and **declarative** workflow
 language that targets the serverless computing technology domain. 
@@ -75,7 +75,7 @@ For more information on the history, development and design rationale behind the
 <img src="media/spec/spec-parts.png" width="600" alt="Serverless Workflow Specification Focus On Standards"/>
 </p>
 
-Serverless Workflow language takes advantage of well established and known standards such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/) specifications.
+Serverless Workflow language takes advantage of well-established and known standards such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/) specifications.
 
 ## Project Components
 
@@ -87,7 +87,7 @@ The specification has multiple components:
 
 * Definitions of the workflow language. This is defined via the [Workflow JSON Schema](schema/workflow.json). You can use both 
 [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats to model your workflows.
-* Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
+* Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java),
   and we plan to add them for more languages in the future.
 * Set of [Workflow Extensions](extensions/README.md) which 
   allow users to define additional, non-execution-related workflow information. This information can be used to improve
@@ -135,7 +135,7 @@ you can enforce instance creations upon arrival of certain events with a startin
 on a defined [schedule](#Start-Definition). 
 
 Workflow instance termination is also explicitly described in the workflow definition. 
-By default instances should be terminated once there are no active workflow paths (all active
+By default, instances should be terminated once there are no active workflow paths (all active
 paths reach a state containing the default [end definition](#End-Definition)). Other ways, such as 
 using the `terminate` property of the [end definition](#End-Definition) to terminate instance execution,
 or defining an [execution timeout](#ExecTimeout-Definition) are also possible.
@@ -831,8 +831,7 @@ that the workflow instance creates during its execution (produced).
 The default value (if not specified) of the `kind` property is `consumed`. 
 Note that for `produced` event definitions, implementations must provide the value of the CloudEvent source attribute. 
 In this case (i.e., when the `kind` property is set to `produced`), the `source` property of the event definition is not required.
-Otherwise (i.e., when the `kind` property is set to `consumed`), the `source` property must be defined in the event definition.
-
+Otherwise, (i.e., when the `kind` property is set to `consumed`), the `source` property must be defined in the event definition.
 
 Event correlation plays a big role in large event-driven applications. Correlating one or more events with a particular workflow instance
 can be done by defining the event correlation rules within the `correlation` property. 
@@ -905,7 +904,7 @@ If a workflow instance is created (e.g., via Event state) by consuming a "HeartR
 from the defined source and with the defined type that have the same "patientId" as the event that triggered the workflow instance
 should then also be associated with the same instance.
 
-You can also correlate multiple events together. In the following example, we assume that the workflow consumes two different event types
+You can also correlate multiple events together. In the following example, we assume that the workflow consumes two different event types,
 and we want to make sure that both are correlated, as in the above example, with the same "patientId": 
 
 
@@ -1676,7 +1675,7 @@ reducing total time to complete requests and overall congestion. How this value
 is used in the exponential backoff algorithm is left up to implementations.
 
 `jitter` may be specified as a percentage relative to the total delay. 
-For example, if `interval` is 2 seconds, `multiplier` is 2 seconds and we're at
+For example, if `interval` is 2 seconds, `multiplier` is 2 seconds, and we're at
 the third attempt, there will be a delay of 6 seconds. If we set `jitter` to
 0.3, then a random amount of time between 0 and 1.8 (`totalDelay * jitter == 6 * 0.3`)
 will be added or subtracted from the delay.
@@ -3000,7 +2999,7 @@ Can be either `boolean` or `object` type. If type boolean, must be set to `true`
 ```json
 "start": true
 ```
-In this case it's assumed that the `schedule`property is not defined.
+In this case it's assumed that the `schedule` property is not defined.
 
 If the start definition is of type `object`, it has the following structure:
 
@@ -4127,7 +4126,7 @@ Retries are related to errors. When certain errors are encountered we might want
 
 We can define retries within the workflow states [error definitions](#Defining-Errors).
 This is done by defining the [retry strategy](#Retry-Definition) as the workflow top-level parameter using its `retries` array, and then
-adding a `retryRef` parameter to the error definition which references this retry strategy for a specific error. 
+adding a `retryRef` parameter to the error definition which references these retry strategies for a specific error. 
 
 If a defined retry for the defined error is successful, the defined workflow control flow logic of the state
 should be performed, meaning either workflow can transition according to the states `transition`
