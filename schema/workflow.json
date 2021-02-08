@@ -144,6 +144,11 @@
           "format": "uri",
           "description": "URI to a resource containing function definitions (json or yaml)"
         },
+        "retries": {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to a resource containing retry definitions (json or yaml)"
+        },
         "states": {
           "type": "array",
           "description": "State definitions",
