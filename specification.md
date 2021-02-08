@@ -360,7 +360,7 @@ Our expression function definitions can now be referenced by workflow states whe
 }
 ```
 
-Note that the used function definition type in this case must be `expression` . 
+Note that the used function definition type in this case must be `expression`. 
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
