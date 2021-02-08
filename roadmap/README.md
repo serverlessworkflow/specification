@@ -39,7 +39,6 @@ _Status description:_
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
 | 🚩 | Uniqueness constraint for workflows | [issue](https://github.com/serverlessworkflow/specification/issues/146) |
-| 🚩 | Function invocations (GRPC) |  |
 | 🚩 | OpenAPI endpoint selection |  |
 | 🚩 | Data triggers |  |
 | 🚩 | JSON schema checks |  |
