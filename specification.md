@@ -44,7 +44,7 @@ They can bridge the gap between how we express and model business logic.
 
 A key component of workflows is the domain-specific language (DSL) we use to model our 
 business logic and solutions. Selecting the appropriate workflow language for our business and technology domains is 
-a very important decision to be consider. 
+a very important decision to be considered. 
 
 Serverless Workflow focuses on defining a **vendor-neutral**, **platform-independent**, and **declarative** workflow
 language that targets the serverless computing technology domain. 
@@ -60,7 +60,7 @@ Portability as well as productivity that can be achieved from workflow orchestra
 Serverless Workflow addresses the need for a community-driven, vendor-neutral and a platform-independent
 workflow language specification that targets the serverless computing technology domain.
 
-Having and using a specification-based workflow language allows us to model our worflows once and deploy them 
+Having and using a specification-based workflow language allows us to model our workflows once and deploy them 
 onto many different container/cloud platforms, expecting the same execution results.
 
 <p align="center">
@@ -75,7 +75,7 @@ For more information on the history, development and design rationale behind the
 <img src="media/spec/spec-parts.png" width="600" alt="Serverless Workflow Specification Focus On Standards"/>
 </p>
 
-Serverless Workflow language takes advantage of well established and known standards such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/) specifications.
+Serverless Workflow language takes advantage of well-established and known standards such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/) specifications.
 
 ## Project Components
 
@@ -87,7 +87,7 @@ The specification has multiple components:
 
 * Definitions of the workflow language. This is defined via the [Workflow JSON Schema](schema/workflow.json). You can use both 
 [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats to model your workflows.
-* Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java)
+* Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java),
   and we plan to add them for more languages in the future.
 * Set of [Workflow Extensions](extensions/README.md) which 
   allow users to define additional, non-execution-related workflow information. This information can be used to improve
@@ -105,12 +105,12 @@ This section describes some of the core Serverless Workflow concepts:
 
 ### Workflow Definition
 
-A workflow definition is a single artefact written in the Serverless Workflow 
+A workflow definition is a single artifact written in the Serverless Workflow 
 language. It consists of a set of [workflow model](#Workflow-Model) constructs,
 and defines a blueprint used by runtimes for its execution. 
 
 A business solution can be composed of any number of related workflow definitions.
-Their relationships are explicitly modelled with the Serverless Workflow language (for example
+Their relationships are explicitly modeled with the Serverless Workflow language (for example
 by using [SubFlow](#SubFlow-State) states).
 
 Runtimes can initialize workflow definitions for some particular set of data inputs or events
@@ -135,7 +135,7 @@ you can enforce instance creations upon arrival of certain events with a startin
 on a defined [schedule](#Start-Definition). 
 
 Workflow instance termination is also explicitly described in the workflow definition. 
-By default instances should be terminated once there are no active workflow paths (all active
+By default, instances should be terminated once there are no active workflow paths (all active
 paths reach a state containing the default [end definition](#End-Definition)). Other ways, such as 
 using the `terminate` property of the [end definition](#End-Definition) to terminate instance execution,
 or defining an [execution timeout](#ExecTimeout-Definition) are also possible.
@@ -831,8 +831,7 @@ that the workflow instance creates during its execution (produced).
 The default value (if not specified) of the `kind` property is `consumed`. 
 Note that for `produced` event definitions, implementations must provide the value of the CloudEvent source attribute. 
 In this case (i.e., when the `kind` property is set to `produced`), the `source` property of the event definition is not required.
-Otherwise (i.e., when the `kind` property is set to `consumed`), the `source` property must be defined in the event definition.
-
+Otherwise, (i.e., when the `kind` property is set to `consumed`), the `source` property must be defined in the event definition.
 
 Event correlation plays a big role in large event-driven applications. Correlating one or more events with a particular workflow instance
 can be done by defining the event correlation rules within the `correlation` property. 
@@ -905,7 +904,7 @@ If a workflow instance is created (e.g., via Event state) by consuming a "HeartR
 from the defined source and with the defined type that have the same "patientId" as the event that triggered the workflow instance
 should then also be associated with the same instance.
 
-You can also correlate multiple events together. In the following example, we assume that the workflow consumes two different event types
+You can also correlate multiple events together. In the following example, we assume that the workflow consumes two different event types,
 and we want to make sure that both are correlated, as in the above example, with the same "patientId": 
 
 
@@ -1634,7 +1633,7 @@ Defines the states retry policy (strategy). This is an explicit definition and c
 defined workflow state errors.
 
 The `name` property specifies the unique name of the retry definition (strategy). This unique name 
-can be refered by workflow states [error definitions](#Error-Definition).
+can be referred by workflow states [error definitions](#Error-Definition).
 
 The `delay` property specifies the initial time delay between retry attempts (ISO 8601 duration format).
 
@@ -1676,7 +1675,7 @@ reducing total time to complete requests and overall congestion. How this value
 is used in the exponential backoff algorithm is left up to implementations.
 
 `jitter` may be specified as a percentage relative to the total delay. 
-For example, if `interval` is 2 seconds, `multiplier` is 2 seconds and we're at
+For example, if `interval` is 2 seconds, `multiplier` is 2 seconds, and we're at
 the third attempt, there will be a delay of 6 seconds. If we set `jitter` to
 0.3, then a random amount of time between 0 and 1.8 (`totalDelay * jitter == 6 * 0.3`)
 will be added or subtracted from the delay.
@@ -1926,7 +1925,7 @@ These are exclusive, meaning that a switch state can define one or the other con
 
 At times multiple defined conditions can be evaluated to `true` by runtime implementations.
 Conditions defined first take precedence over conditions defined later. This is backed by the fact that arrays/sequences
-are orderd in both JSON and YAML. For example, let's say there are two `true` conditions: A and B, defined in that order.
+are ordered in both JSON and YAML. For example, let's say there are two `true` conditions: A and B, defined in that order.
 Because A was defined first, its transition will be executed, not B's.
 
 In case of data-based conditions definition, switch state controls workflow transitions based on the states data.
@@ -2691,7 +2690,7 @@ It should contain the unique element of the `inputCollection` array and passed a
 The `actions` property defines actions to be executed in each state iteration.
 
 If actions are not defined, you can specify the `workflowid` to reference a workflow id which needs to be executed
-for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow wher the foreach state
+for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow where the foreach state
 is defined.
 
 Let's take a look at an example:
@@ -2990,7 +2989,7 @@ SubFlow states [`onErrors`](#Error-Definition) definition, the control flow must
 and repeat execution must halt.
 
 An alternative way to limit repeat executions is via the `stopOnEvents` property. It contains a list of one or more 
-defined consumed workflow events (referened by the unique event name). When `stopOnEvents` is defined,
+defined consumed workflow events (referenced by the unique event name). When `stopOnEvents` is defined,
 SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached.
 
 #### Start Definition
@@ -3000,7 +2999,7 @@ Can be either `boolean` or `object` type. If type boolean, must be set to `true`
 ```json
 "start": true
 ```
-In this case it's assumed that the `schedule`property is not defined.
+In this case it's assumed that the `schedule` property is not defined.
 
 If the start definition is of type `object`, it has the following structure:
 
@@ -3140,7 +3139,7 @@ directInvoke: true
 The `interval` property uses the ISO 8601 time interval format to describe when workflow instances can be created.
 There is a number of ways to express the time interval:
 
-1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning workflow intances can be
+1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning workflow instances can be
 created from March 20th 2020 at 1PM UTC until May 11th 2021 at 3:30pm UTC.
 2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning workflow instances can be created
 from March 20th 2020 at 1pm UTC and continue to do so for 1 year, 2 months, 10 days 2 hours and 30 minutes.
@@ -3946,7 +3945,7 @@ the entire state data as the data available to functions that should be executed
 specifies that results of all functions executed in this action should be placed back to the state data as part
 of a new "finalCustomerGreeting" object.
 
-The action then calls the "greetingFunction" function passing in as parameters the spanish greeting and the name of the customer that arrived.
+The action then calls the "greetingFunction" function passing in as parameters the Spanish greeting and the name of the customer that arrived.
 
 We assume that for this example "greetingFunction" returns:
 
@@ -4126,8 +4125,8 @@ onErrors:
 Retries are related to errors. When certain errors are encountered we might want to retry the states execution.
 
 We can define retries within the workflow states [error definitions](#Defining-Errors).
-This is done by defining the [retry stragy](#Retry-Definition) as the workflow top-level parameter using its `retries` array, and then
-adding a `retryRef` parameter to the error definition which references this retry strategy for a specific error. 
+This is done by defining the [retry strategy](#Retry-Definition) as the workflow top-level parameter using its `retries` array, and then
+adding a `retryRef` parameter to the error definition which references these retry strategies for a specific error. 
 
 If a defined retry for the defined error is successful, the defined workflow control flow logic of the state
 should be performed, meaning either workflow can transition according to the states `transition`
@@ -4511,7 +4510,7 @@ After it is cancelled, compensation should be performed.
 States that are marked as `usedForCompensation` can define [error handling](#Workflow-Error-Handling) via their
 `onErrors` property just like any other workflow states. In case of unrecoverable errors during their execution
 (errors not explicitly handled),
-workflow execution should be stopped, which is the same behaviour as when not using compensation as well. 
+workflow execution should be stopped, which is the same behavior as when not using compensation as well. 
 
 ### Workflow Metadata
 
