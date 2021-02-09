@@ -188,7 +188,7 @@ states:
     functionRef:
       refName: consoleLogFunction
       arguments:
-        log: Caught Exception ${ .exception }
+        log: "Caught Exception ${ .exception }"
   end: true
 ```
 
@@ -403,18 +403,18 @@ states:
   - eventRefs:
     - execEvent
     eventDataFilter:
-      dataOutputPath: "{{ $.event }}"
+      dataOutputPath: "${ .event }"
     actions:
     - name: eventInfoAction
       functionRef:
         refName: consoleFunction
         arguments:
-          log: ">>> event $event.type caused by $.event.data.provider"
+          log: ">>> event ${ .event.type } caused by ${ .event.data.provider }"
     - name: projectInfoAction
       functionRef:
         refName: consoleFunction
         arguments:
-          log: ">>> project $event.data.project.name clones the repo at by $.event.data.repo.cloneURL"
+          log: ">>> project ${ .event.data.project.name } clones the repo at by ${ .event.data.repo.cloneURL }"
   end: true
 
 ```
@@ -484,18 +484,18 @@ states:
   - eventRefs:
     - execEvent
     eventDataFilter:
-      dataOutputPath: "{{ $.event }}"
+      dataOutputPath: "${ .event }"
     actions:
     - name: helloAction
       actionDataFilter:
-        dataResultsPath: "{{ $.helloResult }}"
+        dataResultsPath: "${ .helloResult }"
       functionRef:
         refName: greetingFunction
         arguments:
           message: hello
     - name: worldAction
       actionDataFilter:
-        dataResultsPath: "{{ $.worldResults }}"
+        dataResultsPath: "${ .worldResults }"
       functionRef:
         refName: greetingAction
         arguments:
@@ -504,8 +504,8 @@ states:
       functionRef:
         refName: storeToFileFunction
         arguments:
-          destination: "{{ $.event.destination }}"
-          value: "{{ $.helloResult }} {{ $.worldResults }}"
+          destination: "${ .event.destination }"
+          value: "${ .helloResult } ${ .worldResults }"
   end: true
 
 ```
@@ -572,7 +572,7 @@ states:
     - execEvent
     actions: []
     eventDataFilter:
-      dataOutputPath: "{{ $.execEvent }}"
+      dataOutputPath: "${ .execEvent }"
   transition:
     nextState: NextEventState
     produceEvents:
@@ -580,23 +580,23 @@ states:
       data:
         type: next
         provider: exec-handler
-        buildID: "{{ $.execEvent.data.buildID }}"
-        workerID: "{{ $.execEvent.data.workerID }}"
+        buildID: "${ .execEvent.data.buildID }"
+        workerID: "${ .execEvent.data.workerID }"
         cause:
-          event: "{{ $.execEvent }}"
+          event: "${ .execEvent }"
 - name: NextEventState
   type: event
   onEvents:
   - eventRefs:
     - nextEvent
     eventDataFilter:
-      dataOutputPath: "{{ $.nextEvent }}"
+      dataOutputPath: "${ .nextEvent }"
     actions:
     - name: consoleLogAction
       functionRef:
         refName: consoleLogFunction
         arguments:
-          log: fired $.nextEvent.data.type caused by $.nextEvent.data.cause.event
+          log: "fired ${ .nextEvent.data.type } caused by ${ .nextEvent.data.cause.event }"
   end: true
 ```
 

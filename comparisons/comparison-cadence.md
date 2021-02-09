@@ -199,13 +199,13 @@ states:
   - functionRef:
       refName: processfilefunction
       arguments:
-        filename: "{{ $file.name }}"
+        filename: "${ .file.name }"
     actionDataFilter:
-      dataResultsPath: "{{ $.processed }}"
+      dataResultsPath: "${ .processed }"
   - functionRef:
       refName: uploadfunction
       arguments:
-        file: "{{ $processed }}"
+        file: "${ .processed }"
   onErrors:
   - error: "*"
     retryRef: fileprocessingretry

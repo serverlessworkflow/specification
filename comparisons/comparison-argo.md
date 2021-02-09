@@ -90,7 +90,7 @@ states:
   - functionRef:
       refName: whalesayimage
       arguments:
-        message: "{{ $.message }}"
+        message: "${ .message }"
   end: true
 ```
 
@@ -397,7 +397,7 @@ functions:
   metadata:
     image: alpine:latest
     command: sh, -c
-    source: 'echo result was: {{inputs.parameters.message}}'
+    source: 'echo result was: ${ .inputs.parameters.message }'
 states:
 - name: generate
   type: operation
@@ -405,7 +405,7 @@ states:
   actions:
   - functionRef: gen-random-int-bash
     actionDataFilter:
-      dataResultsPath: "{{ $.results }}"
+      dataResultsPath: "${ .results }"
   transition: print-message
 - name: print-message
   type: operation
@@ -413,7 +413,7 @@ states:
   - functionRef:
       refName: printmessagefunc
       arguments:
-        message: "{{ $.results }}"
+        message: "${ .results }"
   end: true
 ```
 
@@ -486,14 +486,14 @@ states:
   transition: printgreetings
 - name: printgreetings
   type: foreach
-  inputCollection: "{{ $.greetings }}"
+  inputCollection: "${ .greetings }"
   iterationParam: greeting
   actions:
   - name: print-message
     functionRef:
       refName: whalesay
       arguments:
-        message: "{{ $.greeting }}"
+        message: "${ .greeting }"
   end: true
 ```
 
@@ -582,14 +582,14 @@ states:
   actions:
   - functionRef: flip-coin-function
     actionDataFilter:
-      dataResultsPath: "{{ $.flip.result }}"
+      dataResultsPath: "${ .flip.result }"
   transition: show-flip-results
 - name: show-flip-results
   type: switch
   dataConditions:
-  - condition: "{{ $.flip[?(@.result == 'heads')] }}"
+  - condition: "${ .flip | .result == \"heads\" }"
     transition: show-results-heads
-  - condition: "{{ $.flip[?(@.result == 'tails')] }}"
+  - condition: "${ .flip | .result == \"tails\" }"
     transition: show-results-tails
 - name: show-results-heads
   type: operation
@@ -762,14 +762,14 @@ states:
   actions:
   - functionRef: flip-coin-function
     actionDataFilter:
-      dataResultsPath: "{{ $.steps.flip-coin.outputs.result }}" 
+      dataResultsPath: "${ .steps.flip-coin.outputs.result }" 
   transition: flip-coin-check
 - name: flip-coin-check
   type: switch
   dataConditions:
-  - condition: "{{ $.steps.flip-coin.outputs[?(@.result == 'tails')] }}"
+  - condition: "${ .steps.flip-coin.outputs | .result == \"tails\" }"
     transition: flip-coin-state
-  - condition: "{{ $.steps.flip-coin.outputs[?(@.result == 'heads')] }}"
+  - condition: "${ .steps.flip-coin.outputs | .result == \"heads\" }"
     transition: heads-state
 - name: heads-state
   type: operation
@@ -791,7 +791,7 @@ states:
 [Argo Example](https://github.com/argoproj/argo/tree/master/examples#exit-handlers)
 
 *Note*: With Serverless Workflow specification we can handle Argos "onExit" functionality
-in couple of ways. One is the "onErrors" functionality to define errors and transition to the parts
+in a couple of ways. One is the "onErrors" functionality to define errors and transition to the parts
 of workflow which is capable of handling the errors. 
 Another is to send an event at the end of workflow execution 
 which includes the workflow status. This event can then trigger execution other workflows
@@ -885,14 +885,14 @@ states:
   - functionRef:
       refName: send-email-function
       arguments:
-        args: 'echo send e-mail: $.workflow.name $.exit-code'
+        args: "echo send e-mail: ${ .workflow.name } ${ .workflow.status }"
   transition: emo-state
 - name: emo-state
   type: switch
   dataConditions:
-  - condition: "{{ $[?(@.exit_code == '1')] }}"
+  - condition: "${ .workflow| .status == \"Succeeded\" }"
     transition: celebrate-state
-  - condition: "{{ $[?(@.exit_code != '1')] }}"
+  - condition: "${ .workflow| .status != \"Succeeded\" }"
     transition: cry-state
 - name: celebrate-state
   type: operation

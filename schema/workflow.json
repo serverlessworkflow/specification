@@ -1161,7 +1161,7 @@
         },
         "condition": {
           "type": "string",
-          "description": "JsonPath expression evaluated against state data. True if results are not empty"
+          "description": "jq expression evaluated against state data. Must evaluate to true or false"
         },
         "transition": {
           "description": "Next transition of the workflow if there is valid matches",
@@ -1186,7 +1186,7 @@
         },
         "condition": {
           "type": "string",
-          "description": "JsonPath expression evaluated against state data. True if results are not empty"
+          "description": "jq expression evaluated against state data. Must evaluate to true or false"
         },
         "end": {
           "$ref": "#/definitions/end",
@@ -1454,11 +1454,11 @@
         },
         "inputCollection": {
           "type": "string",
-          "description": "JsonPath expression selecting an array element of the states data"
+          "description": "Workflow expression selecting an array element of the states data"
         },
         "outputCollection": {
           "type": "string",
-          "description": "JsonPath expression specifying an array element of the states data to add the results of each iteration"
+          "description": "Workflow expression specifying an array element of the states data to add the results of each iteration"
         },
         "iterationParam": {
           "type": "string",
@@ -1887,11 +1887,11 @@
       "properties": {
         "dataInputPath": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the states data input"
+          "description": "Workflow definition that selects parts of the states data input"
         },
         "dataOutputPath": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the states data output"
+          "description": "Workflow expression that selects parts of the states data output"
         }
       },
       "required": []
@@ -1901,7 +1901,7 @@
       "properties": {
         "dataOutputPath": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the event data, to be merged with the states data"
+          "description": "Workflow expression that selects parts of the event data, to be merged with the states data"
         }
       },
       "required": []
@@ -1911,11 +1911,11 @@
       "properties": {
         "dataInputPath": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the states data input to be the action data"
+          "description": "Workflow expression that selects parts of the states data input to be the action data"
         },
         "dataResultsPath": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the actions data result, to be merged with the states data"
+          "description": "Workflow expression that selects parts of the actions data result, to be merged with the states data"
         }
       },
       "required": []
@@ -1925,7 +1925,7 @@
       "properties": {
         "dataOutputPath": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the error data, to be merged with the states data"
+          "description": "Workflow expression that selects parts of the error data, to be merged with the states data"
         }
       },
       "required": []
