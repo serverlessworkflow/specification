@@ -2779,7 +2779,8 @@ You can use the `max` property to set the upper bound on how many iterations may
 of the `max` property is zero, which places no limit on number of parallel executions.
 
 The `inputCollection` property is a workflow expression which selects an array in the states data. All iterations 
-are performed against data elements of this array. This array must exist.
+are performed against data elements of this array. If this array does not exist, the runtime should throw 
+an error. This error can be handled inside the states [`onErrors`](#Error-Definition) definition.
 
 The `outputCollection` property is a workflow expression which selects an array in the state data where the results
 of each iteration should be added to. If this array does not exist, it should be created.

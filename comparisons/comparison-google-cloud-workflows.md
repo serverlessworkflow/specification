@@ -228,10 +228,9 @@ The second step, "exit-loop" is then used alongside the "return" keyword to spec
 workflow results.
 With Serverless Workflow we can inject the array data via the "inject" state again, or 
 it can simply be passed as workflow data input. There is no need for looping here as
-we can just utilize the [jq "join" function](https://stedolan.github.io/jq/manual/) as shown in the states data filter.
+we can just utilize the [jq "join" function](https://stedolan.github.io/jq/manual/#join(str)) as shown in the states data filter.
 We could use the [ForEach state](../specification.md#ForEach-State) for iteration of 
-array values, however 
-it just complicates things and is not needed.
+array values, however it would just unnecessarily complicate things.
 
 ### Connect Compute Engine
 
