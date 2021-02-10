@@ -374,17 +374,28 @@ Note that different data filters play a big role as to which parts of the states
 evaluated. Reference the 
 [State Data Filtering](#State-Data-Filtering) section for more information about state data filters.
 
-All expressions must follow the [jq](https://stedolan.github.io/jq/) syntax. Jq is a very powerful JSON processor. You 
-can find more information in the [jq manual](https://stedolan.github.io/jq/manual/).
+By default, all workflow expressions should be defined using the [jq](https://stedolan.github.io/jq/) syntax.
+You can find more information on jq in its [manual](https://stedolan.github.io/jq/manual/).
 
-Expressions have the following format:
+Serverless Workflow does not mandate the use of jq and it's possible to use an expression language 
+of your choice with the restriction that a single one must be used for all expressions
+in a workflow definition. If a different expression language needs to be used, make sure to set the workflow 
+`expressionLang` property to identify it to runtime implementations.
+
+Note that using a non-default expression language could lower the portability of your workflow definitions 
+across multiple container/cloud platforms.
+
+All workflow expressions in this document, [specification examples](examples/README.md) as well as [comparisons examples](comparisons/README.md) 
+are written using the default jq syntax.
+
+Workflow expressions have the following format:
 
 ```text
 ${ expression }
 ```
 
-Where `expression` can be either an in-line expression using the [jq](https://stedolan.github.io/jq/) syntax,
-or a reference to a defined [expression function definition](#Using-Functions-For-Expression-Evaluation).
+Where `expression` can be either an in-line expression, or a reference to a 
+defined [expression function definition](#Using-Functions-For-Expression-Evaluation).
 
 To reference a defined [expression function definition](#Using-Functions-For-Expression-Evaluation)
 the expression must have the following format, for example:
@@ -489,8 +500,7 @@ This would set the data output of the particular state to:
 }
 ```
 
-[Switch state](#Switch-State) [conditions](#switch-state-dataconditions) require for expressions to be resolved to a boolean value (true / false).
-In this case jq expressions can also be used. 
+[Switch state](#Switch-State) [conditions](#switch-state-dataconditions) require for expressions to be resolved to a boolean value (true / false). 
 
 We can now get back to our previously defined "IsAdultApplicant" expression function and reference it:
 
@@ -540,6 +550,7 @@ definition "id" must be a constant value.
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
 | schemaVersion | Workflow schema version | string | no |
+| expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
@@ -609,6 +620,11 @@ The `version` property can be used to provide a specific workflow version.
 
 The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
 to validate this workflow markup. If not provided the latest released schema version is assumed.
+
+The `expressionLang` property can be used to identify the expression language used for all expressions in
+the workflow definition. The default value of this property is ["jq"](https://stedolan.github.io/jq/). 
+You should set this property if you chose to define [workflow expressions](#Workflow-Expressions) 
+with an expression language / syntax other than the default.
 
 The `execTimeout` property is used to define execution timeout for a workflow instance.
 For more information about this property and its use cases see the [execTimeout definition](#ExecTimeout-Definition) section.
@@ -2022,7 +2038,7 @@ If events defined in event-based conditions do not arrive before the states `eve
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Data condition name | string | no |
-| condition | jq expression evaluated against state data. Must evaluate to true or false | string | yes |
+| [condition](#Workflow-Expressions) | Workflow expression evaluated against state data. Must evaluate to true or false | string | yes |
 | [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -3026,7 +3042,7 @@ If the defined callback event has not been received during this time period, the
 
 | Parameter | Description | Type | Required | 
 | --- | --- | --- | --- |
-| [expression](#Workflow-Expressions) | Data Expression evaluated against state data. SubFlow will repeat execution as long as this expression is true or until the max property count is reached  | string | no |
+| [expression](#Workflow-Expressions) | Workflow expression evaluated against state data. SubFlow will repeat execution as long as this expression is true or until the max property count is reached  | string | no |
 | checkBefore | If set to `true` (default value) the expression is evaluated before each repeat execution, if set to false the expression is evaluated after each repeat execution | boolean | no |
 | max | Sets the maximum amount of repeat executions | integer | no |
 | continueOnError | If set to `true` repeats executions in a case unhandled errors propagate from the sub-workflow to this state | boolean | no |
