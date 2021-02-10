@@ -23,7 +23,7 @@ You can find the specification roadmap [here](roadmap/README.md).
   - [Workflow Model](#Workflow-Model)
   - [Workflow Data](#Workflow-Data)
   - [Workflow Functions](#Workflow-Functions)
-  - [Workflow Expressions](#Workflow-Functions)
+  - [Workflow Expressions](#Workflow-Expressions)
   - [Workflow Definition](#Workflow-Definition)
   - [Workflow Error Handling](#Workflow-Error-Handling)
     - [Defining Errors](#Defining-Errors)
