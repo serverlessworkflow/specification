@@ -621,11 +621,11 @@ using and referencing retry definitions see the [Workflow Error Handling](#Workf
 The `keepActive` property allows you to change the default behavior of workflow instances.
 By default, as described in the [Core Concepts](#Core-Concepts) section, a workflow instance is terminated once there are no more 
 active execution paths, one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
-its [`execTimeout`](#ExecTimeout Definition) time is reached. 
+its [`execTimeout`](#ExecTimeout-Definition) time is reached. 
 
 Setting the `keepActive` property to "true" allows you change this default behavior in that a workflow instance
 created from this workflow definition can only be terminated if one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
-its [`execTimeout`](#ExecTimeout Definition) time is reached. 
+its [`execTimeout`](#ExecTimeout-Definition) time is reached. 
 This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
 
 You can reference the [specification examples](#Examples) to see the `keepActive` property in action.
