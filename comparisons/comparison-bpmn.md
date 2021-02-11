@@ -21,7 +21,8 @@ JSON/YAML.
 
 The BPMN2 graphical notation does not provide details about things like data inputs/outputs, mapping and transformation. 
 BPMN2 does provide graphical representation for this such as Data Objects, however most of the examples
-available do not use them. For this reason some of the data inputs, parameters and transformations 
+available do not use them. Execution semantics such as task and event properties are also not visual.
+For this reason the event, function, retry, and data mapping 
 defined in the associated Serverless Workflow YAML are assumed. 
 
 
@@ -29,6 +30,7 @@ defined in the associated Serverless Workflow YAML are assumed.
 
 - [Simple File Processor](#File-Processor)
 - [Process Application](#Process-Application)
+- [Compensation](#Compensation)
 
 
 ### File Processor
@@ -118,5 +120,66 @@ events:
 </td>
 </tr>
 </table>
+
+### Compensation
+
+<table>
+<tr>
+    <th>BPMN2 Diagram</th>
+    <th>Serverless Workflow</th>
+</tr>
+<tr>
+<td valign="top">
+<p align="center">
+<img src="../media/comparisons/bpmn/simple-compensation.png" alt="BPMN2 Simple Compensation Workflow"/>
+</p>
+</td>
+<td valign="top">
+
+```yaml
+id: processapplication
+name: Process Application
+version: '1.0'
+states:
+- name: Step 1
+  start: true
+  type: operation
+  actions:
+  - functionRef: step1function
+  compensatedBy: Cancel Step 1
+  transition: Step 2
+- name: Step 2
+  type: operation
+  actions:
+  - functionRef: step2function
+  transition: OK?
+- name: OK?
+  type: switch
+  dataConditions:
+  - name: 'yes'
+    condition: ${ .outcome | .ok == "yes" }
+    end: true
+  - name: 'no'
+    condition: ${ .outcome | .ok == "no" }
+    end:
+      compensate: true
+- name: Cancel Step 1
+  type: operation
+  usedForCompensation: true
+  actions:
+  - functionRef: undostep1
+functions:
+- name: step1function
+  operation: file://myservice.json#step1
+- name: step2function
+  operation: file://myservice.json#step2
+- name: undostep1function
+  operation: file://myservice.json#undostep1
+```
+
+</td>
+</tr>
+</table>
+
 
 
