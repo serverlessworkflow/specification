@@ -29,7 +29,7 @@ defined in the associated Serverless Workflow YAML are assumed.
 
 ## Table of Contents
 
-- [Simple File Processor](#File-Processor)
+- [Simple File Processor](#Simple-File-Processor)
 - [Process Application](#Process-Application)
 - [Compensation](#Compensation)
 - [Error Handling with Retries](#Error-Handling-With-Retries)
@@ -38,7 +38,7 @@ defined in the associated Serverless Workflow YAML are assumed.
 - [Approve Report (User Task)](#Approve-Report)
 - [Event Based Decision](#Event-Based-Decision)
 
-### File Processor
+### Simple File Processor
 
 <table>
 <tr>
