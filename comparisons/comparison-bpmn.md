@@ -35,6 +35,7 @@ defined in the associated Serverless Workflow YAML are assumed.
 - [Process Execution Timeout](#Process-Execution-Timeout)
 - [Multiple Instance Subprocess](#Multiple-Instance-Subprocess)
 - [Approve Report (User Task)](#Approve-Report)
+- [Event Based Decision](#Event-Based-Decision)
 
 ### File Processor
 
@@ -390,3 +391,65 @@ functions:
 </table>
 
 * Note: Human interactions during workflow execution in Serverless Workflow is handled via its [Callback state](../specification.md#Callback-State).
+
+### Event Based Decision
+
+<table>
+<tr>
+    <th>BPMN2 Diagram</th>
+    <th>Serverless Workflow</th>
+</tr>
+<tr>
+<td valign="top">
+<p align="center">
+<img src="../media/comparisons/bpmn/event-decisions.png" width="500px" alt="BPMN2 Event Decision Workflow"/>
+</p>
+</td>
+<td valign="top">
+
+```yaml
+id: eventdecision
+name: Event Decision workflow
+version: '1.0'
+states:
+- name: A
+  type: subflow
+  start: true
+  workflowId: asubflowid
+  transition: Event Decision
+- name: Event Decision
+  type: switch
+  eventConditions:
+  - eventRef: EventB
+    transition: B
+  - eventRef: EventC
+    transition: C
+- name: B
+  type: operation
+  actions:
+  - name: doSomething
+    functionRef: doSomethingFunction
+  end: true
+- name: C
+  type: operation
+  actions:
+  - name: doSomething
+    functionRef: doSomethingFunction
+  end: true
+events:
+- name: EventB
+  type: my.events.b
+  source: "/events/+"
+- name: EventC
+  type: my.events.c
+  source: "/events/+"
+functions:
+- name: doSomethingFunction
+  operation: file://myservice.json#dosomething
+```
+
+</td>
+</tr>
+</table>
+
+* Note: Human 
