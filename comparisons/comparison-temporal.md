@@ -1,4 +1,4 @@
-# Examples - Temporal
+# Comparisons - Temporal
 
 [Temporal](https://temporal.io/) is an open source microservice orchestration platform. Temporal apps are written
 in code, and SDKs are currently available for Go, Java, PHP and Ruby. It provides two special functions, namely Workflow

@@ -1,4 +1,4 @@
-# Examples - Cadence
+# Comparisons - Cadence
 
 [Cadence](https://cadenceworkflow.io/) describes it solution as a fault-oblivious stateful programming model 
 that obscures most of the complexities of building scalable distributed applications.
