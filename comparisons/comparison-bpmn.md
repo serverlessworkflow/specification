@@ -32,7 +32,8 @@ defined in the associated Serverless Workflow YAML are assumed.
 - [Process Application](#Process-Application)
 - [Compensation](#Compensation)
 - [Error Handling with Retries](#Error-Handling-With-Retries)
-
+- [Process Execution Timeout](#Process-Execution-Timeout)
+- [Multiple Instance Subprocess](#Multiple-Instance-Subprocess)
 
 ### File Processor
 
@@ -239,5 +240,90 @@ functions:
 </tr>
 </table>
 
+### Process Execution Timeout
 
+<table>
+<tr>
+    <th>BPMN2 Diagram</th>
+    <th>Serverless Workflow</th>
+</tr>
+<tr>
+<td valign="top">
+<p align="center">
+<img src="../media/comparisons/bpmn/exec-timeout.png" width="500px" alt="BPMN2 Execution Timeout Workflow"/>
+</p>
+</td>
+<td valign="top">
 
+```yaml
+id: executiontimeout
+name: Execution Timeout Workflow
+version: '1.0'
+execTimeout:
+  interval: PT7D
+  interrupt: true
+  runBefore: Handle timeout
+states:
+- name: Purchase Parts
+  start: true
+  type: operation
+  actions:
+  - functionRef: purchasePartsFunction
+  transition: Unpack Parts
+- name: Unpack Parts
+  type: operation
+  actions:
+  - functionRef: unpackPartsFunction
+  end: true
+- name: Handle timeout
+  type: operation
+  actions:
+  - functionRef: handleTimeoutFunction
+functions:
+- name: purchasePartsFunction
+  operation: file://myservice.json#purchase
+- name: unpackPartsFunction
+  operation: file://myservice.json#unpack
+- name: handleTimeoutFunction
+  operation: file://myservice.json#handle
+```
+
+</td>
+</tr>
+</table>
+
+### Multiple Instance Subprocess
+
+<table>
+<tr>
+    <th>BPMN2 Diagram</th>
+    <th>Serverless Workflow</th>
+</tr>
+<tr>
+<td valign="top">
+<p align="center">
+<img src="../media/comparisons/bpmn/multiinstance-subprocess.png" width="500px" alt="BPMN2 Multi-Instance Subprocess Workflow"/>
+</p>
+</td>
+<td valign="top">
+
+```yaml
+id: subflowloop
+name: SubflowLoop
+version: '1.0'
+states:
+- name: SubflowLoopState
+  start: true
+  type: subflow
+  workflowId: dosomethingandwaitformessage
+  repeat:
+    max: 10
+  end: true
+```
+
+</td>
+</tr>
+</table>
+
+* Note: We did not include the `dosomethingandwaitformessage` workflow in this example which would just include
+a starting "operation" state transitioning to an "event" state that waits for the needed event.
