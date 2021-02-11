@@ -8,8 +8,9 @@ BPMN2 defines a graphical notation to specify workflows. This notation can then 
 The graphical notation is translated into XML which then can be used for execution on runtime engines.
 
 For this comparison we will compare the Serverless Workflow language with the graphical representation of BPMN2,
-and not its underlying XML representation. The BPMN2 XML is very difficult to understand and quite large for even the smallest 
-workflows, so it makes more sense to use its graphical notation for comparisons.
+and not its underlying XML representation. The BPMN2 XML is very difficult to understand,quite large for even the smallest 
+workflows, and often times not portable between runtimes. 
+It makes more sense to use its portable graphical notation for comparisons.
 
 Serverless Workflow is a declarative workflow language, represented with JSON or YAML. It currently does not 
 define a graphical notation however can be graphically represented using different flowcharting techniques such as 
