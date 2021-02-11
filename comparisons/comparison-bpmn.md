@@ -27,10 +27,11 @@ defined in the associated Serverless Workflow YAML are assumed.
 
 ## Table of Contents
 
-- [Simple File Processor](#Simple-File-Processor)
+- [Simple File Processor](#File-Processor)
+- [Process Application](#Process-Application)
 
 
-### Simple File Processor
+### File Processor
 
 <table>
 <tr>
@@ -40,7 +41,7 @@ defined in the associated Serverless Workflow YAML are assumed.
 <tr>
 <td valign="top">
 <p align="center">
-<img src="../media/comparisons/simple-file-processing.png" width="300px" alt="BPMN2 Simple File Processing Workflow"/>
+<img src="../media/comparisons/bpmn/simple-file-processing.png" width="300px" alt="BPMN2 Simple File Processing Workflow"/>
 </p>
 </td>
 <td valign="top">
@@ -50,7 +51,7 @@ id: processfile
 name: Process File Workflow
 version: '1.0'
 states:
-- name: Process
+- name: Process File
   type: operation
   start: true
   actions:
@@ -59,6 +60,59 @@ states:
 functions:
 - name: processFile
   operation: file://myservice.json#process
+```
+
+</td>
+</tr>
+</table>
+
+### Process Application
+
+<table>
+<tr>
+    <th>BPMN2 Diagram</th>
+    <th>Serverless Workflow</th>
+</tr>
+<tr>
+<td valign="top">
+<p align="center">
+<img src="../media/comparisons/bpmn/process-applicant.png" alt="BPMN2 Process Applicant Workflow"/>
+</p>
+</td>
+<td valign="top">
+
+```yaml
+id: processapplication
+name: Process Application
+version: '1.0'
+states:
+- name: ProcessNewApplication
+  type: event
+  start: true
+  onEvents:
+  - eventRefs:
+    - ApplicationReceivedEvent
+    actions:
+    - functionRef: processApplicationFunction
+    - functionRef: acceptApplicantFunction
+    - functionRef: depositFeesFunction
+  end:
+    produceEvents:
+    - eventRef: NotifyApplicantEvent
+functions:
+- name: processApplicationFunction
+  operation: file://myservice.json#process
+- name: acceptApplicantFunction
+  operation: file://myservice.json#accept
+- name: depositFeesFunction
+  operation: file://myservice.json#deposit
+events:
+- name: ApplicationReceivedEvent
+  type: application
+  source: "/applications/new"
+- name: NotifyApplicantEvent
+  type: notifications
+  source: "/applicants/notify"
 ```
 
 </td>
