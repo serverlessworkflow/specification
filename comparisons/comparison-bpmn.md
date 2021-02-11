@@ -34,6 +34,7 @@ defined in the associated Serverless Workflow YAML are assumed.
 - [Error Handling with Retries](#Error-Handling-With-Retries)
 - [Process Execution Timeout](#Process-Execution-Timeout)
 - [Multiple Instance Subprocess](#Multiple-Instance-Subprocess)
+- [Approve Report (User Task)](#Approve-Report)
 
 ### File Processor
 
@@ -309,12 +310,12 @@ functions:
 
 ```yaml
 id: subflowloop
-name: SubflowLoop
+name: SubFlow Repeat workflow
 version: '1.0'
 states:
-- name: SubflowLoopState
-  start: true
+- name: SubflowRepeat
   type: subflow
+  start: true
   workflowId: dosomethingandwaitformessage
   repeat:
     max: 10
@@ -327,3 +328,65 @@ states:
 
 * Note: We did not include the `dosomethingandwaitformessage` workflow in this example which would just include
 a starting "operation" state transitioning to an "event" state that waits for the needed event.
+
+### Approve Report
+
+<table>
+<tr>
+    <th>BPMN2 Diagram</th>
+    <th>Serverless Workflow</th>
+</tr>
+<tr>
+<td valign="top">
+<p align="center">
+<img src="../media/comparisons/bpmn/approvereport.png" width="500px" alt="BPMN2 Multi-Instance Subprocess Workflow"/>
+</p>
+</td>
+<td valign="top">
+
+```yaml
+id: approvereport
+name: Approve Report Workflow
+version: '1.0'
+states:
+- name: Approve Report
+  type: callback
+  start: true
+  action:
+    functionRef: managerDecideOnReport
+  eventRef: ReportDecisionMadeEvent
+  transition: Evaluate Report Decision
+- name: Evaluate Report Decision
+  type: switch
+  dataConditions:
+  - name: Approve
+    condition: "${ .decision | .approved == true }"
+    end: true
+  - name: Reject
+    condition: "${ .decision | .approved != true }"
+    transition: Update Report
+- name: Update Report
+  type: callback
+  action:
+    functionRef: workerUpdateReport
+  eventRef: ReportUpdatedEvent
+  transition: Approve Report
+events:
+- name: ReportDecisionMadeEvent
+  type: report.decisions
+  source: reports/decision
+- name: ReportUpdatedEvent
+  type: report.updated
+  source: reports/updated
+functions:
+- name: managerDecideOnReport
+  operation: file://myservice.json#managerapproval
+- name: workerUpdateReport
+  operation: file://myservice.json#workerupdate
+```
+
+</td>
+</tr>
+</table>
+
+* Note: Human interactions during workflow execution in Serverless Workflow is handled via its [Callback state](../specification.md#Callback-State).
