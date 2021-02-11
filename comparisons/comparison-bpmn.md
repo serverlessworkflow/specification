@@ -40,7 +40,7 @@ defined in the associated Serverless Workflow YAML are assumed.
 <tr>
 <td valign="top">
 <p align="center">
-<img src="media/comparisons/simple-file-processing.png" width="300px" alt="BPMN2 Simple File Processing Workflow"/>
+<img src="../media/comparisons/simple-file-processing.png" width="300px" alt="BPMN2 Simple File Processing Workflow"/>
 </p>
 </td>
 <td valign="top">
