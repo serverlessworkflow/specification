@@ -31,6 +31,7 @@ defined in the associated Serverless Workflow YAML are assumed.
 - [Simple File Processor](#File-Processor)
 - [Process Application](#Process-Application)
 - [Compensation](#Compensation)
+- [Error Handling with Retries](#Error-Handling-With-Retries)
 
 
 ### File Processor
@@ -131,14 +132,14 @@ events:
 <tr>
 <td valign="top">
 <p align="center">
-<img src="../media/comparisons/bpmn/simple-compensation.png" alt="BPMN2 Simple Compensation Workflow"/>
+<img src="../media/comparisons/bpmn/simple-compensation.png" width="450px" alt="BPMN2 Simple Compensation Workflow"/>
 </p>
 </td>
 <td valign="top">
 
 ```yaml
-id: processapplication
-name: Process Application
+id: simplecompensation
+name: Simple Compensation
 version: '1.0'
 states:
 - name: Step 1
@@ -175,6 +176,63 @@ functions:
   operation: file://myservice.json#step2
 - name: undostep1function
   operation: file://myservice.json#undostep1
+```
+
+</td>
+</tr>
+</table>
+
+### Error Handling With Retries
+
+<table>
+<tr>
+    <th>BPMN2 Diagram</th>
+    <th>Serverless Workflow</th>
+</tr>
+<tr>
+<td valign="top">
+<p align="center">
+<img src="../media/comparisons/bpmn/error-with-retries.png" width="500px" alt="BPMN2 Error Handling With Retries Workflow"/>
+</p>
+</td>
+<td valign="top">
+
+```yaml
+id: errorwithretries
+name: Error Handling With Retries Workflow
+version: '1.0'
+states:
+- name: Make Coffee
+  start: true
+  type: operation
+  actions:
+  - functionRef: makeCoffee
+  transition: Add Milk
+- name: Add Milk
+  type: operation
+  actions:
+  - functionRef: addMilk
+  onErrors:
+  - error: D'oh! No more Milk!
+    retryRef: noMilkRetries
+    end: true
+  transition: Drink Coffee
+- name: Drink Coffee
+  type: operation
+  actions:
+  - functionRef: drinkCoffee
+  end: true
+retries:
+- name: noMilkRetries
+  delay: PT1M
+  maxAttempts: 10
+functions:
+- name: makeCoffee
+  operation: file://myservice.json#make
+- name: addMilk
+  operation: file://myservice.json#add
+- name: drinkCoffee
+  operation: file://myservice.json#drink
 ```
 
 </td>
