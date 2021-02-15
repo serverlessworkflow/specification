@@ -11,11 +11,8 @@ For this comparison, we will compare the Serverless Workflow language with the g
 and not its underlying XML representation. The BPMN2 XML is very difficult to understand, quite large for even the smallest workflows, and often not portable between runtimes. 
 It makes more sense to use its portable graphical notation for comparisons.
 
-Serverless Workflow is a declarative workflow language, represented with JSON or YAML. It currently does not 
-define a graphical notation however can be graphically represented using different flowcharting techniques such as 
-UML activity diagrams. The [Serverless Workflow Java SDK](https://github.com/serverlessworkflow/sdk-java#building-workflow-diagram) 
-as well as its [VSCode Extension](https://github.com/serverlessworkflow/vscode-extension) provide means to generate SVG diagrams based on the workflow
-JSON/YAML. 
+Serverless Workflow is a declarative workflow language, represented with JSON or YAML. It currently does not define a graphical notation. However, it can be graphically represented using different flowcharting techniques such as 
+UML activity diagrams. The [Serverless Workflow Java SDK](https://github.com/serverlessworkflow/sdk-java#building-workflow-diagram) as well as its [VSCode Extension](https://github.com/serverlessworkflow/vscode-extension) provide means to generate SVG diagrams based on the workflow JSON/YAML. 
 
 ## Note when reading provided examples
 
