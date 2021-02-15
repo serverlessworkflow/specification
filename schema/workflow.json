@@ -3,200 +3,97 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Serverless Workflow specification - workflow schema",
   "type": "object",
-  "oneOf": [
-    {
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Workflow unique identifier",
-          "minLength": 1
-        },
-        "name": {
-          "type": "string",
-          "description": "Workflow name",
-          "minLength": 1
-        },
-        "description": {
-          "type": "string",
-          "description": "Workflow description"
-        },
-        "version": {
-          "type": "string",
-          "description": "Workflow version",
-          "minLength": 1
-        },
-        "schemaVersion": {
-          "type": "string",
-          "description": "Serverless Workflow schema version",
-          "minLength": 1
-        },
-        "execTimeout": {
-          "$ref": "#/definitions/exectimeout"
-        },
-        "keepActive": {
-          "type": "boolean",
-          "default": false,
-          "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
-        },
-        "metadata": {
-          "$ref": "common.json#/definitions/metadata"
-        },
-        "events": {
-          "$ref": "events.json#/events"
-        },
-        "functions": {
-          "$ref": "functions.json#/functions"
-        },
-        "retries": {
-          "$ref": "retries.json#/retries"
-        },
-        "states": {
-          "type": "array",
-          "description": "State definitions",
-          "items": {
-            "anyOf": [
-              {
-                "title": "Delay State",
-                "$ref": "#/definitions/delaystate"
-              },
-              {
-                "title": "Event State",
-                "$ref": "#/definitions/eventstate"
-              },
-              {
-                "title": "Operation State",
-                "$ref": "#/definitions/operationstate"
-              },
-              {
-                "title": "Parallel State",
-                "$ref": "#/definitions/parallelstate"
-              },
-              {
-                "title": "Switch State",
-                "$ref": "#/definitions/switchstate"
-              },
-              {
-                "title": "SubFlow State",
-                "$ref": "#/definitions/subflowstate"
-              },
-              {
-                "title": "Inject State",
-                "$ref": "#/definitions/injectstate"
-              },
-              {
-                "title": "ForEach State",
-                "$ref": "#/definitions/foreachstate"
-              },
-              {
-                "title": "Callback State",
-                "$ref": "#/definitions/callbackstate"
-              }
-            ]
-          },
-          "minItems": 1
-        }
-      }
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Workflow unique identifier",
+      "minLength": 1
     },
-    {
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Workflow unique identifier",
-          "minLength": 1
-        },
-        "name": {
-          "type": "string",
-          "description": "Workflow name",
-          "minLength": 1
-        },
-        "description": {
-          "type": "string",
-          "description": "Workflow description"
-        },
-        "version": {
-          "type": "string",
-          "description": "Workflow version",
-          "minLength": 1
-        },
-        "schemaVersion": {
-          "type": "string",
-          "description": "Serverless Workflow schema version",
-          "minLength": 1
-        },
-        "execTimeout": {
-          "$ref": "#/definitions/exectimeout"
-        },
-        "keepActive": {
-          "type": "boolean",
-          "default": false,
-          "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
-        },
-        "metadata": {
-          "$ref": "common.json#/definitions/metadata"
-        },
-        "events": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to a resource containing event definitions (json or yaml)"
-        },
-        "functions": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to a resource containing function definitions (json or yaml)"
-        },
-        "retries": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI to a resource containing retry definitions (json or yaml)"
-        },
-        "states": {
-          "type": "array",
-          "description": "State definitions",
-          "items": {
-            "anyOf": [
-              {
-                "title": "Delay State",
-                "$ref": "#/definitions/delaystate"
-              },
-              {
-                "title": "Event State",
-                "$ref": "#/definitions/eventstate"
-              },
-              {
-                "title": "Operation State",
-                "$ref": "#/definitions/operationstate"
-              },
-              {
-                "title": "Parallel State",
-                "$ref": "#/definitions/parallelstate"
-              },
-              {
-                "title": "Switch State",
-                "$ref": "#/definitions/switchstate"
-              },
-              {
-                "title": "SubFlow State",
-                "$ref": "#/definitions/subflowstate"
-              },
-              {
-                "title": "Inject State",
-                "$ref": "#/definitions/injectstate"
-              },
-              {
-                "title": "ForEach State",
-                "$ref": "#/definitions/foreachstate"
-              },
-              {
-                "title": "Callback State",
-                "$ref": "#/definitions/callbackstate"
-              }
-            ]
+    "name": {
+      "type": "string",
+      "description": "Workflow name",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "description": "Workflow description"
+    },
+    "version": {
+      "type": "string",
+      "description": "Workflow version",
+      "minLength": 1
+    },
+    "schemaVersion": {
+      "type": "string",
+      "description": "Serverless Workflow schema version",
+      "minLength": 1
+    },
+    "execTimeout": {
+      "$ref": "#/definitions/exectimeout"
+    },
+    "keepActive": {
+      "type": "boolean",
+      "default": false,
+      "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
+    },
+    "metadata": {
+      "$ref": "common.json#/definitions/metadata"
+    },
+    "events": {
+      "$ref": "events.json#/events"
+    },
+    "functions": {
+      "$ref": "functions.json#/functions"
+    },
+    "retries": {
+      "$ref": "retries.json#/retries"
+    },
+    "states": {
+      "type": "array",
+      "description": "State definitions",
+      "items": {
+        "anyOf": [
+          {
+            "title": "Delay State",
+            "$ref": "#/definitions/delaystate"
           },
-          "minItems": 1
-        }
-      }
+          {
+            "title": "Event State",
+            "$ref": "#/definitions/eventstate"
+          },
+          {
+            "title": "Operation State",
+            "$ref": "#/definitions/operationstate"
+          },
+          {
+            "title": "Parallel State",
+            "$ref": "#/definitions/parallelstate"
+          },
+          {
+            "title": "Switch State",
+            "$ref": "#/definitions/switchstate"
+          },
+          {
+            "title": "SubFlow State",
+            "$ref": "#/definitions/subflowstate"
+          },
+          {
+            "title": "Inject State",
+            "$ref": "#/definitions/injectstate"
+          },
+          {
+            "title": "ForEach State",
+            "$ref": "#/definitions/foreachstate"
+          },
+          {
+            "title": "Callback State",
+            "$ref": "#/definitions/callbackstate"
+          }
+        ]
+      },
+      "minItems": 1
     }
-  ],
+  },
   "required": [
     "id",
     "name",
@@ -323,7 +220,7 @@
       "type": "object",
       "properties": {
         "eventRefs": {
-          "type" : "array",
+          "type": "array",
           "description": "References one or more unique event names in the defined workflow events",
           "minItems": 1,
           "items": {
@@ -427,7 +324,10 @@
           "description": "Reference to the unique name of a 'consumed' event definition"
         },
         "data": {
-          "type": ["string", "object"],
+          "type": [
+            "string",
+            "object"
+          ],
           "description": "If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by 'triggerEventRef'. If object type, a custom object to become the data (payload) of the event referenced by 'triggerEventRef'."
         },
         "contextAttributes": {
@@ -778,7 +678,6 @@
         "required": [
           "name",
           "type",
-          "actionMode",
           "actions"
         ]
       },
@@ -788,7 +687,6 @@
             "required": [
               "name",
               "type",
-              "actionMode",
               "actions",
               "end"
             ]
@@ -797,7 +695,6 @@
             "required": [
               "name",
               "type",
-              "actionMode",
               "actions",
               "transition"
             ]
@@ -807,7 +704,6 @@
               "start",
               "name",
               "type",
-              "actionMode",
               "actions",
               "transition"
             ]
@@ -817,7 +713,6 @@
               "start",
               "name",
               "type",
-              "actionMode",
               "actions",
               "end"
             ]
@@ -863,13 +758,20 @@
           }
         },
         "completionType": {
-          "type" : "string",
-          "enum": ["and", "xor", "n_of_m"],
+          "type": "string",
+          "enum": [
+            "and",
+            "xor",
+            "n_of_m"
+          ],
           "description": "Option types on how to complete branch execution.",
           "default": "and"
         },
         "n": {
-          "type": ["number","string"],
+          "type": [
+            "number",
+            "string"
+          ],
           "minimum": 0,
           "minLength": 0,
           "description": "Used when completionType is set to 'n_of_m' to specify the 'N' value"
@@ -1180,7 +1082,7 @@
           "description": "Event condition name"
         },
         "eventRef": {
-          "type" : "string",
+          "type": "string",
           "description": "References an unique event name in the defined workflow events"
         },
         "transition": {
@@ -1195,7 +1097,10 @@
       "metadata": {
         "$ref": "common.json#/definitions/metadata"
       },
-      "required": ["eventRef", "transition"]
+      "required": [
+        "eventRef",
+        "transition"
+      ]
     },
     "enddeventcondition": {
       "type": "object",
@@ -1206,7 +1111,7 @@
           "description": "Event condition name"
         },
         "eventRef": {
-          "type" : "string",
+          "type": "string",
           "description": "References an unique event name in the defined workflow events"
         },
         "end": {
@@ -1221,7 +1126,10 @@
       "metadata": {
         "$ref": "common.json#/definitions/metadata"
       },
-      "required": ["eventRef", "transition"]
+      "required": [
+        "eventRef",
+        "transition"
+      ]
     },
     "datacondition": {
       "oneOf": [
@@ -1253,7 +1161,10 @@
       "metadata": {
         "$ref": "common.json#/definitions/metadata"
       },
-      "required": ["condition", "transition"]
+      "required": [
+        "condition",
+        "transition"
+      ]
     },
     "enddatacondition": {
       "type": "object",
@@ -1275,7 +1186,10 @@
       "metadata": {
         "$ref": "common.json#/definitions/metadata"
       },
-      "required": ["condition", "end"]
+      "required": [
+        "condition",
+        "end"
+      ]
     },
     "subflowstate": {
       "type": "object",
@@ -1541,7 +1455,10 @@
           "description": "Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array"
         },
         "max": {
-          "type": ["number","string"],
+          "type": [
+            "number",
+            "string"
+          ],
           "minimum": 0,
           "minLength": 0,
           "description": "Specifies how upper bound on how many iterations may run in parallel"
@@ -1706,7 +1623,7 @@
           "description": "State name"
         },
         "type": {
-          "type" : "string",
+          "type": "string",
           "const": "callback",
           "description": "State type"
         },
@@ -1715,7 +1632,7 @@
           "$ref": "#/definitions/action"
         },
         "eventRef": {
-          "type" : "string",
+          "type": "string",
           "description": "References an unique callback event name in the defined workflow events"
         },
         "timeout": {
@@ -1855,7 +1772,7 @@
       "properties": {
         "interval": {
           "type": "string",
-          "description":  "Time interval (ISO 8601 format) describing when workflow instances can be created."
+          "description": "Time interval (ISO 8601 format) describing when workflow instances can be created."
         },
         "cron": {
           "$ref": "#/definitions/crondef"
@@ -1867,7 +1784,7 @@
         },
         "timezone": {
           "type": "string",
-          "description":  "Timezone name used to evaluate the cron expression. Not used for interval as timezone can be specified there directly. If not specified, should default to local machine timezone."
+          "description": "Timezone name used to evaluate the cron expression. Not used for interval as timezone can be specified there directly. If not specified, should default to local machine timezone."
         }
       },
       "oneOf": [
@@ -1927,7 +1844,10 @@
           "description": "References a name of a defined event"
         },
         "data": {
-          "type": ["string", "object"],
+          "type": [
+            "string",
+            "object"
+          ],
           "description": "If String, expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the data of produced event."
         },
         "contextAttributes": {
@@ -2014,7 +1934,7 @@
           "default": false
         },
         "stopOnEvents": {
-          "type" : "array",
+          "type": "array",
           "description": "List referencing defined consumed workflow events. SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached",
           "minItems": 1,
           "items": {

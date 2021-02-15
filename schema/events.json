@@ -4,13 +4,22 @@
   "description": "Serverless Workflow specification - events schema",
   "type": "object",
   "events": {
-    "type": "array",
-    "description": "Workflow CloudEvent definitions. Defines CloudEvents that can be consumed or produced",
-    "items": {
-      "type": "object",
-      "$ref": "#/definitions/eventdef"
-    },
-    "minItems": 1
+    "oneOf": [
+      {
+        "type": "string",
+        "format": "uri",
+        "description": "URI to a resource containing event definitions (json or yaml)"
+      },
+      {
+        "type": "array",
+        "description": "Workflow CloudEvent definitions. Defines CloudEvents that can be consumed or produced",
+        "items": {
+          "type": "object",
+          "$ref": "#/definitions/eventdef"
+        },
+        "minItems": 1
+      }
+    ]
   },
   "required": [
     "events"

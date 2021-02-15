@@ -4,13 +4,22 @@
   "description": "Serverless Workflow specification - functions schema",
   "type": "object",
   "functions": {
-    "type": "array",
-    "description": "Workflow function definitions",
-    "items": {
-      "type": "object",
-      "$ref": "#/definitions/function"
-    },
-    "minItems": 1
+    "oneOf": [
+      {
+        "type": "string",
+        "format": "uri",
+        "description": "URI to a resource containing function definitions (json or yaml)"
+      },
+      {
+        "type": "array",
+        "description": "Workflow function definitions",
+        "items": {
+          "type": "object",
+          "$ref": "#/definitions/function"
+        },
+        "minItems": 1
+      }
+    ]
   },
   "required": [
     "functions"
