@@ -1251,32 +1251,26 @@ Let's look at the following JSON definition of 'onEvents' to show this:
 
 ```json
 {
- "eventsActions": [
-    {
-        "eventRefs": [
-            "HighBodyTemperature",
-            "HighBloodPressure"
-        ],
-        "actions": [
-            {
-                "functionRef": {
-                    "refName": "SendTylenolOrder",
-                    "parameters": {
-                       "patient": "{{ $.patientId }}"
-                    }
-                }
-            },
-            {
-                "functionRef": {
-                    "refName": "CallNurse",
-                    "parameters": {
-                       "patient": "{{ $.patientId }}"
-                    }
-                }
-            } 
-        ]
-    }
-]
+	"onEvents": [{
+		"eventRefs": ["HighBodyTemperature", "HighBloodPressure"],
+		"actions": [{
+				"functionRef": {
+					"refName": "SendTylenolOrder",
+					"parameters": {
+						"patient": "{{ $.patientId }}"
+					}
+				}
+			},
+			{
+				"functionRef": {
+					"refName": "CallNurse",
+					"parameters": {
+						"patient": "{{ $.patientId }}"
+					}
+				}
+			}
+		]
+	}]
 }
 ```
 
