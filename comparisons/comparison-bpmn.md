@@ -16,11 +16,10 @@ UML activity diagrams. The [Serverless Workflow Java SDK](https://github.com/ser
 
 ## Note when reading provided examples
 
-The BPMN2 graphical notation does not provide details about things like data inputs/outputs, mapping and transformation. 
-BPMN2 does provide graphical representation for this such as Data Objects, however most of the examples
+The BPMN2 graphical notation does not provide details about data inputs/outputs, mapping, and transformation. 
+BPMN2 does provide graphical representation for things such as Data Objects. However, most of the examples
 available do not use them. Execution semantics such as task and event properties are also not visual.
-For this reason the event, function, retry, and data mapping 
-defined in the associated Serverless Workflow YAML are assumed. 
+For this reason, the event, function, retry, and data mapping defined in the associated Serverless Workflow YAML are assumed. 
 
 
 ## Table of Contents
