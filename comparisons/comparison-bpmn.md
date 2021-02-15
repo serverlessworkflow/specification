@@ -5,7 +5,7 @@ DSL for workflows. It is maintained by the [Object Management Group (OMG)](https
 The latest BPMN version is [2.0.2](https://www.omg.org/spec/BPMN/2.0.2/), published in 2014.
 
 BPMN2 defines a graphical notation to specify workflows. This notation can then be shared between tooling and organizations.
-The graphical notation is translated into XML which then can be used for execution on runtime engines.
+The graphical notation is translated into XML, which then can be used for runtime execution.
 
 For this comparison, we will compare the Serverless Workflow language with the graphical representation of BPMN2,
 and not its underlying XML representation. The BPMN2 XML is very difficult to understand, quite large for even the smallest workflows, and often not portable between runtimes. 
