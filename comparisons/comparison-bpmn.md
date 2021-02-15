@@ -2,7 +2,7 @@
 
 The [Business Process Model and Notation (BPMN)](https://www.omg.org/spec/BPMN/2.0/PDF) defines a flowchart-based
 DSL for workflows. It is maintained by the [Object Management Group (OMG)](https://www.omg.org/). 
-The latest version of BPMN is [2.0.2](https://www.omg.org/spec/BPMN/2.0.2/), published in 2014.
+The latest BPMN version is [2.0.2](https://www.omg.org/spec/BPMN/2.0.2/), published in 2014.
 
 BPMN2 defines a graphical notation to specify workflows. This notation can then be shared between tooling and organizations.
 The graphical notation is translated into XML which then can be used for execution on runtime engines.
