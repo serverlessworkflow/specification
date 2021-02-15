@@ -324,7 +324,7 @@ states:
 </tr>
 </table>
 
-* Note: We did not include the `dosomethingandwaitformessage` workflow in this example which would just include
+* Note: We did not include the `dosomethingandwaitformessage` workflow in this example, which would just include
 a starting "operation" state transitioning to an "event" state that waits for the needed event.
 
 ### Approve Report
