@@ -35,14 +35,15 @@
         },
         "operation": {
           "type": "string",
-          "description": "If type `rest`, combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. If type is `expression` defines the workflow expression.",
+          "description": "If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `expression`, defines the workflow expression.",
           "minLength": 1
         },
         "type": {
           "type": "string",
-          "description": "Defines the function type. Is either `rest` or `expression`. Default is `rest`",
+          "description": "Defines the function type. Is either `rest`, `rpc` or `expression`. Default is `rest`",
           "enum": [
             "rest",
+            "rpc",
             "expression"
           ],
           "default": "rest"

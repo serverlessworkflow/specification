@@ -75,7 +75,8 @@ For more information on the history, development and design rationale behind the
 <img src="media/spec/spec-parts.png" width="600" alt="Serverless Workflow Specification Focus On Standards"/>
 </p>
 
-Serverless Workflow language takes advantage of well-established and known standards such as [CloudEvents](https://cloudevents.io/) and [OpenApi](https://www.openapis.org/) specifications.
+Serverless Workflow language takes advantage of well-established and known standards such as [CloudEvents](https://cloudevents.io/), [OpenApi](https://www.openapis.org/) specifications,
+and [gRPC](https://grpc.io/).
 
 ## Project Components
 
@@ -172,6 +173,7 @@ They can be referenced by their domain-specific names inside workflow [states](#
 
 Reference the following sections to learn more about workflow functions:
 * [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
+* [Using functions for RPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
 
 ### Using Functions For RESTful Service Invocations
@@ -186,9 +188,9 @@ To learn more about that, please reference the [event definitions](#Event-Defini
 as well as the [actions definitions](#Action-Definition) [eventRef](#EventRef-Definition) property.
  
 Because of an overall lack of a common way to describe different services and their operations,
-workflow markups typically chose to define custom function definitions.
-This approach often runs into issues such as lack of markup portability, limited capabilities, as well as 
-forces non-workflow-specific information such as service authentication to be added inside workflow markup.
+many workflow languages typically chose to define custom function definitions.
+This approach however often runs into issues such as lack of portability, limited capabilities, as well as 
+forcing non-workflow-specific information, such as service authentication, to be added inside the workflow language.
 
 To avoid these issues, the Serverless Workflow specification mandates that details about 
 RESTful services and their operations be described using the [OpenAPI Specification](https://www.openapis.org/) specification.
@@ -196,12 +198,7 @@ OpenAPI is a language-agnostic standard that describes discovery of RESTful serv
 This allows Serverless Workflow language to describe RESTful services in a portable 
 way, as well as workflow runtimes to utilize OpenAPI tooling and APIs to invoke service operations.
 
-The workflow markup allows defining non-restful services and their operations using the `metadata` property
-of [functions definitions](#Function-Definition). Note that using the function definitions `metadata` to add proprietary
-information about service execution can break the portability of the workflow language, meaning your
-workflow model may not be executable on different platforms that do not understand it.
-
-Here is an example function definition for a service operation. 
+Here is an example function definition for a RESTful service operation. 
 
 ```json
 {
@@ -234,14 +231,74 @@ For example:
 ```
 
 Note that the referenced function definition type in this case must be `rest` (default type). 
-If the referenced function definition type is `expression`, this should be regarded as 
-an error during parsing of the workflow definition.
+
+For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
+### Using Functions For RPC Service Invocations
+
+Similar to defining invocations of operations on RESTful services, you can also use the workflow 
+[functions definitions](#Function-Definition) that follow the remote procedure call (RPC) protocol.
+For RPC invocations, the Serverless Workflow specification mandates that they are described using [gRPC](https://grpc.io/),
+a widely used RPC system. 
+gRPC uses [Protocol Buffers](https://developers.google.com/protocol-buffers/docs/overview) to define messages, services,
+and the methods on those services that can be invoked. 
+
+Let's look at an example of invoking a service method using RPC. For this example let's say we have the following
+gRP prototocol buffer definition in a myuserservice.proto file:
+
+```text
+service UserService {
+    rpc AddUser(User) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/api/v1/users"
+            body: "*"
+        };
+    }
+    rpc ListUsers(ListUsersRequest) returns (stream User) {
+        option (google.api.http) = {
+            get: "/api/v1/users"
+        };
+    }
+    rpc ListUsersByRole(UserRole) returns (stream User) {
+        option (google.api.http) = {
+            get: "/api/v1/users/role"
+        };
+    }
+    rpc UpdateUser(UpdateUserRequest) returns (User) {
+        option (google.api.http) = {
+            patch: "/api/v1/users/{user.id}"
+            body: "*"
+        };
+    }
+}
+```
+
+In our workflow definition, we can then use function definitions:
+
+```json
+{
+"functions": [
+  {
+    "name": "listUsers",
+    "operation": "file://myuserservice.proto#UserService#ListUsers",
+    "type": "rpc"
+  }
+]
+}
+```
+
+Note that the `operation` property has the following format: 
+```text
+<URI_to_proto_file>#<Service_Name>#<Service_Method_Name>
+```
+
+Note that the referenced function definition type in this case must be `rpc`. 
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
 ### Using Functions For Expression Evaluation
 
-In addition to defining RESTful service operations, workflow [functions definitions](#Function-Definition)
+In addition to defining RESTful and RPC services and their operations, workflow [functions definitions](#Function-Definition)
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference
@@ -303,9 +360,7 @@ Our expression function definitions can now be referenced by workflow states whe
 }
 ```
 
-Note that the used function definition type in this case must be `expression` . 
-If the referenced function definition type is `rest` (default), this should be regarded as 
-an error during parsing of the workflow definition.
+Note that the used function definition type in this case must be `expression`. 
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
@@ -695,8 +750,8 @@ not obeyed in the workflow definition.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | If type `rest`, combination of the function/service OpenAPI definition URI and the operationID of the operation that needs to be invoked, separated by a '#'. If type is `expression` defines the workflow expression. | string | no |
-| type | Defines the function type. Is either `rest` or `expression`. Default is `rest` | enum | no |
+| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `expression`, defines the workflow expression. | string | no |
+| type | Defines the function type. Is either `rest`, `rpc` or `expression`. Default is `rest` | enum | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -738,6 +793,8 @@ The `type` property defines the function type. Its value can be either `rest` or
 Depending on the function `type`, the `operation` property can be:
 * If `type` is `rest`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'. 
   For example `https://petstore.swagger.io/v2/swagger.json#getPetById`. 
+* If `type` is `rpc`, a combination of the gRPC proto document URI and the particular service name and service method name that needs to be invoked, separated by a '#'. 
+For example `file://myuserservice.proto#UserService#ListUsers`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
 
 The [`metadata`](#Workflow-Metadata) property allows users to define custom information to function definitions.
