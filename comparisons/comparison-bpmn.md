@@ -43,7 +43,7 @@ For this reason, the event, function, retry, and data mapping defined in the ass
 <tr>
 <td valign="top">
 <p align="center">
-<img src="../media/comparisons/bpmn/simple-file-processing.png" width="300px" alt="BPMN2 Simple File Processing Workflow"/>
+<img src="../media/comparisons/bpmn/simple-file-processing.png" width="500px" alt="BPMN2 Simple File Processing Workflow"/>
 </p>
 </td>
 <td valign="top">
@@ -78,7 +78,7 @@ functions:
 <tr>
 <td valign="top">
 <p align="center">
-<img src="../media/comparisons/bpmn/process-applicant.png" alt="BPMN2 Process Applicant Workflow"/>
+<img src="../media/comparisons/bpmn/process-applicant.png" width="500px" alt="BPMN2 Process Applicant Workflow"/>
 </p>
 </td>
 <td valign="top">
@@ -131,7 +131,7 @@ events:
 <tr>
 <td valign="top">
 <p align="center">
-<img src="../media/comparisons/bpmn/simple-compensation.png" width="450px" alt="BPMN2 Simple Compensation Workflow"/>
+<img src="../media/comparisons/bpmn/simple-compensation.png" width="500px" alt="BPMN2 Simple Compensation Workflow"/>
 </p>
 </td>
 <td valign="top">
