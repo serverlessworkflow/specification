@@ -236,7 +236,7 @@ For more information about functions, reference the [Functions definitions](#Fun
 
 ### Using Functions For RPC Service Invocations
 
-Similarly to defining invocations of operations on RESTful services, you can also use the workflow 
+Similar to defining invocations of operations on RESTful services, you can also use the workflow 
 [functions definitions](#Function-Definition) that follow the remote procedure call (RPC) protocol.
 For RPC invocations, the Serverless Workflow specification mandates that they are described using [gRPC](https://grpc.io/),
 a widely used RPC system. 
