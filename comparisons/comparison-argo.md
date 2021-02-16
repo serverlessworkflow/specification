@@ -1,4 +1,4 @@
-# Examples - Argo Workflows
+# Comparisons - Argo Workflows
 
 [Argo Workflows](https://github.com/argoproj/argo) is an open source container-native workflow engine for 
 orchestrating parallel jobs on Kubernetes. 

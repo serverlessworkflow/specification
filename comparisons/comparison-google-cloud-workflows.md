@@ -1,4 +1,4 @@
-# Examples - Google Cloud Workflows
+# Comparisons - Google Cloud Workflows
 
 [Google Cloud Workflows](https://cloud.google.com/workflows) is a proprietary Google serverless workflow language
 and runtime service. It's main features, as mentioned on their website, include orchestration of Google Cloud 

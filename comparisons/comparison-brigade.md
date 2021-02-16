@@ -1,4 +1,4 @@
-# Examples - Brigade
+# Comparisons - Brigade
 
 [Brigade](https://github.com/brigadecore/brigade) is an open-source Kubernetes-native tool for doing event-driven
 scripting. Brigade allows you to
