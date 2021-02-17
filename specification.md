@@ -2425,7 +2425,7 @@ state data (as by the time its completion the parent workflow execution has alre
 The `repeat` property defines the SubFlow states repeated execution (looping) behavior. This allows you to specify that 
 the sub-workflow should be executed multiple times repeatedly.
 If the `repeat` property is defined, the `waitForCompletion` should be assumed have the value of `true`.
-If the workflow explicitly triggers [compensation](#Workflow Compensation) and the SubFlow state 
+If the workflow explicitly triggers [compensation](#Workflow-Compensation) and the SubFlow state 
 was executed and defines its compensation state, it should be compensated once, no matter how many times
 its was executed as defined by the `repeat` property.
 After each execution of the SubFlow state, if `repeat` is defined, the SubFlow state data at the end of the 
@@ -2720,6 +2720,7 @@ actions:
 </table>
 
 </details>
+
 ForEach states can be used to execute [actions](#Action-Definition), or a [sub-workflow](#SubFlow-State) for 
 each element of a data set.
 
@@ -3328,7 +3329,7 @@ produceEvents:
 </details>
 
 End definitions are used to explicitly define execution completion of a workflow instance or workflow execution path.
-A workflow definition must include at least one [workflow state](#State Definition).
+A workflow definition must include at least one [workflow state](#State-Definition).
 Note that [Switch states](#Switch-State) cannot declare to be workflow end states. Switch states must end
 their execution followed by a transition another workflow state, given their conditional evaluation.
 
