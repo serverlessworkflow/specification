@@ -3166,9 +3166,7 @@ the needed events at the defined times to trigger workflow instance creation.
 
 ```json
 {
-   "cron": {
-      "expression": "0 0/15 * * * ?"
-   },
+   "cron": "0 0/15 * * * ?",
    "directInvoke": true
 }
 ```
@@ -3214,6 +3212,18 @@ the needed events at the defined times to trigger workflow instance creation.
 The `directInvoke` property defines if workflow instances are allowed to be created outside of the defined interval or cron expression.
 
 #### Cron Definition
+
+`Cron` definition can have two types, either `string` or `object`.
+If `string` type, it defines the repeating interval (cron expression) describing when the workflow instance should be created.
+This can be used as a short-cut definition when you don't need to define any other parameters, for example:
+
+```json
+"cron": "0 15,30,45 * ? * *"
+```
+
+If you need to define the `validUntil` parameters in your `cron` definition, you can define 
+it with its `object` type which has the following properties:
+
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |

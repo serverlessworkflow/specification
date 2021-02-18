@@ -102,18 +102,28 @@
   ],
   "definitions": {
     "crondef": {
-      "type": "object",
-      "properties": {
-        "expression": {
+      "oneOf": [
+        {
           "type": "string",
           "description": "Repeating interval (cron expression) describing when the workflow instance should be created",
           "minLength": 1
         },
-        "validUntil": {
-          "type": "string",
-          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid"
+        {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string",
+              "description": "Repeating interval (cron expression) describing when the workflow instance should be created",
+              "minLength": 1
+            },
+            "validUntil": {
+              "type": "string",
+              "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid"
+            }
+          },
+          "required": ["expression"]
         }
-      }
+      ]
     },
     "exectimeout": {
       "type": "object",

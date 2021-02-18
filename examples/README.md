@@ -2208,9 +2208,7 @@ The results of the inbox service called is expected to be for example:
         "type": "operation",
         "start": {
             "schedule": {
-                "cron": {
-                   "expression": "0 0/15 * * * ?"
-                }
+                "cron": "0 0/15 * * * ?"
             }
         },
         "actionMode": "sequential",
