@@ -1777,35 +1777,45 @@
       ]
     },
     "schedule": {
-      "type": "object",
-      "description": "Start state schedule definition",
-      "properties": {
-        "interval": {
-          "type": "string",
-          "description": "Time interval (ISO 8601 format) describing when workflow instances can be created."
-        },
-        "cron": {
-          "$ref": "#/definitions/crondef"
-        },
-        "directInvoke": {
-          "description": "Define if workflow instances can be created outside of the defined interval/cron",
-          "type": "boolean",
-          "default": false
-        },
-        "timezone": {
-          "type": "string",
-          "description": "Timezone name used to evaluate the cron expression. Not used for interval as timezone can be specified there directly. If not specified, should default to local machine timezone."
-        }
-      },
       "oneOf": [
         {
-          "required": [
-            "interval"
-          ]
+          "type": "string",
+          "description": "Time interval (ISO 8601 format) describing when workflow instances can be created.",
+          "minLength": 1
         },
         {
-          "required": [
-            "cron"
+          "type": "object",
+          "description": "Start state schedule definition",
+          "properties": {
+            "interval": {
+              "type": "string",
+              "description": "Time interval (ISO 8601 format) describing when workflow instances can be created.",
+              "minLength": 1
+            },
+            "cron": {
+              "$ref": "#/definitions/crondef"
+            },
+            "directInvoke": {
+              "description": "Define if workflow instances can be created outside of the defined interval/cron",
+              "type": "boolean",
+              "default": false
+            },
+            "timezone": {
+              "type": "string",
+              "description": "Timezone name used to evaluate the cron expression. Not used for interval as timezone can be specified there directly. If not specified, should default to local machine timezone."
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "interval"
+              ]
+            },
+            {
+              "required": [
+                "cron"
+              ]
+            }
           ]
         }
       ]

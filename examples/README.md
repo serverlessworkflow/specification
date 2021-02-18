@@ -2082,9 +2082,7 @@ Bidding is done via an online application and bids are received as events are as
           "name": "StoreCarAuctionBid",
           "type": "event",
           "start": {
-              "schedule": {
-                "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
-              }
+              "schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
           },
           "exclusive": true,
           "onEvents": [
@@ -2125,8 +2123,7 @@ states:
 - name: StoreCarAuctionBid
   type: event
   start:
-    schedule:
-      interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
+    schedule: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
   exclusive: true
   onEvents:
   - eventRefs:
@@ -2258,8 +2255,7 @@ states:
   type: operation
   start:
     schedule:
-      cron:
-        expression: 0 0/15 * * * ?
+      cron: 0 0/15 * * * ?
   actionMode: sequential
   actions:
   - functionRef: checkInboxFunction
