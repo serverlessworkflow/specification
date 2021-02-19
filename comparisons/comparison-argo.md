@@ -55,14 +55,14 @@ metadata:
 spec:
   entrypoint: whalesay
   arguments:
-    arguments:
+    parameters:
     - name: message
       value: hello world
 
   templates:
   - name: whalesay
     inputs:
-      arguments:
+      parameters:
       - name: message
     container:
       image: docker/whalesay
@@ -117,36 +117,30 @@ metadata:
   generateName: steps-
 spec:
   entrypoint: hello-hello-hello
-
-  # This spec contains two templates: hello-hello-hello and whalesay
   templates:
   - name: hello-hello-hello
-    # Instead of just running a container
-    # This template has a sequence of steps
     steps:
     - - name: hello1            # hello1 is run before the following steps
         template: whalesay
         arguments:
-          arguments:
+          parameters:
           - name: message
             value: "hello1"
     - - name: hello2a           # double dash => run after previous step
         template: whalesay
         arguments:
-          arguments:
+          parameters:
           - name: message
             value: "hello2a"
       - name: hello2b           # single dash => run in parallel with previous step
         template: whalesay
         arguments:
-          arguments:
+          parameters:
           - name: message
             value: "hello2b"
-
-  # This is the same template as from the previous example
   - name: whalesay
     inputs:
-      arguments:
+      parameters:
       - name: message
     container:
       image: docker/whalesay
@@ -226,7 +220,7 @@ spec:
   templates:
   - name: echo
     inputs:
-      arguments:
+      parameters:
       - name: message
     container:
       image: alpine:3.7
@@ -237,17 +231,17 @@ spec:
       - name: A
         template: echo
         arguments:
-          arguments: [{name: message, value: A}]
+          parameters: [{name: message, value: A}]
       - name: B
         dependencies: [A]
         template: echo
         arguments:
-          arguments: [{name: message, value: B}]
+          parameters: [{name: message, value: B}]
       - name: C
         dependencies: [A]
         template: echo
         arguments:
-          arguments: [{name: message, value: C}]
+          parameters: [{name: message, value: C}]
       - name: D
         dependencies: [B, C]
         template: echo
@@ -643,9 +637,11 @@ spec:
       limit: 10
       retryPolicy: "Always"
       backoff:
-        duration: "1"      
+        duration: "1"      # Must be a string. Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
         factor: 2
-        maxDuration: "1m" 
+        maxDuration: "1m"  # Must be a string. Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
+      affinity:
+        nodeAntiAffinity: {}
     container:
       image: python:alpine3.6
       command: ["python", -c]
@@ -816,7 +812,7 @@ metadata:
   generateName: exit-handlers-
 spec:
   entrypoint: intentional-fail
-  onExit: exit-handler           
+  onExit: exit-handler                  # invoke exit-handler template at end of the workflow
   templates:
   # primary workflow template
   - name: intentional-fail
@@ -824,11 +820,6 @@ spec:
       image: alpine:latest
       command: [sh, -c]
       args: ["echo intentional failure; exit 1"]
-
-  # Exit handler templates
-  # After the completion of the entrypoint template, the status of the
-  # workflow is made available in the global variable {{workflow.status}}.
-  # {{workflow.status}} will be one of: Succeeded, Failed, Error
   - name: exit-handler
     steps:
     - - name: notify
