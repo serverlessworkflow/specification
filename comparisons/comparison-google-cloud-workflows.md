@@ -293,7 +293,7 @@ it just complicates things and is not needed.
                 {
                     "functionRef": {
                         "refName": "StopComputeEngine",
-                        "parameters": {
+                        "arguments": {
                             "project": "{{ $.project }}",
                             "zone": "{{ $.zone }}",
                             "vmToStop": "{{ $.vmToStop }}"
@@ -423,7 +423,7 @@ as service invocations, where as Google Workflow uses the "call" keyword.
                 {
                     "functionRef": {
                         "refName": "PublishToTopic",
-                        "parameters": {
+                        "arguments": {
                             "project": "{{ $.project }}",
                             "topic": "{{ $.topic }}",
                             "message": "{{ $.message }}"

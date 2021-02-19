@@ -198,13 +198,13 @@ states:
   actions:
   - functionRef:
       refName: processfilefunction
-      parameters:
+      arguments:
         filename: "{{ $file.name }}"
     actionDataFilter:
       dataResultsPath: "{{ $.processed }}"
   - functionRef:
       refName: uploadfunction
-      parameters:
+      arguments:
         file: "{{ $processed }}"
   onErrors:
   - error: "*"

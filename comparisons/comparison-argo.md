@@ -55,14 +55,14 @@ metadata:
 spec:
   entrypoint: whalesay
   arguments:
-    parameters:
+    arguments:
     - name: message
       value: hello world
 
   templates:
   - name: whalesay
     inputs:
-      parameters:
+      arguments:
       - name: message
     container:
       image: docker/whalesay
@@ -89,7 +89,7 @@ states:
   actions:
   - functionRef:
       refName: whalesayimage
-      parameters:
+      arguments:
         message: "{{ $.message }}"
   end: true
 ```
@@ -127,26 +127,26 @@ spec:
     - - name: hello1            # hello1 is run before the following steps
         template: whalesay
         arguments:
-          parameters:
+          arguments:
           - name: message
             value: "hello1"
     - - name: hello2a           # double dash => run after previous step
         template: whalesay
         arguments:
-          parameters:
+          arguments:
           - name: message
             value: "hello2a"
       - name: hello2b           # single dash => run in parallel with previous step
         template: whalesay
         arguments:
-          parameters:
+          arguments:
           - name: message
             value: "hello2b"
 
   # This is the same template as from the previous example
   - name: whalesay
     inputs:
-      parameters:
+      arguments:
       - name: message
     container:
       image: docker/whalesay
@@ -173,7 +173,7 @@ states:
   actions:
   - functionRef:
       refName: whalesayimage
-      parameters:
+      arguments:
         message: hello1
   transition: parallelhello
 - name: parallelhello
@@ -184,13 +184,13 @@ states:
     actions:
     - functionRef:
         refName: whalesayimage
-        parameters:
+        arguments:
           message: hello2a
   - name: hello2b-branch
     actions:
     - functionRef:
         refName: whalesayimage
-        parameters:
+        arguments:
           message: hello2b
   end: true
 ```
@@ -226,7 +226,7 @@ spec:
   templates:
   - name: echo
     inputs:
-      parameters:
+      arguments:
       - name: message
     container:
       image: alpine:3.7
@@ -237,17 +237,17 @@ spec:
       - name: A
         template: echo
         arguments:
-          parameters: [{name: message, value: A}]
+          arguments: [{name: message, value: A}]
       - name: B
         dependencies: [A]
         template: echo
         arguments:
-          parameters: [{name: message, value: B}]
+          arguments: [{name: message, value: B}]
       - name: C
         dependencies: [A]
         template: echo
         arguments:
-          parameters: [{name: message, value: C}]
+          arguments: [{name: message, value: C}]
       - name: D
         dependencies: [B, C]
         template: echo
@@ -274,7 +274,7 @@ states:
   actions:
   - functionRef:
       refName: echo
-      parameters:
+      arguments:
         message: A
   transition: parallelecho
 - name: parallelecho
@@ -285,13 +285,13 @@ states:
     actions:
     - functionRef:
         refName: echo
-        parameters:
+        arguments:
           message: B
   - name: C-branch
     actions:
     - functionRef:
         refName: echo
-        parameters:
+        arguments:
           message: C
   transition: D
 - name: D
@@ -300,7 +300,7 @@ states:
   actions:
   - functionRef:
       refName: echo
-      parameters:
+      arguments:
         message: D
   end: true
 ```
@@ -418,7 +418,7 @@ states:
   actions:
   - functionRef:
       refName: printmessagefunc
-      parameters:
+      arguments:
         message: "{{ $.results }}"
   end: true
 ```
@@ -498,7 +498,7 @@ states:
   - name: print-message
     functionRef:
       refName: whalesay
-      parameters:
+      arguments:
         message: "{{ $.greeting }}"
   end: true
 ```
@@ -678,7 +678,7 @@ states:
   actions:
   - functionRef:
       refName: flip-coin-function
-      parameters:
+      arguments:
         args:
         - import random; import sys; exit_code = random.choice([0, 1, 1]); sys.exit(exit_code)
   onErrors:
@@ -780,7 +780,7 @@ states:
   actions:
   - functionRef:
       refName: heads-function
-      parameters:
+      arguments:
         args: echo "it was heads"
   end: true
 ```
@@ -883,7 +883,7 @@ states:
   actions:
   - functionRef:
       refName: intentional-fail-function
-      parameters:
+      arguments:
         args: echo intentional failure; exit 1
   onErrors:
   - error: "*"
@@ -893,7 +893,7 @@ states:
   actions:
   - functionRef:
       refName: send-email-function
-      parameters:
+      arguments:
         args: 'echo send e-mail: $.workflow.name $.exit-code'
   transition: emo-state
 - name: emo-state
@@ -908,7 +908,7 @@ states:
   actions:
   - functionRef:
       refName: celebrate-cry-function
-      parameters:
+      arguments:
         args: echo hooray!
   end: true
 - name: cry-state
@@ -916,7 +916,7 @@ states:
   actions:
   - functionRef:
       refName: celebrate-cry-function
-      parameters:
+      arguments:
         args: echo boohoo!
   end: true
 ```

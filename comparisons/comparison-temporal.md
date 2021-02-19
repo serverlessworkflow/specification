@@ -143,7 +143,7 @@ public class HelloActivity {
           "name": "Greet",
           "functionRef": {
             "refName": "GreetingFunction",
-            "parameters": {
+            "arguments": {
                "name": "World"
             }
           },
@@ -285,7 +285,7 @@ public class HelloActivity {
           "name": "Greet",
           "functionRef": {
             "refName": "GreetingFunction",
-            "parameters": {
+            "arguments": {
                "name": "World"
             }
           },
@@ -462,7 +462,7 @@ public class HelloActivity {
           "name": "Execute",
           "functionRef": {
             "refName": "ExecuteFunction",
-            "parameters": {
+            "arguments": {
                "amount": 10
             }
           }
@@ -481,7 +481,7 @@ public class HelloActivity {
           "name": "Compensate",
           "functionRef": {
             "refName": "CompensateFunction",
-            "parameters": {
+            "arguments": {
                "amount": -10
             }
           }
@@ -617,7 +617,7 @@ public class HelloActivityRetry {
           "name": "Greet",
           "functionRef": {
             "refName": "GreetingFunction",
-            "parameters": {
+            "arguments": {
                "name": "World"
             }
           },

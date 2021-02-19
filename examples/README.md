@@ -160,7 +160,7 @@ Which is added to the states data and becomes the workflow data output.
         {  
            "functionRef": {
               "refName": "greetingFunction",
-              "parameters": {
+              "arguments": {
                 "name": "{{ $.person.name }}"
               }
            },
@@ -193,7 +193,7 @@ states:
   actions:
   - functionRef:
       refName: greetingFunction
-      parameters:
+      arguments:
         name: "{{ $.person.name }}"
     actionDataFilter:
       dataResultsPath: "{{ $.greeting }}"
@@ -315,7 +315,7 @@ filters what is selected to be the state data output which then becomes the work
             {  
                "functionRef": {
                   "refName": "greetingFunction",
-                  "parameters": {
+                  "arguments": {
                     "name": "{{ $.greet.name }}"
                   }
                }
@@ -358,7 +358,7 @@ states:
     actions:
     - functionRef:
         refName: greetingFunction
-        parameters:
+        arguments:
           name: "{{ $.greet.name }}"
   stateDataFilter:
     dataOutputPath: "{{ $.payload.greeting }}"
@@ -430,7 +430,7 @@ result of the workflow execution.
    {  
       "functionRef": {
          "refName": "solveMathExpressionFunction",
-         "parameters": {
+         "arguments": {
            "expression": "{{ $.singleexpression }}"
          }
       }
@@ -466,7 +466,7 @@ states:
   actions:
   - functionRef:
       refName: solveMathExpressionFunction
-      parameters:
+      arguments:
         expression: "{{ $.singleexpression }}"
   stateDataFilter:
     dataOutputPath: "{{ $.results }}"
@@ -770,7 +770,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
            {  
               "functionRef": {
                  "refName": "sendRejectionEmailFunction",
-                 "parameters": {
+                 "arguments": {
                    "applicant": "{{ $.applicant }}"
                  }
               }
@@ -814,7 +814,7 @@ states:
   actions:
   - functionRef:
       refName: sendRejectionEmailFunction
-      parameters:
+      arguments:
         applicant: "{{ $.applicant }}"
   end: true
 ```
@@ -884,7 +884,7 @@ The data output of the workflow contains the information of the exception caught
        {  
           "functionRef": {
              "refName": "provisionOrderFunction",
-             "parameters": {
+             "arguments": {
                "order": "{{ $.order }}"
              }
           }
@@ -956,7 +956,7 @@ states:
   actions:
   - functionRef:
       refName: provisionOrderFunction
-      parameters:
+      arguments:
         order: "{{ $.order }}"
   stateDataFilter:
     dataOutputPath: "{{ $.exceptions }}"
@@ -1054,7 +1054,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       {  
           "functionRef": {
             "refName": "submitJob",
-            "parameters": {
+            "arguments": {
               "name": "{{ $.job.name }}"
             }
           },
@@ -1094,7 +1094,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       {  
         "functionRef": {
             "refName": "checkJobStatus",
-            "parameters": {
+            "arguments": {
               "name": "{{ $.jobuid }}"
             }
           },
@@ -1134,7 +1134,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       {  
         "functionRef": {
             "refName": "reportJobSuceeded",
-            "parameters": {
+            "arguments": {
               "name": "{{ $.jobuid }}"
             }
         }
@@ -1150,7 +1150,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
     {  
         "functionRef": {
           "refName": "reportJobFailed",
-          "parameters": {
+          "arguments": {
             "name": "{{ $.jobuid }}"
           }
         }
@@ -1187,7 +1187,7 @@ states:
   actions:
   - functionRef:
       refName: submitJob
-      parameters:
+      arguments:
         name: "{{ $.job.name }}"
     actionDataFilter:
       dataResultsPath: "{{ $.jobuid }}"
@@ -1211,7 +1211,7 @@ states:
   actions:
   - functionRef:
       refName: checkJobStatus
-      parameters:
+      arguments:
         name: "{{ $.jobuid }}"
     actionDataFilter:
       dataResultsPath: "{{ $.jobstatus }}"
@@ -1233,7 +1233,7 @@ states:
   actions:
   - functionRef:
       refName: reportJobSuceeded
-      parameters:
+      arguments:
         name: "{{ $.jobuid }}"
   end: true
 - name: JobFailed
@@ -1242,7 +1242,7 @@ states:
   actions:
   - functionRef:
       refName: reportJobFailed
-      parameters:
+      arguments:
         name: "{{ $.jobuid }}"
   end: true
 ```
@@ -1359,7 +1359,7 @@ CloudEvent upon completion of the workflow could look like:
         {
             "functionRef": {
                 "refName": "provisionOrderFunction",
-                "parameters": {
+                "arguments": {
                     "order": "{{ $.singleorder }}"
                 }
             }
@@ -1400,7 +1400,7 @@ states:
   actions:
   - functionRef:
       refName: provisionOrderFunction
-      parameters:
+      arguments:
         order: "{{ $.singleorder }}"
   end:
     produceEvents:
@@ -1522,7 +1522,7 @@ have the matching patient id.
         "actions": [{
             "functionRef": {
                 "refName": "sendTylenolOrder",
-                "parameters": {
+                "arguments": {
                     "patientid": "{{ $.patientId }}"
                 }
             }
@@ -1533,7 +1533,7 @@ have the matching patient id.
         "actions": [{
             "functionRef": {
                 "refName": "callNurse",
-                "parameters": {
+                "arguments": {
                     "patientid": "{{ $.patientId }}"
                 }
             }
@@ -1544,7 +1544,7 @@ have the matching patient id.
         "actions": [{
             "functionRef": {
                 "refName": "callPulmonologist",
-                "parameters": {
+                "arguments": {
                     "patientid": "{{ $.patientId }}"
                 }
             }
@@ -1599,21 +1599,21 @@ states:
     actions:
     - functionRef:
         refName: sendTylenolOrder
-        parameters:
+        arguments:
           patientid: "{{ $.patientId }}"
   - eventRefs:
     - HighBloodPressure
     actions:
     - functionRef:
         refName: callNurse
-        parameters:
+        arguments:
           patientid: "{{ $.patientId }}"
   - eventRefs:
     - HighRespirationRate
     actions:
     - functionRef:
         refName: callPulmonologist
-        parameters:
+        arguments:
           patientid: "{{ $.patientId }}"
   end:
     terminate: true
@@ -1713,7 +1713,7 @@ when all three of these events happened (in no particular order).
                 {
                     "functionRef": {
                         "refName": "finalizeApplicationFunction",
-                        "parameters": {
+                        "arguments": {
                             "student": "{{ $.applicantId }}"
                         }
                     }
@@ -1768,7 +1768,7 @@ states:
     actions:
     - functionRef:
         refName: finalizeApplicationFunction
-        parameters:
+        arguments:
           student: "{{ $.applicantId }}"
   end:
     terminate: true
@@ -1899,7 +1899,7 @@ And for denied credit check, for example:
             "action": {
                 "functionRef": {
                     "refName": "callCreditCheckMicroservice",
-                    "parameters": {
+                    "arguments": {
                         "customer": "{{ $.customer }}"
                     }
                 }
@@ -1939,7 +1939,7 @@ And for denied credit check, for example:
                 {
                     "functionRef": {
                         "refName": "sendRejectionEmailFunction",
-                        "parameters": {
+                        "arguments": {
                             "applicant": "{{ $.customer }}"
                         }
                     }
@@ -1977,7 +1977,7 @@ states:
   action:
     functionRef:
       refName: callCreditCheckMicroservice
-      parameters:
+      arguments:
         customer: "{{ $.customer }}"
   eventRef: CreditCheckCompletedEvent
   timeout: PT15M
@@ -2001,7 +2001,7 @@ states:
   actions:
   - functionRef:
       refName: sendRejectionEmailFunction
-      parameters:
+      arguments:
         applicant: "{{ $.customer }}"
   end: true
 ```
@@ -2093,7 +2093,7 @@ Bidding is done via an online application and bids are received as events are as
                 "actions": [{
                     "functionRef": {
                         "refName": "StoreBidFunction",
-                        "parameters": {
+                        "arguments": {
                             "bid": "{{ $.bid }}"
                         }
                     }
@@ -2134,7 +2134,7 @@ states:
     actions:
     - functionRef:
         refName: StoreBidFunction
-        parameters:
+        arguments:
           bid: "{{ $.bid }}"
   end: true
 ```
@@ -2230,7 +2230,7 @@ The results of the inbox service called is expected to be for example:
             {
                 "functionRef": {
                     "refName": "sendTextFunction",
-                    "parameters": {
+                    "arguments": {
                         "message": "{{ $.singlemessage }}"
                     }
                 }
@@ -2273,7 +2273,7 @@ states:
   actions:
   - functionRef:
       refName: sendTextFunction
-      parameters:
+      arguments:
         message: "{{ $.singlemessage }}"
   end: true
 ```
@@ -2492,7 +2492,7 @@ In our workflow definition then we can reference these files rather than definin
               "name": "checkfunds",
               "functionRef": {
                 "refName": "checkFundsAvailability",
-                "parameters": {
+                "arguments": {
                   "account": "{{ $.accountId }}",
                   "paymentamount": "{{ $.payment.amount }}"
                 }
@@ -2527,7 +2527,7 @@ In our workflow definition then we can reference these files rather than definin
         {
           "functionRef": {
             "refName": "sendSuccessEmail",
-            "parameters": {
+            "arguments": {
               "applicant": "{{ $.customer }}"
             }
           }
@@ -2549,7 +2549,7 @@ In our workflow definition then we can reference these files rather than definin
         {
           "functionRef": {
             "refName": "sendInsufficientFundsEmail",
-            "parameters": {
+            "arguments": {
               "applicant": "{{ $.customer }}"
             }
           }
@@ -2588,7 +2588,7 @@ states:
     - name: checkfunds
       functionRef:
         refName: checkFundsAvailability
-        parameters:
+        arguments:
           account: "{{ $.accountId }}"
           paymentamount: "{{ $.payment.amount }}"
   transition: ConfirmBasedOnFunds
@@ -2606,7 +2606,7 @@ states:
   actions:
   - functionRef:
       refName: sendSuccessEmail
-      parameters:
+      arguments:
         applicant: "{{ $.customer }}"
   end:
     produceEvents:
@@ -2617,7 +2617,7 @@ states:
   actions:
   - functionRef:
       refName: sendInsufficientFundsEmail
-      parameters:
+      arguments:
         applicant: "{{ $.customer }}"
   end:
     produceEvents:
@@ -3141,7 +3141,7 @@ the data for an hour, send report, and so on.
         {
           "functionRef": {
             "refName": "ProduceReport",
-            "parameters": {
+            "arguments": {
               "data": "$.readings"
             }
           }
@@ -3217,7 +3217,7 @@ states:
   actions:
   - functionRef:
       refName: ProduceReport
-      parameters:
+      arguments:
         data: "$.readings"
   end:
     terminate: true
