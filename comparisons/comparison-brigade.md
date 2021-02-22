@@ -86,17 +86,17 @@ states:
     - name: sayHelloAction
       functionRef:
         refName: greetingFunction
-        parameters:
+        arguments:
           greeting: hello
     - name: sayGoodbyeAction
       functionRef:
         refName: greetingFunction
-        parameters:
+        arguments:
           greeting: hello
     - name: logDoneAction
       functionRef:
         refName: consoleLogFunction
-        parameters:
+        arguments:
           log: done
   end: true
 ```
@@ -165,17 +165,17 @@ states:
     - name: sayHelloAction
       functionRef:
         refName: greetingFunction
-        parameters:
+        arguments:
           greeting: hello
     - name: sayGoodbyeAction
       functionRef:
         refName: greetingFunction
-        parameters:
+        arguments:
           greeting: hello
     - name: logDoneAction
       functionRef:
         refName: consoleLogFunction
-        parameters:
+        arguments:
           log: done
   onErrors:
   - error: "*"
@@ -187,8 +187,8 @@ states:
   - name: logErrorAction
     functionRef:
       refName: consoleLogFunction
-      parameters:
-        log: Caught Exception $.exception
+      arguments:
+        log: Caught Exception ${ .exception }
   end: true
 ```
 
@@ -246,7 +246,7 @@ states:
     - name: logExecEventAction
       functionRef:
         refName: consoleLogFunction
-        parameters:
+        arguments:
           log: "==> handling an 'exec' event"
   - eventRefs:
     - pushEvent
@@ -254,7 +254,7 @@ states:
     - name: logPushEventAction
       functionRef:
         refName: consoleLogFunction
-        parameters:
+        arguments:
           log: "**** I'm a GitHub 'push' handler"
   end: true
 ```
@@ -330,12 +330,12 @@ states:
     - name: firstHelloAction
       functionRef:
         refName: echoFunction
-        parameters:
+        arguments:
           message: hello
     - name: firstGoodbyeAction
       functionRef:
         refName: echoFunction
-        parameters:
+        arguments:
           message: goodbye
   transition: SecondGreetGroup
 - name: SecondGreetGroup
@@ -344,12 +344,12 @@ states:
   - name: secondHelloAction
     functionRef:
       refName: echoFunction
-      parameters:
+      arguments:
         message: hello-again
   - name: secondGoodbyeAction
     functionRef:
       refName: echoFunction
-      parameters:
+      arguments:
         message: bye-again
   end: true
 ```
@@ -408,12 +408,12 @@ states:
     - name: eventInfoAction
       functionRef:
         refName: consoleFunction
-        parameters:
+        arguments:
           log: ">>> event $event.type caused by $.event.data.provider"
     - name: projectInfoAction
       functionRef:
         refName: consoleFunction
-        parameters:
+        arguments:
           log: ">>> project $event.data.project.name clones the repo at by $.event.data.repo.cloneURL"
   end: true
 
@@ -491,19 +491,19 @@ states:
         dataResultsPath: "{{ $.helloResult }}"
       functionRef:
         refName: greetingFunction
-        parameters:
+        arguments:
           message: hello
     - name: worldAction
       actionDataFilter:
         dataResultsPath: "{{ $.worldResults }}"
       functionRef:
         refName: greetingAction
-        parameters:
+        arguments:
           message: world
     - name: storeToFileAction
       functionRef:
         refName: storeToFileFunction
-        parameters:
+        arguments:
           destination: "{{ $.event.destination }}"
           value: "{{ $.helloResult }} {{ $.worldResults }}"
   end: true
@@ -595,7 +595,7 @@ states:
     - name: consoleLogAction
       functionRef:
         refName: consoleLogFunction
-        parameters:
+        arguments:
           log: fired $.nextEvent.data.type caused by $.nextEvent.data.cause.event
   end: true
 ```

@@ -89,7 +89,7 @@ states:
   actions:
   - functionRef:
       refName: whalesayimage
-      parameters:
+      arguments:
         message: "{{ $.message }}"
   end: true
 ```
@@ -117,12 +117,8 @@ metadata:
   generateName: steps-
 spec:
   entrypoint: hello-hello-hello
-
-  # This spec contains two templates: hello-hello-hello and whalesay
   templates:
   - name: hello-hello-hello
-    # Instead of just running a container
-    # This template has a sequence of steps
     steps:
     - - name: hello1            # hello1 is run before the following steps
         template: whalesay
@@ -142,8 +138,6 @@ spec:
           parameters:
           - name: message
             value: "hello2b"
-
-  # This is the same template as from the previous example
   - name: whalesay
     inputs:
       parameters:
@@ -173,7 +167,7 @@ states:
   actions:
   - functionRef:
       refName: whalesayimage
-      parameters:
+      arguments:
         message: hello1
   transition: parallelhello
 - name: parallelhello
@@ -184,13 +178,13 @@ states:
     actions:
     - functionRef:
         refName: whalesayimage
-        parameters:
+        arguments:
           message: hello2a
   - name: hello2b-branch
     actions:
     - functionRef:
         refName: whalesayimage
-        parameters:
+        arguments:
           message: hello2b
   end: true
 ```
@@ -274,7 +268,7 @@ states:
   actions:
   - functionRef:
       refName: echo
-      parameters:
+      arguments:
         message: A
   transition: parallelecho
 - name: parallelecho
@@ -285,13 +279,13 @@ states:
     actions:
     - functionRef:
         refName: echo
-        parameters:
+        arguments:
           message: B
   - name: C-branch
     actions:
     - functionRef:
         refName: echo
-        parameters:
+        arguments:
           message: C
   transition: D
 - name: D
@@ -300,7 +294,7 @@ states:
   actions:
   - functionRef:
       refName: echo
-      parameters:
+      arguments:
         message: D
   end: true
 ```
@@ -418,7 +412,7 @@ states:
   actions:
   - functionRef:
       refName: printmessagefunc
-      parameters:
+      arguments:
         message: "{{ $.results }}"
   end: true
 ```
@@ -498,7 +492,7 @@ states:
   - name: print-message
     functionRef:
       refName: whalesay
-      parameters:
+      arguments:
         message: "{{ $.greeting }}"
   end: true
 ```
@@ -643,9 +637,11 @@ spec:
       limit: 10
       retryPolicy: "Always"
       backoff:
-        duration: "1"      
+        duration: "1"      # Must be a string. Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
         factor: 2
-        maxDuration: "1m" 
+        maxDuration: "1m"  # Must be a string. Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
+      affinity:
+        nodeAntiAffinity: {}
     container:
       image: python:alpine3.6
       command: ["python", -c]
@@ -678,7 +674,7 @@ states:
   actions:
   - functionRef:
       refName: flip-coin-function
-      parameters:
+      arguments:
         args:
         - import random; import sys; exit_code = random.choice([0, 1, 1]); sys.exit(exit_code)
   onErrors:
@@ -780,7 +776,7 @@ states:
   actions:
   - functionRef:
       refName: heads-function
-      parameters:
+      arguments:
         args: echo "it was heads"
   end: true
 ```
@@ -816,7 +812,7 @@ metadata:
   generateName: exit-handlers-
 spec:
   entrypoint: intentional-fail
-  onExit: exit-handler           
+  onExit: exit-handler                  # invoke exit-handler template at end of the workflow
   templates:
   # primary workflow template
   - name: intentional-fail
@@ -824,11 +820,6 @@ spec:
       image: alpine:latest
       command: [sh, -c]
       args: ["echo intentional failure; exit 1"]
-
-  # Exit handler templates
-  # After the completion of the entrypoint template, the status of the
-  # workflow is made available in the global variable {{workflow.status}}.
-  # {{workflow.status}} will be one of: Succeeded, Failed, Error
   - name: exit-handler
     steps:
     - - name: notify
@@ -883,7 +874,7 @@ states:
   actions:
   - functionRef:
       refName: intentional-fail-function
-      parameters:
+      arguments:
         args: echo intentional failure; exit 1
   onErrors:
   - error: "*"
@@ -893,7 +884,7 @@ states:
   actions:
   - functionRef:
       refName: send-email-function
-      parameters:
+      arguments:
         args: 'echo send e-mail: $.workflow.name $.exit-code'
   transition: emo-state
 - name: emo-state
@@ -908,7 +899,7 @@ states:
   actions:
   - functionRef:
       refName: celebrate-cry-function
-      parameters:
+      arguments:
         args: echo hooray!
   end: true
 - name: cry-state
@@ -916,7 +907,7 @@ states:
   actions:
   - functionRef:
       refName: celebrate-cry-function
-      parameters:
+      arguments:
         args: echo boohoo!
   end: true
 ```

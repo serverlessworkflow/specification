@@ -1137,7 +1137,7 @@ The following is a detailed description of each of the defined states.
         "actions": [{
             "functionRef": {
                 "refName": "sendTylenolOrder",
-                "parameters": {
+                "arguments": {
                     "patientid": "{{ $.patientId }}"
                 }
             }
@@ -1148,7 +1148,7 @@ The following is a detailed description of each of the defined states.
         "actions": [{
             "functionRef": {
                 "refName": "callNurse",
-                "parameters": {
+                "arguments": {
                     "patientid": "{{ $.patientId }}"
                 }
             }
@@ -1159,7 +1159,7 @@ The following is a detailed description of each of the defined states.
         "actions": [{
             "functionRef": {
                 "refName": "callPulmonologist",
-                "parameters": {
+                "arguments": {
                     "patientid": "{{ $.patientId }}"
                 }
             }
@@ -1186,21 +1186,21 @@ onEvents:
   actions:
   - functionRef:
       refName: sendTylenolOrder
-      parameters:
+      arguments:
         patientid: "{{ $.patientId }}"
 - eventRefs:
   - HighBloodPressure
   actions:
   - functionRef:
       refName: callNurse
-      parameters:
+      arguments:
         patientid: "{{ $.patientId }}"
 - eventRefs:
   - HighRespirationRate
   actions:
   - functionRef:
       refName: callPulmonologist
-      parameters:
+      arguments:
         patientid: "{{ $.patientId }}"
 end:
   terminate: true
@@ -1268,7 +1268,7 @@ the state should transition to the next state or can end the workflow execution 
     "actions": [{
         "functionRef": {
             "refName": "sendTylenolOrder",
-            "parameters": {
+            "arguments": {
                 "patientid": "{{ $.patientId }}"
             }
         }
@@ -1285,7 +1285,7 @@ eventRefs:
 actions:
 - functionRef:
     refName: sendTylenolOrder
-    parameters:
+    arguments:
       patientid: "{{ $.patientId }}"
 ```
 
@@ -1313,7 +1313,7 @@ Let's look at the following JSON definition of 'onEvents' to show this:
 		"actions": [{
 				"functionRef": {
 					"refName": "SendTylenolOrder",
-					"parameters": {
+					"arguments": {
 						"patient": "{{ $.patientId }}"
 					}
 				}
@@ -1321,7 +1321,7 @@ Let's look at the following JSON definition of 'onEvents' to show this:
 			{
 				"functionRef": {
 					"refName": "CallNurse",
-					"parameters": {
+					"arguments": {
 						"patient": "{{ $.patientId }}"
 					}
 				}
@@ -1419,7 +1419,7 @@ instance in case it is an end state without performing any actions.
     "name": "Finalize Application Action",
     "functionRef": {
         "refName": "finalizeApplicationFunction",
-        "parameters": {
+        "arguments": {
             "student": "{{ $.applicantId }}"
         }
     },
@@ -1434,7 +1434,7 @@ instance in case it is an end state without performing any actions.
 name: Finalize Application Action
 functionRef:
   refName: finalizeApplicationFunction
-  parameters:
+  arguments:
     student: "{{ $.applicantId }}"
 timeout: PT15M
 ```
@@ -1478,7 +1478,7 @@ it with its `object` type which has the following properties:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | refName | Name of the referenced [function](#Function-Definition) | string | yes |
-| parameters | Parameters to be passed to the referenced function | object | no |
+| arguments | Arguments to be passed to the referenced function | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1494,7 +1494,7 @@ it with its `object` type which has the following properties:
 ```json
 {
     "refName": "finalizeApplicationFunction",
-    "parameters": {
+    "arguments": {
         "student": "{{ $.applicantId }}"
     }
 }
@@ -1505,7 +1505,7 @@ it with its `object` type which has the following properties:
 
 ```yaml
 refName: finalizeApplicationFunction
-parameters:
+arguments:
   student: "{{ $.applicantId }}"
 ```
 
@@ -1516,8 +1516,19 @@ parameters:
 </details>
 
 The `refName` property is the name of the referenced [function](#Function-Definition).
-The `parameters` property defines the parameters you can pass as input parameters to the referenced function.
-Values of the `parameters` property can be either static values, or an expression.
+The `arguments` property defines the arguments that are to be passed to the referenced function.
+Values of the `arguments` property can be either static values, or an expression, for example:
+
+```json
+{
+   "refName": "checkFundsAvailabe",
+   "arguments": {
+     "account": "{{ $.accountId }}",
+     "forAmount": "{{ $.payment.amount }}",
+     "insufficientMessage": "The requested amount is not available."
+   }
+}
+```
 
 #### EventRef Definition
 
@@ -1860,7 +1871,7 @@ Transitions allow you to move from one state (control-logic block) to another. F
         {
             "functionRef": {
                 "refName": "sendRejectionEmailFunction",
-                "parameters": {
+                "arguments": {
                     "applicant": "{{ $.customer }}"
                 }
             }
@@ -1880,7 +1891,7 @@ actionMode: sequential
 actions:
 - functionRef:
     refName: sendRejectionEmailFunction
-    parameters:
+    arguments:
       applicant: "{{ $.customer }}"
 end: true
 ```
@@ -2189,7 +2200,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
             {
                 "functionRef": {
                     "refName": "functionNameOne",
-                    "parameters": {
+                    "arguments": {
                         "order": "{{ $.someParam }}"
                     }
                 }
@@ -2202,7 +2213,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
               {
                   "functionRef": {
                       "refName": "functionNameTwo",
-                      "parameters": {
+                      "arguments": {
                           "order": "{{ $.someParam }}"
                       }
                   }
@@ -2227,13 +2238,13 @@ branches:
   actions:
   - functionRef:
       refName: functionNameOne
-      parameters:
+      arguments:
         order: "{{ $.someParam }}"
 - name: Branch2
   actions:
   - functionRef:
       refName: functionNameTwo
-      parameters:
+      arguments:
         order: "{{ $.someParam }}"
 end: true
 ```
@@ -2283,7 +2294,7 @@ Exceptions may occur during execution of branches of the Parallel state, this is
           {
               "functionRef": {
                   "refName": "functionNameOne",
-                  "parameters": {
+                  "arguments": {
                       "order": "{{ $.someParam }}"
                   }
               }
@@ -2291,7 +2302,7 @@ Exceptions may occur during execution of branches of the Parallel state, this is
           {
               "functionRef": {
                   "refName": "functionNameTwo",
-                  "parameters": {
+                  "arguments": {
                       "order": "{{ $.someParamTwo }}"
                   }
               }
@@ -2308,11 +2319,11 @@ name: Branch1
 actions:
 - functionRef:
     refName: functionNameOne
-    parameters:
+    arguments:
       order: "{{ $.someParam }}"
 - functionRef:
     refName: functionNameTwo
-    parameters:
+    arguments:
       order: "{{ $.someParamTwo }}"
 ```
 
@@ -2689,7 +2700,7 @@ This allows you to test if your workflow behaves properly for cases when there a
         {
             "functionRef": {
                 "refName": "provisionOrderFunction",
-                "parameters": {
+                "arguments": {
                     "order": "{{ $.singleorder }}"
                 }
             }
@@ -2711,7 +2722,7 @@ outputCollection: "{{ $.provisionresults }}"
 actions:
 - functionRef:
     refName: provisionOrderFunction
-    parameters:
+    arguments:
       order: "{{ $.singleorder }}"
 ```
 
@@ -2804,7 +2815,7 @@ and our workflow is defined as:
       {  
        "functionRef": {
          "refName": "sendConfirmationFunction",
-         "parameters": {
+         "arguments": {
            "orderNumber": "{{ $.completedorder.orderNumber }}",
            "email": "{{ $.completedorder.email }}"
          }
@@ -2835,7 +2846,7 @@ states:
   actions:
   - functionRef:
       refName: sendConfirmationFunction
-      parameters:
+      arguments:
         orderNumber: "{{ $.completedorder.orderNumber }}"
         email: "{{ $.completedorder.email }}"
   end: true
@@ -2916,7 +2927,7 @@ The results of each parallel action execution are stored as elements in the stat
         "action": {
             "functionRef": {
                 "refName": "callCreditCheckMicroservice",
-                "parameters": {
+                "arguments": {
                     "customer": "{{ $.customer }}"
                 }
             }
@@ -2937,7 +2948,7 @@ start: true
 action:
   functionRef:
     refName: callCreditCheckMicroservice
-    parameters:
+    arguments:
       customer: "{{ $.customer }}"
 eventRef: CreditCheckCompletedEvent
 timeout: PT15M
@@ -3791,7 +3802,7 @@ and then lets us know how to greet this customer in different languages. We coul
                     {
                         "functionRef": {
                             "refName": "greetingFunction",
-                            "parameters": {
+                            "arguments": {
                                 "greeting": "{{ $.languageGreetings.spanish }} ",
                                 "customerName": "{{ $.customer.name }} "
                             }
@@ -4252,7 +4263,7 @@ state it references:
                 {
                   "functionRef": {
                     "refName": "DebitCustomerFunction",
-                    "parameters": {
+                    "arguments": {
                         "customerid": "{{ $.purchase.customerid }}",
                         "amount": "{{ $.purchase.amount }}"
                     }
@@ -4261,7 +4272,7 @@ state it references:
                 {
                   "functionRef": {
                     "refName": "SendPurchaseConfirmationEmailFunction",
-                    "parameters": {
+                    "arguments": {
                         "customerid": "{{ $.purchase.customerid }}"
                     }
                   }
@@ -4280,7 +4291,7 @@ state it references:
             {
               "functionRef": {
                 "refName": "CreditCustomerFunction",
-                "parameters": {
+                "arguments": {
                     "customerid": "{{ $.purchase.customerid }}",
                     "amount": "{{ $.purchase.amount }}"
                 }
@@ -4289,7 +4300,7 @@ state it references:
             {
               "functionRef": {
                 "refName": "SendPurchaseCancellationEmailFunction",
-                "parameters": {
+                "arguments": {
                     "customerid": "{{ $.purchase.customerid }}"
                 }
               }
@@ -4312,12 +4323,12 @@ states:
     actions:
     - functionRef:
         refName: DebitCustomerFunction
-        parameters:
+        arguments:
           customerid: "{{ $.purchase.customerid }}"
           amount: "{{ $.purchase.amount }}"
     - functionRef:
         refName: SendPurchaseConfirmationEmailFunction
-        parameters:
+        arguments:
           customerid: "{{ $.purchase.customerid }}"
   compensatedBy: CancelPurchase
   transition: SomeNextWorkflowState
@@ -4327,12 +4338,12 @@ states:
   actions:
   - functionRef:
       refName: CreditCustomerFunction
-      parameters:
+      arguments:
         customerid: "{{ $.purchase.customerid }}"
         amount: "{{ $.purchase.amount }}"
   - functionRef:
       refName: SendPurchaseCancellationEmailFunction
-      parameters:
+      arguments:
         customerid: "{{ $.purchase.customerid }}"
 ```
 </td>

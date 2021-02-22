@@ -275,9 +275,9 @@
                   "type": "string",
                   "description": "Name of the referenced function"
                 },
-                "parameters": {
+                "arguments": {
                   "type": "object",
-                  "description": "Function parameters"
+                  "description": "Function arguments"
                 }
               },
               "required": [
