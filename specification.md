@@ -3083,9 +3083,7 @@ If the start definition is of type `object`, it has the following structure:
 
 ```json
 {
-  "schedule": {
-    "interval": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
-  }
+  "schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
 }
 ```
 
@@ -3093,8 +3091,7 @@ If the start definition is of type `object`, it has the following structure:
 <td valign="top">
 
 ```yaml
-schedule:
-  interval: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
+schedule: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
 ```
 
 </td>
@@ -3157,6 +3154,17 @@ the needed events at the defined times to trigger workflow instance creation.
 
 #### Schedule Definition
 
+`Schedule` definition can have two types, either `string` or `object`.
+If `string` type, it defines time interval describing when the workflow instance can be created.
+This can be used as a short-cut definition when you don't need to define any other parameters, for example:
+
+```json
+"schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+```
+
+If you need to define the `cron`, `directInvoke` or the `timezone` parameters in your `schedule` definition, you can define 
+it with its `object` type which has the following properties:
+
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | interval | Time interval describing when the workflow instance can be created (ISO 8601 time interval format). | string | yes if `cron` not defined |
@@ -3177,9 +3185,7 @@ the needed events at the defined times to trigger workflow instance creation.
 
 ```json
 {
-   "cron": {
-      "expression": "0 0/15 * * * ?"
-   },
+   "cron": "0 0/15 * * * ?",
    "directInvoke": true
 }
 ```
@@ -3188,8 +3194,7 @@ the needed events at the defined times to trigger workflow instance creation.
 <td valign="top">
 
 ```yaml
-cron:
-  expression: 0 0/15 * * * ?
+cron: 0 0/15 * * * ?
 directInvoke: true
 ```
 
@@ -3225,6 +3230,17 @@ the needed events at the defined times to trigger workflow instance creation.
 The `directInvoke` property defines if workflow instances are allowed to be created outside of the defined interval or cron expression.
 
 #### Cron Definition
+
+`Cron` definition can have two types, either `string` or `object`.
+If `string` type, it defines the repeating interval (cron expression) describing when the workflow instance should be created.
+This can be used as a short-cut definition when you don't need to define any other parameters, for example:
+
+```json
+"cron": "0 15,30,45 * ? * *"
+```
+
+If you need to define the `validUntil` parameters in your `cron` definition, you can define 
+it with its `object` type which has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |

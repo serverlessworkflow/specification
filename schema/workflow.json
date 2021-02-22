@@ -102,18 +102,28 @@
   ],
   "definitions": {
     "crondef": {
-      "type": "object",
-      "properties": {
-        "expression": {
+      "oneOf": [
+        {
           "type": "string",
           "description": "Repeating interval (cron expression) describing when the workflow instance should be created",
           "minLength": 1
         },
-        "validUntil": {
-          "type": "string",
-          "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid"
+        {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string",
+              "description": "Repeating interval (cron expression) describing when the workflow instance should be created",
+              "minLength": 1
+            },
+            "validUntil": {
+              "type": "string",
+              "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid"
+            }
+          },
+          "required": ["expression"]
         }
-      }
+      ]
     },
     "exectimeout": {
       "type": "object",
@@ -1767,35 +1777,45 @@
       ]
     },
     "schedule": {
-      "type": "object",
-      "description": "Start state schedule definition",
-      "properties": {
-        "interval": {
-          "type": "string",
-          "description": "Time interval (ISO 8601 format) describing when workflow instances can be created."
-        },
-        "cron": {
-          "$ref": "#/definitions/crondef"
-        },
-        "directInvoke": {
-          "description": "Define if workflow instances can be created outside of the defined interval/cron",
-          "type": "boolean",
-          "default": false
-        },
-        "timezone": {
-          "type": "string",
-          "description": "Timezone name used to evaluate the cron expression. Not used for interval as timezone can be specified there directly. If not specified, should default to local machine timezone."
-        }
-      },
       "oneOf": [
         {
-          "required": [
-            "interval"
-          ]
+          "type": "string",
+          "description": "Time interval (ISO 8601 format) describing when workflow instances can be created.",
+          "minLength": 1
         },
         {
-          "required": [
-            "cron"
+          "type": "object",
+          "description": "Start state schedule definition",
+          "properties": {
+            "interval": {
+              "type": "string",
+              "description": "Time interval (ISO 8601 format) describing when workflow instances can be created.",
+              "minLength": 1
+            },
+            "cron": {
+              "$ref": "#/definitions/crondef"
+            },
+            "directInvoke": {
+              "description": "Define if workflow instances can be created outside of the defined interval/cron",
+              "type": "boolean",
+              "default": false
+            },
+            "timezone": {
+              "type": "string",
+              "description": "Timezone name used to evaluate the cron expression. Not used for interval as timezone can be specified there directly. If not specified, should default to local machine timezone."
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "interval"
+              ]
+            },
+            {
+              "required": [
+                "cron"
+              ]
+            }
           ]
         }
       ]
