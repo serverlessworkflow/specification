@@ -28,6 +28,12 @@
       "description": "Serverless Workflow schema version",
       "minLength": 1
     },
+    "expressionLang": {
+      "type": "string",
+      "description": "Identifies the expression language used for workflow expressions. Default is 'jq'",
+      "default": "jq",
+      "minLength": 1
+    },
     "execTimeout": {
       "$ref": "#/definitions/exectimeout"
     },

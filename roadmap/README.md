@@ -35,7 +35,7 @@ _Status description:_
 | ✔️| Adding comparison examples with BPMN | [comparison doc](../comparisons/README.md) |
 | ✔️| Adding RPC type to function definitions (gRPC) | [spec doc](../specification.md) |
 | ✔️| Change function definition 'parameters' to 'arguments' | [spec doc](../specification.md) |
-| 🚩 | JSONPatch transformations | [issue](https://github.com/serverlessworkflow/specification/issues/149) |
+| ✔️| Replace JsonPath with jq | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 

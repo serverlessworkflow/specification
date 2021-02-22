@@ -160,21 +160,21 @@ states:
     - functionRef:
         refName: sendTylenolOrder
         arguments:
-          patientid: "{{ $.patientId }}"
+          patientid: "${ .patientId }"
   - eventRefs:
     - HighBloodPressure
     actions:
     - functionRef:
         refName: callNurse
         arguments:
-          patientid: "{{ $.patientId }}"
+          patientid: "${ .patientId }"
   - eventRefs:
     - HighRespirationRate
     actions:
     - functionRef:
         refName: callPulmonologist
         arguments:
-          patientid: "{{ $.patientId }}"
+          patientid: "${ .patientId }"
   end: true
 ```
 

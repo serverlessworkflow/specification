@@ -47,13 +47,11 @@
             "expression"
           ],
           "default": "rest"
-        },
-        "metadata": {
-          "$ref": "common.json#/definitions/metadata"
         }
       },
       "required": [
-        "name"
+        "name",
+        "operation"
       ]
     }
   }
