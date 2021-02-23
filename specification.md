@@ -130,10 +130,10 @@ Each workflow instances should have its unique identifier, which should remain
 unchanged throughout its execution.
 
 Workflow definitions can describe how/when workflow instances should be created via
-the workflow state [start definition](#Start-Definition).
-For example, instance creation can be defined for some set of data, but other ways are also possible;
-you can enforce instance creations upon arrival of certain events with a starting [EventState](#Event-State), as well
-on a defined [schedule](#Start-Definition). 
+its `start` property. This property is described in detail in the  [start definition section](#Start-Definition).
+For example, instance creation can be defined for some set of data, but other ways are also possible.
+For example you can enforce instance creations upon arrival of certain events with a starting [EventState](#Event-State), as well
+on a defined [schedule](#Schedule-Definition). 
 
 Workflow instance termination is also explicitly described in the workflow definition. 
 By default, instances should be terminated once there are no active workflow paths (all active
@@ -220,7 +220,6 @@ For example:
   {
       "name":"SendConfirmState",
       "type":"operation",
-      "start": true,
       "actions":[  
        {  
        "functionRef": "sendOrderConfirmation"
@@ -339,7 +338,6 @@ Our expression function definitions can now be referenced by workflow states whe
   {  
      "name":"CheckApplicant",
      "type":"switch",
-     "start": true,
      "dataConditions": [
         {
           "name": "Applicant is adult",
@@ -549,6 +547,7 @@ definition "id" must be a constant value.
 | name | Workflow name | string | yes |
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
+| [start](#Start-Definition) | Workflow start definition | string | yes |
 | schemaVersion | Workflow schema version | string | no |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
@@ -576,6 +575,7 @@ definition "id" must be a constant value.
    "version": "1.0",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
+   "start": "MyStartingState",
    "states": [],
    "functions": [],
    "events": [],
@@ -591,6 +591,7 @@ id: sampleWorkflow
 version: '1.0'
 name: Sample Workflow
 description: Sample Workflow
+start: MyStartingState
 states: []
 functions: []
 events: []
@@ -618,6 +619,8 @@ The `description` property can be used to give further information about the wor
 
 The `version` property can be used to provide a specific workflow version.
 
+The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
+
 The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
 to validate this workflow markup. If not provided the latest released schema version is assumed.
 
@@ -642,6 +645,7 @@ Here is an example of using external resource for function definitions:
    "version": "1.0",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
+   "start": "MyStartingState",
    "functions": "http://myhost:8080/functiondefs.json",
    "states":[
      ...
@@ -675,6 +679,7 @@ Here is an example of using external resource for event definitions:
    "version": "1.0",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
+   "start": "MyStartingState",
    "events": "http://myhost:8080/eventsdefs.json",
    "states":[
      ...
@@ -770,7 +775,6 @@ The `runBefore` property defines a name of a workflow state to be executed befor
 States referenced by `runBefore` (as well as any other states that they transition to) must obey following rules:
 * They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
 * They cannot be states marked for compensation (have their `usedForCompensation` property and set to `true`)
-* They cannot define an [start definition](#Start-Definition). If they do, it should be ignored
 * If it is a single state, it must define an [end definition](#End-Definition), if it transitions to other states,
 at last one must define it.
 * They can transition only to states are also not part of the main control flow logic (and are not marked 
@@ -1144,7 +1148,6 @@ The following is a detailed description of each of the defined states.
 | [stateDataFilter](#state-data-filter) | State data filter definition| object | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -1164,7 +1167,6 @@ The following is a detailed description of each of the defined states.
 {
 "name": "MonitorVitals",
 "type": "event",
-"start": true,
 "exclusive": true,
 "onEvents": [{
         "eventRefs": ["HighBodyTemperature"],
@@ -1212,7 +1214,6 @@ The following is a detailed description of each of the defined states.
 ```yaml
 name: MonitorVitals
 type: event
-start: true
 exclusive: true
 onEvents:
 - eventRefs:
@@ -1259,20 +1260,20 @@ Following two figures illustrate the `exclusive` property:
 <img src="media/spec/event-state-exclusive-true.png" height="300px" alt="Event state with exclusive set to true"/>
 </p>
 
-If the Event state in this case is a starting state, the occurrence of *any* of the defined events would start a new workflow instance.
+If the Event state in this case is a workflow starting state, the occurrence of *any* of the defined events would start a new workflow instance.
 
 <p align="center">
 <img src="media/spec/event-state-exclusive-false.png" height="300px" alt="Event state with exclusive set to false"/>
 </p>
 
-If the Event state in this case is a starting state, the occurrence of *all* defined events would start a new
+If the Event state in this case is a workflow starting state, the occurrence of *all* defined events would start a new
  workflow instance.
   
 In order to consider only events that are related to each other, we need to set the `correlation` property in the workflow
  [events definitions](#Event-Definition). This allows us to set up event correlation rules against the events 
  extension context attributes.
 
-If the Event state is not a starting state, the `timeout` property can be used to define the time duration from the 
+If the Event state is not a workflow starting state, the `timeout` property can be used to define the time duration from the 
 invocation of the event state. If the defined event, or events have not been received during this time, 
 the state should transition to the next state or can end the workflow execution (if it is an end state).
 
@@ -1383,10 +1384,10 @@ The event state timeout period is described in the ISO 8601 data and time format
 You can specify for example "PT15M" to represent 15 minutes or "P2DT3H4M" to represent 2 days, 3 hours and 4 minutes.
 Timeout values should always be represented as durations and not as time/repeating intervals.
 
-The timeout property needs to be described in detail as it depends on whether or not the Event state is a starting workflow
+The timeout property needs to be described in detail as it depends on whether or not the Event state is a workflow starting
 state or not.
 
-If the Event state is a starting state, incoming events may trigger workflow instances. In this case,
+If the Event state is a workflow starting state, incoming events may trigger workflow instances. In this case,
 if the `exclusive` property is set to true, the timeout property should be ignored.
 
 If the `exclusive` property is set to false, in this case, the defined timeout represents the time
@@ -1422,7 +1423,7 @@ between arrival of specified events. To give an example, consider the following:
 The first timeout would start once any of the referenced events are consumed. If the second event does not occur within
 the defined timeout, no workflow instance should be created.
 
-If the event state is not a starting state, the `timeout` property is relative to the time when the
+If the event state is not a workflow starting state, the `timeout` property is relative to the time when the
 state becomes active. If the defined event conditions (regardless of the value of the exclusive property)
 are not satisfied within the defined timeout period, the event state should transition to the next state or end the workflow
 instance in case it is an end state without performing any actions.
@@ -1882,7 +1883,6 @@ Transitions allow you to move from one state (control-logic block) to another. F
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -1954,7 +1954,6 @@ Once all actions have been performed, a transition to another state can occur.
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1971,7 +1970,6 @@ Once all actions have been performed, a transition to another state can occur.
 {  
      "name":"CheckVisaStatus",
      "type":"switch",
-     "start": true,
      "eventConditions": [
         {
           "eventRef": "visaApprovedEvent",
@@ -1995,7 +1993,6 @@ Once all actions have been performed, a transition to another state can occur.
 ```yaml
 name: CheckVisaStatus
 type: switch
-start: true
 eventConditions:
 - eventRef: visaApprovedEvent
   transition: HandleApprovedVisa
@@ -2150,7 +2147,6 @@ The `eventDataFilter` property can be used to filter event when it is received.
 | [transition](#Transitions) | Next transition of the workflow after the delay | object | yes (if end is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) |If this state an end state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2207,7 +2203,6 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2225,7 +2220,6 @@ Delay state waits for a certain amount of time before transitioning to a next st
  {  
      "name":"ParallelExec",
      "type":"parallel",
-     "start": true,
      "completionType": "and",
      "branches": [
         {
@@ -2265,7 +2259,6 @@ Delay state waits for a certain amount of time before transitioning to a next st
 ```yaml
 name: ParallelExec
 type: parallel
-start: true
 completionType: and
 branches:
 - name: Branch1
@@ -2410,7 +2403,6 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2494,7 +2486,6 @@ Referenced sub-workflows must declare their own [function](#Function-Definition)
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | If this state and end state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2512,7 +2503,6 @@ Referenced sub-workflows must declare their own [function](#Function-Definition)
 {  
      "name":"Hello",
      "type":"inject",
-     "start": true,
      "data": {
         "result": "Hello"
      },
@@ -2526,7 +2516,6 @@ Referenced sub-workflows must declare their own [function](#Function-Definition)
 ```yaml
 name: Hello
 type: inject
-start: true
 data:
   result: Hello
 transition: World
@@ -2728,7 +2717,6 @@ This allows you to test if your workflow behaves properly for cases when there a
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2746,7 +2734,6 @@ This allows you to test if your workflow behaves properly for cases when there a
 {
     "name": "ProvisionOrdersState",
     "type": "foreach",
-    "start": true,
     "inputCollection": "${ .orders }",
     "iterationParam": "singleorder",
     "outputCollection": "${ .provisionresults }",
@@ -2769,7 +2756,6 @@ This allows you to test if your workflow behaves properly for cases when there a
 ```yaml
 name: ProvisionOrdersState
 type: foreach
-start: true
 inputCollection: "${ .orders }"
 iterationParam: "singleorder"
 outputCollection: "${ .provisionresults }"
@@ -2852,6 +2838,7 @@ and our workflow is defined as:
   "id": "sendConfirmWorkflow",
   "name": "SendConfirmationForCompletedOrders",
   "version": "1.0",
+  "start": "SendConfirmState",
   "functions": [
   {
     "name": "sendConfirmationFunction",
@@ -2860,7 +2847,6 @@ and our workflow is defined as:
   ],
   "states": [
   {
-      "start": true,
       "name":"SendConfirmState",
       "type":"foreach",
       "inputCollection": "${ [.orders[] | select(.completed == true)] }",
@@ -2888,12 +2874,12 @@ and our workflow is defined as:
 id: sendConfirmWorkflow
 name: SendConfirmationForCompletedOrders
 version: '1.0'
+start: SendConfirmState
 functions:
 - name: sendConfirmationFunction
   operation: file://confirmationapi.json#sendOrderConfirmation
 states:
-- start: true
-  name: SendConfirmState
+- name: SendConfirmState
   type: foreach
   inputCollection: "${ [.orders[] | select(.completed == true)] }"
   iterationParam: completedorder
@@ -2957,7 +2943,6 @@ The results of each parallel action execution are stored as elements in the stat
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes |
-| [start](#Start-Definition) | Is this state a starting state | object | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
 | [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
@@ -2978,7 +2963,6 @@ The results of each parallel action execution are stored as elements in the stat
 {
         "name": "CheckCredit",
         "type": "callback",
-        "start": true,
         "action": {
             "functionRef": {
                 "refName": "callCreditCheckMicroservice",
@@ -2999,7 +2983,6 @@ The results of each parallel action execution are stored as elements in the stat
 ```yaml
 name: CheckCredit
 type: callback
-start: true
 action:
   functionRef:
     refName: callCreditCheckMicroservice
@@ -3112,10 +3095,10 @@ SubFlow will repeat execution until one of the defined events is consumed, or un
 
 #### Start Definition
 
-Can be either `boolean` or `object` type. If type boolean, must be set to `true`, for example:
+Can be either `string` or `object` type. If type string, it defines the name of the workflow starting state.
 
 ```json
-"start": true
+"start": "MyStartingState"
 ```
 In this case it's assumed that the `schedule` property is not defined.
 
@@ -3123,7 +3106,8 @@ If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [schedule](#Schedule-Definition) | Define the time/repeating intervals at which workflow instances can/should be started | object | no |
+| stateName | Name of the starting workflow state | object | yes |
+| [schedule](#Schedule-Definition) | Define the time/repeating intervals or cron at which workflow instances can/should be started | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3138,6 +3122,7 @@ If the start definition is of type `object`, it has the following structure:
 
 ```json
 {
+  "stateName": "MyStartingstate",
   "schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
 }
 ```
@@ -3146,6 +3131,7 @@ If the start definition is of type `object`, it has the following structure:
 <td valign="top">
 
 ```yaml
+stateName: MyStartingstate
 schedule: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
 ```
 
@@ -3155,21 +3141,17 @@ schedule: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
 
 </details>
 
-Start definition explicitly defines how/when workflow instances should be created.
-A workflow definition must include one state that defines the start definition. 
+Start definition explicitly defines how/when workflow instances should be created and what the workflow starting state is.
 
-Any workflow state can declare to be the starting workflow, meaning when a workflow instance is created it will be the initial
-state to be executed. A workflow definition can declare one single workflow starting state.
+The start definition can be either `string` or `object` type.
 
-The start definition can be either `boolean` or `object` type.
+If `string` type, it defines the name of the workflow starting state.
 
-If `boolean` type, when set to `true`, there are no restrictions imposed on its execution.
+If `object` type, it provides the ability to set the workflow starting state name, as well as the `schedule` property.
 
-If `object` type, it provides the ability to set the`scheduled` properties.
-
-The `scheduled` property allows to define scheduled workflow instance creation. 
+The `schedule` property allows to define scheduled workflow instance creation. 
 Scheduled starts have two different choices. You can define time-based intervals during which workflow instances are **allowed**
-to be created, or cron-based repeating times at which a workflow instance **should** be created. 
+to be created (can be repeating), or cron-based times at which a workflow instance **should** be created (automatically). 
 
 To better explain interval-based scheduled starts, let's say
 we have a workflow that orchestrates an online auction and should be "available" only from when the auction starts until it ends. 
@@ -3189,20 +3171,20 @@ In this case we could use a cron definition
 0 0/5 * * * ?
 ```
 
-to define that this workflow should be triggered every 5 minutes, starting at full hour. 
+to define that a workflow instance from the workflow definition should be created every 5 minutes, starting at full hour. 
 
 Here are some more examples of cron expressions and their meanings:
 
 ``` text
-* * * * *   - Trigger workflow instance at the top of every minute
-0 * * * *   - Trigger workflow instance at the top of every hour
-0 */2 * * * - Trigger workflow instance every 2 hours
-0 9 8 * *   - Trigger workflow instance at 9:00:00AM on the eighth day of every month
+* * * * *   - Create workflow instance at the top of every minute
+0 * * * *   - Create workflow instance at the top of every hour
+0 */2 * * * - Create workflow instance every 2 hours
+0 9 8 * *   - Create workflow instance at 9:00:00AM on the eighth day of every month
 ```
 
 [See here](http://crontab.org/) to get more information on defining cron expressions.
 
-One thing to discuss when dealing with cron-based scheduled starts is when the starting state of the workflow is an [Event](#Event-State).
+One thing to discuss when dealing with cron-based scheduled starts is when the workflow starting state is an [Event](#Event-State).
 Event states define that workflow instances are triggered by the existence of the defined event(s). 
 Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
@@ -3222,8 +3204,8 @@ it with its `object` type which has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| interval | Time interval describing when the workflow instance can be created (ISO 8601 time interval format). | string | yes if `cron` not defined |
-| [cron](#Cron-Definition) | Define expression (cron) when the workflow instance should be created | object | yes if `interval` not defined |
+| interval | Time interval (can be repeating) described with ISO 8601 format. Declares when workflow instances can be created | string | yes if `cron` not defined |
+| [cron](#Cron-Definition) | Cron expression defining when workflow instances should be created (automatically) | object | yes if `interval` not defined |
 | directInvoke | Defines if workflow instances can be created outside of the interval/cron interval. Default value is `false` | boolean | no |
 | timezone | Timezone name (for example "America/Los_Angeles") used to evaluate the cron expression against. Not used for `interval` property as timezone can be specified there directly. If not specified, should default to local machine timezone | string | no |
 
@@ -3259,7 +3241,7 @@ directInvoke: true
 
 </details>
 
-The `interval` property uses the ISO 8601 time interval format to describe when workflow instances can be created.
+The `interval` property uses the ISO 8601 time interval format (can be repeating) to describe when workflow instances are allowed be created.
 There is a number of ways to express the time interval:
 
 1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning workflow instances can be
@@ -3272,13 +3254,13 @@ when the first instance is created until 1 year, 2 months, 10 days 2 hours and 3
 from the time the first instance is created.
 
 The `cron` property uses a [cron expression](http://crontab.org/) 
-to describe a repeating interval upon which a workflow instance should be created.
+to describe a repeating interval upon which a workflow instance should be created (automatically).
 For more information see the [cron definition](#Cron-Definition) section.
 
 The `timezone` property is used to define a time zone name to evaluate the cron expression against. If not specified, it should default to the local
 machine time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezone names.
 
-Note that when the starting state of the workflow is an [Event](#Event-State) 
+Note that when the workflow starting state is an [Event](#Event-State) 
 defining cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
 
@@ -3287,7 +3269,7 @@ The `directInvoke` property defines if workflow instances are allowed to be crea
 #### Cron Definition
 
 `Cron` definition can have two types, either `string` or `object`.
-If `string` type, it defines the repeating interval (cron expression) describing when the workflow instance should be created.
+If `string` type, it defines the cron expression describing when the workflow instance should be created (automatically).
 This can be used as a short-cut definition when you don't need to define any other parameters, for example:
 
 ```json
@@ -3299,8 +3281,8 @@ it with its `object` type which has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| expression | Repeating interval (cron expression) describing when the workflow instance should be created | string | yes |
-| validUntil | Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid | string | no |
+| expression | Cron expression describing when the workflow instance should be created (automatically) | string | yes |
+| validUntil | Specific date and time (ISO 8601 format) when the cron expression is no longer valid | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3335,11 +3317,11 @@ validUntil: '2021-11-05T08:15:30-05:00'
 </details>
 
 The `expression` property is a a [cron expression](http://crontab.org/) which defines 
-when a workflow instance should be created.
+when workflow instances should be created (automatically).
 
 The `validUntil` property defines a date and time (using ISO 8601 format). When the 
 `validUntil` time is reached, the cron expression for instances creations of this workflow 
-should should no longer be valid.
+should no longer be valid.
 
 For example let's say we have to following cron definitions:
 
@@ -3526,7 +3508,7 @@ If no input is provided the default data input is the empty object:
 }
 ```
 
-Workflow data input is passed to the workflow's [start state](#Start-Definition) state as data input.
+Workflow data input is passed to the workflow [starting state](#Start-Definition) as data input.
 
 <p align="center">
 <img src="media/spec/workflowdatainput.png" height="350px" alt="Workflow data input"/>
@@ -3567,8 +3549,8 @@ When a state completes its tasks, its data output is passed to the data input of
 
 There are two of rules to consider here:
 
-- If the state is the starting state its data input is the [workflow data input](#Workflow-data-input).
-- If the state is an end state (`end` property is defined), its data output is the [workflow data output](#Workflow-data-output).  
+- If the state is the workflow starting state, its data input is the [workflow data input](#Workflow-data-input).
+- If the state is an end state ([`end`](#End-Definition) property is defined), its data output is the [workflow data output](#Workflow-data-output).  
 
 <p align="center">
 <img src="media/spec/basic-state-data-passing.png" height="350px" alt="Basic state data passing"/>
@@ -3848,6 +3830,7 @@ and then lets us know how to greet this customer in different languages. We coul
     "id": "GreetCustomersWorkflow",
     "name": "Greet Customers when they arrive",
     "version": "1.0",
+    "start": "WaitForCustomerToArrive",
     "events": [{
         "name": "CustomerArrivesEvent",
         "type": "customer-arrival-type",
@@ -3859,7 +3842,6 @@ and then lets us know how to greet this customer in different languages. We coul
     }],
     "states":[
         {
-            "start": true,
             "name": "WaitForCustomerToArrive",
             "type": "event",
             "onEvents": [{
@@ -4297,7 +4279,6 @@ This property references another workflow state (by it's unique name) which is r
 States referenced by `compensatedBy` (as well as any other states that they transition to) must obey following rules:
 * They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
 * They cannot be an [event state](#Event-State)
-* They cannot define an [start definition](#Start-definition). If they do, it should be ignored
 * They cannot define an [end definition](#End-definition). If they do, it should be ignored
 * They must define the `usedForCompensation` property and set it to `true`
 * They can transition only to states which also have their `usedForCompensation` property and set to `true`
@@ -4571,7 +4552,7 @@ Here is an example of metadata attached to the core workflow definition:
   "id": "processSalesOrders",
   "name": "Process Sales Orders",
   "version": "1.0",
-  "startsAt": "NewOrder",
+  "start": "MyStartingState",
   "metadata": {
     "loglevel": "Info",
     "environment": "Production",

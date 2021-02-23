@@ -86,11 +86,11 @@ languages.
 {
     "id": "greetingwithargs",
     "name": "Greeting With Args",
+    "start": "Set Output",
     "states": [
         {
             "name": "Set Output",
             "type": "inject",
-            "start": true,
             "data": {
                 "outputVar": "Hello ${ .firstname + \" \" +  .lastname  }"
             },
@@ -193,11 +193,11 @@ instance is created. See the Serverless Workflow ["Workflow Data"](../specificat
 {
     "id": "concatarray",
     "name": "Concatenating array values",
+    "start": "DoConcat",
     "states": [
         {
             "name": "DoConcat",
             "type": "inject",
-            "start": true,
             "data": {
                 "array": [
                     "foo",
@@ -283,11 +283,11 @@ array values, however it would just unnecessarily complicate things.
 {
     "id": "stopcomputeengine",
     "name": "Stop Compute Engine",
+    "start": "DoStop",
     "states": [
         {
             "name": "DoStop",
             "type": "operation",
-            "start": true,
             "actions": [
                 {
                     "functionRef": {
@@ -413,11 +413,11 @@ as service invocations, where as Google Workflow uses the "call" keyword.
 {
     "id": "publishtotopicwitherrorhandling",
     "name": "Publish To Topic With Error Handling",
+    "start": "DoPublish",
     "states": [
         {
             "name": "DoPublish",
             "type": "operation",
-            "start": true,
             "actions": [
                 {
                     "functionRef": {
@@ -575,11 +575,11 @@ to interested parties via events (CloudEvents specification format), which we ar
 {
     "id": "errorhandlingwithretries",
     "name": "Error Handling with Retries",
+    "start": "ReadItem",
     "states": [
         {
             "name": "ReadItem",
             "type": "operation",
-            "start": true,
             "actions": [
                 {
                     "functionRef": "ReadItemFromApi"
@@ -678,11 +678,11 @@ error handlers in the "retry" statement as an expression/variable.
 {
     "id": "callsubflow",
     "name": "Call SubFlow",
+    "start": "CallSub",
     "states": [
         {
             "name": "CallSub",
             "type":"subflow",
-            "start": true,
             "workflowId": "calledsubflow",
             "end": true
         }
@@ -776,11 +776,11 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
 {
     "id": "databasedconditions",
     "name": "Data Based Conditions",
+    "start": "CallA",
     "states": [
         {
             "name": "CallA",
             "type":"operation",
-            "start": true,
             "actions": [
                 {
                     "functionRef": "callFunctionA"

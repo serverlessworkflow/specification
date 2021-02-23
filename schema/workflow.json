@@ -23,6 +23,9 @@
       "description": "Workflow version",
       "minLength": 1
     },
+    "start": {
+      "$ref": "#/definitions/startdef"
+    },
     "schemaVersion": {
       "type": "string",
       "description": "Serverless Workflow schema version",
@@ -104,6 +107,7 @@
     "id",
     "name",
     "version",
+    "start",
     "states"
   ],
   "definitions": {
@@ -111,7 +115,7 @@
       "oneOf": [
         {
           "type": "string",
-          "description": "Repeating interval (cron expression) describing when the workflow instance should be created",
+          "description": "Cron expression defining when workflow instances should be created (automatically)",
           "minLength": 1
         },
         {
@@ -413,10 +417,6 @@
           "const": "delay",
           "description": "State type"
         },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
         "end": {
           "$ref": "#/definitions/end",
           "description": "State end definition"
@@ -485,24 +485,6 @@
               "timeDelay",
               "transition"
             ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "timeDelay",
-              "transition"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "timeDelay",
-              "end"
-            ]
           }
         ]
       }
@@ -557,10 +539,6 @@
           "description": "Next transition of the workflow after all the actions have been performed",
           "$ref": "#/definitions/transition"
         },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
         "end": {
           "$ref": "#/definitions/end",
           "description": "State end definition"
@@ -593,16 +571,6 @@
         },
         {
           "required": [
-            "start",
-            "name",
-            "type",
-            "onEvents",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "start",
             "name",
             "type",
             "onEvents",
@@ -628,10 +596,6 @@
           "type": "string",
           "const": "operation",
           "description": "State type"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
         },
         "end": {
           "$ref": "#/definitions/end",
@@ -717,16 +681,6 @@
           },
           {
             "required": [
-              "start",
-              "name",
-              "type",
-              "actions",
-              "transition"
-            ]
-          },
-          {
-            "required": [
-              "start",
               "name",
               "type",
               "actions",
@@ -753,10 +707,6 @@
           "type": "string",
           "const": "parallel",
           "description": "State type"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
         },
         "end": {
           "$ref": "#/definitions/end",
@@ -852,20 +802,9 @@
           },
           {
             "required": [
-              "start",
               "name",
               "type",
               "branches",
-              "transition"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "branches",
-              "transition",
               "end"
             ]
           }
@@ -899,9 +838,6 @@
           "type": "string",
           "const": "switch",
           "description": "State type"
-        },
-        "start": {
-          "$ref": "#/definitions/start"
         },
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
@@ -944,42 +880,12 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "name",
-          "type",
-          "eventConditions",
-          "default"
-        ]
-      },
-      "else": {
-        "oneOf": [
-          {
-            "required": [
-              "name",
-              "type",
-              "eventConditions",
-              "default"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "eventConditions",
-              "default"
-            ]
-          }
-        ]
-      }
+      "required": [
+        "name",
+        "type",
+        "eventConditions",
+        "default"
+      ]
     },
     "databasedswitch": {
       "type": "object",
@@ -998,10 +904,6 @@
           "type": "string",
           "const": "switch",
           "description": "State type"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
         },
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
@@ -1031,28 +933,20 @@
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state"
         },
+        "usedForCompensation": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, this state is used to compensate another state. Default is false"
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "dataConditions",
-            "default"
-          ]
-        },
-        {
-          "required": [
-            "start",
-            "name",
-            "type",
-            "dataConditions",
-            "default"
-          ]
-        }
+      "required": [
+        "name",
+        "type",
+        "dataConditions",
+        "default"
       ]
     },
     "defaultdef": {
@@ -1225,10 +1119,6 @@
           "const": "subflow",
           "description": "State type"
         },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
         "end": {
           "$ref": "#/definitions/end",
           "description": "State end definition"
@@ -1306,24 +1196,6 @@
               "workflowId",
               "transition"
             ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "workflowId",
-              "transition"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "workflowId",
-              "end"
-            ]
           }
         ]
       }
@@ -1345,10 +1217,6 @@
           "type": "string",
           "const": "inject",
           "description": "State type"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
         },
         "end": {
           "$ref": "#/definitions/end",
@@ -1410,24 +1278,6 @@
               "data",
               "transition"
             ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "data",
-              "transition"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "data",
-              "end"
-            ]
           }
         ]
       }
@@ -1449,10 +1299,6 @@
           "type": "string",
           "const": "foreach",
           "description": "State type"
-        },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
         },
         "end": {
           "$ref": "#/definitions/end",
@@ -1560,28 +1406,6 @@
           },
           {
             "required": [
-              "start",
-              "name",
-              "type",
-              "inputCollection",
-              "inputParameter",
-              "workflowId",
-              "end"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "inputCollection",
-              "inputParameter",
-              "workflowId",
-              "transition"
-            ]
-          },
-          {
-            "required": [
               "name",
               "type",
               "inputCollection",
@@ -1592,28 +1416,6 @@
           },
           {
             "required": [
-              "name",
-              "type",
-              "inputCollection",
-              "inputParameter",
-              "actions",
-              "transition"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "inputCollection",
-              "inputParameter",
-              "actions",
-              "end"
-            ]
-          },
-          {
-            "required": [
-              "start",
               "name",
               "type",
               "inputCollection",
@@ -1675,10 +1477,6 @@
           "description": "Next transition of the workflow after all the actions have been performed",
           "$ref": "#/definitions/transition"
         },
-        "start": {
-          "$ref": "#/definitions/start",
-          "description": "State start definition"
-        },
         "end": {
           "$ref": "#/definitions/end",
           "description": "State end definition"
@@ -1734,49 +1532,33 @@
               "timeout",
               "transition"
             ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "action",
-              "eventRef",
-              "timeout",
-              "end"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "action",
-              "eventRef",
-              "timeout",
-              "transition"
-            ]
           }
         ]
       }
     },
-    "start": {
+    "startdef": {
       "oneOf": [
         {
-          "type": "boolean",
-          "description": "State start definition",
-          "default": true
+          "type": "string",
+          "description": "Name of the starting workflow state",
+          "minLength": 1
         },
         {
           "type": "object",
-          "description": "State start definition",
+          "description": "Workflow start definition",
           "properties": {
+            "stateName": {
+              "type": "string",
+              "description": "Name of the starting workflow state",
+              "minLength": 1
+            },
             "schedule": {
-              "description": "Define the time/repeating intervals at which workflow instances can/should be started",
+              "description": "Define the time/repeating intervals or cron at which workflow instances can/should be started",
               "$ref": "#/definitions/schedule"
             }
           },
           "required": [
+            "stateName",
             "schedule"
           ]
         }
@@ -1786,7 +1568,7 @@
       "oneOf": [
         {
           "type": "string",
-          "description": "Time interval (ISO 8601 format) describing when workflow instances can be created.",
+          "description": "Time interval (can be repeating) described with ISO 8601 format. Declares when workflow instances can be created.",
           "minLength": 1
         },
         {

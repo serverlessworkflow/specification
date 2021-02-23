@@ -63,11 +63,11 @@ data output, which is:
 "version": "1.0",
 "name": "Hello World Workflow",
 "description": "Inject Hello World",
+"start": "Hello State",
 "states":[  
   {  
      "name":"Hello State",
      "type":"inject",
-     "start": true,
      "data": {
         "result": "Hello World!"
      },
@@ -85,10 +85,10 @@ id: helloworld
 version: '1.0'
 name: Hello World Workflow
 description: Inject Hello World
+start: Hello State
 states:
 - name: Hello State
   type: inject
-  start: true
   data:
     result: Hello World!
   end: true
@@ -145,6 +145,7 @@ Which is added to the states data and becomes the workflow data output.
 "version": "1.0",
 "name": "Greeting Workflow",
 "description": "Greet Someone",
+"start": "Greet",
 "functions": [
   {
      "name": "greetingFunction",
@@ -155,7 +156,6 @@ Which is added to the states data and becomes the workflow data output.
   {  
      "name":"Greet",
      "type":"operation",
-     "start": true,
      "actions":[  
         {  
            "functionRef": {
@@ -183,13 +183,13 @@ id: greeting
 version: '1.0'
 name: Greeting Workflow
 description: Greet Someone
+start: Greet
 functions:
 - name: greetingFunction
   operation: file://myapis/greetingapis.json#greeting
 states:
 - name: Greet
   type: operation
-  start: true
   actions:
   - functionRef:
       refName: greetingFunction
@@ -288,6 +288,7 @@ filters what is selected to be the state data output which then becomes the work
 "version": "1.0",
 "name": "Event Based Greeting Workflow",
 "description": "Event Based Greeting",
+"start": "Greet",
 "events": [
  {
   "name": "GreetingEvent",
@@ -305,7 +306,6 @@ filters what is selected to be the state data output which then becomes the work
   {  
      "name":"Greet",
      "type":"event",
-     "start": true,
      "onEvents": [{
          "eventRefs": ["GreetingEvent"],
          "eventDataFilter": {
@@ -339,6 +339,7 @@ id: eventbasedgreeting
 version: '1.0'
 name: Event Based Greeting Workflow
 description: Event Based Greeting
+start: Greet
 events:
 - name: GreetingEvent
   type: greetingEventType
@@ -349,7 +350,6 @@ functions:
 states:
 - name: Greet
   type: event
-  start: true
   onEvents:
   - eventRefs:
     - GreetingEvent
@@ -412,6 +412,7 @@ result of the workflow execution.
 "version": "1.0",
 "name": "Solve Math Problems Workflow",
 "description": "Solve math problems",
+"start": "Solve",
 "functions": [
 {
   "name": "solveMathExpressionFunction",
@@ -421,7 +422,6 @@ result of the workflow execution.
 "states":[  
 {
  "name":"Solve",
- "start": true,
  "type":"foreach",
  "inputCollection": "${ .expressions }",
  "iterationParam": "singleexpression",
@@ -453,12 +453,12 @@ id: solvemathproblems
 version: '1.0'
 name: Solve Math Problems Workflow
 description: Solve math problems
+start: Solve
 functions:
 - name: solveMathExpressionFunction
   operation: http://myapis.org/mapthapis.json#solveExpression
 states:
 - name: Solve
-  start: true
   type: foreach
   inputCollection: "${ .expressions }"
   iterationParam: singleexpression
@@ -507,11 +507,11 @@ to finish execution before it can transition (end workflow execution in this cas
 "version": "1.0",
 "name": "Parallel Execution Workflow",
 "description": "Executes two branches in parallel",
+"start": "ParallelExec",
 "states":[  
   {  
      "name": "ParallelExec",
      "type": "parallel",
-     "start": true,
      "completionType": "and",
      "branches": [
         {
@@ -537,10 +537,10 @@ id: parallelexec
 version: '1.0'
 name: Parallel Execution Workflow
 description: Executes two branches in parallel
+start: ParallelExec
 states:
 - name: ParallelExec
   type: parallel
-  start: true
   completionType: and
   branches:
   - name: ShortDelayBranch
@@ -589,6 +589,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
 "version": "1.0",
 "name": "Event Based Switch Transitions",
 "description": "Event Based Switch Transitions",
+"start": "CheckVisaStatus",
 "events": [
 {
     "name": "visaApprovedEvent",
@@ -605,7 +606,6 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
   {  
      "name":"CheckVisaStatus",
      "type":"switch",
-     "start": true,
      "eventConditions": [
         {
           "eventRef": "visaApprovedEvent",
@@ -651,6 +651,7 @@ id: eventbasedswitch
 version: '1.0'
 name: Event Based Switch Transitions
 description: Event Based Switch Transitions
+start: CheckVisaStatus
 events:
 - name: visaApprovedEvent
   type: VisaApproved
@@ -661,7 +662,6 @@ events:
 states:
 - name: CheckVisaStatus
   type: switch
-  start: true
   eventConditions:
   - eventRef: visaApprovedEvent
     transition: HandleApprovedVisa
@@ -731,6 +731,7 @@ If the applicants age is over 18 we start the application (subflow state). Other
    "version": "1.0",
    "name": "Applicant Request Decision Workflow",
    "description": "Determine if applicant request is valid",
+   "start": "CheckApplication",
    "functions": [
      {
         "name": "sendRejectionEmailFunction",
@@ -741,7 +742,6 @@ If the applicants age is over 18 we start the application (subflow state). Other
       {  
          "name":"CheckApplication",
          "type":"switch",
-         "start": true,
          "dataConditions": [
             {
               "condition": "${ .applicants | .age >= 18 }",
@@ -790,13 +790,13 @@ id: applicantrequest
 version: '1.0'
 name: Applicant Request Decision Workflow
 description: Determine if applicant request is valid
+start: CheckApplication
 functions:
 - name: sendRejectionEmailFunction
   operation: http://myapis.org/applicationapi.json#emailRejection
 states:
 - name: CheckApplication
   type: switch
-  start: true
   dataConditions:
   - condition: "${ .applicants | .age >= 18 }"
     transition: StartApplication
@@ -868,6 +868,7 @@ The data output of the workflow contains the information of the exception caught
 "version": "1.0",
 "name": "Provision Orders",
 "description": "Provision Orders and handle errors thrown",
+"start": "ProvisionOrder",
 "functions": [
   {
      "name": "provisionOrderFunction",
@@ -878,7 +879,6 @@ The data output of the workflow contains the information of the exception caught
   {  
     "name":"ProvisionOrder",
     "type":"operation",
-    "start": true,
     "actionMode":"sequential",
     "actions":[  
        {  
@@ -945,13 +945,13 @@ id: provisionorders
 version: '1.0'
 name: Provision Orders
 description: Provision Orders and handle errors thrown
+start: ProvisionOrder
 functions:
 - name: provisionOrderFunction
   operation: http://myapis.org/provisioningapi.json#doProvision
 states:
 - name: ProvisionOrder
   type: operation
-  start: true
   actionMode: sequential
   actions:
   - functionRef:
@@ -1026,6 +1026,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
   "version": "1.0",
   "name": "Job Monitoring",
   "description": "Monitor finished execution of a submitted job",
+  "start": "SubmitJob",
   "functions": [
     {
       "name": "submitJob",
@@ -1048,7 +1049,6 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
     {  
       "name":"SubmitJob",
       "type":"operation",
-      "start": true,
       "actionMode":"sequential",
       "actions":[  
       {  
@@ -1123,7 +1123,6 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
     ],
     "default": {
       "transition": "WaitForCompletion"
-,
     }
   },
   {  
@@ -1170,6 +1169,7 @@ id: jobmonitoring
 version: '1.0'
 name: Job Monitoring
 description: Monitor finished execution of a submitted job
+start: SubmitJob
 functions:
 - name: submitJob
   operation: http://myapis.org/monitorapi.json#doSubmit
@@ -1182,7 +1182,6 @@ functions:
 states:
 - name: SubmitJob
   type: operation
-  start: true
   actionMode: sequential
   actions:
   - functionRef:
@@ -1334,6 +1333,7 @@ CloudEvent upon completion of the workflow could look like:
 "id": "sendcloudeventonprovision",
 "version": "1.0",
 "name": "Send CloudEvent on provision completion",
+"start": "ProvisionOrdersState",
 "events": [
 {
     "name": "provisioningCompleteEvent",
@@ -1351,7 +1351,6 @@ CloudEvent upon completion of the workflow could look like:
 {
     "name": "ProvisionOrdersState",
     "type": "foreach",
-    "start": true,
     "inputCollection": "${ .orders }",
     "iterationParam": "singleorder",
     "outputCollection": "${ .provisionedOrders }",
@@ -1383,6 +1382,7 @@ CloudEvent upon completion of the workflow could look like:
 id: sendcloudeventonprovision
 version: '1.0'
 name: Send CloudEvent on provision completion
+start: ProvisionOrdersState
 events:
 - name: provisioningCompleteEvent
   type: provisionCompleteType
@@ -1393,7 +1393,6 @@ functions:
 states:
 - name: ProvisionOrdersState
   type: foreach
-  start: true
   inputCollection: "${ .orders }"
   iterationParam: singleorder
   outputCollection: "${ .provisionedOrders }"
@@ -1465,6 +1464,7 @@ have the matching patient id.
 "id": "patientVitalsWorkflow",
 "name": "Monitor Patient Vitals",
 "version": "1.0",
+"start": "MonitorVitals",
 "events": [
 {
     "name": "HighBodyTemperature",
@@ -1515,7 +1515,6 @@ have the matching patient id.
 {
 "name": "MonitorVitals",
 "type": "event",
-"start": true,
 "exclusive": true,
 "onEvents": [{
         "eventRefs": ["HighBodyTemperature"],
@@ -1565,6 +1564,7 @@ have the matching patient id.
 id: patientVitalsWorkflow
 name: Monitor Patient Vitals
 version: '1.0'
+start: MonitorVitals
 events:
 - name: HighBodyTemperature
   type: org.monitor.highBodyTemp
@@ -1591,7 +1591,6 @@ functions:
 states:
 - name: MonitorVitals
   type: event
-  start: true
   exclusive: true
   onEvents:
   - eventRefs:
@@ -1658,6 +1657,7 @@ when all three of these events happened (in no particular order).
 "id": "finalizeCollegeApplication",
 "name": "Finalize College Application",
 "version": "1.0",
+"start": "FinalizeApplication",
 "events": [
 {
     "name": "ApplicationSubmitted",
@@ -1700,7 +1700,6 @@ when all three of these events happened (in no particular order).
 {
     "name": "FinalizeApplication",
     "type": "event",
-    "start": true,
     "exclusive": false,
     "onEvents": [
         {
@@ -1736,6 +1735,7 @@ when all three of these events happened (in no particular order).
 id: finalizeCollegeApplication
 name: Finalize College Application
 version: '1.0'
+start: FinalizeApplication
 events:
 - name: ApplicationSubmitted
   type: org.application.submitted
@@ -1758,7 +1758,6 @@ functions:
 states:
 - name: FinalizeApplication
   type: event
-  start: true
   exclusive: false
   onEvents:
   - eventRefs:
@@ -1869,6 +1868,7 @@ And for denied credit check, for example:
     "version": "1.0",
     "name": "Customer Credit Check Workflow",
     "description": "Perform Customer Credit Check",
+    "start": "CheckCredit",
     "functions": [
         {
             "name": "creditCheckFunction",
@@ -1895,7 +1895,6 @@ And for denied credit check, for example:
         {
             "name": "CheckCredit",
             "type": "callback",
-            "start": true,
             "action": {
                 "functionRef": {
                     "refName": "callCreditCheckMicroservice",
@@ -1959,6 +1958,7 @@ id: customercreditcheck
 version: '1.0'
 name: Customer Credit Check Workflow
 description: Perform Customer Credit Check
+start: CheckCredit
 functions:
 - name: creditCheckFunction
   operation: http://myapis.org/creditcheckapi.json#doCreditCheck
@@ -1973,7 +1973,6 @@ events:
 states:
 - name: CheckCredit
   type: callback
-  start: true
   action:
     functionRef:
       refName: callCreditCheckMicroservice
@@ -2064,6 +2063,10 @@ Bidding is done via an online application and bids are received as events are as
     "version": "1.0",
     "name": "Car Auction Bidding Workflow",
     "description": "Store a single bid whole the car auction is active",
+    "start": {
+      "stateName": "StoreCarAuctionBid",
+      "schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+    },
     "functions": [
         {
             "name": "StoreBidFunction",
@@ -2081,9 +2084,6 @@ Bidding is done via an online application and bids are received as events are as
         {
           "name": "StoreCarAuctionBid",
           "type": "event",
-          "start": {
-              "schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
-          },
           "exclusive": true,
           "onEvents": [
             {
@@ -2112,6 +2112,9 @@ id: handleCarAuctionBid
 version: '1.0'
 name: Car Auction Bidding Workflow
 description: Store a single bid whole the car auction is active
+start:
+  stateName: StoreCarAuctionBid
+  schedule: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
 functions:
 - name: StoreBidFunction
   operation: http://myapis.org/carauctionapi.json#storeBid
@@ -2122,8 +2125,6 @@ events:
 states:
 - name: StoreCarAuctionBid
   type: event
-  start:
-    schedule: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
   exclusive: true
   onEvents:
   - eventRefs:
@@ -2188,6 +2189,12 @@ The results of the inbox service called is expected to be for example:
 "id": "checkInbox",
 "name": "Check Inbox Workflow",
 "description": "Periodically Check Inbox",
+"start": {
+    "stateName": "CheckInbox",
+    "schedule": {
+        "cron": "0 0/15 * * * ?"
+    }
+},
 "version": "1.0",
 "functions": [
     {
@@ -2203,11 +2210,6 @@ The results of the inbox service called is expected to be for example:
     {
         "name": "CheckInbox",
         "type": "operation",
-        "start": {
-            "schedule": {
-                "cron": "0 0/15 * * * ?"
-            }
-        },
         "actionMode": "sequential",
         "actions": [
             {
@@ -2244,6 +2246,10 @@ The results of the inbox service called is expected to be for example:
 id: checkInbox
 name: Check Inbox Workflow
 description: Periodically Check Inbox
+start:
+  stateName: CheckInbox
+  schedule:
+    cron: 0 0/15 * * * ?
 version: '1.0'
 functions:
 - name: checkInboxFunction
@@ -2253,9 +2259,6 @@ functions:
 states:
 - name: CheckInbox
   type: operation
-  start:
-    schedule:
-      cron: 0 0/15 * * * ?
   actionMode: sequential
   actions:
   - functionRef: checkInboxFunction
@@ -2328,6 +2331,7 @@ For this example we assume that the workflow instance is started given the follo
     "name": "Vet Appointment Workflow",
     "description": "Vet service call via events",
     "version": "1.0",
+    "start": "MakeVetAppointmentState",
     "events": [
         {
             "name": "MakeVetAppointment",
@@ -2344,7 +2348,6 @@ For this example we assume that the workflow instance is started given the follo
         {
             "name": "MakeVetAppointmentState",
             "type": "operation",
-            "start": true,
             "actions": [
                 {
                     "name": "MakeAppointmentAction",
@@ -2373,6 +2376,7 @@ id: VetAppointmentWorkflow
 name: Vet Appointment Workflow
 description: Vet service call via events
 version: '1.0'
+start: MakeVetAppointmentState
 events:
 - name: MakeVetAppointment
   source: VetServiceSoure
@@ -2383,7 +2387,6 @@ events:
 states:
 - name: MakeVetAppointmentState
   type: operation
-  start: true
   actions:
   - name: MakeAppointmentAction
     eventRef:
@@ -2670,11 +2673,11 @@ If the retries are not successful, we want to just gracefully end workflow execu
   "id": "patientonboarding",
   "name": "Patient Onboarding Workflow",
   "version": "1.0",
+  "start": "Onboard",
   "states": [
     {
       "name": "Onboard",
       "type": "event",
-      "start": true,
       "onEvents": [
         {
           "eventRefs": [
@@ -2742,10 +2745,10 @@ If the retries are not successful, we want to just gracefully end workflow execu
 id: patientonboarding
 name: Patient Onboarding Workflow
 version: '1.0'
+start: Onboard
 states:
 - name: Onboard
   type: event
-  start: true
   onEvents:
   - eventRefs:
     - NewPatientEvent
@@ -2821,6 +2824,7 @@ This example shows the use of the workflow [execTimeout definition](../specifica
   "id": "order",
   "name": "Purchase Order Workflow",
   "version": "1.0",
+  "start": "StartNewOrder",
   "execTimeout": {
     "interval": "PT30D",
     "interrupt": true,
@@ -2830,7 +2834,6 @@ This example shows the use of the workflow [execTimeout definition](../specifica
     {
       "name": "StartNewOrder",
       "type": "event",
-      "start": true,
       "onEvents": [
         {
           "eventRefs": ["OrderCreatedEvent"],
@@ -2980,6 +2983,7 @@ This example shows the use of the workflow [execTimeout definition](../specifica
 id: order
 name: Purchase Order Workflow
 version: '1.0'
+start: StartNewOrder
 execTimeout:
   interval: PT30D
   interrupt: true
@@ -2987,7 +2991,6 @@ execTimeout:
 states:
 - name: StartNewOrder
   type: event
-  start: true
   onEvents:
   - eventRefs:
     - OrderCreatedEvent
@@ -3101,6 +3104,7 @@ the data for an hour, send report, and so on.
   "id": "roomreadings",
   "name": "Room Temp and Humidity Workflow",
   "version": "1.0",
+  "start": "ConsumeReading",
   "execTimeout": {
     "interval": "PT1H",
     "runBefore": "GenerateReport"
@@ -3110,7 +3114,6 @@ the data for an hour, send report, and so on.
     {
       "name": "ConsumeReading",
       "type": "event",
-      "start": true,
       "onEvents": [
         {
           "eventRefs": ["TemperatureEvent", "HumidityEvent"],
@@ -3188,6 +3191,7 @@ the data for an hour, send report, and so on.
 id: roomreadings
 name: Room Temp and Humidity Workflow
 version: '1.0'
+start: ConsumeReading
 execTimeout:
   interval: PT1H
   runBefore: GenerateReport
@@ -3195,7 +3199,6 @@ keepActive: true
 states:
 - name: ConsumeReading
   type: event
-  start: true
   onEvents:
   - eventRefs:
     - TemperatureEvent
@@ -3271,11 +3274,11 @@ We fist define our top-level workflow for this example:
     "id": "checkcarvitals",
     "name": "Check Car Vitals Workflow",
     "version": "1.0",
+    "start": "WhenCarIsOn",
     "states": [
        {
           "name": "WhenCarIsOn",
           "type": "event",
-          "start": true,
           "onEvents": [
              {
                 "eventRefs": ["CarTurnedOnEvent"]
@@ -3315,10 +3318,10 @@ We fist define our top-level workflow for this example:
 id: checkcarvitals
 name: Check Car Vitals Workflow
 version: '1.0'
+start: WhenCarIsOn
 states:
 - name: WhenCarIsOn
   type: event
-  start: true
   onEvents:
   - eventRefs:
     - CarTurnedOnEvent
@@ -3358,11 +3361,11 @@ And then our reusable sub-workflow which performs the checking of our car vitals
    "id": "vitalscheck",
    "name": "Car Vitals Check",
    "version": "1.0",
+   "start": "CheckVitals",
    "states": [
       {
          "name": "CheckVitals",
          "type": "operation",
-         "start": true,
          "actions": [
             {
                "functionRef": "checkTirePressure"
@@ -3443,10 +3446,10 @@ And then our reusable sub-workflow which performs the checking of our car vitals
 id: vitalscheck
 name: Car Vitals Check
 version: '1.0'
+start: CheckVitals
 states:
 - name: CheckVitals
   type: operation
-  start: true
   actions:
   - functionRef: checkTirePressure
   - functionRef: checkOilPressure

@@ -52,10 +52,10 @@ For this reason, the event, function, retry, and data mapping defined in the ass
 id: processfile
 name: Process File Workflow
 version: '1.0'
+start: Process File
 states:
 - name: Process File
   type: operation
-  start: true
   actions:
   - functionRef: processFile
   end: true
@@ -87,10 +87,10 @@ functions:
 id: processapplication
 name: Process Application
 version: '1.0'
+start: ProcessNewApplication
 states:
 - name: ProcessNewApplication
   type: event
-  start: true
   onEvents:
   - eventRefs:
     - ApplicationReceivedEvent
@@ -140,9 +140,9 @@ events:
 id: simplecompensation
 name: Simple Compensation
 version: '1.0'
+start: Step 1
 states:
 - name: Step 1
-  start: true
   type: operation
   actions:
   - functionRef: step1function
@@ -200,9 +200,9 @@ functions:
 id: errorwithretries
 name: Error Handling With Retries Workflow
 version: '1.0'
+start: Make Coffee
 states:
 - name: Make Coffee
-  start: true
   type: operation
   actions:
   - functionRef: makeCoffee
@@ -257,13 +257,13 @@ functions:
 id: executiontimeout
 name: Execution Timeout Workflow
 version: '1.0'
+start: Purchase Parts
 execTimeout:
   interval: PT7D
   interrupt: true
   runBefore: Handle timeout
 states:
 - name: Purchase Parts
-  start: true
   type: operation
   actions:
   - functionRef: purchasePartsFunction
@@ -309,10 +309,10 @@ functions:
 id: subflowloop
 name: SubFlow Repeat workflow
 version: '1.0'
+start: SubflowRepeat
 states:
 - name: SubflowRepeat
   type: subflow
-  start: true
   workflowId: dosomethingandwaitformessage
   repeat:
     max: 10
@@ -345,10 +345,10 @@ a starting "operation" state transitioning to an "event" state that waits for th
 id: approvereport
 name: Approve Report Workflow
 version: '1.0'
+start: Approve Report
 states:
 - name: Approve Report
   type: callback
-  start: true
   action:
     functionRef: managerDecideOnReport
   eventRef: ReportDecisionMadeEvent
@@ -407,10 +407,10 @@ functions:
 id: eventdecision
 name: Event Decision workflow
 version: '1.0'
+start: A
 states:
 - name: A
   type: subflow
-  start: true
   workflowId: asubflowid
   transition: Event Decision
 - name: Event Decision
