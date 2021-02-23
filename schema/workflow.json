@@ -193,14 +193,9 @@
     "error": {
       "type": "object",
       "properties": {
-        "error": {
+        "condition": {
           "type": "string",
-          "description": "Domain-specific error name, or '*' to indicate all possible errors",
-          "minLength": 1
-        },
-        "code": {
-          "type": "string",
-          "description": "Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions. Should not be defined if error is set to '*'",
+          "description": "Predicate JQ expression to match this error handler against incoming state data",
           "minLength": 1
         },
         "retryRef": {
@@ -220,13 +215,13 @@
       "oneOf": [
         {
           "required": [
-            "error",
+            "condition",
             "transition"
           ]
         },
         {
           "required": [
-            "error",
+            "condition",
             "end"
           ]
         }

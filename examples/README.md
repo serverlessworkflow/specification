@@ -890,21 +890,18 @@ The data output of the workflow contains the information of the exception caught
           }
        }
     ],
-    "stateDataFilter": {
-       "dataOutputPath": "${ .exceptions }"
-    },
     "transition": "ApplyOrder",
     "onErrors": [
        {
-         "error": "Missing order id",
+         "condition": "${ .exceptions | .[] | .error == 'Missing order id' }",
          "transition": "MissingId"
        },
        {
-         "error": "Missing order item",
+         "condition": "${ .exceptions | .[] | .error == 'Missing order item' }",
          "transition": "MissingItem"
        },
        {
-        "error": "Missing order quantity",
+         "condition": "${ .exceptions | .[] | .error == 'Missing order quantity' }",
         "transition": "MissingQuantity"
        }
     ]
@@ -962,11 +959,11 @@ states:
     dataOutputPath: "${ .exceptions }"
   transition: ApplyOrder
   onErrors:
-  - error: Missing order id
+  - condition: ${ .exceptions | .[] | .error == 'Missing order id' }
     transition: MissingId
-  - error: Missing order item
+  - condition: ${ .exceptions | .[] | .error == 'Missing order item' }
     transition: MissingItem
-  - error: Missing order quantity
+  - condition: ${ .exceptions | .[] | .error == 'Missing order quantity' }
     transition: MissingQuantity
 - name: MissingId
   type: subflow
@@ -1064,10 +1061,10 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       }
       ],
       "onErrors": [
-      {
-        "error": "*",
-        "transition": "SubmitError"
-      }
+        {
+          "condition": "${ .error }",
+          "transition": "SubmitError"
+        }
       ],
       "stateDataFilter": {
           "dataOutputPath": "${ .jobuid }"
@@ -1192,7 +1189,7 @@ states:
     actionDataFilter:
       dataResultsPath: "${ .jobuid }"
   onErrors:
-  - error: "*"
+  - condition: ${ .error }
     transition: SubmitError
   stateDataFilter:
     dataOutputPath: "${ .jobuid }"
@@ -2695,8 +2692,7 @@ If the retries are not successful, we want to just gracefully end workflow execu
       ],
       "onErrors": [
         {
-          "error": "ServiceNotAvailable",
-          "code": "503",
+          "condition": "${ .error.message == 'ServiceNotAvailable' and .error.code == 503 }",
           "retryRef": "ServicesNotAvailableRetryStrategy",
           "end": true
         }
@@ -2754,8 +2750,7 @@ states:
     - functionRef: AssignDoctor
     - functionRef: ScheduleAppt
   onErrors:
-  - error: ServiceNotAvailable
-    code: '503'
+  - condition: ${ .error.message == 'ServiceNotAvailable' and .error.code == 503 }
     retryRef: ServicesNotAvailableRetryStrategy
     end: true
   end: true

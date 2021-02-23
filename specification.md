@@ -1622,8 +1622,7 @@ to the trigger/produced event.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| error | Domain-specific error name, or '*' to indicate all possible errors | string | yes |
-| code | Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions. Should not be defined if error is set to '*' | string | no |
+| condition | jq expression to resolve against input to error-handling logic | string | yes |
 | retryRef | Defines the unique retry strategy definition to be used | string | no |
 | [transition](#Transitions) or [end](#End-Definition) | Transition to next state to handle the error, or end workflow execution if this error is encountered | object | yes |
 
@@ -1640,7 +1639,7 @@ to the trigger/produced event.
 
 ```json
 {
-   "error": "Item not in inventory",
+   "condition": "${ .item | .quantity == 0 }",
    "transition": "IssueRefundToCustomer"
 }
 ```
@@ -1649,7 +1648,7 @@ to the trigger/produced event.
 <td valign="top">
 
 ```yaml
-error: Item not in inventory
+condition: ${ item | .quantity == 0 }
 transition: IssueRefundToCustomer
 ```
 
@@ -1661,12 +1660,7 @@ transition: IssueRefundToCustomer
 
 Error definitions describe errors that can occur during workflow execution and how to handle them. 
 
-The `error`property defines the domain-specific name of the error. Users can also set the name to 
-`*` which is a wildcard specifying "all" errors, in the case where no other error definitions are defined,
-or "all other" errors if there are other errors defined within the same states `onErrors` definition.
-
-The `code` property can be used in addition to `name` to help runtimes resolve the defined 
-domain-specific error to the actual technical errors/exceptions that may happen during runtime execution.
+The `condition` property defines a query against error data returned from, say, a function call. Runtimes should detect data using technology-appropriate means (error codes, exception handling, etc.) and invoke error handling logic as appropriate.
 
 The `transition` property defines the transition to the next workflow state in cases when the defined 
 error happens during runtime execution.
@@ -4063,96 +4057,7 @@ to concrete technical errors that arise during workflow execution.
 
 #### Defining Errors
 
-Errors can be defined via the states `onErrors` property. It is an array of ['error'](#Error-Definition) definitions.
-
-Each error definition should have a unique `error` property. There can be only one error definition
-which has the `error` property set to the wildcard character `*`.
-
-The order of error definitions within `onErrors` does not matter. 
-
-If there is an error definition with the `error` property set to the wildcard character `*`, it 
-can mean either "all errors", if it is the only error definition defined, or it can mean
-"all other errors", in the case where other error definitions are defined.
-Note that if the `error` property is set to `*`, the error definition `code` property should not be defined.
-Runtime implementations should warn users in this case.
-
-Let's take a look at an example of each of these two cases:
-
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-"onErrors": [
-  {
-    "error": "Item not in inventory",
-    "transition": "ReimburseCustomer"
-  },
-  {
-    "error": "*",
-    "transition": "handleAnyOtherError"
-  }
-]
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-onErrors:
-- error: Item not in inventory
-  transition: ReimburseCustomer
-- error: "*"
-  transition: handleAnyOtherError
-```
-
-</td>
-</tr>
-</table>
-
-In this example the "Item not in inventory" error is being handled by the first error definition.
-The second error definition handles "all other" errors that may happen during this states execution.
-
-On the other hand the following example shows how to handle "all" errors with the same error definition:
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-"onErrors": [
-  {
-    "error": "*",
-    "transition": "handleAllErrors"
-  }
-]
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-onErrors:
-- error: "*"
-  transition: handleAllErrors
-```
-
-</td>
-</tr>
-</table>
+Errors can be defined via the states `onErrors` property. It is an array of ['error'](#Error-Definition) definitions. The order of error definitions within `onErrors` matters, in that they are evaluated in order, and the first condition which evaluates to true handles the incoming error. 
 
 #### Defining Retries
 
@@ -4225,7 +4130,7 @@ Different states now can use this retry strategy defined. For example:
 {
 "onErrors": [
   {
-    "error": "Inventory service timeout",
+    "condition": "${ .item.error == 'Inventory service timeout' }",
     "retryRef": "Service Call Timeout Retry Strategy",
     "transition": "ReimburseCustomer"
   }
@@ -4238,7 +4143,7 @@ Different states now can use this retry strategy defined. For example:
 
 ```yaml
 onErrors:
-- error: Inventory service timeout
+- condition: ${ .item.error == 'Inventory service timeout' }
   retryRef: Service Call Timeout Retry Strategy
   transition: ReimburseCustomer
 ```
