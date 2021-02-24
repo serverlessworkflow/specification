@@ -3496,9 +3496,9 @@ functions:
 #### Description
 
 In this example we want to create a book lending workflow. The workflow starts when a lender
-submits a book request (via event "Book Lending Request Event").
+submits a book lending request (via event "Book Lending Request Event").
 The workflow describes our business logic around lending a book, from checking its current availability,
-to waiting on the lenders response if the book is currently not available, to checking out the book and notifying
+to waiting on the lender's response if the book is currently not available, to checking out the book and notifying
 the lender.
 
 This example expects the "Book Lending Request Event" event to have a payload of for example:
@@ -3517,10 +3517,10 @@ This example expects the "Book Lending Request Event" event to have a payload of
 }
 ```
 
-where the "book" property defines the book to be lended out, and the "lender" property provides info 
+where the "book" property defines the book to be lent out, and the "lender" property provides info 
 about the person wanting to lend the book.
 
-For the sake of the example we assume the functions and event definitions are defined in separate json files.
+For the sake of the example we assume the functions and event definitions are defined in separate JSON files.
 
 #### Workflow Diagram
 
