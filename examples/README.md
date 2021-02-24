@@ -503,30 +503,40 @@ to finish execution before it can transition (end workflow execution in this cas
 
 ```json
 {  
-"id": "parallelexec",
-"version": "1.0",
-"name": "Parallel Execution Workflow",
-"description": "Executes two branches in parallel",
-"states":[  
-  {  
-     "name": "ParallelExec",
-     "type": "parallel",
-     "start": true,
-     "completionType": "and",
-     "branches": [
-        {
-          "name": "ShortDelayBranch",
-          "workflowId": "shortdelayworkflowid"
-        },
-        {
-          "name": "LongDelayBranch",
-          "workflowId": "longdelayworkflowid"
-        }
-     ],
-     "end": true
-  }
-]
-}
+    "id": "parallelexec",
+    "version": "1.0",
+    "name": "Parallel Execution Workflow",
+    "description": "Executes two branches in parallel",
+    "states":[  
+      {  
+         "name": "ParallelExec",
+         "type": "parallel",
+         "start": true,
+         "completionType": "and",
+         "branches": [
+            {
+              "name": "ShortDelayBranch",
+              "subflow": "ShortDelaySubFlow"
+            },
+            {
+              "name": "LongDelayBranch",
+              "subflow": "LongDelaySubFlow"
+            }
+         ],
+         "end": true
+      },
+      {
+        "name": "ShortDelaySubFlow",
+        "type": "subflow",
+        "workflowId": "shortdelayworkflowid"
+      },
+      {
+        "name": "LongDelaySubFlow",
+        "type": "subflow",
+        "workflowId": "longdelayworkflowid"
+      }
+    ]
+    }
 ```
 
 </td>
@@ -544,10 +554,16 @@ states:
   completionType: and
   branches:
   - name: ShortDelayBranch
-    workflowId: shortdelayworkflowid
+    subflow: ShortDelaySubFlow
   - name: LongDelayBranch
-    workflowId: longdelayworkflowid
+    subflow: LongDelaySubFlow
   end: true
+- name: ShortDelaySubFlow
+  type: subflow
+  workflowId: shortdelayworkflowid
+- name: LongDelaySubFlow
+  type: subflow
+  workflowId: longdelayworkflowid
 ```
 
 </td>

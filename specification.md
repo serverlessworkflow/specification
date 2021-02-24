@@ -2307,8 +2307,8 @@ Exceptions may occur during execution of branches of the Parallel state, this is
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Branch name | string | yes |
-| [actions](#Action-Definition) | Actions to be executed in this branch | array | yes if workflowId is not defined |
-| workflowId | Unique Id of a workflow to be executed in this branch | string | yes if actions is not defined |
+| [actions](#Action-Definition) | Actions to be executed in this branch | array | yes if subflow is not defined |
+| subflow | Name of the SubFlow state to be executed in this branch | string | yes if `actions` is not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2369,8 +2369,11 @@ actions:
 
 Each branch receives the same copy of the Parallel state's data input.
 
-A branch can define either actions or a workflow id of the workflow that needs to be executed.
-The workflow id defined cannot be the same id of the workflow there the branch is defined.
+A Parallel state branch can either define `actions` to be executed, or define a `subflow` property which
+is the name of a workflow SubFlow state to be executed. 
+Note that the referenced SubFlow state
+ should not be part of the core workflow control flow logic (should not have any incoming or outgoing transitions,
+ and should not be able to end workflow execution).
 
 #### <a name="parallel-state-exceptions"></a>Parallel State: Handling Exceptions
 
@@ -2383,9 +2386,9 @@ If the parallel states branch defines actions, all exceptions that arise from ex
  are propagated to the parallel state 
 and can be handled with the parallel states `onErrors` definition.
 
-If the parallel states defines a `workflowId`, exceptions that occur during execution of the called workflow
-can chose to handle exceptions on their own. All unhandled exceptions from the called workflow
-execution however are propagated back to the parallel state and can be handled with the parallel states
+If the parallel state branch defines a `subflow`, exceptions that occur during execution of the subflow
+can be handlerd by the defined SubFlow state. All unhandled exceptions however should be 
+propagated back to the parallel state and can be handled with the parallel states
 `onErrors` definition.
 
 Note that once an error that is propagated to the parallel state from a branch and handled by the 
@@ -2402,7 +2405,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | name |State name | string | yes |
 | type |State type | string | yes |
 | waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
-| workflowId |Sub-workflow unique id | boolean | no |
+| workflowId | Sub-workflow unique id | boolean | no |
 | [repeat](#Repeat-Definition) | SubFlow state repeat exec definition | object | no |
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
@@ -2456,7 +2459,8 @@ multiple other workflow definitions.
 <img src="media/spec/subflowstateref.png" height="350px" alt="Referencing reusable workflow via SubFlow states"/>
 </p>
 
-Reusable workflow are referenced by their `id` property via the SubFlow states`workflowId` parameter.
+Reusable workflows should be referenced by SubFlow states`workflowId` parameter. The value of the parameter
+should match the `id` parameter of the reusable workflow.
 
 Each referenced workflow receives the SubFlow states data as workflow data input.
 
@@ -2721,7 +2725,7 @@ This allows you to test if your workflow behaves properly for cases when there a
 | iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
 | max | Specifies how upper bound on how many iterations may run in parallel | string or number | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if subflowId is not defined |
-| workflowId | Unique Id of a workflow to be executed for each of the elements of inputCollection | string | yes if actions is not defined |
+| subflow | Name of a SubFlow state to be executed for each of the elements of inputCollection | string | yes if actions is not defined |
 | [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes (if end is not defined) |
@@ -2807,9 +2811,10 @@ It should contain the unique element of the `inputCollection` array and passed a
 
 The `actions` property defines actions to be executed in each state iteration.
 
-If actions are not defined, you can specify the `workflowid` to reference a workflow id which needs to be executed
-for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow where the foreach state
-is defined.
+If actions are not defined, you can specify the `subflow` parameter. It's value should be a name of 
+ a SubFlow state which should be invoked for each iteration. Note that the referenced SubFlow state
+ should not be part of the core workflow control flow logic (should not have any incoming or outgoing transitions,
+ and should not be able to end workflow execution).
 
 Let's take a look at an example:
 

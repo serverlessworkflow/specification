@@ -36,6 +36,7 @@ _Status description:_
 | ✔️| Adding RPC type to function definitions (gRPC) | [spec doc](../specification.md) |
 | ✔️| Change function definition 'parameters' to 'arguments' | [spec doc](../specification.md) |
 | ✔️| Replace JsonPath with jq | [spec doc](../specification.md) |
+| ✔️| Replace Parallel state branches and ForEach states "workflowid" parameter with "subflow" | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 

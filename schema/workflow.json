@@ -375,16 +375,16 @@
             "$ref": "#/definitions/action"
           }
         },
-        "workflowId": {
+        "subflow": {
           "type": "string",
-          "description": "Unique Id of a workflow to be executed in this branch"
+          "description": "Name of the SubFlow state to be executed in this branch"
         }
       },
       "oneOf": [
         {
           "required": [
             "name",
-            "workflowId"
+            "subflow"
           ]
         },
         {
@@ -1275,58 +1275,11 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
-      "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "name",
-          "type",
-          "workflowId"
-        ]
-      },
-      "else": {
-        "oneOf": [
-          {
-            "required": [
-              "name",
-              "type",
-              "workflowId",
-              "end"
-            ]
-          },
-          {
-            "required": [
-              "name",
-              "type",
-              "workflowId",
-              "transition"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "workflowId",
-              "transition"
-            ]
-          },
-          {
-            "required": [
-              "start",
-              "name",
-              "type",
-              "workflowId",
-              "end"
-            ]
-          }
-        ]
-      }
+      "required": [
+        "name",
+        "type",
+        "workflowId"
+      ]
     },
     "injectstate": {
       "type": "object",
@@ -1487,9 +1440,9 @@
             "$ref": "#/definitions/action"
           }
         },
-        "workflowId": {
+        "subflow": {
           "type": "string",
-          "description": "Unique Id of a workflow to be executed for each of the elements of inputCollection"
+          "description": "Name of a SubFlow state to be executed for each of the elements of inputCollection"
         },
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
@@ -1528,12 +1481,25 @@
         }
       },
       "then": {
-        "required": [
-          "name",
-          "type",
-          "inputCollection",
-          "inputParameter",
-          "workflowId"
+        "oneOf": [
+          {
+            "required": [
+              "name",
+              "type",
+              "inputCollection",
+              "iterationParam",
+              "actions"
+            ]
+          },
+          {
+            "required": [
+              "name",
+              "type",
+              "inputCollection",
+              "iterationParam",
+              "subflow"
+            ]
+          }
         ]
       },
       "else": {
@@ -1543,8 +1509,8 @@
               "name",
               "type",
               "inputCollection",
-              "inputParameter",
-              "workflowId",
+              "iterationParam",
+              "subflow",
               "end"
             ]
           },
@@ -1553,8 +1519,8 @@
               "name",
               "type",
               "inputCollection",
-              "inputParameter",
-              "workflowId",
+              "iterationParam",
+              "subflow",
               "transition"
             ]
           },
@@ -1565,7 +1531,7 @@
               "type",
               "inputCollection",
               "inputParameter",
-              "workflowId",
+              "iterationParam",
               "end"
             ]
           },
@@ -1575,8 +1541,8 @@
               "name",
               "type",
               "inputCollection",
-              "inputParameter",
-              "workflowId",
+              "iterationParam",
+              "subflow",
               "transition"
             ]
           },
@@ -1585,7 +1551,7 @@
               "name",
               "type",
               "inputCollection",
-              "inputParameter",
+              "iterationParam",
               "actions",
               "end"
             ]
@@ -1595,7 +1561,7 @@
               "name",
               "type",
               "inputCollection",
-              "inputParameter",
+              "iterationParam",
               "actions",
               "transition"
             ]
@@ -1606,7 +1572,7 @@
               "name",
               "type",
               "inputCollection",
-              "inputParameter",
+              "iterationParam",
               "actions",
               "end"
             ]
@@ -1617,7 +1583,7 @@
               "name",
               "type",
               "inputCollection",
-              "inputParameter",
+              "iterationParam",
               "actions",
               "transition"
             ]
