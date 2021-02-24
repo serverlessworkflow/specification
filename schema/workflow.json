@@ -1243,8 +1243,8 @@
           "description": "Sub-workflow unique id"
         },
         "repeat": {
-          "$ref": "#/definitions/repeat",
-          "description": "SubFlow state repeat exec definition"
+          "description": "SubFlow state repeat exec definition",
+          "$ref": "#/definitions/repeat"
         },
         "stateDataFilter": {
           "$ref": "#/definitions/statedatafilter"
@@ -1966,8 +1966,28 @@
           "items": {
             "type": "string"
           }
+        },
+        "delay": {
+          "type": "string",
+          "description": "Time delay between repeats (ISO 8601 duration format)"
+        },
+        "timeout": {
+          "type": "string",
+          "description": "Sets the maximum amount of time for repeat executions (ISO 8601 format)"
         }
-      }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "expression"
+          ]
+        },
+        {
+          "required": [
+            "stopOnEvents"
+          ]
+        }
+      ]
     }
   }
 }

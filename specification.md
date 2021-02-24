@@ -3047,6 +3047,8 @@ If the defined callback event has not been received during this time period, the
 | max | Sets the maximum amount of repeat executions | integer | no |
 | continueOnError | If set to `true` repeats executions in a case unhandled errors propagate from the sub-workflow to this state | boolean | no |
 | stopOnEvents | List referencing defined consumed workflow events. SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached | array | no |
+| delay | Time delay between repeat executions (ISO 8601 duration format) | string | no |
+| timeout | Sets the maximum amount of time for repeat executions (ISO 8601 format) | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3094,6 +3096,22 @@ The `max` property sets the maximum count of repeat executions. It should be a p
 Runtime implementations must define an internal repeat/loop counter which is incremented for each of the 
 SubFlow state repeated executions. If this counter reaches the max value, repeated executions should end.
 
+The `delay` property sets the time delay between repeat executions. For example setting this property
+to "PT1H" would mean that there is a one hour wait between each repeat execution.
+
+The `timeout` property sets the maximum amount of time for repeat executions. This property should
+have predence over the `max` property, meaning that if both are set, if the time defined by `timeout`
+is reached, repeat executions should stop even if `max` was not reached yet. 
+The `timeout` and `max` properties can be used together to solve the cases where you want to define 
+repeat executions for let's say 100 times **or** until 1 hour is reached;
+
+```json
+{
+  "max": 100,
+  "timeout": "PT1H"
+}
+```
+
 The `continueOnError` property defines if repeated executions should continue or not in case unhandled errors are propagated
 by the sub-workflow to the SubFlow state. Default value of this property is `false`.
 Unhandled errors are errors which are not explicitly handled by the sub-workflow, and the SubFlow state 
@@ -3108,7 +3126,9 @@ and repeat execution must halt.
 
 An alternative way to limit repeat executions is via the `stopOnEvents` property. It contains a list of one or more 
 defined consumed workflow events (referenced by the unique event name). When `stopOnEvents` is defined,
-SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached.
+SubFlow will repeat execution until one of the defined events is consumed. You can limit the amount of repeats 
+while waiting on the defined events by setting the `max` property, by setting the `timeout` property, or by 
+setting both `max` and `timeout` together as explained above.
 
 #### Start Definition
 
