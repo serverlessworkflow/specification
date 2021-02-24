@@ -3507,12 +3507,12 @@ This example expects the "Book Lending Request Event" event to have a payload of
 {
     "book": {
         "title": " ... ",
-        "id": " ..."
+        "id": " ... "
     },
     "lender": {
         "name": "John Doe",
-        "address": " ... "
-        "phone: " ... "
+        "address": " ... ",
+        "phone": " ... "
     }
 }
 ```
