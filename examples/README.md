@@ -3606,7 +3606,7 @@ For the sake of the example we assume that the "Order Request" event has the fol
             "type": "subflow",
             "workflowId": "checkshipmentstatus",
             "repeat": {
-                "untilData": "${ .order.shipment.status == \"ready\" }",
+                "expression": "${ .order.shipment.status == \"ready\" }",
                 "delay": "PT1H",
                 "timeout": "PT2D"
             },
@@ -3681,7 +3681,7 @@ states:
   type: subflow
   workflowId: checkshipmentstatus
   repeat:
-    untilData: ${ .order.shipment.status == "ready" }
+    expression: ${ .order.shipment.status == "ready" }
     delay: PT1H
     timeout: PT2D
   compensatedBy: Cancel Shipment
