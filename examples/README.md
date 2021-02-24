@@ -3494,13 +3494,14 @@ functions:
 
 In this example we want to implement an iPhone ordering workflow. We receive an order by consuming 
 an "Order Request" event. Then we start processing the order. 
+
 The purpose of this example is to show how you can implement parallel execution of payment
 processing and preparing the phone shipment. We take advantage of the [Parallel state](../specification.md#Parallel-State)
 and its "completionType" property which is set to "and" by default. This means that all parallel state 
 branches must complete before the state can transition to the next workflow states.
 
 In addition, we show how we can use compensation for each Parallel state branch. This allows us to compensate
-payment processing in case there were errors during shipment preparation and vice versa. Again, both shipment preparation 
+each branch separately. Again, both shipment preparation 
 and payment processing have to complete for the order to be completed successfully. 
 
 For the sake of the example we assume that the "Order Request" event has the following sample payload:
@@ -3517,10 +3518,13 @@ For the sake of the example we assume that the "Order Request" event has the fol
 }
 ```
 
+We are not showing the implementation of the function and events definitions in-line. They are assumed 
+to be present in separate json files as shown in the workflow definition.
+
 #### Workflow Diagram
 
 <p align="center">
-<img src="../media/examples/example-helloworld.png" height="400px" alt="Hello World Example"/>
+<img src="../media/examples/iphone-ordering.png" height="400px" alt="iPhone Ordering Example"/>
 </p>
 
 #### Workflow Definition
