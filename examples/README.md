@@ -3499,13 +3499,16 @@ processing and preparing the phone shipment. We take advantage of the [Parallel 
 and its "completionType" property which is set to "and" by default. This means that all parallel state 
 branches must complete before the state can transition to the next workflow states.
 
-In addition, we show how we can compensate the order in case the order payment cannot be processed.
+In addition, we show how we can use compensation for each Parallel state branch. This allows us to compensate
+payment processing in case there were errors during shipment preparation and vice versa. Again, both shipment preparation 
+and payment processing have to complete for the order to be completed successfully. 
 
 For the sake of the example we assume that the "Order Request" event has the following sample payload:
 
 ```json
 {
     "order": {
+        "number": "abcde",
         "phone": "iPhone",
         "version": "11",
         "model": "pro",
@@ -3531,22 +3534,105 @@ For the sake of the example we assume that the "Order Request" event has the fol
 <td valign="top">
 
 ```json
-{  
-"id": "helloworld",
-"version": "1.0",
-"name": "Hello World Workflow",
-"description": "Inject Hello World",
-"states":[  
-  {  
-     "name":"Hello State",
-     "type":"inject",
-     "start": true,
-     "data": {
-        "result": "Hello World!"
-     },
-     "end": true
-  }
-]
+{
+    "id": "iphoneorder",
+    "name": "iPhone ordering workflow",
+    "version": "1.0",
+    "states": [
+        {
+            "name": "Receive Order Request",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": ["Order Request Event"],
+                    "actions": [
+                        {
+                            "functionRef": "Send order receved confirmation"
+                        }
+                    ]
+                }
+            ],
+            "transition": "Process Order"
+        },
+        {
+            "name": "Process Order",
+            "type": "parallel",
+            "branches": [
+                {
+                    "name": "Prepare Shipment",
+                    "subflow": "Check Shipment Status"
+                },
+                {
+                    "name": "Process Payment",
+                    "subflow": "Payment Processing"
+                }
+            ],
+            "onErrors": [
+                {
+                    "error": "*",
+                    "end": {
+                        "compensate": true
+                    }
+                }
+            ],
+            "transition": "Complete Order"
+        },
+        {
+            "name": "Complete Order",
+            "type": "operation",
+            "actions": [
+                {
+                    "functionRef": {
+                        "refName":  "Notify successful payment",
+                        "arguments": {
+                            "customer": "${ .order.customerid }",
+                            "ordernumber": "${ .order.number }"
+                        }
+                    }
+                },
+                {
+                    "functionRef": {
+                        "refName": "Ship Item",
+                        "arguments": {
+                            "to": "${ .order.customerid }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "Check Shipment Status",
+            "type": "subflow",
+            "workflowId": "checkshipmentstatus",
+            "repeat": {
+                "untilData": "${ .order.shipment.status == \"ready\" }",
+                "delay": "PT1H",
+                "timeout": "PT2D"
+            },
+            "compensatedBy": "Cancel Shipment"
+        },
+        {
+            "name": "Payment Processing",
+            "type": "subflow",
+            "workflowId": "processpayment",
+            "compensatedBy": "Cancel Payment"
+        },
+        {
+            "name": "Cancel Shipment",
+            "type": "subflow",
+            "usedForCompensation": true,
+            "workflowId": "cancelshipment"
+        },
+        {
+            "name": "Cancel Payment",
+            "type": "subflow",
+            "usedForCompensation": true,
+            "workflowId": "cancelpayment"
+        }
+    ],
+    "functions": "file://orders/iphone/functions.json",
+    "events": "file://orders/iphone/events.json"
 }
 ```
 
@@ -3554,17 +3640,65 @@ For the sake of the example we assume that the "Order Request" event has the fol
 <td valign="top">
 
 ```yaml
-id: helloworld
+id: iphoneorder
+name: iPhone ordering workflow
 version: '1.0'
-name: Hello World Workflow
-description: Inject Hello World
 states:
-- name: Hello State
-  type: inject
-  start: true
-  data:
-    result: Hello World!
+- name: Receive Order Request
+  type: event
+  onEvents:
+  - eventRefs:
+    - Order Request Event
+    actions:
+    - functionRef: Send order receved confirmation
+  transition: Process Order
+- name: Process Order
+  type: parallel
+  branches:
+  - name: Prepare Shipment
+    subflow: Check Shipment Status
+  - name: Process Payment
+    subflow: Payment Processing
+  onErrors:
+  - error: "*"
+    end:
+      compensate: true
+  transition: Complete Order
+- name: Complete Order
+  type: operation
+  actions:
+  - functionRef:
+      refName: Notify successful payment
+      arguments:
+        customer: "${ .order.customerid }"
+        ordernumber: "${ .order.number }"
+  - functionRef:
+      refName: Ship Item
+      arguments:
+        to: "${ .order.customerid }"
   end: true
+- name: Check Shipment Status
+  type: subflow
+  workflowId: checkshipmentstatus
+  repeat:
+    untilData: ${ .order.shipment.status == "ready" }
+    delay: PT1H
+    timeout: PT2D
+  compensatedBy: Cancel Shipment
+- name: Payment Processing
+  type: subflow
+  workflowId: processpayment
+  compensatedBy: Cancel Payment
+- name: Cancel Shipment
+  type: subflow
+  usedForCompensation: true
+  workflowId: cancelshipment
+- name: Cancel Payment
+  type: subflow
+  usedForCompensation: true
+  workflowId: cancelpayment
+functions: file://orders/iphone/functions.json
+events: file://orders/iphone/events.json
 ```
 
 </td>
