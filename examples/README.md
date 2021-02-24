@@ -25,6 +25,7 @@ Provides Serverless Workflow language examples
 - [Purchase order deadline (ExecTimeout)](#Purchase-order-deadline)
 - [Accumulate room readings and create timely reports (ExecTimeout and KeepActive)](#Accumulate-room-readings)
 - [Car vitals checks (SubFlow state Repeat)](#Car-Vitals-Checks)
+- [Book Lending Workflow](#Book-Lending)
 
 ### Hello World Example
 
@@ -3484,6 +3485,269 @@ functions:
   operation: mycarservices.json#checkcoolantlevel
 - name: checkBattery
   operation: mycarservices.json#checkbattery
+```
+
+</td>
+</tr>
+</table>
+
+### Book Lending
+
+#### Description
+
+In this example we want to create a book lending workflow. The workflow starts when a lender
+submits a book request (via event "Book Lending Request Event").
+The workflow describes our business logic around lending a book, from checking its current availability,
+to waiting on the lenders response if the book is currently not available, to checking out the book and notifying
+the lender.
+
+This example expects the "Book Lending Request Event" event to have a payload of for example:
+
+```json
+{
+    "book": {
+        "title": " ... ",
+        "id": " ..."
+    },
+    "lender": {
+        "name": "John Doe",
+        "address": " ... "
+        "phone: " ... "
+    }
+}
+```
+
+where the "book" property defines the book to be lended out, and the "lender" property provides info 
+about the person wanting to lend the book.
+
+For the sake of the example we assume the functions and event definitions are defined in separate json files.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-booklending.png" height="400px" alt="Book Lending Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+   "id": "booklending",
+   "name": "Book Lending Workflow",
+   "version": "1.0",
+   "states": [
+      {
+         "name": "Book Lending Request",
+         "type": "event",
+         "start": true,
+         "onEvents": [
+            {
+               "eventRefs": ["Book Lending Request Event"]
+            }
+         ],
+         "transition": "Get Book Status"
+      },
+      {
+         "name": "Get Book Status",
+         "type": "operation",
+         "actions": [
+            {
+               "functionRef": {
+                  "refName": "Get status for book",
+                  "arguments": {
+                     "bookid": "${ .book.id }"
+                  }
+               }
+            }
+         ],
+         "transition": "Book Status Decision"
+      },
+      {
+         "name": "Book Status Decision",
+         "type": "switch",
+         "dataConditions": [
+            {
+               "name": "Book is on loan",
+               "condition": "${ .book.status == \"onloan\" }",
+               "transition": "Report Status To Lender"
+            },
+            {
+               "name": "Check is available",
+               "condition": "${ .book.status == \"available\" }",
+               "transition": "Check Out Book"
+            }
+         ]
+      },
+      {
+         "name": "Report Status To Lender",
+         "type": "operation",
+         "actions": [
+            {
+               "functionRef": {
+                  "refName": "Send status to lender",
+                  "arguments": {
+                     "bookid": "${ .book.id }",
+                     "message": "Book ${ .book.title } is already on loan"
+                  }
+               }
+            }
+         ],
+         "transition": "Wait for Lender response"
+      },
+      {
+         "name": "Wait for Lender response",
+         "type": "switch",
+         "eventConditions": [
+            {
+               "name": "Hold Book",
+               "eventRef": "Hold Book Event",
+               "transition": "Request Hold"
+            },
+            {
+               "name": "Decline Book Hold",
+               "eventRef": "Decline Hold Event",
+               "transition": "Cancel Request"
+            }
+         ]
+      },
+      {
+         "name": "Request Hold",
+         "type": "operation",
+         "actions": [
+            {
+               "functionRef": {
+                  "refName": "Request fold for lender",
+                  "arguments": {
+                     "bookid": "${ .book.id }",
+                     "lender": "${ .lender }"
+                  }
+               }
+            }
+         ],
+         "transition": "Wait two weeks"
+      },
+      {
+         "name": "Wait two weeks",
+         "type": "delay",
+         "timeDelay": "PT2W",
+         "transition": "Get Book Status"
+      },
+      {
+         "name": "Check Out Book",
+         "type": "operation",
+         "actions": [
+            {
+               "functionRef": {
+                  "refName": "Check out book with id",
+                  "arguments": {
+                     "bookid": "${ .book.id }"
+                  }
+               }
+            },
+            {
+               "functionRef": {
+                  "refName": "Notify Lender for checkout",
+                  "arguments": {
+                     "bookid": "${ .book.id }",
+                     "lender": "${ .lender }"
+                  }
+               }
+            }
+         ],
+         "end": true
+      }
+   ],
+   "functions": "file://books/lending/functions.json",
+   "events": "file://books/lending/events.json"
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: booklending
+name: Book Lending Workflow
+version: '1.0'
+states:
+- name: Book Lending Request
+  type: event
+  start: true
+  onEvents:
+  - eventRefs:
+    - Book Lending Request Event
+  transition: Get Book Status
+- name: Get Book Status
+  type: operation
+  actions:
+  - functionRef:
+      refName: Get status for book
+      arguments:
+        bookid: "${ .book.id }"
+  transition: Book Status Decision
+- name: Book Status Decision
+  type: switch
+  dataConditions:
+  - name: Book is on loan
+    condition: ${ .book.status == "onloan" }
+    transition: Report Status To Lender
+  - name: Check is available
+    condition: ${ .book.status == "available" }
+    transition: Check Out Book
+- name: Report Status To Lender
+  type: operation
+  actions:
+  - functionRef:
+      refName: Send status to lender
+      arguments:
+        bookid: "${ .book.id }"
+        message: Book ${ .book.title } is already on loan
+  transition: Wait for Lender response
+- name: Wait for Lender response
+  type: switch
+  eventConditions:
+  - name: Hold Book
+    eventRef: Hold Book Event
+    transition: Request Hold
+  - name: Decline Book Hold
+    eventRef: Decline Hold Event
+    transition: Cancel Request
+- name: Request Hold
+  type: operation
+  actions:
+  - functionRef:
+      refName: Request fold for lender
+      arguments:
+        bookid: "${ .book.id }"
+        lender: "${ .lender }"
+  transition: Wait two weeks
+- name: Wait two weeks
+  type: delay
+  timeDelay: PT2W
+  transition: Get Book Status
+- name: Check Out Book
+  type: operation
+  actions:
+  - functionRef:
+      refName: Check out book with id
+      arguments:
+        bookid: "${ .book.id }"
+  - functionRef:
+      refName: Notify Lender for checkout
+      arguments:
+        bookid: "${ .book.id }"
+        lender: "${ .lender }"
+  end: true
+functions: file://books/lending/functions.json
+events: file://books/lending/events.json
 ```
 
 </td>
