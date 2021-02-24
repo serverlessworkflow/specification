@@ -882,8 +882,7 @@
       "required": [
         "name",
         "type",
-        "eventConditions",
-        "default"
+        "eventConditions"
       ]
     },
     "databasedswitch": {
@@ -944,7 +943,6 @@
       "required": [
         "name",
         "type",
-        "dataConditions",
         "default"
       ]
     },
@@ -1037,7 +1035,7 @@
       },
       "required": [
         "eventRef",
-        "transition"
+        "end"
       ]
     },
     "datacondition": {
