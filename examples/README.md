@@ -25,6 +25,7 @@ Provides Serverless Workflow language examples
 - [Purchase order deadline (ExecTimeout)](#Purchase-order-deadline)
 - [Accumulate room readings and create timely reports (ExecTimeout and KeepActive)](#Accumulate-room-readings)
 - [Car vitals checks (SubFlow state Repeat)](#Car-Vitals-Checks)
+- [Order iPhone](#Order-iPhone)
 
 ### Hello World Example
 
@@ -3481,6 +3482,89 @@ functions:
   operation: mycarservices.json#checkcoolantlevel
 - name: checkBattery
   operation: mycarservices.json#checkbattery
+```
+
+</td>
+</tr>
+</table>
+
+### Order iPhone
+
+#### Description
+
+In this example we want to implement an iPhone ordering workflow. We receive an order by consuming 
+an "Order Request" event. Then we start processing the order. 
+The purpose of this example is to show how you can implement parallel execution of payment
+processing and preparing the phone shipment. We take advantage of the [Parallel state](../specification.md#Parallel-State)
+and its "completionType" property which is set to "and" by default. This means that all parallel state 
+branches must complete before the state can transition to the next workflow states.
+
+In addition, we show how we can compensate the order in case the order payment cannot be processed.
+
+For the sake of the example we assume that the "Order Request" event has the following sample payload:
+
+```json
+{
+    "order": {
+        "phone": "iPhone",
+        "version": "11",
+        "model": "pro",
+        "customerid" : "12345"
+    }
+}
+```
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-helloworld.png" height="400px" alt="Hello World Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{  
+"id": "helloworld",
+"version": "1.0",
+"name": "Hello World Workflow",
+"description": "Inject Hello World",
+"states":[  
+  {  
+     "name":"Hello State",
+     "type":"inject",
+     "start": true,
+     "data": {
+        "result": "Hello World!"
+     },
+     "end": true
+  }
+]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: helloworld
+version: '1.0'
+name: Hello World Workflow
+description: Inject Hello World
+states:
+- name: Hello State
+  type: inject
+  start: true
+  data:
+    result: Hello World!
+  end: true
 ```
 
 </td>
