@@ -3545,7 +3545,7 @@ or be passed as data output to transition states.
 
 Similarly for Callback states, the callback event data is merged with the data of the Callback state.
 
-Merging of this data case be controlled via [data filters](#State-Information-Filtering).
+Merging of this data case be controlled via [data filters](#State-Data-Filtering).
 
 #### Action Data
 
@@ -3557,7 +3557,7 @@ further orchestration decisions. Function results can be  merged with the state 
 <img src="media/spec/actionsdatamerged.png" height="350px" alt="Actions data merged with state data"/>
 </p>
 
-Merging of this data case be controlled via [data filters](#State-Information-Filtering).
+Merging of this data case be controlled via [data filters](#State-Data-Filtering).
 
 #### Information Passing Between States
 
