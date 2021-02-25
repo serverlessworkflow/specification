@@ -68,5 +68,8 @@ us know in chat or team meeting.
 * **Microsoft**
     * Josh Lane
 
+* **Vorteil**
+    * Alan Murtagh
+    * Jens Gerke
     
 
