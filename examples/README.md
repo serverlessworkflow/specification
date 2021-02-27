@@ -3519,7 +3519,7 @@ For the sake of the example we assume that the "Order Request" event has the fol
 ```
 
 We are not showing the implementation of the function and events definitions in-line. They are assumed 
-to be present in separate json files as shown in the workflow definition.
+to be present in separate JSON files as shown in the workflow definition.
 
 #### Workflow Diagram
 
