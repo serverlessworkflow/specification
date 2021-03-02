@@ -69,5 +69,8 @@ us know in chat or team meeting.
     * Josh Lane
     * Chris Gillum
 
+* **Vorteil**
+    * Alan Murtagh
+    * Jens Gerke
     
 
