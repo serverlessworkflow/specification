@@ -3543,11 +3543,11 @@ For the sake of the example we assume the functions and event definitions are de
    "id": "booklending",
    "name": "Book Lending Workflow",
    "version": "1.0",
+   "start": "Book Lending Request",
    "states": [
       {
          "name": "Book Lending Request",
          "type": "event",
-         "start": true,
          "onEvents": [
             {
                "eventRefs": ["Book Lending Request Event"]
@@ -3624,7 +3624,7 @@ For the sake of the example we assume the functions and event definitions are de
          "actions": [
             {
                "functionRef": {
-                  "refName": "Request fold for lender",
+                  "refName": "Request hold for lender",
                   "arguments": {
                      "bookid": "${ .book.id }",
                      "lender": "${ .lender }"
@@ -3677,10 +3677,10 @@ For the sake of the example we assume the functions and event definitions are de
 id: booklending
 name: Book Lending Workflow
 version: '1.0'
+start: Book Lending Request
 states:
 - name: Book Lending Request
   type: event
-  start: true
   onEvents:
   - eventRefs:
     - Book Lending Request Event
