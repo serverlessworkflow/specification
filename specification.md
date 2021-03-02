@@ -1143,7 +1143,7 @@ The following is a detailed description of each of the defined states.
 | name | State name | string | yes |
 | type | State type | string | yes |
 | exclusive | If "true", consuming one of the defined events causes its associated actions to be performed. If "false", all of the defined events must be consumed in order for actions to be performed. Default is "true"  | boolean | no |
-| [onEvents](#eventstate-onevents) | Define the events to be consumed and one or more actions to be performed | array | yes |
+| [onEvents](#eventstate-onevents) | Define the events to be consumed and optional actions to be performed | array | yes |
 | [timeout](#eventstate-timeout) | Time period to wait for incoming events (ISO 8601 format). For example: "PT15M" (wait 15 minutes), or "P2DT3H4M" (wait 2 days, 3 hours and 4 minutes)| string | no |
 | [stateDataFilter](#state-data-filter) | State data filter definition| object | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes |
@@ -1283,7 +1283,7 @@ the state should transition to the next state or can end the workflow execution 
 | --- | --- | --- | --- |
 | eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
 | actionMode | Specifies how actions are to be performed (in sequence of parallel). Default is "sequential" | string | no |
-| [actions](#Action-Definition) | Actions to be performed | array | yes |
+| [actions](#Action-Definition) | Actions to be performed | array | no |
 | [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
