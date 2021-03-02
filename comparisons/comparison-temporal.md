@@ -133,11 +133,11 @@ public class HelloActivity {
   "id": "HelloActivityRetry",
   "name": "Hello Activity Workflow",
   "version": "1.0",
+  "start": "GreetingState",
   "states": [
     {
       "name": "GreetingState",
       "type": "operation",
-      "start": true,
       "actions": [
         {
           "name": "Greet",
@@ -268,18 +268,19 @@ public class HelloActivity {
   "id": "HelloCron",
   "name": "Hello Activity with Cron Workflow",
   "version": "1.0",
+  "start": {
+    "stateName": "GreetingState",
+    "schedule": {
+      "cron": {
+        "expression": "* * * * *",
+        "validUntil": "PT10M"
+      }
+    }
+  },
   "states": [
     {
       "name": "GreetingState",
       "type": "operation",
-      "start": {
-        "schedule": {
-          "cron": {
-            "expression": "* * * * *",
-            "validUntil": "PT10M"
-          }
-        }
-      },
       "actions": [
         {
           "name": "Greet",
@@ -451,11 +452,11 @@ public class HelloActivity {
   "id": "HelloSaga",
   "name": "Hello SAGA compensation Workflow",
   "version": "1.0",
+  "start": "ExecuteState",
   "states": [
     {
       "name": "ExecuteState",
       "type": "operation",
-      "start": true,
       "compensatedBy": "CompensateState",
       "actions": [
         {
@@ -607,11 +608,11 @@ public class HelloActivityRetry {
   "id": "HelloActivityRetry",
   "name": "Hello Activity with Retries Workflow",
   "version": "1.0",
+  "start": "GreetingState",
   "states": [
     {
       "name": "GreetingState",
       "type": "operation",
-      "start": true,
       "actions": [
         {
           "name": "Greet",

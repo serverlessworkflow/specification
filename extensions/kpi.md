@@ -125,6 +125,7 @@ an associated sample KPIs extension definition on the right.
 id: patientVitalsWorkflow
 name: Monitor Patient Vitals
 version: '1.0'
+start: MonitorVitals
 events:
 - name: HighBodyTemperature
   type: org.monitor.highBodyTemp
@@ -151,7 +152,6 @@ functions:
 states:
 - name: MonitorVitals
   type: event
-  start: true
   exclusive: true
   onEvents:
   - eventRefs:

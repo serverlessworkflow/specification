@@ -77,6 +77,7 @@ spec:
 id: hello-world-parameters
 name: Hello World with parameters
 version: '1.0'
+start: whalesay
 functions:
 - name: whalesayimage
   metadata:
@@ -85,7 +86,6 @@ functions:
 states:
 - name: whalesay
   type: operation
-  start: true
   actions:
   - functionRef:
       refName: whalesayimage
@@ -155,6 +155,7 @@ spec:
 id: hello-hello-hello
 name: Multi Step Hello
 version: '1.0'
+start: hello1
 functions:
 - name: whalesayimage
   metadata:
@@ -163,7 +164,6 @@ functions:
 states:
 - name: hello1
   type: operation
-  start: true
   actions:
   - functionRef:
       refName: whalesayimage
@@ -256,6 +256,7 @@ spec:
 id: dag-diamond-
 name: DAG Diamond Example
 version: '1.0'
+start: A
 functions:
 - name: echo
   metadata:
@@ -264,7 +265,6 @@ functions:
 states:
 - name: A
   type: operation
-  start: true
   actions:
   - functionRef:
       refName: echo
@@ -290,7 +290,6 @@ states:
   transition: D
 - name: D
   type: operation
-  start: true
   actions:
   - functionRef:
       refName: echo
@@ -375,6 +374,7 @@ spec:
 id: scripts-bash-
 name: Scripts and Results Example
 version: '1.0'
+start: generate
 functions:
 - name: gen-random-int-bash
   metadata:
@@ -401,7 +401,6 @@ functions:
 states:
 - name: generate
   type: operation
-  start: true
   actions:
   - functionRef: gen-random-int-bash
     actionDataFilter:
@@ -470,6 +469,7 @@ spec:
 id: loops-
 name: Loop over data example
 version: '1.0'
+start: injectdata
 functions:
 - name: whalesay
   metadata:
@@ -478,7 +478,6 @@ functions:
 states:
 - name: injectdata
   type: inject
-  start: true
   data:
     greetings:
     - hello world
@@ -564,6 +563,7 @@ spec:
 id: coinflip-
 name: Conditionals Example
 version: '1.0'
+start: flip-coin
 functions:
 - name: flip-coin-function
   metadata:
@@ -578,7 +578,6 @@ functions:
 states:
 - name: flip-coin
   type: operation
-  start: true
   actions:
   - functionRef: flip-coin-function
     actionDataFilter:
@@ -656,6 +655,7 @@ spec:
 id: retry-backoff-
 name: Retry Example
 version: '1.0'
+start: retry-backoff
 functions:
 - name: fail-function
   metadata:
@@ -670,7 +670,6 @@ retries:
 states:
 - name: retry-backoff
   type: operation
-  start: true
   actions:
   - functionRef:
       refName: flip-coin-function
@@ -745,6 +744,7 @@ spec:
 id: coinflip-recursive-
 name: Recursion Example
 version: '1.0'
+start: flip-coin-state
 functions:
 - name: heads-function
   metadata:
@@ -758,7 +758,6 @@ functions:
 states:
 - name: flip-coin-state
   type: operation
-  start: true
   actions:
   - functionRef: flip-coin-function
     actionDataFilter:
@@ -854,6 +853,7 @@ spec:
 id: exit-handlers-
 name: Exit/Error Handling Example
 version: '1.0'
+start: intentional-fail-state
 functions:
 - name: intentional-fail-function
   metadata:
@@ -870,7 +870,6 @@ functions:
 states:
 - name: intentional-fail-state
   type: operation
-  start: true
   actions:
   - functionRef:
       refName: intentional-fail-function

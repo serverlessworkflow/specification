@@ -83,10 +83,10 @@ public class TripBookingWorkflowImpl implements TripBookingWorkflow {
 id: tripbookingwithcompensation
 name: Trip Booking With Compensation
 version: '1.0'
+start: BookTrip
 states:
 - name: BookTrip
   type: operation
-  start: true
   compensatedBy: CancelTrip
   actions:
   - functionRef: reservecarfunction
@@ -191,10 +191,10 @@ public class FileProcessingWorkflowImpl implements FileProcessingWorkflow {
 id: fileprocessingwithretries
 name: File Processing Workflow With Retries
 version: '1.0'
+start: ProcessAndUpload
 states:
 - name: ProcessAndUpload
   type: operation
-  start: true
   actions:
   - functionRef:
       refName: processfilefunction
@@ -295,11 +295,11 @@ public static class GreetingWorkflowImpl implements GreetingWorkflow {
 id: subflowgreeting
 name: SubFlow Greeting Workflow
 version: '1.0'
+start: GreetingSubFlow
 states:
 - name: GreetingSubFlow
   type: subflow
   workflowId: subflowgreet
-  start: true
   waitForCompletion: false
   end: true
 functions:
