@@ -259,7 +259,7 @@ name: Execution Timeout Workflow
 version: '1.0'
 start: Purchase Parts
 execTimeout:
-  interval: PT7D
+  duration: PT7D
   interrupt: true
   runBefore: Handle timeout
 states:

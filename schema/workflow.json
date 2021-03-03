@@ -138,9 +138,9 @@
     "exectimeout": {
       "type": "object",
       "properties": {
-        "interval": {
+        "duration": {
           "type": "string",
-          "description": "Timeout interval (ISO 8601 duration format)",
+          "description": "Timeout duration (ISO 8601 duration format)",
           "minLength": 1
         },
         "interrupt": {
@@ -155,7 +155,7 @@
         }
       },
       "required": [
-        "interval"
+        "duration"
       ]
     },
     "transition": {
@@ -1552,7 +1552,7 @@
               "minLength": 1
             },
             "schedule": {
-              "description": "Define the time/repeating intervals or cron at which workflow instances can/should be started",
+              "description": "Define the time/repeating intervals or cron at which workflow instances should be automatically started.",
               "$ref": "#/definitions/schedule"
             }
           },
@@ -1567,7 +1567,7 @@
       "oneOf": [
         {
           "type": "string",
-          "description": "Time interval (can be repeating) described with ISO 8601 format. Declares when workflow instances can be created.",
+          "description": "Time interval (must be repeating interval) described with ISO 8601 format. Declares when workflow instances will be automatically created.  (UTC timezone is assumed)",
           "minLength": 1
         },
         {
@@ -1576,7 +1576,7 @@
           "properties": {
             "interval": {
               "type": "string",
-              "description": "Time interval (ISO 8601 format) describing when workflow instances can be created.",
+              "description": "Time interval (must be repeating interval) described with ISO 8601 format. Declares when workflow instances will be automatically created.",
               "minLength": 1
             },
             "cron": {
@@ -1584,7 +1584,7 @@
             },
             "timezone": {
               "type": "string",
-              "description": "Timezone name used to evaluate the cron expression. Not used for interval as timezone can be specified there directly. If not specified, should default to local machine timezone."
+              "description": "Timezone name used to evaluate the interval & cron-expression. (default: UTC)"
             }
           },
           "oneOf": [

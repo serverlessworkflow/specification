@@ -728,7 +728,7 @@ You can reference the [specification examples](#Examples) to see the `keepActive
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| interval | Timeout interval (ISO 8601 duration format) | string | yes |
+| duration | Timeout duration (ISO 8601 duration format) | string | yes |
 | interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is stopped immediately. Default is `false`  | boolean | no |
 | runBefore | Name of a workflow state to be executed before workflow instance is terminated | string | no |
 
@@ -765,7 +765,7 @@ runBefore: createandsendreport
 
 </details>
 
-The `interval` property defines the time interval of the execution timeout. Once a workflow instance is created,
+The `duration` property defines the time duration of the execution timeout. Once a workflow instance is created,
 and the amount of the defined time is reached, the workflow instance should be terminated.
 
 The `interrupt` property defines if the currently running instance should be allowed to finish its current 
@@ -3107,7 +3107,7 @@ If the start definition is of type `object`, it has the following structure:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | stateName | Name of the starting workflow state | object | yes |
-| [schedule](#Schedule-Definition) | Define the time/repeating intervals or cron at which workflow instances can/should be started | object | yes |
+| [schedule](#Schedule-Definition) | Define the time/repeating intervals or cron at which workflow instances should be automatically started. | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3150,17 +3150,8 @@ If `string` type, it defines the name of the workflow starting state.
 If `object` type, it provides the ability to set the workflow starting state name, as well as the `schedule` property.
 
 The `schedule` property allows to define scheduled workflow instance creation. 
-Scheduled starts have two different choices. You can define time-based intervals during which workflow instances are **allowed**
-to be created (can be repeating), or cron-based times at which a workflow instance **should** be created (automatically). 
-
-To better explain interval-based scheduled starts, let's say
-we have a workflow that orchestrates an online auction and should be "available" only from when the auction starts until it ends. 
-Customer bids should only be allowed during this time interval. Bids made before or after the defined time interval should not be allowed.
-
-There are two cases to discuss when dealing with interval-based scheduled starts:
-
-1. **Starting States in [Parallel](#Parallel-State) state [branches](#parallel-state-branch)**: if a state in a parallel state branch defines a scheduled start state that is not "active" at the time the branch is executed, the parent workflow should not wait until it becomes active, and just complete the execution of the branch.
-2. **Starting states in [SubFlow](#SubFlow-State) states**: if a state in a workflow definition (referenced by SubFlow state) defines a scheduled start state that is not "active" at the time the SubFlow state is executed, the parent workflow should not wait until it becomes active, and just complete the execution of the SubFlow state.
+Scheduled starts have two different choices. You can a repeating interval or cron-based schedule at which a workflow 
+instance **should** be created (automatically). 
 
 You can also define cron-based scheduled starts, which allow to define periodically started workflow instances based on a [cron](http://crontab.org/) definition.
 Cron-based scheduled starts can handle absolute time intervals (i.e., not calculated in respect to some particular point in time).
@@ -3192,11 +3183,11 @@ the needed events at the defined times to trigger workflow instance creation.
 #### Schedule Definition
 
 `Schedule` definition can have two types, either `string` or `object`.
-If `string` type, it defines time interval describing when the workflow instance can be created.
+If `string` type, it defines time interval describing when the workflow instance should be automatically created.
 This can be used as a short-cut definition when you don't need to define any other parameters, for example:
 
 ```json
-"schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+"schedule": "R/PT2H"
 ```
 
 If you need to define the `cron` or the `timezone` parameters in your `schedule` definition, you can define 
@@ -3204,9 +3195,9 @@ it with its `object` type which has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| interval | Time interval (can be repeating) described with ISO 8601 format. Declares when workflow instances can be created | string | yes if `cron` not defined |
+| interval | Time interval (must be repeating interval) described with ISO 8601 format. Declares when workflow instances will be automatically created. | string | yes if `cron` not defined |
 | [cron](#Cron-Definition) | Cron expression defining when workflow instances should be created (automatically) | object | yes if `interval` not defined |
-| timezone | Timezone name (for example "America/Los_Angeles") used to evaluate the cron expression against. Not used for `interval` property as timezone can be specified there directly. If not specified, should default to local machine timezone | string | no |
+| timezone | Timezone name used to evaluate the interval & cron-expression. If the interval specifies a date-time w/ timezone then proper timezone conversion will be applied. (default: UTC). | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3238,24 +3229,22 @@ cron: 0 0/15 * * * ?
 
 </details>
 
-The `interval` property uses the ISO 8601 time interval format (can be repeating) to describe when workflow instances are allowed be created.
-There is a number of ways to express the time interval:
+The `interval` property uses the ISO 8601 time repeating interval format to describe when workflow instances will be automatically created.
+There are a number of supported ways to express the repeating interval:
 
-1. **Start** + **End**: Defines the start and end time, for example "2020-03-20T13:00:00Z/2021-05-11T15:30:00Z", meaning workflow instances can be
-created from March 20th 2020 at 1PM UTC until May 11th 2021 at 3:30pm UTC.
-2. **Start** + **Duration**: Defines the start time and the duration, for example: "2020-03-20T13:00:00Z/P1Y2M10DT2H30M", meaning workflow instances can be created
-from March 20th 2020 at 1pm UTC and continue to do so for 1 year, 2 months, 10 days 2 hours and 30 minutes.
-3. **Duration** + **End**: Defines the duration and an end, for example: "P1Y2M10DT2H30M/2020-05-11T15:30:00Z", meaning that workflow instances can be created from
-when the first instance is created until 1 year, 2 months, 10 days 2 hours and 30 minutes from that time, or until May 11th 2020 at 3:30PM UTC, whichever comes first.
-4. **Duration**: Defines the duration only, for example: ""P1Y2M10DT2H30M"", meaning workflow instances can be created for 1 year, 2 months, 10 days 2 hours and 30 minutes
-from the time the first instance is created.
+1. `R/<Start>/<Duration>`: Defines the start time and a duration, for example: "R/2020-03-20T13:00:00Z/PT2H", meaning workflow 
+instances will be automatically created every 2 hours starting from March 20th 2020 at 1pm UTC.
+2. `R/<Duration>/<End>`: Defines a duration and an end, for example: "R/PT2H/2020-05-11T15:30:00Z", meaning that workflow instances will be 
+automatically created every 2 hours until until May 11th 2020 at 3:30PM UTC.
+3. `R/<Duration>`: Defines a duration only, for example: "R/PT2H", meaning workflow instances will be automatically created every 2 hours.
 
 The `cron` property uses a [cron expression](http://crontab.org/) 
-to describe a repeating interval upon which a workflow instance should be created (automatically).
+to describe a repeating interval upon which a workflow instance should be created automatically.
 For more information see the [cron definition](#Cron-Definition) section.
 
-The `timezone` property is used to define a time zone name to evaluate the cron expression against. If not specified, it should default to the local
-machine time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezone names.
+The `timezone` property is used to define a time zone name to evaluate the cron or interval expression against. If not specified, it should default 
+to UTC time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezone names.  For ISO 8601 date time 
+values in `interval` or `cron.validUntil`, runtimes should treat `timezone` as the 'local time' (UTC if `interval` is not defined by the user).
 
 Note that when the workflow starting state is an [Event](#Event-State) 
 defining cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
