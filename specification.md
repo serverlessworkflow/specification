@@ -801,6 +801,7 @@ After the merge the state data should be:
 ```
 
 Merging array types should be done by concatenating them into a larger array including unique elements of both arrays.
+
 To give an example, merging:
 
 ```json
@@ -885,6 +886,9 @@ would produce state data:
 ```
 
 Merging string types should be done by overwriting the data from events data/action results into the merging element of the state data.
+
+Merging number types should be done by overwriting the data from events data/action results into the merging element of the state data. 
+
 
 ### Workflow Functions
 
