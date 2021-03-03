@@ -3199,14 +3199,13 @@ This can be used as a short-cut definition when you don't need to define any oth
 "schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
 ```
 
-If you need to define the `cron`, `directInvoke` or the `timezone` parameters in your `schedule` definition, you can define 
+If you need to define the `cron` or the `timezone` parameters in your `schedule` definition, you can define 
 it with its `object` type which has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | interval | Time interval (can be repeating) described with ISO 8601 format. Declares when workflow instances can be created | string | yes if `cron` not defined |
 | [cron](#Cron-Definition) | Cron expression defining when workflow instances should be created (automatically) | object | yes if `interval` not defined |
-| directInvoke | Defines if workflow instances can be created outside of the interval/cron interval. Default value is `false` | boolean | no |
 | timezone | Timezone name (for example "America/Los_Angeles") used to evaluate the cron expression against. Not used for `interval` property as timezone can be specified there directly. If not specified, should default to local machine timezone | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3222,8 +3221,7 @@ it with its `object` type which has the following properties:
 
 ```json
 {
-   "cron": "0 0/15 * * * ?",
-   "directInvoke": true
+   "cron": "0 0/15 * * * ?"
 }
 ```
 
@@ -3232,7 +3230,6 @@ it with its `object` type which has the following properties:
 
 ```yaml
 cron: 0 0/15 * * * ?
-directInvoke: true
 ```
 
 </td>
@@ -3263,8 +3260,6 @@ machine time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_
 Note that when the workflow starting state is an [Event](#Event-State) 
 defining cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues 
 the needed events at the defined times to trigger workflow instance creation.
-
-The `directInvoke` property defines if workflow instances are allowed to be created outside of the defined interval or cron expression.
 
 #### Cron Definition
 
