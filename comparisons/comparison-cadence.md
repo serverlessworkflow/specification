@@ -200,8 +200,8 @@ states:
       refName: processfilefunction
       arguments:
         filename: "${ .file.name }"
-    actionDataFilter:
-      dataResultsPath: "${ .processed }"
+    actionFilter:
+      results: "${ .processed }"
   - functionRef:
       refName: uploadfunction
       arguments:

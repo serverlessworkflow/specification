@@ -165,8 +165,8 @@ Which is added to the states data and becomes the workflow data output.
                 "name": "${ .person.name }"
               }
            },
-           "actionDataFilter": {
-              "dataResultsPath": "${ .greeting }"
+           "actionFilter": {
+              "results": "${ .greeting }"
            }
         }
      ],
@@ -196,8 +196,8 @@ states:
       refName: greetingFunction
       arguments:
         name: "${ .person.name }"
-    actionDataFilter:
-      dataResultsPath: "${ .greeting }"
+    actionFilter:
+      results: "${ .greeting }"
   end: true
 ```
 
@@ -242,21 +242,21 @@ Note that in the workflow definition you can see two filters defined. The event 
 
 ```json
 {
-  "eventDataFilter": {
-    "dataOutputPath": "${ .data.greet } "
+  "eventFilter": {
+    "data": "${ .data.greet } "
   }
 }
 ```
 
-which is triggered when the greeting event is consumed. It extracts its "data.greet" of the event and
-merges it with the states data.
+which is triggered when the greeting event is consumed. It extracts its "data.greet" of the event data (payload) and
+merges it with the state data.
 
 The second, a state data filter, which is defined on the event state itself:
 
 ```json
 {
-  "stateDataFilter": {
-     "dataOutputPath": "${ .payload.greeting }"
+  "stateFilter": {
+     "output": "${ .payload.greeting }"
   }
 }
 ```
@@ -309,8 +309,8 @@ filters what is selected to be the state data output which then becomes the work
      "type":"event",
      "onEvents": [{
          "eventRefs": ["GreetingEvent"],
-         "eventDataFilter": {
-            "dataOutputPath": "${ .data.greet }"
+         "eventFilter": {
+            "data": "${ .data.greet }"
          },
          "actions":[  
             {  
@@ -323,8 +323,8 @@ filters what is selected to be the state data output which then becomes the work
             }
          ]
      }],
-     "stateDataFilter": {
-        "dataOutputPath": "${ .payload.greeting }"
+     "stateFilter": {
+        "output": "${ .payload.greeting }"
      },
      "end": true
   }
@@ -354,15 +354,15 @@ states:
   onEvents:
   - eventRefs:
     - GreetingEvent
-    eventDataFilter:
-      dataOutputPath: "${ .data.greet }"
+    eventFilter:
+      data: "${ .data.greet }"
     actions:
     - functionRef:
         refName: greetingFunction
         arguments:
           name: "${ .greet.name }"
-  stateDataFilter:
-    dataOutputPath: "${ .payload.greeting }"
+  stateFilter:
+    output: "${ .payload.greeting }"
   end: true
 ```
 
@@ -437,8 +437,8 @@ result of the workflow execution.
       }
    }
  ],
- "stateDataFilter": {
-    "dataOutputPath": "${ .results }"
+ "stateFilter": {
+    "output": "${ .results }"
  },
  "end": true
 }
@@ -469,8 +469,8 @@ states:
       refName: solveMathExpressionFunction
       arguments:
         expression: "${ .singleexpression }"
-  stateDataFilter:
-    dataOutputPath: "${ .results }"
+  stateFilter:
+    output: "${ .results }"
   end: true
 ```
 
@@ -891,8 +891,8 @@ The data output of the workflow contains the information of the exception caught
           }
        }
     ],
-    "stateDataFilter": {
-       "dataOutputPath": "${ .exceptions }"
+    "stateFilter": {
+       "output": "${ .exceptions }"
     },
     "transition": "ApplyOrder",
     "onErrors": [
@@ -959,8 +959,8 @@ states:
       refName: provisionOrderFunction
       arguments:
         order: "${ .order }"
-  stateDataFilter:
-    dataOutputPath: "${ .exceptions }"
+  stateFilter:
+    output: "${ .exceptions }"
   transition: ApplyOrder
   onErrors:
   - error: Missing order id
@@ -1059,8 +1059,8 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
               "name": "${ .job.name }"
             }
           },
-          "actionDataFilter": {
-            "dataResultsPath": "${ .jobuid }"
+          "actionFilter": {
+            "results": "${ .jobuid }"
           }
       }
       ],
@@ -1070,8 +1070,8 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
         "transition": "SubmitError"
       }
       ],
-      "stateDataFilter": {
-          "dataOutputPath": "${ .jobuid }"
+      "stateFilter": {
+          "output": "${ .jobuid }"
       },
       "transition": "WaitForCompletion'"
   },
@@ -1099,13 +1099,13 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
               "name": "${ .jobuid }"
             }
           },
-          "actionDataFilter": {
-          "dataResultsPath": "${ .jobstatus }"
+          "actionFilter": {
+            "results": "${ .jobstatus }"
           }
       }
       ],
-      "stateDataFilter": {
-          "dataOutputPath": "${ .jobstatus }"
+      "stateFilter": {
+          "output": "${ .jobstatus }"
       },
       "transition": "DetermineCompletion"
   },
@@ -1189,13 +1189,13 @@ states:
       refName: submitJob
       arguments:
         name: "${ .job.name }"
-    actionDataFilter:
-      dataResultsPath: "${ .jobuid }"
+    actionFilter:
+      results: "${ .jobuid }"
   onErrors:
   - error: "*"
     transition: SubmitError
-  stateDataFilter:
-    dataOutputPath: "${ .jobuid }"
+  stateFilter:
+    output: "${ .jobuid }"
   transition: WaitForCompletion
 - name: SubmitError
   type: subflow
@@ -1213,10 +1213,10 @@ states:
       refName: checkJobStatus
       arguments:
         name: "${ .jobuid }"
-    actionDataFilter:
-      dataResultsPath: "${ .jobstatus }"
-  stateDataFilter:
-    dataOutputPath: "${ .jobstatus }"
+    actionFilter:
+      results: "${ .jobstatus }"
+  stateFilter:
+    output: "${ .jobstatus }"
   transition: DetermineCompletion
 - name: DetermineCompletion
   type: switch
@@ -2357,8 +2357,8 @@ For this example we assume that the workflow instance is started given the follo
                        "data": "${ .patientInfo }",
                        "resultEventRef":  "VetAppointmentInfo"
                     },
-                    "actionDataFilter": {
-                        "dataResultsPath": "${ .appointmentInfo }"
+                    "actionFilter": {
+                        "results": "${ .appointmentInfo }"
                     },
                     "timeout": "PT15M"
                 }
@@ -2394,8 +2394,8 @@ states:
       triggerEventRef: MakeVetAppointment
       data: "${ .patientInfo }"
       resultEventRef: VetAppointmentInfo
-    actionDataFilter:
-      dataResultsPath: "${ .appointmentInfo }"
+    actionFilter:
+      results: "${ .appointmentInfo }"
     timeout: PT15M
   end: true
 ```
@@ -3125,8 +3125,8 @@ the data for an hour, send report, and so on.
               }
             }
           ],
-          "eventDataFilter": {
-            "dataOutputPath": "${ .readings }"
+          "eventFilter": {
+            "data": "${ .readings }"
           }
         }
       ],
@@ -3207,8 +3207,8 @@ states:
     actions:
     - functionRef:
         refName: LogReading
-    eventDataFilter:
-      dataOutputPath: "${ .readings }"
+    eventFilter:
+      data: "${ .readings }"
   end: true
 - name: GenerateReport
   type: operation

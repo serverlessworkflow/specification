@@ -402,8 +402,8 @@ states:
   onEvents:
   - eventRefs:
     - execEvent
-    eventDataFilter:
-      dataOutputPath: "${ .event }"
+    eventFilter:
+      results: "${ .event }"
     actions:
     - name: eventInfoAction
       functionRef:
@@ -483,19 +483,19 @@ states:
   onEvents:
   - eventRefs:
     - execEvent
-    eventDataFilter:
-      dataOutputPath: "${ .event }"
+    eventFilter:
+      data: "${ .event }"
     actions:
     - name: helloAction
-      actionDataFilter:
-        dataResultsPath: "${ .helloResult }"
+      actionFilter:
+        results: "${ .helloResult }"
       functionRef:
         refName: greetingFunction
         arguments:
           message: hello
     - name: worldAction
-      actionDataFilter:
-        dataResultsPath: "${ .worldResults }"
+      actionFilter:
+        results: "${ .worldResults }"
       functionRef:
         refName: greetingAction
         arguments:
@@ -571,8 +571,8 @@ states:
   - eventRefs:
     - execEvent
     actions: []
-    eventDataFilter:
-      dataOutputPath: "${ .execEvent }"
+    eventFilter:
+      data: "${ .execEvent }"
   transition:
     nextState: NextEventState
     produceEvents:
@@ -589,8 +589,8 @@ states:
   onEvents:
   - eventRefs:
     - nextEvent
-    eventDataFilter:
-      dataOutputPath: "${ .nextEvent }"
+    eventFilter:
+      data: "${ .nextEvent }"
     actions:
     - name: consoleLogAction
       functionRef:

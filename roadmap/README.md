@@ -38,6 +38,7 @@ _Status description:_
 | ✔️| Replace JsonPath with jq | [spec doc](../specification.md) |
 | ✔️| Update start definition (move to top-level worklow param) | [spec doc](../specification.md) |
 | ✔️| Updated schedule definition | [spec doc](../specification.md) |
+| ✔️| Update data filters | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 

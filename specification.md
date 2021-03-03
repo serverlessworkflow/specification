@@ -157,14 +157,734 @@ The Serverless Workflow language is composed of:
 ### Workflow Data
 
 Serverless Workflow data is represented in [JSON](https://www.json.org/json-en.html) format.
-Data flow during workflow execution is composed of:
+Data flow and execution logic go hand in hand, meaning as workflow execution follows the workflow definition
+logic, so does the workflow data:
 
-- [Workfow data input](#Workflow-data-input)
-- [Event data](#Event-data)
-- [Action data](#Action-data)
-- [Information passing between states](#Information-passing-Between-States)
-- [State Data filtering](#State-data-filtering)
-- [Workflow data output](#Workflow-data-output)
+<p align="center">
+<img src="media/spec/workflowdataflow.png" height="400" alt="Serverless Workflow Data Flow"/>
+</p>
+ 
+The initial [Workfow data input](#Workflow-data-input) is passed to the workflow starting state as its data input.
+When a state finishes its execution, [its data output is passed as data input to the next state](#Information-passing-Between-States) that should be executed.
+
+When workflow execution ends, the last executed workflow state's data output becomes the final [Workflow data output](#Workflow-data-output).
+
+States can filter their data inputs and outputs using [State Data filters](#State-data-filters).
+
+States can also consume events as well as invoke services. These event payloads and service invocation results
+can be filtered using [Event data filters](#Event-data-filters) and [Action data filters](#Action-data-filters).
+
+Data filters use [workflow expressions](#Workflow-Expressions) for selecting and manipulating state data
+input and output, action inputs and results, and event payloads.
+
+Multiple filters can be combined to gain high level of control of your workflow state data. You can find an example of that in
+[this](#Using-multiple-data-filters) section.
+
+Data from consumed events,and action execution results are added/merged
+to state data. Reference the [data merging section](#Data-Merging) to learn about the merging rules that should be applied.
+
+#### Workflow Data Input
+
+The initial data input into a workflow instance. Must be a valid [JSON object](https://tools.ietf.org/html/rfc7159#section-4).
+If no input is provided, the default data input should be an empty JSON object:
+
+```json
+{ }
+```
+
+Workflow data input is passed to the workflow starting state as its data input.
+
+<p align="center">
+<img src="media/spec/workflowdatainput.png" height="350px" alt="Workflow data input"/>
+</p>
+
+#### Information Passing Between States
+
+States in a workflow can receive data (data input) and produce a data result (data output). The state's data input is typically the previous state's data output.
+When a state completes its execution, its data output is passed to the state's data input it transitions to.
+There are two rules to consider here:
+
+- If the state is the workflow starting state, its data input is the [workflow data input](#Workflow-data-input).
+- When workflow execution ends, the data output of the last executed state becomes the [workflow data output](#Workflow-data-output).  
+
+<p align="center">
+<img src="media/spec/basic-state-data-passing.png" height="350px" alt="Basic state data passing"/>
+</p>
+
+#### Workflow data output
+
+Each workflow execution should produce a data output. 
+The workflow data output is the data output of the last executed workflow state.
+
+#### State data filters
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| input | Workflow expression to filter the states data input | string | no |
+| output | Workflow expression that filters the states data output | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+    "stateDataFilter": {
+      "input": "${ .orders }",
+      "output": "${ .provisionedOrders }"
+    }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+stateDataFilter:
+  input: "${ .orders }"
+  output: "${ .provisionedOrders }"
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+State data filters can be used to filter the states data input and output.
+
+The state data filters `input` property expression is applied when the workflow transitions to the current state and receives its data input.
+It can be used to select only data that is needed and disregard what is not needed.
+If `input` is not defined or does not select any parts of the state's data input, its data input is not filtered.
+
+The state data filter `output` property expression is applied right before the state transitions to the next state defined. 
+It filters the state's data output to be passed as data input to the transitioning state.
+If the current state is the workflow end state, the filtered state's data output becomes the workflow data output.
+If `output` is not defined or does not select any parts of the state's data output, its data output is not filtered.
+
+Results of the `input` expression should become the state data. 
+Results of the `output` expression should become the state data output.
+
+For more information on this you can reference the [data merging](#Data-Merging) section.
+
+Let's take a look at some examples of state filters. For our examples let's say the data input to our state is as follows:
+
+```json
+{
+  "fruits": [ "apple", "orange", "pear" ],
+  "vegetables": [
+    {
+      "veggieName": "potato",
+      "veggieLike": true
+    },
+    {
+      "veggieName": "broccoli",
+      "veggieLike": false
+    }
+  ]
+}
+```
+
+For the first example, our state only cares about fruits data, and we want to disregard the vegetables. To do this
+we can define a state filter:
+
+```json
+{
+  "stateDataFilter": {
+    "input": "${ {fruits: .fruits} }"
+  }
+}
+```
+
+The state data output then would include only the fruits data:
+
+```json
+{
+  "fruits": [ "apple", "orange", "pear"]
+}
+```
+
+<p align="center">
+<img src="media/spec/state-data-filter-example1.png" height="400px" alt="State Data Filter Example"/>
+</p>
+
+For our second example, let's say that we are interested in the only vegetable "veggie-like".
+Here we have two ways of filtering our data, depending on if actions within our state need access to all vegetables, or
+only the ones that are "veggie-like".
+
+The first way would be to use both "input", and "output":
+
+```json
+{
+  "stateDataFilter": {
+    "input": "${ {vegetables: .vegetables} }",
+    "output": "${ {vegetables: .vegetables[] | select(.veggieLike == true)} }"
+  }
+}
+```
+
+The states data input filter selects all the vegetables from the main data input. Once all actions have performed, before the state transition
+or workflow execution completion (if this is an end state), the "output" of the state filter selects only the vegetables which are "veggie like".
+
+<p align="center">
+<img src="media/spec/state-data-filter-example2.png" height="400px" alt="State Data Filter Example"/>
+</p>
+
+The second way would be to directly filter only the "veggie like" vegetables with just the data input path:
+
+```json
+{
+  "stateDataFilter": {
+    "input": "${ {vegetables: .vegetables[] | select(.veggieLike == true)} }"
+  }
+}
+```
+
+#### Action data filters
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
+| results | Workflow expression that filters the actions data results | string | no |
+| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "actionDataFilter": {
+    "fromStateData": "${ .language }", 
+    "results": "${ .results.greeting }",
+    "toStateData": "${ .finalgreeting }"
+  }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+actionDataFilter:
+  fromStateData: "${ .language }"
+  results: "${ .results.greeting }"
+  toStateData: "${ .finalgreeting }"
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Action data filters can be used inside [Action definitions.](#Action-Definition)
+Each action can define this filter which can:
+
+* Filter the state data to select only the data that can be used within function definition arguments using its `fromStateData` property.
+* Filter the action results to select only the result data that should be added/merged back into the state data
+using its `results` property.
+* Select the part of state data which the action data results should be added/merged to
+using the `toStateData` property.
+
+To give an example, let's say we have an action which returns a list of breads and pasta types.
+For our workflow, we are only interested into breads and not the pasta.
+
+Action results:
+
+```json
+{
+  "breads": ["baguette", "brioche", "rye"],
+  "pasta": [ "penne",  "spaghetti", "ravioli"]
+}
+```
+
+We can use an action data filter to filter only the breads data:
+
+```json
+{
+"actions":[  
+    {  
+       "functionRef": "breadAndPastaTypesFunction",
+       "actionDataFilter": {
+          "results": "${ {breads: .breads} }"
+       }
+    }
+ ]
+}
+```
+
+The `results` will filter the action results, which would then be:
+
+```json
+{
+  "breads": [
+    "baguette",
+    "brioche",
+    "rye"
+  ]
+}
+```
+
+Now let's take a look at a similar example (same expected action results) and assume our current state data is:
+
+```json
+{
+  "itemsToBuyAtStore": [
+  ]
+}
+```
+
+and have the following action definition:
+
+```json
+{
+"actions":[  
+    {  
+       "functionRef": "breadAndPastaTypesFunction",
+       "actionDataFilter": {
+          "results": "${ [ .breads[0], .pasta[1] ] }",
+          "toStateData": "${ .itemsToBuyAtStore }"
+       }
+    }
+ ]
+}
+```
+
+In this case, our `results` select the first bread and the second element of the pasta array.
+The `toStateData` expression then selects the `itemsToBuyAtStore` array of the state data to add/merge these results
+into. With this, after our action executes the state data would be:
+
+```json
+{
+  "itemsToBuyAtStore": [
+    "baguette",
+    "spaghetti"
+  ]
+}
+```
+
+#### Event data filters
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| data | Workflow expression that filters the event data (payload) | string | no |
+| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+    "eventDataFilter": {
+       "data": "${ .data.results }"
+    }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+eventDataFilter:
+  data: "${ .data.results }"
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Event data filters can be used to filter consumed event payloads.
+They can be used to:
+
+* Filter the event payload to select only the data that should be added/merged into the state data 
+using its `data` property.
+* Select the part of state data into which the event payload should be added/merged into
+using the `toStateData` property.
+
+Allows event data to be filtered and added to or merged with the state data. All events have to be in the CloudEvents format
+and event data filters can filter both context attributes and the event payload (data) using the `data` property.
+
+Here is an example using an event filter:
+
+<p align="center">
+<img src="media/spec/event-data-filter-example1.png" height="400px" alt="Event Data Filter Example"/>
+</p>
+
+#### Using multiple data filters
+
+As [Event states](#Event-State) can take advantage of all defined data filters. In the example below, we define
+a workflow with a single event state and show how data filters can be combined.
+
+```json
+{
+    "id": "GreetCustomersWorkflow",
+    "name": "Greet Customers when they arrive",
+    "version": "1.0",
+    "start": "WaitForCustomerToArrive",
+    "states":[
+         {
+            "name": "WaitForCustomerToArrive",
+            "type": "event",
+            "onEvents": [{
+                "eventRefs": ["CustomerArrivesEvent"],
+                "eventDataFilter": {
+                    "data": "${ .customer }",
+                    "toStateData": "${ .customerInfo }"
+                },
+                "actions":[
+                    {
+                        "functionRef": {
+                            "refName": "greetingFunction",
+                            "arguments": {
+                                "greeting": "${ .spanish } ",
+                                "customerName": "${ .customerInfo.name } "
+                            }
+                        },
+                        "actionDataFilter": {
+                            "fromStateData": "${ .hello }",
+                            "results": "${ .greetingMessageResult }",
+                            "toStateData": "${ .finalCustomerGreeting }"
+                        }
+                    }
+                ]
+            }],
+            "stateDataFilter": {
+                "input": "${ .greetings } ",
+                "output": "${ .finalCustomerGreeting }"
+            },
+            "end": true
+        }
+    ],
+    "events": [{
+        "name": "CustomerArrivesEvent",
+        "type": "customer-arrival-type",
+        "source": "customer-arrival-event-source"
+     }],
+    "functions": [{
+        "name": "greetingFunction",
+        "operation": "http://my.api.org/myapi.json#greeting"
+    }]
+}
+```
+
+The workflow data input when starting workflow execution is assumed to include greetings in different languages:
+
+```json
+{
+  "greetings": {
+      "hello": {
+        "english": "Hello",
+        "spanish": "Hola",
+        "german": "Hallo",
+        "russian": "Здравствуйте"
+      },
+      "goodbye": {
+        "english": "Goodbye",
+        "spanish": "Adiós",
+        "german": "Auf Wiedersehen",
+        "russian": "Прощай"
+      }
+  }
+}
+```
+The workflow data input then becomes the data input of the starting workflow state.
+
+We also assume for this example that the CloudEvent that our event state consumes include the data (payload):
+
+```json
+{
+ "customer": {
+   "name": "John Michaels",
+   "address": "111 Some Street, SomeCity, SomeCountry",
+   "age": 40
+ }
+}
+```
+
+Here is a sample diagram showing our workflow, each numbered step on this diagram shows a certain defined point during
+workflow execution at which data filters are invoked and correspond to the numbered items below.
+
+<p align="center">
+<img src="media/spec/using-multiple-filters-example.png" height="400px" alt="Using Multple Filters Example"/>
+</p>
+
+**(1) Workflow execution starts**: Workflow data is passed to our "WaitForCustomerToArrive" event state as data input.
+Workflow executes its starting state, namely the "WaitForCustomerToArrive" event state.
+
+The event state **stateDataFilter** is invoked to filter its data input. The filters "input" expression is evaluated and 
+selects only the "greetings" data. The rest of the state data input should be disregarded. 
+
+At this point our state data should be:
+
+```json
+{
+  "hello": {
+    "english": "Hello",
+    "spanish": "Hola",
+    "german": "Hallo",
+    "russian": "Здравствуйте"
+  },
+  "goodbye": {
+    "english": "Goodbye",
+    "spanish": "Adiós",
+    "german": "Auf Wiedersehen",
+    "russian": "Прощай"
+  }
+}
+```
+
+**(2) CloudEvent of type "customer-arrival-type" is consumed**: Once the vent is consumed, the "eventDataFilter" is triggered. 
+Its "data" expression selects the "customer" object from the events data. The "toStateData" expression
+says that we should add/merge this selected event data to the state data in its "customerInfo" property. If this property
+exists it should be merged, if it does not exist, one should be created.
+
+At this point our state data contains:
+
+```json
+{
+  "hello": {
+      "english": "Hello",
+      "spanish": "Hola",
+      "german": "Hallo",
+      "russian": "Здравствуйте"
+    },
+    "goodbye": {
+      "english": "Goodbye",
+      "spanish": "Adiós",
+      "german": "Auf Wiedersehen",
+      "russian": "Прощай"
+    },
+    "customerInfo": {
+       "name": "John Michaels",
+       "address": "111 Some Street, SomeCity, SomeCountry",
+       "age": 40
+     }
+}
+```
+
+**(3) Event state performs its actions**:
+Before the first action is executed, its actionDataFilter is invoked. Its "fromStateData" expression filters
+the current state data to select from its data that should be available to action arguments. In this example
+it selects the "hello" property from the current state data.
+At this point the action is executed. 
+We assume that for this example "greetingFunction" returns:
+
+```json
+{
+   "execInfo": {
+     "execTime": "10ms",
+     "failures": false
+   },
+   "greetingMessageResult": "Hola John Michaels!"
+}
+```
+
+After the action is executed, the actionDataFilter "results" expression is evaluated to filter the results returned from the action execution. In this case, we select only the "greetingMessageResult" element from the results.
+
+The action filters "toStateData" expression then defines that we want to add/merge this action result to
+state data under the "finalCustomerGreeting" element.
+
+At this point, our state data contains:
+
+```json
+{
+  "hello": {
+      "english": "Hello",
+      "spanish": "Hola",
+      "german": "Hallo",
+      "russian": "Здравствуйте"
+    },
+    "goodbye": {
+      "english": "Goodbye",
+      "spanish": "Adiós",
+      "german": "Auf Wiedersehen",
+      "russian": "Прощай"
+    },
+    "customerInfo": {
+       "name": "John Michaels",
+       "address": "111 Some Street, SomeCity, SomeCountry",
+       "age": 40
+     },
+     "finalCustomerGreeting": "Hola John Michaels!"
+}
+```
+
+
+**(4) Event State Completes  Execution**: 
+
+When our event state finishes its execution, the states "stateDataFilter" "output" filter expression is executed
+to filter the state data to create the final state data output.
+
+Because our event state is also an end state, its data output becomes the final [workflow data output](#Workflow-data-output). Namely:
+
+```json
+{
+   "finalCustomerGreeting": "Hola John Michaels!"
+}
+```
+
+#### Data Merging
+
+Consumed event data (payload) and action execution results should be merged into the state data.
+Event and action data filters can be used to give more details about this operation.
+
+By default (no data filters specified), when an event is consumed, its entire data section (payload) should be merged
+to the state data. The merge should be applied to the entire state data JSON element.
+
+In case of event and action filters, their "toStateData" property can be defined to select a specific element 
+of the state data with which the merge should be done against. If this element does not exist, a new one should
+be created first.
+
+When merging, the state data element and the data (payload)/action result should have the same type, meaning
+that you should not merge arrays with objects or objects with arrays etc. 
+
+When merging elements of type object should be done by inserting all the key-value pairs from both objects into
+a single combined object. If both objects contain a value for the same key, the object of the event data/action results 
+should "win". To give an example, let's say we have the following state data:
+
+```json
+{
+    "customer": {
+        "name": "John",
+        "address": "1234 street",
+        "zip": "12345"
+    }
+}
+```
+
+and we have the following event payload that needs to be merged into the state data:
+
+```json
+{
+    "customer": {
+        "name": "John",
+        "zip": "54321"
+    }
+}
+```
+
+After the merge the state data should be:
+
+```json
+{
+  "customer": {
+    "name": "John",
+    "address": "1234 street",
+    "zip": "54321"
+  }
+}
+```
+
+Merging array types should be done by concatenating them into a larger array including unique elements of both arrays.
+To give an example, merging:
+
+```json
+{
+    "customers": [
+      {
+        "name": "John",
+        "address": "1234 street",
+        "zip": "12345"
+      },
+      {
+        "name": "Jane",
+        "address": "4321 street",
+        "zip": "54321"
+      }
+    ]
+}
+```
+
+into state data:
+
+```json
+{
+    "customers": [
+      {
+        "name": "Michael",
+        "address": "6789 street",
+        "zip": "6789"
+      }
+    ]
+}
+```
+
+should produce state data:
+
+```json
+{
+    "customers": [
+      { 
+        "name": "Michael",
+        "address": "6789 street",
+        "zip": "6789"
+      },
+      {
+        "name": "John",
+        "address": "1234 street",
+        "zip": "12345"
+      },
+      {
+        "name": "Jane",
+        "address": "4321 street",
+        "zip": "54321"
+      }
+    ]
+}
+```
+
+
+Merging number types should be done by overwriting the data from events data/action results into the merging element of the state data. 
+For example merging action results:
+
+```json
+{
+    "age": 30
+}
+```
+
+into state data:
+
+```json
+{
+    "age": 20
+}
+```
+
+would produce state data: 
+
+```json
+{
+    "age": 30
+}
+```
+
+Merging string types should be done by overwriting the data from events data/action results into the merging element of the state data.
 
 ### Workflow Functions
 
@@ -183,13 +903,13 @@ workflow execution. They can be referenced by states [action definitions](#Actio
 define when the service operations should be invoked during workflow execution, as well as the data parameters
 passed to them if needed.
 
-Note that with Serverless Workflow we can also define service invocations via events.
+Note that with Serverless Workflow, we can also define service invocations via events.
 To learn more about that, please reference the [event definitions](#Event-Definition) section, 
 as well as the [actions definitions](#Action-Definition) [eventRef](#EventRef-Definition) property.
- 
+
 Because of an overall lack of a common way to describe different services and their operations,
 many workflow languages typically chose to define custom function definitions.
-This approach however often runs into issues such as lack of portability, limited capabilities, as well as 
+This approach, however, often runs into issues such as lack of portability, limited capabilities, as well as 
 forcing non-workflow-specific information, such as service authentication, to be added inside the workflow language.
 
 To avoid these issues, the Serverless Workflow specification mandates that details about 
@@ -211,7 +931,7 @@ Here is an example function definition for a RESTful service operation.
 }
 ```
 
-It can, as previously mentioned be referenced during workflow execution when invocation of this service is desired. 
+It can, as previously mentioned be referenced during workflow execution when the invocation of this service is desired. 
 For example:
 
 ```json
@@ -243,7 +963,7 @@ gRPC uses [Protocol Buffers](https://developers.google.com/protocol-buffers/docs
 and the methods on those services that can be invoked. 
 
 Let's look at an example of invoking a service method using RPC. For this example let's say we have the following
-gRP prototocol buffer definition in a myuserservice.proto file:
+gRP protocol buffer definition in a myuserservice.proto file:
 
 ```text
 service UserService {
@@ -328,7 +1048,7 @@ Let's take at an example of such definitions:
 Here we define two reusable expression functions. Expressions in Serverless Workflow
 are evaluated against the workflow data. Note that different data filters play a big role as to which parts of the 
 workflow data are selected. Reference the 
-[State Data Filtering](#State-Data-Filtering) section for more information on this.
+[State Data Filtering](#State-data-filters) section for more information on this.
 
 Our expression function definitions can now be referenced by workflow states when they need to be evaluated. For example:
 
@@ -370,7 +1090,7 @@ Workflow model parameters can use expressions to select/manipulate workflow and/
 
 Note that different data filters play a big role as to which parts of the states data are to be used when the expression is
 evaluated. Reference the 
-[State Data Filtering](#State-Data-Filtering) section for more information about state data filters.
+[State Data Filtering](#State-data-filters) section for more information about state data filters.
 
 By default, all workflow expressions should be defined using the [jq](https://stedolan.github.io/jq/) syntax.
 You can find more information on jq in its [manual](https://stedolan.github.io/jq/manual/).
@@ -467,12 +1187,13 @@ In this case our input parameter `applicantName` would be set to "John Doe".
 
 Expressions can also be used to select and manipulate state data, this is in particularly useful for 
 state data filters. 
+
 For example let's use another inline expression:
 
 ```json
 {
    "stateDataFilter": {
-       "dataOutputPath": "${ .applicant | {applicant: .name, contactInfo: { email: .email, phone: .phoneNumbers }} }"
+       "output": "${ .applicant | {applicant: .name, contactInfo: { email: .email, phone: .phoneNumbers }} }"
    }
 }
 ```
@@ -1145,7 +1866,7 @@ The following is a detailed description of each of the defined states.
 | exclusive | If "true", consuming one of the defined events causes its associated actions to be performed. If "false", all of the defined events must be consumed in order for actions to be performed. Default is "true"  | boolean | no |
 | [onEvents](#eventstate-onevents) | Define the events to be consumed and optional actions to be performed | array | yes |
 | [timeout](#eventstate-timeout) | Time period to wait for incoming events (ISO 8601 format). For example: "PT15M" (wait 15 minutes), or "P2DT3H4M" (wait 2 days, 3 hours and 4 minutes)| string | no |
-| [stateDataFilter](#state-data-filter) | State data filter definition| object | no |
+| [stateDataFilter](#State-data-filters) | State data filter definition| object | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [end](#End-Definition) | Is this state an end state | object | no |
@@ -1284,7 +2005,7 @@ the state should transition to the next state or can end the workflow execution 
 | eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
 | actionMode | Specifies how actions are to be performed (in sequence of parallel). Default is "sequential" | string | no |
 | [actions](#Action-Definition) | Actions to be performed | array | no |
-| [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
+| [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1436,7 +2157,7 @@ instance in case it is an end state without performing any actions.
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` is not used |
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` is not used |
 | timeout | Time period to wait for function execution to complete or the resultEventRef to be consumed (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | no |
-| [actionDataFilter](#action-data-filter) | Action data filter definition | object | no |
+| [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1877,7 +2598,7 @@ Transitions allow you to move from one state (control-logic block) to another. F
 | type | State type | string | yes |
 | actionMode | Should actions be performed sequentially or in parallel | string | no |
 | [actions](#Action-Definition) | Actions to be performed | array | yes |
-| [stateDataFilter](#state-data-filter) | State data filter | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes (if end is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
@@ -1947,10 +2668,10 @@ Once all actions have been performed, a transition to another state can occur.
 | name | State name | string | yes |
 | type | State type | string | yes |
 | [dataConditions](#switch-state-dataconditions) or [eventConditions](#switch-state-eventconditions) | Defined if the Switch state evaluates conditions and transitions based on state data, or arrival of events. | array | yes (one) |
-| [stateDataFilter](#state-data-filter) | State data filter | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | eventTimeout | If eventConditions is used, defines the time period to wait for events (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | yes only if eventConditions is defined |
-| default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | no |
+| default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2088,7 +2809,7 @@ to decide what to do, transition to another workflow state, or end workflow exec
 | name | Event condition name | string | no |
 | eventRef | References an unique event name in the defined workflow events | string | yes |
 | [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
-| [eventDataFilter](#event-data-filter) | Event data filter definition | object | no |
+| [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2132,7 +2853,7 @@ The `eventRef` property references a name of one of the defined workflow events.
 If the referenced event is received, you can specify either the `transition` or `end` definitions
 to decide what to do, transition to another workflow state, or end workflow execution.
 
-The `eventDataFilter` property can be used to filter event when it is received.
+The `eventDataFilter` property can be used to filter event data when it is received.
 
 #### Delay State
 
@@ -2142,7 +2863,7 @@ The `eventDataFilter` property can be used to filter event when it is received.
 | name |State name | string | yes |
 | type |State type | string | yes |
 | timeDelay |Amount of time (ISO 8601 format) to delay when in this state. For example: "PT15M" (delay 15 minutes), or "P2DT3H4M" (delay 2 days, 3 hours and 4 minutes) | integer | yes |
-| [stateDataFilter](#state-data-filter) | State data filter | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after the delay | object | yes (if end is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
@@ -2197,7 +2918,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | [branches](#parallel-state-branch) | List of branches for this parallel state| array | yes |
 | completionType | Option types on how to complete branch execution. Default is "and" | enum | no |
 | n | Used when branchCompletionType is set to `n_of_m` to specify the `n` value. | string or number | no |
-| [stateDataFilter](#state-data-filter) | State data filter | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes (if end is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
@@ -2397,7 +3118,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
 | workflowId |Sub-workflow unique id | boolean | no |
 | [repeat](#Repeat-Definition) | SubFlow state repeat exec definition | object | no |
-| [stateDataFilter](#state-data-filter) | State data filter | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
@@ -2480,7 +3201,7 @@ Referenced sub-workflows must declare their own [function](#Function-Definition)
 | name | State name | string | yes |
 | type | State type | string | yes |
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
-| [stateDataFilter](#state-data-filter) | State data filter | object | no |
+| [stateDataFilter](#state-data-filters) | State data filter | object | no |
 | [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is set to false) |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
@@ -2634,7 +3355,7 @@ You can also use the filter property to filter the state data after data is inje
         ]
      },
      "stateDataFilter": {
-        "dataOutputPath": "${ {people: [.people[] | select(.age < 40)]} }"
+        "output": "${ {people: [.people[] | select(.age < 40)]} }"
      },
      "transition": "GreetPersonState"
     }
@@ -2661,7 +3382,7 @@ You can also use the filter property to filter the state data after data is inje
       address: 1234 SomeStreet
       age: 30
   stateDataFilter:
-    dataOutputPath: "${ {people: [.people[] | select(.age < 40)]} }"
+    output: "${ {people: [.people[] | select(.age < 40)]} }"
   transition: GreetPersonState
 ```
 
@@ -2711,7 +3432,7 @@ This allows you to test if your workflow behaves properly for cases when there a
 | max | Specifies how upper bound on how many iterations may run in parallel | string or number | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if subflowId is not defined |
 | workflowId | Unique Id of a workflow to be executed for each of the elements of inputCollection | string | yes if actions is not defined |
-| [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes (if end is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
@@ -2939,8 +3660,8 @@ The results of each parallel action execution are stored as elements in the stat
 | [action](#Action-Definition) | Defines the action to be executed | object | yes |
 | eventRef | References an unique callback event name in the defined workflow [events](#Event-Definition) | string | yes |
 | [timeout](#eventstate-timeout) | Time period to wait from when action is executed until the callback event is received (ISO 8601 format). For example: "PT15M" (wait 15 minutes), or "P2DT3H4M" (wait 2 days, 3 hours and 4 minutes)| string | yes |
-| [eventDataFilter](#event-data-filter) | Callback event data filter definition | object | no |
-| [stateDataFilter](#state-data-filter) | State data filter definition | object | no |
+| [eventDataFilter](#Event-data-filters) | Callback event data filter definition | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes |
 | [end](#End-Definition) | Is this state an end state | object | no |
@@ -3187,7 +3908,9 @@ If `string` type, it defines time interval describing when the workflow instance
 This can be used as a short-cut definition when you don't need to define any other parameters, for example:
 
 ```json
-"schedule": "R/PT2H"
+{
+  "schedule": "R/PT2H"
+}
 ```
 
 If you need to define the `cron` or the `timezone` parameters in your `schedule` definition, you can define 
@@ -3257,7 +3980,9 @@ If `string` type, it defines the cron expression describing when the workflow in
 This can be used as a short-cut definition when you don't need to define any other parameters, for example:
 
 ```json
-"cron": "0 15,30,45 * ? * *"
+{
+  "cron": "0 15,30,45 * ? * *"
+}
 ```
 
 If you need to define the `validUntil` parameters in your `cron` definition, you can define 
@@ -3480,525 +4205,6 @@ For each of the produced events you can select what parts of state data to be th
 
 Transitions can trigger compensation via their `compensate` property. See the [Workflow Compensation](#Workflow-Compensation)
 section for more information.
-
-#### Workflow Data Input
-
-The initial data input into a workflow instance must be a valid [JSON object](https://tools.ietf.org/html/rfc7159#section-4).
-If no input is provided the default data input is the empty object:
-
-```json
-{
-
-}
-```
-
-Workflow data input is passed to the workflow [starting state](#Start-Definition) as data input.
-
-<p align="center">
-<img src="media/spec/workflowdatainput.png" height="350px" alt="Workflow data input"/>
-</p>
-
-#### Event Data
-
-[Event states](#Event-State) wait for arrival of defined CloudEvents, and when consumed perform a number of defined actions.
-CloudEvents can contain data which is needed to make further orchestration decisions. Data from consumed CloudEvents
-can be merged with the data of the Event state, so it can be used inside defined actions
-or be passed as data output to transition states.
-
-<p align="center">
-<img src="media/spec/eventdatamerged.png" height="350px" alt="Event data merged with state data input"/>
-</p>
-
-Similarly for Callback states, the callback event data is merged with the data of the Callback state.
-
-Merging of this data case be controlled via [data filters](#State-Data-Filtering).
-
-#### Action Data
-
-[Event](#Event-State), [Callback](#Callback-State), and [Operation](#Operation-State) states can execute [actions](#Action-Definition). 
-Actions can invoke different services (functions). Functions can return results that may be needed to make
-further orchestration decisions. Function results can be  merged with the state data.
-
-<p align="center">
-<img src="media/spec/actionsdatamerged.png" height="350px" alt="Actions data merged with state data"/>
-</p>
-
-Merging of this data case be controlled via [data filters](#State-Data-Filtering).
-
-#### Information Passing Between States
-
-States in a workflow can receive data (data input) as well as produce a data result (data output). The states data input is
-typically the previous states data output.
-When a state completes its tasks, its data output is passed to the data input of the state it transitions to.
-
-There are two of rules to consider here:
-
-- If the state is the workflow starting state, its data input is the [workflow data input](#Workflow-data-input).
-- If the state is an end state ([`end`](#End-Definition) property is defined), its data output is the [workflow data output](#Workflow-data-output).  
-
-<p align="center">
-<img src="media/spec/basic-state-data-passing.png" height="350px" alt="Basic state data passing"/>
-</p>
-
-#### State Data Filtering
-
-Data filters allow you to select and extract specific data that is useful and needed during workflow execution.
-Filters use [workflow expressions](#Workflow-Expressions) for extracting portions of state's data
-input and output, actions data and results, event data, as well as error data.
-
-There are several types of data filters:
-
-- [State Data Filter](#state-data-filter)
-- [Action Data Filter](#action-data-filter)
-- [Event Data Filter](#event-data-filter)
-
-All states can define state data filters. States which can consume events can define event data filters, and states
-that can perform actions can define action data filters for each of the actions they perform.
-
-#### <a name="state-data-filter"></a> State data filtering - State Data Filter
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| dataInputPath | Workflow expression to filter the states data input | string | no |
-| dataOutputPath | Workflow expression that filters the states data output | string | no |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-    "dataInputPath": "${ .orders }",
-    "dataOutputPath": "${ .provisionedOrders }"
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-dataInputPath: "${ .orders }"
-dataOutputPath: "${ .provisionedOrders }"
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-State data filters can be used to filter the states data input and output.
-
-The state data filters `dataInputPath` expression is applied when the workflow transitions to the current state and it receives its data input.
-It filters this data input selecting parts of it (only the selected data is considered part of the states data during its execution).
-If `dataInputPath` is not defined, or it does not select any parts of the states data input, the states data input is not filtered.
-
-The state data filter `dataOutputPath` is applied right before the state transitions to the next state defined. It filters the states data
-output to be passed as data input to the transitioning state. If the current state is the workflow end state, the filtered states data
-output becomes the workflow data output.
-If `dataOutputPath` is not defined, or it does not select any parts of the states data output, the states data output is not filtered.
-
-Let's take a look at some examples of state filters. For our examples let's say the data input to our state is as follows:
-
-```json
-{
-  "fruits": [ "apple", "orange", "pear" ],
-  "vegetables": [
-    {
-      "veggieName": "potato",
-      "veggieLike": true
-    },
-    {
-      "veggieName": "broccoli",
-      "veggieLike": false
-    }
-  ]
-}
-```
-
-For the first example our state only cares about fruits data, and we want to disregard the vegetables. To do this
-we can define a state filter:
-
-```json
-{
-  "stateDataFilter": {
-    "dataInputPath": "${ {fruits: .fruits} }"
-  }
-}
-```
-
-The state data output then would include only the fruits data:
-
-```json
-{
-  "fruits": [ "apple", "orange", "pear"]
-}
-```
-
-<p align="center">
-<img src="media/spec/state-data-filter-example1.png" height="400px" alt="State Data Filter Example"/>
-</p>
-
-For our second example let's say that we are interested in only vegetable that are "veggie like".
-Here we have two ways of filtering our data, depending on if actions within our state need access to all vegetables, or
-only the ones that are "veggie like".
-
-The first way would be to use both "dataInputPath", and "dataOutputPath":
-
-```json
-{
-  "stateDataFilter": {
-    "dataInputPath": "${ {vegetables: .vegetables} }",
-    "dataOutputPath": "${ {vegetables: .vegetables[] | select(.veggieLike == true)} }"
-  }
-}
-```
-
-The states data input filter selects all the vegetables from the main data input. Once all actions have performed, before the state transition
-or workflow execution completion (if this is an end state), the "dataOutputPath" of the state filter selects only the vegetables which are "veggie like".
-
-<p align="center">
-<img src="media/spec/state-data-filter-example2.png" height="400px" alt="State Data Filter Example"/>
-</p>
-
-The second way would be to directly filter only the "veggie like" vegetables with just the data input path:
-
-```json
-{
-  "stateDataFilter": {
-    "dataInputPath": "${ {vegetables: .vegetables[] | select(.veggieLike == true)} }"
-  }
-}
-```
-
-#### <a name="action-data-filter"></a> State data filtering - Action Data Filter
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| dataInputPath | Workflow expression that filters states data that can be used by the state action | string | no |
-| dataResultsPath | Workflow expression that filters the actions data result, to be added to or merged with the states data | string | no |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-  "dataInputPath": "${ .language }", 
-  "dataResultsPath": "${ .payload.greeting }"
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-dataInputPath: "${ .language } "
-dataResultsPath: "${ .payload.greeting }"
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-[Actions](#Action-Definition) have access to the state data. 
-They can filter this data using an action data filter 'dataInputPath' expression before invoking functions.
-This is useful if you want to restrict the data that can be passed as parameters to functions during action invocation.
-
-Actions can reference [functions](#Function-Definition) that need to be invoked. 
-The results of these functions are considered the output of the action which needs to be added to or merged with the states data. 
-You can filter the results of actions with the `dataResultsPath` property, to only select
-parts of the action results that need to go into the states data.
-
-To give an example, let's say we have an action which returns a list of breads and pasta types.
-For our workflow, we are only interested into breads and not the pasta.
-
-Action results:
-
-```json
-{
-  "breads": ["baguette", "brioche", "rye"],
-  "pasta": [ "penne",  "spaghetti", "ravioli"]
-}
-```
-
-We can use an action data filter to filter only the breads data:
-
-```json
-{
-"actions":[  
-    {  
-       "functionRef": "breadAndPastaTypesFunction",
-       "actionDataFilter": {
-          "dataResultsPath": "${ {breads: .breads} }"
-       }
-    }
- ]
-}
-```
-
-With this action data filter in place only the bread types returned by the function invocation will be added to or merged
-with the state data.
-
-#### <a name="event-data-filter"></a> State data filtering - Event Data Filter
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| dataOutputPath | Workflow expression that filters of the event data, to be added to or merged with states data | string | no |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-    "dataOutputPath": "${ .data.results }"
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-dataOutputPath: "${ .data.results }"
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-Allows event data to be filtered and added to or merged with the state data. All events have to be in the CloudEvents format
-and event data filters can filter both context attributes and the event payload (data) using the `dataOutputPath` property.
-
-Here is an example using an event filter:
-
-<p align="center">
-<img src="media/spec/event-data-filter-example1.png" height="400px" alt="Event Data Filter Example"/>
-</p>
-
-#### <a name="using-multiple-filters"></a> State data filtering - Using multiple filters
-
-As [Event states](#Event-State) can take advantage of all defined data filters, it is probably the best way to
-show how we can combine them all to filter state data.
-
-Let's say we have a workflow which consumes events defining a customer arrival (to your store for example),
-and then lets us know how to greet this customer in different languages. We could model this workflow as follows:
-
-```json
-{
-    "id": "GreetCustomersWorkflow",
-    "name": "Greet Customers when they arrive",
-    "version": "1.0",
-    "start": "WaitForCustomerToArrive",
-    "events": [{
-        "name": "CustomerArrivesEvent",
-        "type": "customer-arrival-type",
-        "source": "customer-arrival-event-source"
-     }],
-    "functions": [{
-        "name": "greetingFunction",
-        "operation": "http://my.api.org/myapi.json#greeting"
-    }],
-    "states":[
-        {
-            "name": "WaitForCustomerToArrive",
-            "type": "event",
-            "onEvents": [{
-                "eventRefs": ["CustomerArrivesEvent"],
-                "eventDataFilter": {
-                    "dataInputPath": "${ .customer }"
-                },
-                "actions":[
-                    {
-                        "functionRef": {
-                            "refName": "greetingFunction",
-                            "arguments": {
-                                "greeting": "${ .languageGreetings.spanish } ",
-                                "customerName": "${ .customer.name } "
-                            }
-                        },
-                        "actionDataFilter": {
-                            "dataResultsPath": "${ .finalCustomerGreeting }"
-                        }
-                    }
-                ]
-            }],
-            "stateDataFilter": {
-                "dataInputPath": "${ .hello } ",
-                "dataOutputPath": "${ .finalCustomerGreeting }"
-            },
-            "end": true
-        }
-    ]
-}
-```
-
-The example workflow contains an event state which consumes CloudEvents of type "customer-arrival-type", and then
-calls the "greetingFunction" function passing in the greeting in Spanish and the name of the customer to greet.
-
-The workflow data input when starting workflow execution is assumed to include greetings in different languages:
-
-```json
-{
-  "hello": {
-    "english": "Hello",
-    "spanish": "Hola",
-    "german": "Hallo",
-    "russian": "Здравствуйте"
-  },
-  "goodbye": {
-    "english": "Goodbye",
-    "spanish": "Adiós",
-    "german": "Auf Wiedersehen",
-    "russian": "Прощай"
-  }
-}
-```
-
-We also assume for this example that the CloudEvent that our event state is set to consume (has the "customer-arrival-type" type) include the data:
-
-```json
-{
-  "data": {
-     "customer": {
-       "name": "John Michaels",
-       "address": "111 Some Street, SomeCity, SomeCountry",
-       "age": 40
-     }
-  }
-}
-```
-
-Here is a sample diagram showing our workflow, each numbered step on this diagram shows a certain defined point during
-workflow execution at which data filters are invoked and correspond to the numbered items below.
-
-<p align="center">
-<img src="media/spec/using-multiple-filters-example.png" height="400px" alt="Using Multple Filters Example"/>
-</p>
-
-**(1) Workflow execution starts**: Workflow data is passed to our "WaitForCustomerToArrive" event state as data input.
-Workflow transitions to its starting state, namely the "WaitForCustomerToArrive" event state.
-
-The event state **stateDataFilter** is invoked to filter this data input. Its "dataInputPath" is evaluated and filters
- only the "hello" greetings in different languages. At this point our event state data contains:
-
-```json
-{
-  "hello": {
-      "english": "Hello",
-      "spanish": "Hola",
-      "german": "Hallo",
-      "russian": "Здравствуйте"
-    }
-}
-```
-
-**(2) CloudEvent of type "customer-arrival-type" is consumed**: First the "eventDataFilter" is triggered. Its "dataInputPath"
-expression selects the "customer" object from the events data and places it into the state data.
-
-At this point our event state data contains:
-
-```json
-{
-  "hello": {
-      "english": "Hello",
-      "spanish": "Hola",
-      "german": "Hallo",
-      "russian": "Здравствуйте"
-    },
-    "customer": {
-       "name": "John Michaels",
-       "address": "111 Some Street, SomeCity, SomeCountry",
-       "age": 40
-     }
-}
-```
-
-**(3) Event state performs its actions**:
-Before the first action is executed, its actionDataFilter is invoked. Its "dataInputPath" expression selects
-the entire state data as the data available to functions that should be executed. Its "dataResultsPath" expression
-specifies that results of all functions executed in this action should be placed back to the state data as part
-of a new "finalCustomerGreeting" object.
-
-The action then calls the "greetingFunction" function passing in as parameters the Spanish greeting and the name of the customer that arrived.
-
-We assume that for this example "greetingFunction" returns:
-
-```json
-{
-   "finalCustomerGreeting": "Hola John Michaels!"
-}
-```
-
-which then becomes the result of the action.
-
-**(4) Event State Completes Workflow Execution**: The results of action executions as defined in the actionDataFilter are placed into the
-states data under the "finalCustomerGreeting" object. So at this point our event state data contains:
-
-```json
-{
-  "hello": {
-      "english": "Hello",
-      "spanish": "Hola",
-      "german": "Hallo",
-      "russian": "Здравствуйте"
-    },
-    "customer": {
-       "name": "John Michaels",
-       "address": "111 Some Street, SomeCity, SomeCountry",
-       "age": 40
-     },
-     "finalCustomerGreeting": "Hola John Michaels!"
-}
-```
-
-Since our event state has performed all actions it is ready to either transition to the next state or end workflow execution if it is an end state.
-Before this happens though, the "stateDataFilter" is again invoked to filter this states data, specifically the "dataOutputPath" expression
-selects only the "finalCustomerGreeting" object to make it the data output of the state.
-
-Because our event state is also an end state, its data output becomes the final [workflow data output](#Workflow-data-output). Namely:
-
-```json
-{
-   "finalCustomerGreeting": "Hola John Michaels!"
-}
-```
-
-Note that in case of multiple actions with each containing an "actionDataFilter", you must be careful for their results
-not to overwrite each other after actions complete and their results are added to the state data.
-Also note that in case of parallel execution of actions, the results of only those that complete before the state
-transitions to the next one or ends workflow execution (end state) can be considered to be added to the state data.
-
-#### Workflow data output
-
-Once a workflow instance reaches an end state (where the `end` property is defined) and the workflow finishes its execution
-the data output of that result state becomes the workflow data output. This output can be logged or indexed depending on the
-implementation details.
 
 ### Workflow Error Handling
 

@@ -403,8 +403,8 @@ states:
   type: operation
   actions:
   - functionRef: gen-random-int-bash
-    actionDataFilter:
-      dataResultsPath: "${ .results }"
+    actionFilter:
+      results: "${ .results }"
   transition: print-message
 - name: print-message
   type: operation
@@ -580,8 +580,8 @@ states:
   type: operation
   actions:
   - functionRef: flip-coin-function
-    actionDataFilter:
-      dataResultsPath: "${ .flip.result }"
+    actionFilter:
+      results: "${ .flip.result }"
   transition: show-flip-results
 - name: show-flip-results
   type: switch
@@ -594,15 +594,15 @@ states:
   type: operation
   actions:
   - functionRef: echo
-    actionDataFilter:
-      dataResultsPath: it was heads
+    actionFilter:
+      results: it was heads
   end: true
 - name: show-results-tails
   type: operation
   actions:
   - functionRef: echo
-    actionDataFilter:
-      dataResultsPath: it was tails
+    actionFilter:
+      results: it was tails
   end: true
 ```
 
@@ -760,8 +760,8 @@ states:
   type: operation
   actions:
   - functionRef: flip-coin-function
-    actionDataFilter:
-      dataResultsPath: "${ .steps.flip-coin.outputs.result }" 
+    actionFilter:
+      results: "${ .steps.flip-coin.outputs.result }" 
   transition: flip-coin-check
 - name: flip-coin-check
   type: switch
