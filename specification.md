@@ -181,7 +181,7 @@ Multiple filters can be combined to gain high level of control of your workflow 
 [this](#Using-multiple-data-filters) section.
 
 Data from consumed events, as well as action execution results are added/merged
-to state data. Reference the [data merging rules](#Data-Merging) to see merging rules that should be applied.
+to state data. Reference the [data merging section](#Data-Merging) to learn about the merging rules that should be applied.
 
 #### Workflow Data Input
 
