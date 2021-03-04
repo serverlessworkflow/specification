@@ -180,7 +180,7 @@ input and output, action inputs and results, and event payloads.
 Multiple filters can be combined to gain high level of control of your workflow state data. You can find an example of that in
 [this](#Using-multiple-data-filters) section.
 
-Data from consumed events, as well as action execution results are added/merged
+Data from consumed events,and action execution results are added/merged
 to state data. Reference the [data merging section](#Data-Merging) to learn about the merging rules that should be applied.
 
 #### Workflow Data Input
@@ -482,7 +482,7 @@ into. With this, after our action executes the state data would be:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| data | Workflow expression that filters the event data (payload) | string | no |
+| data | Workflow expression that filters of the event data (payload) | string | no |
 | toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -688,7 +688,7 @@ At this point our state data contains:
 ```
 
 **(3) Event state performs its actions**:
-Before the first action is executed, its actionDataFilter is invoked. Its "fromStateData" expression filters
+Before the first action is executed, its actionFilter is invoked. Its "fromStateData" expression filters
 the current state data to select from its data that should be available to action arguments. In this example
 it selects the "hello" property from the current state data.
 At this point the action is executed. 
@@ -704,7 +704,7 @@ We assume that for this example "greetingFunction" returns:
 }
 ```
 
-After the action is executed, the actionDataFilter "results" expression is evaluated to filter the results returned from the action execution. In this case, we select only the "greetingMessageResult" element from the results.
+After the action is executed, the actionFilter "results" expression is evaluated to filter the results returned from the action execution. In this case, we select only the "greetingMessageResult" element from the results.
 
 The action filters "toStateData" expression then defines that we want to add/merge this action result to
 state data under the "finalCustomerGreeting" element.

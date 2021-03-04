@@ -1678,11 +1678,11 @@
       "properties": {
         "input": {
           "type": "string",
-          "description": "Workflow expression to filter the states data input"
+          "description": "Workflow expression to filter the state data input"
         },
         "output": {
           "type": "string",
-          "description": "Workflow expression that filters the states data output"
+          "description": "Workflow expression that filters the state data output"
         }
       },
       "required": []
@@ -1696,7 +1696,7 @@
         },
         "toStateData": {
           "type": "string",
-          "description": " Workflow expression that selects a state data element to which the event payload should be added/merged into. If not specified denotes the top-level state data element."
+          "description": " Workflow expression that selects a state data element to which the event payload should be added/merged into. If not specified, denotes, the top-level state data element."
         }
       },
       "required": []
@@ -1714,7 +1714,7 @@
         },
         "toStateData": {
           "type": "string",
-          "description": "Workflow expression that selects a state data element to which the action results should be added / merged into. If not specified denotes the top-level state data element"
+          "description": "Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified, denote, the top-level state data element"
         }
       },
       "required": []
