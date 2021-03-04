@@ -482,7 +482,7 @@ into. With this, after our action executes the state data would be:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| data | Workflow expression that filters of the event data (payload) | string | no |
+| data | Workflow expression that filters the event data (payload) | string | no |
 | toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
