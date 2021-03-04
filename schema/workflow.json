@@ -1706,7 +1706,7 @@
       "properties": {
         "fromStateData": {
           "type": "string",
-          "description": "Workflow expression that filters states data that can be used by the state action"
+          "description": "Workflow expression that filters state data that the state action can use"
         },
         "results": {
           "type": "string",
