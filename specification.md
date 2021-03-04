@@ -1564,7 +1564,7 @@ for compensation).
 Runtime implementations should raise compile time / parsing exceptions if any of the rules mentioned above are 
 not obeyed in the workflow definition. 
 
-#### Function Definition
+#### Function Definition 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
