@@ -3150,10 +3150,10 @@ If `string` type, it defines the name of the workflow starting state.
 If `object` type, it provides the ability to set the workflow starting state name, as well as the `schedule` property.
 
 The `schedule` property allows to define scheduled workflow instance creation. 
-Scheduled starts have two different choices. You can a repeating interval or cron-based schedule at which a workflow 
+Scheduled starts have two different choices. You can define a repeating interval or cron-based schedule at which a workflow 
 instance **should** be created (automatically). 
 
-You can also define cron-based scheduled starts, which allow to define periodically started workflow instances based on a [cron](http://crontab.org/) definition.
+You can also define cron-based scheduled starts, which allows you to specify periodically started workflow instances based on a [cron](http://crontab.org/) definition.
 Cron-based scheduled starts can handle absolute time intervals (i.e., not calculated in respect to some particular point in time).
 One use case for cron-based scheduled starts is a workflow that performs periodical data batch processing. 
 In this case we could use a cron definition
