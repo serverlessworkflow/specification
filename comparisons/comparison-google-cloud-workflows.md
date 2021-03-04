@@ -94,7 +94,7 @@ languages.
             "data": {
                 "outputVar": "Hello ${ .firstname + \" \" +  .lastname  }"
             },
-            "stateFilter": {
+            "stateDataFilter": {
                 "output": "${ .outputVar }"
              },
             "end": true
@@ -205,7 +205,7 @@ instance is created. See the Serverless Workflow ["Workflow Data"](../specificat
                     "r"
                 ]
             },
-            "stateFilter": {
+            "stateDataFilter": {
                 "output": "${ .array | join(\"\") }"
              },
             "end": true

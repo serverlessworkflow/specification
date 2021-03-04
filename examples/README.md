@@ -165,7 +165,7 @@ Which is added to the states data and becomes the workflow data output.
                 "name": "${ .person.name }"
               }
            },
-           "actionFilter": {
+           "actionDataFilter": {
               "results": "${ .greeting }"
            }
         }
@@ -196,7 +196,7 @@ states:
       refName: greetingFunction
       arguments:
         name: "${ .person.name }"
-    actionFilter:
+    actionDataFilter:
       results: "${ .greeting }"
   end: true
 ```
@@ -242,7 +242,7 @@ Note that in the workflow definition you can see two filters defined. The event 
 
 ```json
 {
-  "eventFilter": {
+  "eventDataFilter": {
     "data": "${ .data.greet } "
   }
 }
@@ -255,7 +255,7 @@ The second, a state data filter, which is defined on the event state itself:
 
 ```json
 {
-  "stateFilter": {
+  "stateDataFilter": {
      "output": "${ .payload.greeting }"
   }
 }
@@ -309,7 +309,7 @@ filters what is selected to be the state data output which then becomes the work
      "type":"event",
      "onEvents": [{
          "eventRefs": ["GreetingEvent"],
-         "eventFilter": {
+         "eventDataFilter": {
             "data": "${ .data.greet }"
          },
          "actions":[  
@@ -323,7 +323,7 @@ filters what is selected to be the state data output which then becomes the work
             }
          ]
      }],
-     "stateFilter": {
+     "stateDataFilter": {
         "output": "${ .payload.greeting }"
      },
      "end": true
@@ -354,14 +354,14 @@ states:
   onEvents:
   - eventRefs:
     - GreetingEvent
-    eventFilter:
+    eventDataFilter:
       data: "${ .data.greet }"
     actions:
     - functionRef:
         refName: greetingFunction
         arguments:
           name: "${ .greet.name }"
-  stateFilter:
+  stateDataFilter:
     output: "${ .payload.greeting }"
   end: true
 ```
@@ -437,7 +437,7 @@ result of the workflow execution.
       }
    }
  ],
- "stateFilter": {
+ "stateDataFilter": {
     "output": "${ .results }"
  },
  "end": true
@@ -469,7 +469,7 @@ states:
       refName: solveMathExpressionFunction
       arguments:
         expression: "${ .singleexpression }"
-  stateFilter:
+  stateDataFilter:
     output: "${ .results }"
   end: true
 ```
@@ -891,7 +891,7 @@ The data output of the workflow contains the information of the exception caught
           }
        }
     ],
-    "stateFilter": {
+    "stateDataFilter": {
        "output": "${ .exceptions }"
     },
     "transition": "ApplyOrder",
@@ -959,7 +959,7 @@ states:
       refName: provisionOrderFunction
       arguments:
         order: "${ .order }"
-  stateFilter:
+  stateDataFilter:
     output: "${ .exceptions }"
   transition: ApplyOrder
   onErrors:
@@ -1059,7 +1059,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
               "name": "${ .job.name }"
             }
           },
-          "actionFilter": {
+          "actionDataFilter": {
             "results": "${ .jobuid }"
           }
       }
@@ -1070,7 +1070,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
         "transition": "SubmitError"
       }
       ],
-      "stateFilter": {
+      "stateDataFilter": {
           "output": "${ .jobuid }"
       },
       "transition": "WaitForCompletion'"
@@ -1099,12 +1099,12 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
               "name": "${ .jobuid }"
             }
           },
-          "actionFilter": {
+          "actionDataFilter": {
             "results": "${ .jobstatus }"
           }
       }
       ],
-      "stateFilter": {
+      "stateDataFilter": {
           "output": "${ .jobstatus }"
       },
       "transition": "DetermineCompletion"
@@ -1189,12 +1189,12 @@ states:
       refName: submitJob
       arguments:
         name: "${ .job.name }"
-    actionFilter:
+    actionDataFilter:
       results: "${ .jobuid }"
   onErrors:
   - error: "*"
     transition: SubmitError
-  stateFilter:
+  stateDataFilter:
     output: "${ .jobuid }"
   transition: WaitForCompletion
 - name: SubmitError
@@ -1213,9 +1213,9 @@ states:
       refName: checkJobStatus
       arguments:
         name: "${ .jobuid }"
-    actionFilter:
+    actionDataFilter:
       results: "${ .jobstatus }"
-  stateFilter:
+  stateDataFilter:
     output: "${ .jobstatus }"
   transition: DetermineCompletion
 - name: DetermineCompletion
@@ -2357,7 +2357,7 @@ For this example we assume that the workflow instance is started given the follo
                        "data": "${ .patientInfo }",
                        "resultEventRef":  "VetAppointmentInfo"
                     },
-                    "actionFilter": {
+                    "actionDataFilter": {
                         "results": "${ .appointmentInfo }"
                     },
                     "timeout": "PT15M"
@@ -2394,7 +2394,7 @@ states:
       triggerEventRef: MakeVetAppointment
       data: "${ .patientInfo }"
       resultEventRef: VetAppointmentInfo
-    actionFilter:
+    actionDataFilter:
       results: "${ .appointmentInfo }"
     timeout: PT15M
   end: true
@@ -3125,7 +3125,7 @@ the data for an hour, send report, and so on.
               }
             }
           ],
-          "eventFilter": {
+          "eventDataFilter": {
             "data": "${ .readings }"
           }
         }
@@ -3207,7 +3207,7 @@ states:
     actions:
     - functionRef:
         refName: LogReading
-    eventFilter:
+    eventDataFilter:
       data: "${ .readings }"
   end: true
 - name: GenerateReport

@@ -688,7 +688,7 @@ At this point our state data contains:
 ```
 
 **(3) Event state performs its actions**:
-Before the first action is executed, its actionFilter is invoked. Its "fromStateData" expression filters
+Before the first action is executed, its actionDataFilter is invoked. Its "fromStateData" expression filters
 the current state data to select from its data that should be available to action arguments. In this example
 it selects the "hello" property from the current state data.
 At this point the action is executed. 
@@ -704,7 +704,7 @@ We assume that for this example "greetingFunction" returns:
 }
 ```
 
-After the action is executed, the actionFilter "results" expression is evaluated to filter the results returned from the action execution. In this case, we select only the "greetingMessageResult" element from the results.
+After the action is executed, the actionDataFilter "results" expression is evaluated to filter the results returned from the action execution. In this case, we select only the "greetingMessageResult" element from the results.
 
 The action filters "toStateData" expression then defines that we want to add/merge this action result to
 state data under the "finalCustomerGreeting" element.
@@ -801,6 +801,63 @@ After the merge the state data should be:
 ```
 
 Merging array types should be done by concatenating them into a larger array including unique elements of both arrays.
+To give an example, merging:
+
+```json
+{
+    "customers": [
+      {
+        "name": "John",
+        "address": "1234 street",
+        "zip": "12345"
+      },
+      {
+        "name": "Jane",
+        "address": "4321 street",
+        "zip": "54321"
+      }
+    ]
+}
+```
+
+into state data:
+
+```json
+{
+    "customers": [
+      {
+        "name": "Michael",
+        "address": "6789 street",
+        "zip": "6789"
+      }
+    ]
+}
+```
+
+should produce state data:
+
+```json
+{
+    "customers": [
+      { 
+        "name": "Michael",
+        "address": "6789 street",
+        "zip": "6789"
+      },
+      {
+        "name": "John",
+        "address": "1234 street",
+        "zip": "12345"
+      },
+      {
+        "name": "Jane",
+        "address": "4321 street",
+        "zip": "54321"
+      }
+    ]
+}
+```
+
 
 To give an example, merging:
 

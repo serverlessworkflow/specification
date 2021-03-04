@@ -264,7 +264,7 @@
             "$ref": "#/definitions/action"
           }
         },
-        "eventFilter": {
+        "eventDataFilter": {
           "description": "Event data filter",
           "$ref": "#/definitions/eventdatafilter"
         }
@@ -314,7 +314,7 @@
           "type": "string",
           "description": "Time period to wait for function execution to complete"
         },
-        "actionFilter": {
+        "actionDataFilter": {
           "description": "Action data filter",
           "$ref": "#/definitions/actiondatafilter"
         }
@@ -422,7 +422,7 @@
           "$ref": "#/definitions/end",
           "description": "State end definition"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -526,7 +526,7 @@
           "type": "string",
           "description": "Time period to wait for incoming events (ISO 8601 format)"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -604,7 +604,7 @@
           "$ref": "#/definitions/end",
           "description": "State end definition"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -716,7 +716,7 @@
           "$ref": "#/definitions/end",
           "description": "State end definition"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -844,7 +844,7 @@
           "const": "switch",
           "description": "State type"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -910,7 +910,7 @@
           "const": "switch",
           "description": "State type"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1005,7 +1005,7 @@
           "$ref": "#/definitions/transition"
         }
       },
-      "eventFilter": {
+      "eventDataFilter": {
         "description": "Event data filter definition",
         "$ref": "#/definitions/eventdatafilter"
       },
@@ -1034,7 +1034,7 @@
           "description": "Explicit transition to end"
         }
       },
-      "eventFilter": {
+      "eventDataFilter": {
         "description": "Event data filter definition",
         "$ref": "#/definitions/eventdatafilter"
       },
@@ -1141,7 +1141,7 @@
           "$ref": "#/definitions/repeat",
           "description": "SubFlow state repeat exec definition"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1232,7 +1232,7 @@
           "type": "object",
           "description": "JSON object which can be set as states data input and can be manipulated via filters"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1344,7 +1344,7 @@
           "type": "string",
           "description": "Unique Id of a workflow to be executed for each of the elements of inputCollection"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1465,11 +1465,11 @@
           "type": "string",
           "description": "Time period to wait for incoming events (ISO 8601 format)"
         },
-        "eventFilter": {
+        "eventDataFilter": {
           "description": "Event data filter",
           "$ref": "#/definitions/eventdatafilter"
         },
-        "stateFilter": {
+        "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1706,7 +1706,7 @@
       "properties": {
         "fromStateData": {
           "type": "string",
-          "description": "Workflow expression that filters state data that the state action can use"
+          "description": "Workflow expression that selects state data that the state action can use"
         },
         "results": {
           "type": "string",

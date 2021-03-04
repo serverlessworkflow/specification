@@ -402,7 +402,7 @@ states:
   onEvents:
   - eventRefs:
     - execEvent
-    eventFilter:
+    eventDataFilter:
       results: "${ .event }"
     actions:
     - name: eventInfoAction
@@ -483,18 +483,18 @@ states:
   onEvents:
   - eventRefs:
     - execEvent
-    eventFilter:
+    eventDataFilter:
       data: "${ .event }"
     actions:
     - name: helloAction
-      actionFilter:
+      actionDataFilter:
         results: "${ .helloResult }"
       functionRef:
         refName: greetingFunction
         arguments:
           message: hello
     - name: worldAction
-      actionFilter:
+      actionDataFilter:
         results: "${ .worldResults }"
       functionRef:
         refName: greetingAction
@@ -571,7 +571,7 @@ states:
   - eventRefs:
     - execEvent
     actions: []
-    eventFilter:
+    eventDataFilter:
       data: "${ .execEvent }"
   transition:
     nextState: NextEventState
@@ -589,7 +589,7 @@ states:
   onEvents:
   - eventRefs:
     - nextEvent
-    eventFilter:
+    eventDataFilter:
       data: "${ .nextEvent }"
     actions:
     - name: consoleLogAction
