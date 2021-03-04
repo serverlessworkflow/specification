@@ -3829,7 +3829,7 @@ It's results are then merged back into the state data according to the "toStateD
             "actions": [
                 {
                     "functionRef": "Increment Current Count Function",
-                    "actionFilter": {
+                    "actionDataFilter": {
                         "toStateData": ".counts.current"
                     }
                 }
@@ -3865,7 +3865,7 @@ states:
   type: operation
   actions:
   - functionRef: Increment Current Count Function
-    actionFilter:
+    actionDataFilter:
       toStateData: ".counts.current"
   transition: Check If Full
 ```
