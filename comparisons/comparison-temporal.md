@@ -30,7 +30,7 @@ languages.
 
 ## Note when reading provided examples
 
-[Activities](https://docs.temporal.io/docs/activities) in temporal are comparable with 
+[Activities](https://docs.temporal.io/docs/concept-activities) in temporal are comparable with 
 [actions](https://github.com/serverlessworkflow/specification/blob/master/specification.md#Action-Definition) in Serverless Workflow
 language, namely actions that reference [function](https://github.com/serverlessworkflow/specification/blob/master/specification.md#function-definition) 
 definitions. Serverless Workflow action execution involves invoking distributed functions via REST or via events.
