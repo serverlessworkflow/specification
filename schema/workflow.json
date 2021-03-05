@@ -943,7 +943,7 @@
       "required": [
         "name",
         "type",
-        "default"
+        "dataConditions"
       ]
     },
     "defaultdef": {
