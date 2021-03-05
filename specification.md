@@ -1950,7 +1950,7 @@ Once all actions have been performed, a transition to another state can occur.
 | [stateDataFilter](#state-data-filter) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | eventTimeout | If eventConditions is used, defines the time period to wait for events (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | yes only if eventConditions is defined |
-| default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
+| default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
