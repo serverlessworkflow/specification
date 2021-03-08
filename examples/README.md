@@ -3772,11 +3772,11 @@ Our workflow definition is assumed to have the following data input:
 ```
  
 Our workflow simulates filling up a glass of water one "count" at a time until "max" count is reached which
-represents our glass being full.
+represents our glass is full.
 Each time we increment the current count, the workflow checks if we need to keep refilling the glass.
 If the current count reaches the max count, the workflow execution ends.
 To increment the current count, the workflow invokes the "IncrementCurrent" expression function.
-It's results are then merged back into the state data according to the "toStateData" property of the event data filter.
+Its results are then merged back into the state data according to the "toStateData" property of the event data filter.
 
 #### Workflow Diagram
 
