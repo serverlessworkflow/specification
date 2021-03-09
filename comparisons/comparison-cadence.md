@@ -201,7 +201,7 @@ states:
       arguments:
         filename: "${ .file.name }"
     actionDataFilter:
-      dataResultsPath: "${ .processed }"
+      results: "${ .processed }"
   - functionRef:
       refName: uploadfunction
       arguments:

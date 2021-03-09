@@ -404,7 +404,7 @@ states:
   actions:
   - functionRef: gen-random-int-bash
     actionDataFilter:
-      dataResultsPath: "${ .results }"
+      results: "${ .results }"
   transition: print-message
 - name: print-message
   type: operation
@@ -581,7 +581,7 @@ states:
   actions:
   - functionRef: flip-coin-function
     actionDataFilter:
-      dataResultsPath: "${ .flip.result }"
+      results: "${ .flip.result }"
   transition: show-flip-results
 - name: show-flip-results
   type: switch
@@ -595,14 +595,14 @@ states:
   actions:
   - functionRef: echo
     actionDataFilter:
-      dataResultsPath: it was heads
+      results: it was heads
   end: true
 - name: show-results-tails
   type: operation
   actions:
   - functionRef: echo
     actionDataFilter:
-      dataResultsPath: it was tails
+      results: it was tails
   end: true
 ```
 
@@ -761,7 +761,7 @@ states:
   actions:
   - functionRef: flip-coin-function
     actionDataFilter:
-      dataResultsPath: "${ .steps.flip-coin.outputs.result }" 
+      results: "${ .steps.flip-coin.outputs.result }" 
   transition: flip-coin-check
 - name: flip-coin-check
   type: switch

@@ -403,7 +403,7 @@ states:
   - eventRefs:
     - execEvent
     eventDataFilter:
-      dataOutputPath: "${ .event }"
+      results: "${ .event }"
     actions:
     - name: eventInfoAction
       functionRef:
@@ -484,18 +484,18 @@ states:
   - eventRefs:
     - execEvent
     eventDataFilter:
-      dataOutputPath: "${ .event }"
+      data: "${ .event }"
     actions:
     - name: helloAction
       actionDataFilter:
-        dataResultsPath: "${ .helloResult }"
+        results: "${ .helloResult }"
       functionRef:
         refName: greetingFunction
         arguments:
           message: hello
     - name: worldAction
       actionDataFilter:
-        dataResultsPath: "${ .worldResults }"
+        results: "${ .worldResults }"
       functionRef:
         refName: greetingAction
         arguments:
@@ -572,7 +572,7 @@ states:
     - execEvent
     actions: []
     eventDataFilter:
-      dataOutputPath: "${ .execEvent }"
+      data: "${ .execEvent }"
   transition:
     nextState: NextEventState
     produceEvents:
@@ -590,7 +590,7 @@ states:
   - eventRefs:
     - nextEvent
     eventDataFilter:
-      dataOutputPath: "${ .nextEvent }"
+      data: "${ .nextEvent }"
     actions:
     - name: consoleLogAction
       functionRef:

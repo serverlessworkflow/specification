@@ -265,6 +265,7 @@
           }
         },
         "eventDataFilter": {
+          "description": "Event data filter",
           "$ref": "#/definitions/eventdatafilter"
         }
       },
@@ -314,6 +315,7 @@
           "description": "Time period to wait for function execution to complete"
         },
         "actionDataFilter": {
+          "description": "Action data filter",
           "$ref": "#/definitions/actiondatafilter"
         }
       },
@@ -421,6 +423,7 @@
           "description": "State end definition"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "timeDelay": {
@@ -524,6 +527,7 @@
           "description": "Time period to wait for incoming events (ISO 8601 format)"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "onErrors": {
@@ -601,6 +605,7 @@
           "description": "State end definition"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "actionMode": {
@@ -712,6 +717,7 @@
           "description": "State end definition"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "branches": {
@@ -839,6 +845,7 @@
           "description": "State type"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "eventConditions": {
@@ -904,6 +911,7 @@
           "description": "State type"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "dataConditions": {
@@ -1058,10 +1066,10 @@
         },
         "condition": {
           "type": "string",
-          "description": "JsonPath expression evaluated against state data. True if results are not empty"
+          "description": "Workflow expression evaluated against state data. Must evaluate to true or false"
         },
         "transition": {
-          "description": "Next transition of the workflow if there is valid matches",
+          "description": "Workflow transition if condition is evaluated to true",
           "$ref": "#/definitions/transition"
         }
       },
@@ -1083,11 +1091,11 @@
         },
         "condition": {
           "type": "string",
-          "description": "JsonPath expression evaluated against state data. True if results are not empty"
+          "description": "Workflow expression evaluated against state data. Must evaluate to true or false"
         },
         "end": {
           "$ref": "#/definitions/end",
-          "description": "Explicit transition to end"
+          "description": "Workflow end definition"
         }
       },
       "metadata": {
@@ -1134,6 +1142,7 @@
           "description": "SubFlow state repeat exec definition"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "onErrors": {
@@ -1224,6 +1233,7 @@
           "description": "JSON object which can be set as states data input and can be manipulated via filters"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "transition": {
@@ -1303,11 +1313,11 @@
         },
         "inputCollection": {
           "type": "string",
-          "description": "JsonPath expression selecting an array element of the states data"
+          "description": "Workflow expression selecting an array element of the states data"
         },
         "outputCollection": {
           "type": "string",
-          "description": "JsonPath expression specifying an array element of the states data to add the results of each iteration"
+          "description": "Workflow expression specifying an array element of the states data to add the results of each iteration"
         },
         "iterationParam": {
           "type": "string",
@@ -1335,6 +1345,7 @@
           "description": "Unique Id of a workflow to be executed for each of the elements of inputCollection"
         },
         "stateDataFilter": {
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "onErrors": {
@@ -1455,11 +1466,11 @@
           "description": "Time period to wait for incoming events (ISO 8601 format)"
         },
         "eventDataFilter": {
-          "description": "Callback event data filter definition",
+          "description": "Event data filter",
           "$ref": "#/definitions/eventdatafilter"
         },
         "stateDataFilter": {
-          "description": "State data filter definition",
+          "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
         "onErrors": {
@@ -1665,13 +1676,13 @@
     "statedatafilter": {
       "type": "object",
       "properties": {
-        "dataInputPath": {
+        "input": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the states data input"
+          "description": "Workflow expression to filter the state data input"
         },
-        "dataOutputPath": {
+        "output": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the states data output"
+          "description": "Workflow expression that filters the state data output"
         }
       },
       "required": []
@@ -1679,9 +1690,13 @@
     "eventdatafilter": {
       "type": "object",
       "properties": {
-        "dataOutputPath": {
+        "data": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the event data, to be merged with the states data"
+          "description": "Workflow expression that filters of the event data (payload)"
+        },
+        "toStateData": {
+          "type": "string",
+          "description": " Workflow expression that selects a state data element to which the event payload should be added/merged into. If not specified, denotes, the top-level state data element."
         }
       },
       "required": []
@@ -1689,23 +1704,17 @@
     "actiondatafilter": {
       "type": "object",
       "properties": {
-        "dataInputPath": {
+        "fromStateData": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the states data input to be the action data"
+          "description": "Workflow expression that selects state data that the state action can use"
         },
-        "dataResultsPath": {
+        "results": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the actions data result, to be merged with the states data"
-        }
-      },
-      "required": []
-    },
-    "errordatafilter": {
-      "type": "object",
-      "properties": {
-        "dataOutputPath": {
+          "description": "Workflow expression that filters the actions data results"
+        },
+        "toStateData": {
           "type": "string",
-          "description": "JsonPath definition that selects parts of the error data, to be merged with the states data"
+          "description": "Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified, denote, the top-level state data element"
         }
       },
       "required": []
