@@ -2066,7 +2066,7 @@ Bidding is done via an online application and bids are received as events are as
     "description": "Store a single bid whole the car auction is active",
     "start": {
       "stateName": "StoreCarAuctionBid",
-      "schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+      "schedule": "R/PT2H"
     },
     "functions": [
         {
@@ -2115,7 +2115,7 @@ name: Car Auction Bidding Workflow
 description: Store a single bid whole the car auction is active
 start:
   stateName: StoreCarAuctionBid
-  schedule: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
+  schedule: R/PT2H
 functions:
 - name: StoreBidFunction
   operation: http://myapis.org/carauctionapi.json#storeBid
@@ -2827,7 +2827,7 @@ This example shows the use of the workflow [execTimeout definition](../specifica
   "version": "1.0",
   "start": "StartNewOrder",
   "execTimeout": {
-    "interval": "PT30D",
+    "duration": "PT30D",
     "interrupt": true,
     "runBefore": "CancelOrder"
   },
@@ -2986,7 +2986,7 @@ name: Purchase Order Workflow
 version: '1.0'
 start: StartNewOrder
 execTimeout:
-  interval: PT30D
+  duration: PT30D
   interrupt: true
   runBefore: CancelOrder
 states:
@@ -3107,7 +3107,7 @@ the data for an hour, send report, and so on.
   "version": "1.0",
   "start": "ConsumeReading",
   "execTimeout": {
-    "interval": "PT1H",
+    "duration": "PT1H",
     "runBefore": "GenerateReport"
   },
   "keepActive": true,
@@ -3194,7 +3194,7 @@ name: Room Temp and Humidity Workflow
 version: '1.0'
 start: ConsumeReading
 execTimeout:
-  interval: PT1H
+  duration: PT1H
   runBefore: GenerateReport
 keepActive: true
 states:
