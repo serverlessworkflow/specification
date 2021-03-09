@@ -26,6 +26,7 @@ Provides Serverless Workflow language examples
 - [Accumulate room readings and create timely reports (ExecTimeout and KeepActive)](#Accumulate-room-readings)
 - [Car vitals checks (SubFlow state Repeat)](#Car-Vitals-Checks)
 - [Book Lending Workflow](#Book-Lending)
+- [Filling a glass of water (Expression functions)](#Filling-a-glass-of-water)
 
 ### Hello World Example
 
@@ -3748,6 +3749,125 @@ states:
   end: true
 functions: file://books/lending/functions.json
 events: file://books/lending/events.json
+```
+
+</td>
+</tr>
+</table>
+
+### Filling a glass of water
+
+#### Description
+
+In this example we showcase the power of [expression functions](../specification.md#Using-Functions-For-Expression-Evaluation).
+Our workflow definition is assumed to have the following data input:
+
+```json
+{
+  "counts": {
+    "current": 0,
+    "max": 10
+  }
+}
+```
+ 
+Our workflow simulates filling up a glass of water one "count" at a time until "max" count is reached which
+represents our glass is full.
+Each time we increment the current count, the workflow checks if we need to keep refilling the glass.
+If the current count reaches the max count, the workflow execution ends.
+To increment the current count, the workflow invokes the "IncrementCurrent" expression function.
+Its results are then merged back into the state data according to the "toStateData" property of the event data filter.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/examples-fill-glass.png" height="300px" alt="Fill Glass of Water Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+    "id": "fillgrassofwater",
+    "name": "Fill glass of water workflow",
+    "start": "Check if full",
+    "functions": [
+        {
+            "name": "Increment Current Count Function",
+            "type": "expression",
+            "operation": ".counts.current += 1 | .counts.current"
+        }
+    ],
+    "states": [
+        {
+            "name": "Check if full",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "name": "Need to fill more",
+                    "condition": "${ .counts.current < .counts.max }",
+                    "transition": "Add Water"
+                },
+                {
+                    "name": "Glass full",
+                    "condition": ".counts.current >= .counts.max",
+                    "end": true
+                }
+            ]
+        },
+        {
+            "name": "Add Water",
+            "type": "operation",
+            "actions": [
+                {
+                    "functionRef": "Increment Current Count Function",
+                    "actionDataFilter": {
+                        "toStateData": ".counts.current"
+                    }
+                }
+            ],
+            "transition": "Check If Full"
+        }
+    ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: fillgrassofwater
+name: Fill glass of water workflow
+start: Check if full
+functions:
+- name: Increment Current Count Function
+  type: expression
+  operation: ".counts.current += 1 | .counts.current"
+states:
+- name: Check if full
+  type: switch
+  dataConditions:
+  - name: Need to fill more
+    condition: "${ .counts.current < .counts.max }"
+    transition: Add Water
+  - name: Glass full
+    condition: ".counts.current >= .counts.max"
+    end: true
+- name: Add Water
+  type: operation
+  actions:
+  - functionRef: Increment Current Count Function
+    actionDataFilter:
+      toStateData: ".counts.current"
+  transition: Check If Full
 ```
 
 </td>

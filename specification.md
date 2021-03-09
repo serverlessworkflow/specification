@@ -1081,10 +1081,9 @@ In addition to defining RESTful and RPC services and their operations, workflow 
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference
-them by their logical name through workflow states where expression evaluation is required, thus making them
-reusable definitions.
+them by their logical name through workflow states where expression evaluation is required.
 
-Expression expression functions must declare their `type` parameter to be `expression`. 
+Expression functions must declare their `type` parameter to be `expression`. 
 
 Let's take at an example of such definitions:
 
@@ -1106,9 +1105,9 @@ Let's take at an example of such definitions:
 ```
 
 Here we define two reusable expression functions. Expressions in Serverless Workflow
-are evaluated against the workflow data. Note that different data filters play a big role as to which parts of the 
-workflow data are selected. Reference the 
-[State Data Filtering](#State-data-filters) section for more information on this.
+can be evaluated against the workflow, or workflow state data. Note that different data filters play a big role as to which parts of the 
+workflow data are being evaluated by the expressions. Reference the 
+[State Data Filtering](#State-Data-Filtering) section for more information on this.
 
 Our expression function definitions can now be referenced by workflow states when they need to be evaluated. For example:
 
@@ -1135,6 +1134,61 @@ Our expression function definitions can now be referenced by workflow states whe
      }
   }
 ]
+}
+```
+
+Our expression functions can also be referenced and executed as part of state [action](#Action-Definition) execution.
+Let's say we have the following workflow definition:
+
+```json
+{
+    "name": "simpleadd",
+    "functions": [
+        {
+            "name": "Increment Count Function",
+            "type": "expression",
+            "operation": ".count += 1 | .count"
+        }
+    ],
+    "start": "Initialize Count",
+    "states": [
+        {
+            "name": "Initialize Count",
+            "type": "inject",
+            "data": {
+                "count": 0
+            },
+            "transition": "Increment Count"
+        },
+        {
+            "name": "Increment Count",
+            "type": "operation",
+            "actions": [
+                {
+                    "functionRef": "Increment Count Function",
+                    "actionFilter": {
+                        "toStateData": "${ .count }"
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}
+```
+
+The starting [inject state](#Inject-State) "Initialize Count" injects the count element into our state data, 
+which then becomes the state data input of our "Increment Count" [operation state](#Operation-State).
+This state defines an invocation of the "Increment Count Function" expression function defined in our workflow definition.
+
+This triggers the evaluation of the defined expression. The input of this expression is by default the current state data.
+Just like with "rest", and "rpc" type functions, expression functions also produce a result. In this case 
+the result of the expression is just the number 1. 
+The actions filter then assigns this result to the state data element "count" and the state data becomes:
+
+``` json
+{
+    "count": 1
 }
 ```
 
