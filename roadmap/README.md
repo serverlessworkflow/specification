@@ -12,42 +12,33 @@ _Status description:_
 
 ## Releases
 
-- [Roadmap for next planned release](#v06)
+- [v0.6 released March 2021](#v06)
 - [v0.5 released November 2020](#v05)
 - [v0.1 released April 2020](#v01)
 
-## <a name="v06"></a> Next planned release
+## <a name="v06"></a> v0.6
 
 | Status | Description | Comments |
 | --- | --- |  --- |
-| ✔️| Adding Workflow Compensation capabilities (cmp [Compensating Transaction](https://docs.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), [SAGA pattern](https://microservices.io/patterns/data/saga.html)) | [spec doc](../specification.md) |
-| ✔️| Adding comparison examples with Google Cloud Workflow language| [comparisons doc](../comparisons/README.md) |
+| ✔️| Adding Workflow Compensation capabilities (cmp [Compensating Transaction](https://docs.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction), [SAGA pattern](https://microservices.io/patterns/data/saga.html)) | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Adding comparison examples with Google Cloud Workflow language| [comparisons doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/comparisons/README.md) |
 | ✔️| Updates to retry functionality | [retries: exponential backoff & max backoff](https://github.com/serverlessworkflow/specification/issues/137) [retries: max-attempts & interval](https://github.com/serverlessworkflow/specification/issues/136)|
-| ✔️| Update "directInvoke" property type | [spec doc](../specification.md) |
-| ✔️| Data schema input/output update | [spec doc](../specification.md) |
-| ✔️| Updating start and end state definitions| [spec doc](../specification.md) |
-| ✔️| Update cron definition (adding validUntil parameter)| [spec doc](../specification.md) |
-| ✔️| Adding comparison examples with Temporal | [comparison doc](../comparisons/README.md) |
-| ✔️| Simplified functionRef and transition properties | [spec doc](../specification.md) |
-| ✔️| Adding comparison examples with Cadence | [comparison doc](../comparisons/README.md) |
-| ✔️| Adding workflow execTimeout and keepActive properties | [spec doc](../specification.md) |
-| ✔️| Adding SubFlow state repeat (loop) ability | [spec doc](../specification.md) |
-| ✔️| Adding comparison examples with BPMN | [comparison doc](../comparisons/README.md) |
-| ✔️| Adding RPC type to function definitions (gRPC) | [spec doc](../specification.md) |
-| ✔️| Change function definition 'parameters' to 'arguments' | [spec doc](../specification.md) |
-| ✔️| Replace JsonPath with jq | [spec doc](../specification.md) |
-| ✔️| Update start definition (move to top-level worklow param) | [spec doc](../specification.md) |
-| ✔️| Updated schedule definition | [spec doc](../specification.md) |
-| ✔️| Update data filters | [spec doc](../specification.md) |
-| 🚩 | Workflow invocation bindings |  |
-| 🚩 | CE Subscriptions & Discovery |  |
-| 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
-| 🚩 | Uniqueness constraint for workflows | [issue](https://github.com/serverlessworkflow/specification/issues/146) |
-| 🚩 | OpenAPI endpoint selection |  |
-| 🚩 | Data triggers |  |
-| 🚩 | JSON schema checks |  |
-| 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
-| ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
+| ✔️| Update "directInvoke" property type | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Data schema input/output update | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Updating start and end state definitions| [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Update cron definition (adding validUntil parameter)| [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Adding comparison examples with Temporal | [comparison doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/comparisons/README.md) |
+| ✔️| Simplified functionRef and transition properties | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Adding comparison examples with Cadence | [comparison doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/comparisons/README.md) |
+| ✔️| Adding workflow execTimeout and keepActive properties | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Adding SubFlow state repeat (loop) ability | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Adding comparison examples with BPMN | [comparison doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/comparisons/README.md) |
+| ✔️| Adding RPC type to function definitions (gRPC) | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Change function definition 'parameters' to 'arguments' | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Replace JsonPath with jq | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Update start definition (move to top-level worklow param) | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Updated schedule definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
+| ✔️| Update data filters | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
 
 ## <a name="v05"></a> v0.5
 
