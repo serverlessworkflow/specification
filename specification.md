@@ -20,11 +20,11 @@ You can find the specification roadmap [here](roadmap/README.md).
 - [Project Components](#Project-Components)
 - [Specification Details](#Specification-Details)
   - [Core Concepts](#Core-Concepts)
+  - [Workflow Definition](#Workflow-Definition)
   - [Workflow Model](#Workflow-Model)
   - [Workflow Data](#Workflow-Data)
   - [Workflow Functions](#Workflow-Functions)
   - [Workflow Expressions](#Workflow-Expressions)
-  - [Workflow Definition](#Workflow-Definition)
   - [Workflow Error Handling](#Workflow-Error-Handling)
     - [Defining Errors](#Defining-Errors)
     - [Defining Retries](#Defining-Retries)
@@ -107,8 +107,8 @@ This section describes some of the core Serverless Workflow concepts:
 ### Workflow Definition
 
 A workflow definition is a single artefact written in the Serverless Workflow 
-language. It consists of a set of [workflow model](#Workflow-Model) constructs,
-and defines a blueprint used by runtimes for its execution. 
+language. It consists of the core [Workflow Definition Structure](#Workflow-Definition-Structure) 
+and the [Workflow Model](#Workflow-Model) It defines a blueprint used by runtimes for its execution. 
 
 A business solution can be composed of any number of related workflow definitions.
 Their relationships are explicitly modeled with the Serverless Workflow language (for example
@@ -1349,7 +1349,7 @@ We can now get back to our previously defined "IsAdultApplicant" expression func
 As previously mentioned, expressions are evaluated against certain subsets of data. For example 
 the `parameters` param of the [functionRef definition](#FunctionRef-Definition) can evaluate expressions 
 only against the data that is available to the [action](#Action-Definition) it belongs to.
-One thing to note here are the top-level [workflow definition](#Workflow-Definition) parameters. Expressions defined
+One thing to note here are the top-level [workflow definition](#Workflow-Definition-Structure) parameters. Expressions defined
 in them can only be evaluated against the initial [workflow data input](#Workflow-Data-Input).
 
 For example let's say that we have a workflow data input of:
@@ -1374,7 +1374,7 @@ which would set the workflow version to "1.0.0".
 Note that the workflow "id" property value is not allowed to use an expression. The workflow 
 definition "id" must be a constant value.
 
-### Workflow Definition
+### Workflow Definition Structure
 
 | Parameter | Description | Type | Required |
 | --- | --- |  --- | --- |
@@ -4843,7 +4843,7 @@ Metadata includes key/value pairs (string types). Both keys and values are compl
 
 Metadata can be added to:
 
-- [Core Workflow definition](#Workflow-Definition)
+- [Workflow Definition](#Workflow-Definition-Structure)
 - [Function definitions](#Function-Definition)
 - [Event definitions](#Event-Definition)
 - [State definitions](#State-Definition)
