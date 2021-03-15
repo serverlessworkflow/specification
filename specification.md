@@ -106,7 +106,7 @@ This section describes some of the core Serverless Workflow concepts:
 
 ### Workflow Definition
 
-A workflow definition is a single artifact written in the Serverless Workflow 
+A workflow definition is a single artefact written in the Serverless Workflow 
 language. It consists of a set of [workflow model](#Workflow-Model) constructs,
 and defines a blueprint used by runtimes for its execution. 
 
@@ -753,11 +753,11 @@ Because our event state is also an end state, its data output becomes the final 
 Consumed event data (payload) and action execution results should be merged into the state data.
 Event and action data filters can be used to give more details about this operation.
 
-By default (no data filters specified), when an event is consumed, its entire data section (payload) should be merged
-to the state data. The merge should be applied to the entire state data JSON element.
+By default, with no data filters specified, when an event is consumed, its entire data section (payload) should be merged
+to the state data. Merging should be applied to the entire state data JSON element.
 
 In case of event and action filters, their "toStateData" property can be defined to select a specific element 
-of the state data with which the merge should be done against. If this element does not exist, a new one should
+of the state data with which merging should be done against. If this element does not exist, a new one should
 be created first.
 
 When merging, the state data element and the data (payload)/action result should have the same type, meaning
@@ -788,7 +788,7 @@ and we have the following event payload that needs to be merged into the state d
 }
 ```
 
-After the merge the state data should be:
+After merging the state data should be:
 
 ```json
 {
@@ -1552,7 +1552,7 @@ By default, as described in the [Core Concepts](#Core-Concepts) section, a workf
 active execution paths, one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
 its [`execTimeout`](#ExecTimeout-Definition) time is reached. 
 
-Setting the `keepActive` property to "true" allows you change this default behavior in that a workflow instance
+Setting the `keepActive` property to "true" allows you to change this default behavior in that a workflow instance
 created from this workflow definition can only be terminated if one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
 its [`execTimeout`](#ExecTimeout-Definition) time is reached. 
 This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
@@ -3622,14 +3622,14 @@ an error. This error can be handled inside the states [`onErrors`](#Error-Defini
 The `outputCollection` property is a workflow expression which selects an array in the state data where the results
 of each iteration should be added to. If this array does not exist, it should be created.
 
-The `iterationParam` property defines the name of the iteration parameter passed to each parallel execution of the foreach state.
+The `iterationParam` property defines the name of the iteration parameter passed to each parallel execution of the ForEach state.
 It should contain the unique element of the `inputCollection` array and passed as data input to the actions/workflow defined.
 `iterationParam` should be created for each iteration, so it can be referenced/used in defined actions / workflow data input.
 
 The `actions` property defines actions to be executed in each state iteration.
 
 If actions are not defined, you can specify the `workflowid` to reference a workflow id which needs to be executed
-for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow where the foreach state
+for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow where the ForEach state
 is defined.
 
 Let's take a look at an example:
@@ -3732,8 +3732,8 @@ states:
 </tr>
 </table>
 
-The workflow data input containing order information is passed to the `SendConfirmState` foreach state.
-The foreach state defines an `inputCollection` property which selects all orders that have the `completed` property set to `true`.
+The workflow data input containing order information is passed to the `SendConfirmState` [ForEach](#ForEach-State) state.
+The ForEach state defines an `inputCollection` property which selects all orders that have the `completed` property set to `true`.
 
 For each element of the array selected by `inputCollection` a JSON object defined by `iterationParam` should be
 created containing an unique element of `inputCollection` and passed as the data input to the parallel executed actions.
@@ -4225,7 +4225,7 @@ The `terminate` property, if set to `true`, completes the workflow instance exec
 execution paths.
 If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the entire workflow instance is terminated.
 
-The [`produceEvents`](#ProducedEvent-Definition) allows to define events which should be produced
+The [`produceEvents`](#ProducedEvent-Definition) allows defining events which should be produced
 by the workflow instance before workflow stops its execution.
 
 It's important to mention that if the workflow `keepActive` property is set to`true`, 
@@ -4497,7 +4497,7 @@ retries that need to performed for some specific errors that might be encountere
 In this particular case we define a retry strategy for "Service Call Timeouts" which says that the states 
 control-flow logic should be retried up to 4 times, with a 1 minute delay between each retry attempt.
 
-Different states now can use this retry strategy defined. For example:
+Different states now can use the defined retry strategy. For example:
 
 <table>
 <tr>
@@ -4560,7 +4560,7 @@ and the received event information used for all of the issued retries.
 
 Compensation deals with undoing or reversing the work of one or more states which have 
 already successfully completed. For example, let's say that we have charged a customer $100 for an item 
-purchase. If later the customer decides to cancel this purchase we need to undo this. One way of 
+purchase. In the case customer laster on decides to cancel this purchase we need to undo it. One way of 
 doing that is to credit the customer $100.
 
 It's important to understand that compensation with workflows is not the same as for example rolling back
@@ -4578,7 +4578,7 @@ errors.
 #### Defining Compensation
 
 Each workflow state can define how it should be compensated via its `compensatedBy` property.
-This property references another workflow state (by it's unique name) which is responsible for the actual compensation.
+This property references another workflow state (by its unique name) which is responsible for the actual compensation.
 
 States referenced by `compensatedBy` (as well as any other states that they transition to) must obey following rules:
 * They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
@@ -4812,9 +4812,9 @@ So if we look just at the workflow execution flow, the same workflow could be se
 <img src="media/spec/compensation-exec2.png" height="200px" alt="Compensation Execution Example 2"/>
 </p> 
 
-In our example when compensation is triggered, 
+In our example, when compensation triggers,
 the current workflow data is passed as input to the "D1" state, the first compensation state for our example. 
-It state data output is then passed as state data input to "B1", and so on.
+The states data output is then passed as states data input to "B1", and so on.
 
 #### Compensation and Active States
 
@@ -4890,8 +4890,9 @@ evaluated with the end goal being overall workflow improvements in terms of time
 
 Serverless Workflow specification provides extensions which can be found [here](extensions/README.md).
 
-Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification,
-and for the community to contribute their extension to the specification so they can grow alongside it.
+Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification.
+We also encourage users to contribute their extensions to the specification. That way they can be shared
+with the rest of the community.
 
 If you have an idea for a new workflow extension, or would like to enhance an existing one, 
 please open an `New Extension Request` issue in this repository.
