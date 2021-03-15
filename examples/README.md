@@ -3879,29 +3879,25 @@ states:
 
 #### Description
 
-In this example we want to create an online food ordering workflow. Below image outlines the workflow 
+In this example we want to create an online food ordering workflow. The below image outlines the workflow 
 structure and the available services:
 
 <p align="center">
 <img src="../media/examples/example-foodorder-outline.png" height="450px" alt="Online Food Ordering Structure"/>
 </p>
 
-Our workflow starts off with the "Place Order" [Subflow](../specification.md#SubFlow-State) which is responsible
+Our workflow starts with the "Place Order" [Subflow](../specification.md#SubFlow-State), which is responsible
 to send the received order to the requested restaurant and the estimated order ETA. 
-We then wait for the ETA time when our workflow should go into the "Deliver Order" SubFlow which is responsible
-for dispatching a Courier and send her/him off to pick up the order. Once the order is picked up the Courier 
-needs to deliver the order to the customer. 
-After the order has been delievered to the customer, our workflow needs to charge the customer for the order. 
+We then wait for the ETA time when our workflow should go into the "Deliver Order" SubFlow, responsible
+for dispatching a Courier and sending her/him off to pick up the order. Once the order is picked up, the Courier needs to deliver the order to the customer. 
+After the order has been delivered to the customer, our workflow needs to charge the customer. 
 
 Our workflow needs to communicate with three services during its execution, namely the Order, Delivery, and 
 the Payment services. 
 
-For the sake of the example we assume that our workflow can communicate to the Order and Delivery services via REST
-and the Payment service via gRPC. 
-
-Let's start off by defining an example CloudEvent which triggers an instance of our workflow.
-This event can be sent by a web UI for example, or be pushed onto a Kafka/MQTT topic to start 
-our order workflow.
+For the sake of the example, we assume that our workflow can communicate to the Order and Delivery services via REST and the Payment service via gRPC. 
+Let's start by defining an example CloudEvent which triggers an instance of our workflow.
+This event can be sent by a web UI, for example, or be pushed onto a Kafka/MQTT topic to start our order workflow.
 
 ```json
 {
@@ -3937,12 +3933,11 @@ our order workflow.
 }
 ```
 
-Note the "orderid" CloudEvent context attribute which contains the unique ID of the order specified 
-in this event. [Event correlation](../specification.md#Correlation-Definition) is done against CE context attributes, and as such to be able
+Note the `orderid` CloudEvent context attribute, which contains the unique ID of the order specified in this event. [Event correlation](../specification.md#Correlation-Definition) is done against CE context attributes, and as such, to be able
 to correlate multiple order events to the same order id, it needs to be part of the CE context attributes, and 
 not its data (payload).  
 
-Now let's start defining our workflow. For the sake of this example let's define our function and event definitions
+Now let's start defining our workflow. For the sake of this example, let's define our function and event definitions
 as separate YAML files (and then reference them inside our workflow definition). This is useful in cases
 when you want to reuse them between multiple workflow definitions.
 
@@ -4105,7 +4100,7 @@ states:
 
 #### Workflow Results
 
-For the example order event the workflow output for a successful completion would look like for example:
+For the example order event, the workflow output for a successful completion would look like for example:
 
 ``` json
 {
