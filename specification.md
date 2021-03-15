@@ -658,7 +658,7 @@ At this point our state data should be:
 }
 ```
 
-**(2) CloudEvent of type "customer-arrival-type" is consumed**: Once the vent is consumed, the "eventDataFilter" is triggered. 
+**(2) CloudEvent of type "customer-arrival-type" is consumed**: Once the event is consumed, the "eventDataFilter" is triggered.
 Its "data" expression selects the "customer" object from the events data. The "toStateData" expression
 says that we should add/merge this selected event data to the state data in its "customerInfo" property. If this property
 exists it should be merged, if it does not exist, one should be created.
@@ -959,7 +959,7 @@ Reference the following sections to learn more about workflow functions:
 ### Using Functions For RESTful Service Invocations
 
 [Functions](#Function-Definition) can be used to describe services and their operations that need to be invoked during 
-workflow execution. They can be referenced by states [action definitions](#Action-Definition)] to clearly 
+workflow execution. They can be referenced by states [action definitions](#Action-Definition) to clearly
 define when the service operations should be invoked during workflow execution, as well as the data parameters
 passed to them if needed.
 
@@ -1085,7 +1085,7 @@ them by their logical name through workflow states where expression evaluation i
 
 Expression functions must declare their `type` parameter to be `expression`. 
 
-Let's take at an example of such definitions:
+Let's take a look at an example of such definitions:
 
 ```json
 {
