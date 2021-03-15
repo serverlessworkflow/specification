@@ -27,6 +27,7 @@ Provides Serverless Workflow language examples
 - [Car vitals checks (SubFlow state Repeat)](#Car-Vitals-Checks)
 - [Book Lending Workflow](#Book-Lending)
 - [Filling a glass of water (Expression functions)](#Filling-a-glass-of-water)
+- [Online Food Ordering](#Online-Food-Ordering)
 
 ### Hello World Example
 
@@ -3873,3 +3874,244 @@ states:
 </td>
 </tr>
 </table>
+
+### Online Food Ordering
+
+#### Description
+
+In this example we want to create an online food ordering workflow. The below image outlines the workflow 
+structure and the available services:
+
+<p align="center">
+<img src="../media/examples/example-foodorder-outline.png" height="450px" alt="Online Food Ordering Structure"/>
+</p>
+
+Our workflow starts with the "Place Order" [Subflow](../specification.md#SubFlow-State), which is responsible
+to send the received order to the requested restaurant and the estimated order ETA. 
+We then wait for the ETA time when our workflow should go into the "Deliver Order" SubFlow, responsible
+for dispatching a Courier and sending her/him off to pick up the order. Once the order is picked up, the Courier needs to deliver the order to the customer. 
+After the order has been delivered to the customer, our workflow needs to charge the customer. 
+
+Our workflow needs to communicate with three services during its execution, namely the Order, Delivery, and 
+the Payment services. 
+
+For the sake of the example, we assume that our workflow can communicate to the Order and Delivery services via REST and the Payment service via gRPC. 
+Let's start by defining an example CloudEvent which triggers an instance of our workflow.
+This event can be sent by a web UI, for example, or be pushed onto a Kafka/MQTT topic to start our order workflow.
+
+```json
+{
+   "specversion": "1.0",
+   "type": "org.orders",
+   "source": "/orders/",
+   "subject": "Food Order",
+   "id": "A234-1234-1234",
+   "time": "2021-03-05T17:31:00Z",
+   "orderid": "ORDER-12345",
+   "data": {
+      "id": "ORDER-12345",
+      "customerId": "CUSTOMER-12345",
+      "status": [],
+      "order": {
+         "restaurantId": "RESTAURANT-54321",
+         "items": [
+            {
+               "itemId": "ITEM-8765",
+               "amount": 1,
+               "addons": ""
+            }
+         ]
+      },
+      "delivery":{
+         "address": "1234 MyStreet, MyCountry",
+         "type": "contactless",
+         "requestedTime": "ASAP",
+         "location": "Front door",
+         "instructions": ""
+      }
+   }
+}
+```
+
+Note the `orderid` CloudEvent context attribute, which contains the unique ID of the order specified in this event. [Event correlation](../specification.md#Correlation-Definition) is done against CE context attributes, and as such, to be able
+to correlate multiple order events to the same order id, it needs to be part of the CE context attributes, and 
+not its data (payload).  
+
+Now let's start defining our workflow. For the sake of this example, let's define our function and event definitions
+as separate YAML files (and then reference them inside our workflow definition). This is useful in cases
+when you want to reuse them between multiple workflow definitions.
+
+#### Workflow Event Definition
+
+``` yaml
+events:
+- name: Food Order Event
+  source: "/orders/"
+  type: org.orders
+  correlation:
+  - contextAttributeName: orderid
+- name: ETA Deadline Event
+  source: "/orderseta"
+  type: org.orders.eta
+  correlation:
+  - contextAttributeName: orderid
+- name: Order Picked Up Event
+  source: "/orderspickup"
+  type: org.orders.delivery
+  correlation:
+  - contextAttributeName: orderid
+- name: Order Delievered Event
+  source: "/orderdelivery"
+  type: org.orders.delivery
+  correlation:
+  - contextAttributeName: orderid
+```
+
+#### Workflow Function Definition
+
+``` yaml
+functions:
+- name: Submit Order Function
+  operation: http://myorderservice.org/orders.json#submit
+- name: Get Order ETA Function
+  operation: http://myorderservice.org/orders.json#orderETA
+- name: Dispatch Courrier Function
+  operation: http://mydeliveryservice.org/deliveries.json#dispatch
+- name: Deliver Order Function
+  operation: http://mydeliveryservice.org/deliveries.json#deliver
+- name: Charge For Order Function
+  operation: http://mypaymentservice.org/payments.proto#PaymentService#ChargeUser
+```
+
+#### Main Workflow Definition
+
+With the function and event definitions in place we can now start writing our main workflow definition:
+
+``` yaml
+id: foodorderworkflow
+name: Food Order Workflow
+version: '1.0'
+start: Place Order
+functions: file://orderfunctions.yml
+events: file://orderevents.yml
+states:
+- name: Place Order
+  type: subflow
+  workflowId: placeorderworkflow
+  transition: Wait for ETA Deadline
+- name: Wait for ETA Deadline
+  type: event
+  onEvents:
+  - eventRefs:
+    - ETA Deadline Event
+    eventDataFilter:
+      data: "${ .results.status }"
+      toStateData: "${ .status }"
+  transition: Deliver Order
+- name: Deliver Order
+  type: subflow
+  workflowId: deliverorderworkflow
+  transition: Charge For Order
+- name: Charge For Order
+  type: operation
+  actions:
+  - functionRef:
+      refName: Charge For Order Function
+      arguments:
+        order: "${ .order.id }"
+    actionDataFilter:
+      results: "${ .outcome.status }"
+      toStateData: "${ .status }"
+  stateDataFilter:
+    output: '${ . | {"orderid": .id, "orderstatus": .status} | .orderstatus += ["Order
+      Completed"] }'
+  end: true
+```
+
+With this in place we can start defining our sub-workflows:
+
+#### Place Order Sub-Workflow
+
+``` yaml
+id: placeorderworkflow
+name: Place Order Workflow
+version: '1.0'
+start: Submit Order
+states:
+- name: Submit Order
+  type: event
+  onEvents:
+  - eventRefs:
+    - Food Order Event
+    actions:
+    - functionRef:
+        refName: Submit Order Function
+        arguments:
+          order: "${ .order }"
+      actionDataFilter:
+        results: "${ .results.status }"
+        toStateData: "${ .status }"
+    - functionRef:
+        refName: Get Order ETA Function
+        arguments:
+          customer: "${ .customerId }"
+          restaurantid: "${ .order.restaurantId }"
+          delivery: " ${ .delivery }"
+      actionDataFilter:
+        results: "${ .results.status }"
+        toStateData: "${ .status }"
+  end: true
+```
+
+#### Deliver Order Sub-Workflow
+
+``` yaml
+id: deliverorderworkflow
+name: Deliver Order Workflow
+version: '1.0'
+start: Dispatch Courier
+states:
+- name: Dispatch Courier
+  type: operation
+  actions:
+  - functionRef: Dispatch Courrier Function
+  transition: Wait for Order Pickup
+- name: Wait for Order Pickup
+  type: event
+  onEvents:
+  - eventRefs:
+    - Order Picked Up Event
+    eventDataFilter:
+      data: "${ .data.status }"
+      toStateData: "${ .status }"
+    actions:
+    - functionRef: Deliver Order Function
+  transition: Wait for Delivery Confirmation
+- name: Wait for Delivery Confirmation
+  type: event
+  onEvents:
+  - eventRefs:
+    - Order Delievered Event
+    eventDataFilter:
+      data: "${ .data.status }"
+      toStateData: "${ .status }"
+  end: true
+```
+
+#### Workflow Results
+
+For the example order event, the workflow output for a successful completion would look like for example:
+
+``` json
+{
+  "orderid": "ORDER-12345",
+  "orderstatus": [
+    "Order Submitted",
+    "Order ETA Received",
+    "Order Picked up",
+    "Order Delievered",
+    "Order Charged",
+    "Order Completed"
+  ]
+}
+```
