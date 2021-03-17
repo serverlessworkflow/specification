@@ -317,7 +317,8 @@ states:
   inputCollection: "${ .inputsArray }"
   iterationParam: "${ .inputItem }"
   outputCollection: "${ .outputsArray }"
-  workflowId: doSomethingAndWaitForMessage
+  actions:
+  - subFlowRef: doSomethingAndWaitForMessage
   end: true
 ```
 
@@ -349,11 +350,12 @@ name: SubFlow Loop Workflow
 version: '1.0'
 start: SubflowLoop
 states:
-- name: SubflowLoop
-  type: subflow
-  workflowId: checkAndReplyToEmail
-  repeat:
-    max: 100
+- name: SubflowRepeat
+  type: foreach
+  inputCollection: ${ [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ..., 100 ] }
+  max: 1
+  actions:
+  - subFlow: checkAndReplyToEmail
   end: true
 ```
 
@@ -448,8 +450,9 @@ version: '1.0'
 start: A
 states:
 - name: A
-  type: subflow
-  workflowId: asubflowid
+  type: operation
+  actions:
+    - subFlow: asubflowid
   transition: Event Decision
 - name: Event Decision
   type: switch

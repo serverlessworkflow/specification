@@ -10,7 +10,7 @@ Provides Serverless Workflow language examples
 - [Solving Math Problems (ForEach state)](#Solving-Math-Problems-Example)
 - [Parallel Execution](#Parallel-Execution-Example)
 - [Event Based Transitions (Event-based Switch)](#Event-Based-Transitions-Example)
-- [Applicant Request Decision (Data-based Switch + SubFlow states)](#Applicant-Request-Decision-Example)
+- [Applicant Request Decision (Data-based Switch + SubFlows)](#Applicant-Request-Decision-Example)
 - [Provision Orders (Error Handling)](#Provision-Orders-Example)
 - [Monitor Job for completion (Polling)](#Monitor-Job-Example)
 - [Send CloudEvent on Workflow Completion](#Send-CloudEvent-On-Workfow-Completion-Example)
@@ -24,7 +24,7 @@ Provides Serverless Workflow language examples
 - [New Patient Onboarding (Error checking and Retries)](#New-Patient-Onboarding)
 - [Purchase order deadline (ExecTimeout)](#Purchase-order-deadline)
 - [Accumulate room readings and create timely reports (ExecTimeout and KeepActive)](#Accumulate-room-readings)
-- [Car vitals checks (SubFlow state Repeat)](#Car-Vitals-Checks)
+- [Car vitals checks (SubFlow Repeat)](#Car-Vitals-Checks)
 - [Book Lending Workflow](#Book-Lending)
 - [Filling a glass of water (Expression functions)](#Filling-a-glass-of-water)
 - [Online Food Ordering](#Online-Food-Ordering)
@@ -626,20 +626,32 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
   },
   {
     "name": "HandleApprovedVisa",
-    "type": "subflow",
-    "workflowId": "handleApprovedVisaWorkflowID",
+    "type": "operation",
+    "actions": [
+      {
+        "subFlow": "handleApprovedVisaWorkflowID" 
+      }
+    ],
     "end": true
   },
   {
       "name": "HandleRejectedVisa",
-      "type": "subflow",
-      "workflowId": "handleRejectedVisaWorkflowID",
+      "type": "operation",
+      "actions": [
+        {
+          "subFlow": "handleRejectedVisaWorkflowID" 
+        }
+      ],
       "end": true
   },
   {
       "name": "HandleNoVisaDecision",
-      "type": "subflow",
-      "workflowId": "handleNoVisaDecisionWorkfowId",
+      "type": "operation",
+      "actions": [
+        {
+          "subFlow": "handleNoVisaDecisionWorkfowId" 
+        }
+      ],
       "end": true
   }
 ]
@@ -674,16 +686,19 @@ states:
   default:
     transition: HandleNoVisaDecision
 - name: HandleApprovedVisa
-  type: subflow
-  workflowId: handleApprovedVisaWorkflowID
+  type: operation
+  actions:
+    - subFlow: handleApprovedVisaWorkflowID
   end: true
 - name: HandleRejectedVisa
-  type: subflow
-  workflowId: handleRejectedVisaWorkflowID
+  type: operation
+    actions:
+      - subFlow: handleRejectedVisaWorkflowID
   end: true
 - name: HandleNoVisaDecision
-  type: subflow
-  workflowId: handleNoVisaDecisionWorkfowId
+  type: operation
+    actions:
+      - subFlow: handleNoVisaDecisionWorkfowId
   end: true
 ```
 
@@ -695,7 +710,7 @@ states:
 
 #### Description
 
-This example shows off the switch state and the subflow state. The workflow is started with application information data as input:
+This example shows off the switch state and the subflow action. The workflow is started with application information data as input:
 
 ```json
     {
@@ -709,7 +724,7 @@ This example shows off the switch state and the subflow state. The workflow is s
 ```
 
 We use the switch state with two conditions to determine if the application should be made based on the applicants age.
-If the applicants age is over 18 we start the application (subflow state). Otherwise the workflow notifies the
+If the applicants age is over 18 we start the application (subflow action). Otherwise the workflow notifies the
  applicant of the rejection.
 
 #### Workflow Diagram
@@ -761,8 +776,12 @@ If the applicants age is over 18 we start the application (subflow state). Other
       },
       {
         "name": "StartApplication",
-        "type": "subflow",
-        "workflowId": "startApplicationWorkflowId",
+        "type": "operation",
+        "actions": [
+          {
+            "subFlow": "startApplicationWorkflowId" 
+          }
+        ],
         "end": true
       },
       {  
@@ -808,8 +827,9 @@ states:
   default:
     transition: RejectApplication
 - name: StartApplication
-  type: subflow
-  workflowId: startApplicationWorkflowId
+  type: operation
+  actions: 
+    - subFlow: startApplicationWorkflowId
   end: true
 - name: RejectApplication
   type: operation
@@ -914,26 +934,42 @@ The data output of the workflow contains the information of the exception caught
 },
 {
    "name": "MissingId",
-   "type": "subflow",
-   "workflowId": "handleMissingIdExceptionWorkflow",
+   "type": "operation",
+   "actions": [
+     {
+       "subFlow": "handleMissingIdExceptionWorkflow"
+     }
+   ],
    "end": true
 },
 {
    "name": "MissingItem",
-   "type": "subflow",
-   "workflowId": "handleMissingItemExceptionWorkflow",
+   "type": "operation",
+   "actions": [
+     {
+       "subFlow": "handleMissingItemExceptionWorkflow"
+     }
+   ],
    "end": true
 },
 {
    "name": "MissingQuantity",
-   "type": "subflow",
-   "workflowId": "handleMissingQuantityExceptionWorkflow",
+   "type": "operation",
+   "actions": [
+     {
+       "subFlow": "handleMissingQuantityExceptionWorkflow"
+     }
+   ],
    "end": true
 },
 {
    "name": "ApplyOrder",
-   "type": "subflow",
-   "workflowId": "applyOrderWorkflowId",
+   "type": "operation",
+   "actions": [
+     {
+       "subFlow": "applyOrderWorkflowId"
+     }
+   ],
    "end": true
 }
 ]
@@ -972,20 +1008,24 @@ states:
   - error: Missing order quantity
     transition: MissingQuantity
 - name: MissingId
-  type: subflow
-  workflowId: handleMissingIdExceptionWorkflow
+  type: operation
+  actions:
+  - subFlow: handleMissingIdExceptionWorkflow
   end: true
 - name: MissingItem
-  type: subflow
-  workflowId: handleMissingItemExceptionWorkflow
+  type: operation
+  actions:
+  - subFlow: handleMissingItemExceptionWorkflow
   end: true
 - name: MissingQuantity
-  type: subflow
-  workflowId: handleMissingQuantityExceptionWorkflow
+  type: operation
+  actions:
+  - subFlow: handleMissingQuantityExceptionWorkflow
   end: true
 - name: ApplyOrder
-  type: subflow
-  workflowId: applyOrderWorkflowId
+  type: operation
+  actions:
+  - subFlow: applyOrderWorkflowId
   end: true
 ```
 
@@ -1079,8 +1119,12 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
   },
   {
       "name": "SubmitError",
-      "type": "subflow",
-      "workflowId": "handleJobSubmissionErrorWorkflow",
+      "type": "operation",
+      "actions": [
+        {
+          "subFlow": "handleJobSubmissionErrorWorkflow"
+        }
+      ],
       "end": true
   },
   {
@@ -1200,8 +1244,9 @@ states:
     output: "${ .jobuid }"
   transition: WaitForCompletion
 - name: SubmitError
-  type: subflow
-  workflowId: handleJobSubmissionErrorWorkflow
+  type: operation
+  actions:
+  - subFlow: handleJobSubmissionErrorWorkflow
   end: true
 - name: WaitForCompletion
   type: delay
@@ -1929,8 +1974,12 @@ And for denied credit check, for example:
         },
         {
             "name": "StartApplication",
-            "type": "subflow",
-            "workflowId": "startApplicationWorkflowId",
+            "type": "operation",
+            "actions": [
+              {
+                "subFlow": "startApplicationWorkflowId"
+              }
+            ],
             "end": true
         },
         {
@@ -1994,8 +2043,9 @@ states:
   default:
     transition: RejectApplication
 - name: StartApplication
-  type: subflow
-  workflowId: startApplicationWorkflowId
+  type: operation
+  actions:
+  - subFlow: startApplicationWorkflowId
   end: true
 - name: RejectApplication
   type: operation
@@ -3291,11 +3341,34 @@ We fist define our top-level workflow for this example:
        },
        {
           "name": "DoCarVitalsChecks",
-          "type": "subflow",
+          "type": "operation",
+          "actions": [
+            {
+              "subFlow": {
+                "workflowId": "vitalscheck",
+                "waitForCompletion": false
+              },
+            }
+          ],
+          "transition": "WaitForCarStopped"
+       },
+       {
+          "name": "WaitForCarStopped",
+          "type": "event",
           "workflowId": "vitalscheck",
-          "repeat": {
-             "stopOnEvents": ["CarTurnedOffEvent"]
-          },
+          "onEvents": [
+             {
+                "eventRefs": ["CarTurnedOffEvent"],
+                "actions": [
+                  {
+                    "eventRef": {
+                      "triggerEventRef": "StopVitalsCheck",
+                      "resultEventRef":  "VitalsCheckingStopped"
+                    }
+                  }
+                ]
+             }
+          ],
           "end": true
        }
     ],
@@ -3303,12 +3376,22 @@ We fist define our top-level workflow for this example:
         {
             "name": "CarTurnedOnEvent",
             "type": "car.events",
-            "source": "my/car/start"
+            "source": "my/car"
         },
         {
             "name": "CarTurnedOffEvent",
             "type": "car.events",
-            "source": "my/car/start"
+            "source": "my/car"
+        },
+        {
+            "name": "StopVitalsCheck",
+            "type": "car.events",
+            "source": "my/car"
+        },
+        {
+            "name": "VitalsCheckingStopped",
+            "type": "car.events",
+            "source": "my/car"
         }
     ]
  }
@@ -3330,19 +3413,36 @@ states:
     - CarTurnedOnEvent
   transition: DoCarVitalsChecks
 - name: DoCarVitalsChecks
-  type: subflow
-  workflowId: vitalscheck
-  repeat:
-    stopOnEvents:
+  type: operation
+  actions:
+  - subFlow:
+    workflowId: vitalscheck
+    waitForCompletion: false
+  transition: WaitForCarStopped
+- name: WaitForCarStopped,
+  type: event,
+  workflowId: vitalscheck,
+  onEvents:
+  - eventRefs: 
     - CarTurnedOffEvent
+      actions:
+      - eventRef:
+        triggerEventRef: StopVitalsCheck
+        resultEventRef:  VitalsCheckingStopped
   end: true
 events:
 - name: CarTurnedOnEvent
   type: car.events
-  source: my/car/start
+  source: my/car
 - name: CarTurnedOffEvent
   type: car.events
-  source: my/car/start
+  source: my/car
+- name: StopVitalsCheck
+  type: car.events
+  source: my/car
+- name: VitalsCheckingStopped
+  type: car.events
+  source: my/car
 ```
 
 </td>
@@ -3409,12 +3509,52 @@ And then our reusable sub-workflow which performs the checking of our car vitals
       },
       {
          "name": "WaitTwoMinutes",
-         "type": "delay",
-         "timeDelay": "PT2M",
-         "end": true
+         "type": "event",
+         "timeout": "PT2M",
+         "onEvents": [
+            {
+              "eventRefs": ["StopVitalsCheck"],
+              "eventDataFilter": {
+                "data": "${ true }",
+                "toStateData": "${ .stopRecieved }"
+              }
+            }
+         ],
+         "transition": "ShouldStopOrContinue"
+      },
+      {
+         "name": "ShouldStopOrContinue",
+         "type": "switch",
+         "dataConditions": [
+            {
+               "name": "Stop Event Received",
+               "condition": "${ .stopRecieved }",
+               "end": {
+                  "produceEvents": [
+                     {
+                        "eventRef": "VitalsCheckingStopped"
+                     }
+                  ]
+                  
+               }
+            }
+         ],
+         "default": {
+            "transition": "CheckVitals"
+         }
       }
    ],
    "events": [
+      {
+          "name": "StopVitalsCheck",
+          "type": "car.events",
+          "source": "my/car"
+      },
+      {
+          "name": "VitalsCheckingStopped",
+          "type": "car.events",
+          "source": "my/car"
+      },
       {
          "name": "DisplayFailedChecksOnDashboard",
          "kind": "produced",
@@ -3471,13 +3611,35 @@ states:
   default:
     transition: WaitTwoMinutes
 - name: WaitTwoMinutes
-  type: delay
-  timeDelay: PT2M
-  end: true
+  type: event
+  timeout: PT2M
+  onEvents:
+  - eventRefs: 
+    - StopVitalsCheck
+    eventDataFilter:
+      data: ${ true }
+      toStateData: ${ .stopRecieved }
+  transition: ShouldStopOrContinue
+- name: ShouldStopOrContinue
+  type: switch
+  dataConditions:
+  - name: Stop Event Received
+    condition: ${ .stopRecieved }
+    end:
+      produceEvents:
+      - eventRef: VitalsCheckingStopped
+  default:
+    transition: CheckVitals
 events:
 - name: DisplayFailedChecksOnDashboard
   kind: produced
   type: my.car.events
+- name: StopVitalsCheck
+  type: car.events
+  source: my/car
+- name: VitalsCheckingStopped
+  type: car.events
+  source: my/car
 functions:
 - name: checkTirePressure
   operation: mycarservices.json#checktirepressure
@@ -3989,7 +4151,7 @@ functions:
 
 With the function and event definitions in place we can now start writing our main workflow definition:
 
-``` yaml
+```yaml
 id: foodorderworkflow
 name: Food Order Workflow
 version: '1.0'
@@ -3998,8 +4160,9 @@ functions: file://orderfunctions.yml
 events: file://orderevents.yml
 states:
 - name: Place Order
-  type: subflow
-  workflowId: placeorderworkflow
+  type: operation
+  actions:
+  - subFlow: placeorderworkflow
   transition: Wait for ETA Deadline
 - name: Wait for ETA Deadline
   type: event
@@ -4011,8 +4174,9 @@ states:
       toStateData: "${ .status }"
   transition: Deliver Order
 - name: Deliver Order
-  type: subflow
-  workflowId: deliverorderworkflow
+  type: operation
+  actions: 
+  - subFlow: deliverorderworkflow
   transition: Charge For Order
 - name: Charge For Order
   type: operation
@@ -4034,7 +4198,7 @@ With this in place we can start defining our sub-workflows:
 
 #### Place Order Sub-Workflow
 
-``` yaml
+```yaml
 id: placeorderworkflow
 name: Place Order Workflow
 version: '1.0'
@@ -4067,7 +4231,7 @@ states:
 
 #### Deliver Order Sub-Workflow
 
-``` yaml
+```yaml
 id: deliverorderworkflow
 name: Deliver Order Workflow
 version: '1.0'
@@ -4104,7 +4268,7 @@ states:
 
 For the example order event, the workflow output for a successful completion would look like for example:
 
-``` json
+```json
 {
   "orderid": "ORDER-12345",
   "orderstatus": [

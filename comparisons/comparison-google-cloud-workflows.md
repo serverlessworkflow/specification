@@ -682,8 +682,12 @@ error handlers in the "retry" statement as an expression/variable.
     "states": [
         {
             "name": "CallSub",
-            "type":"subflow",
-            "workflowId": "calledsubflow",
+            "type":"operation",
+            "actions": [
+              {
+                "subFlow": "calledsubflow"
+              }
+            ],
             "end": true
         }
     ]
@@ -696,7 +700,7 @@ error handlers in the "retry" statement as an expression/variable.
 
 #### Notes
 
-Serverless Workflow has a specific [SubFlow state](../specification.md#SubFlow-State). When called the current workflow data
+Serverless Workflow has a specific [SubFlow action](../specification.md#SubFlowRef-Definition). By default the current workflow data
 is passed to it, so there is no need to define specific arguments.
 We have omitted the definition of "calledsubflow" as it is pretty straight forward. It would be 
 a separate workflow definition with the "id" parameter set to "calledsubflow" in this example.

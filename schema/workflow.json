@@ -97,10 +97,6 @@
             "$ref": "#/definitions/switchstate"
           },
           {
-            "title": "SubFlow State",
-            "$ref": "#/definitions/subflowstate"
-          },
-          {
             "title": "Inject State",
             "$ref": "#/definitions/injectstate"
           },
@@ -345,6 +341,10 @@
           "description": "References a 'trigger' and 'result' reusable event definitions",
           "$ref": "#/definitions/eventref"
         },
+        "subFlow": {
+          "description": "References a sub-workflow to invoke",
+          "$ref": "#/definitions/subflowref"
+        },
         "timeout": {
           "type": "string",
           "description": "Time period to wait for function execution to complete"
@@ -364,6 +364,11 @@
         {
           "required": [
             "eventRef"
+          ]
+        },
+        {
+          "required": [
+            "subFlow"
           ]
         }
       ]
@@ -399,6 +404,33 @@
       "required": [
         "triggerEventRef",
         "resultEventRef"
+      ]
+    },
+    "subflowref": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Unique id of the sub-workflow to be invoked",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "description": "Specifies a sub-workflow to be invoked",
+          "properties": {
+            "waitForCompletion": {
+              "type": "boolean",
+              "default": false,
+              "description": "Workflow execution must wait for sub-workflow to finish before continuing"
+            },
+            "workflowId": {
+              "type": "string",
+              "description": "Unique id of the sub-workflow to be invoked"
+            }
+          },
+          "required": [
+            "workflowId"
+          ]
+        }
       ]
     },
     "branch": {
@@ -1166,108 +1198,6 @@
         "end"
       ]
     },
-    "subflowstate": {
-      "type": "object",
-      "description": "Defines a sub-workflow to be executed",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique state id",
-          "minLength": 1
-        },
-        "name": {
-          "type": "string",
-          "description": "State name"
-        },
-        "type": {
-          "type": "string",
-          "const": "subflow",
-          "description": "State type"
-        },
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
-        },
-        "waitForCompletion": {
-          "type": "boolean",
-          "default": false,
-          "description": "Workflow execution must wait for sub-workflow to finish before continuing"
-        },
-        "workflowId": {
-          "type": "string",
-          "description": "Sub-workflow unique id"
-        },
-        "repeat": {
-          "$ref": "#/definitions/repeat",
-          "description": "SubFlow state repeat exec definition"
-        },
-        "stateDataFilter": {
-          "description": "State data filter",
-          "$ref": "#/definitions/statedatafilter"
-        },
-        "onErrors": {
-          "type": "array",
-          "description": "States error handling and retries definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
-        },
-        "transition": {
-          "description": "Next transition of the workflow after SubFlow has completed execution",
-          "$ref": "#/definitions/transition"
-        },
-        "compensatedBy": {
-          "type": "string",
-          "minLength": 1,
-          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
-        },
-        "usedForCompensation": {
-          "type": "boolean",
-          "default": false,
-          "description": "If true, this state is used to compensate another state. Default is false"
-        },
-        "metadata": {
-          "$ref": "common.json#/definitions/metadata"
-        }
-      },
-      "additionalProperties": false,
-      "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "name",
-          "type",
-          "workflowId"
-        ]
-      },
-      "else": {
-        "oneOf": [
-          {
-            "required": [
-              "name",
-              "type",
-              "workflowId",
-              "end"
-            ]
-          },
-          {
-            "required": [
-              "name",
-              "type",
-              "workflowId",
-              "transition"
-            ]
-          }
-        ]
-      }
-    },
     "injectstate": {
       "type": "object",
       "description": "Inject static data into state data. Does not perform any actions",
@@ -1299,7 +1229,7 @@
           "$ref": "#/definitions/statedatafilter"
         },
         "transition": {
-          "description": "Next transition of the workflow after subflow has completed",
+          "description": "Next transition of the workflow after injection has completed",
           "$ref": "#/definitions/transition"
         },
         "compensatedBy": {
@@ -1403,10 +1333,6 @@
             "$ref": "#/definitions/action"
           },
           "additionalItems": false
-        },
-        "workflowId": {
-          "type": "string",
-          "description": "Unique Id of a workflow to be executed for each of the elements of inputCollection"
         },
         "stateDataFilter": {
           "description": "State data filter",
@@ -1790,42 +1716,6 @@
         "toStateData": {
           "type": "string",
           "description": "Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified, denote, the top-level state data element"
-        }
-      },
-      "additionalProperties": false,
-      "required": []
-    },
-    "repeat": {
-      "type": "object",
-      "properties": {
-        "expression": {
-          "type": "string",
-          "description": "Expression evaluated against SubFlow state data. SubFlow will repeat execution as long as this expression is true or until the max property count is reached",
-          "minLength": 1
-        },
-        "checkBefore": {
-          "type": "boolean",
-          "description": "If true, the expression is evaluated before each repeat execution, if false the expression is evaluated after each repeat execution",
-          "default": true
-        },
-        "max": {
-          "type": "integer",
-          "description": "Sets the maximum amount of repeat executions",
-          "minimum": 0
-        },
-        "continueOnError": {
-          "type": "boolean",
-          "description": "If true, repeats executions in a case unhandled errors propagate from the sub-workflow to this state",
-          "default": false
-        },
-        "stopOnEvents": {
-          "type": "array",
-          "description": "List referencing defined consumed workflow events. SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
         }
       },
       "additionalProperties": false,
