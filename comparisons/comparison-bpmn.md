@@ -30,6 +30,7 @@ For this reason, the event, function, retry, and data mapping defined in the ass
 - [Error Handling with Retries](#Error-Handling-With-Retries)
 - [Process Execution Timeout](#Process-Execution-Timeout)
 - [Multiple Instance Subprocess](#Multiple-Instance-Subprocess)
+- [Loop Subprocess](#Loop-Subprocess)
 - [Approve Report (User Task)](#Approve-Report)
 - [Event Based Decision](#Event-Based-Decision)
 
@@ -306,16 +307,17 @@ functions:
 <td valign="top">
 
 ```yaml
-id: subflowloop
-name: SubFlow Repeat workflow
+id: foreachWorkflow
+name: ForEach State Workflow
 version: '1.0'
-start: SubflowRepeat
+start: ForEachItem
 states:
-- name: SubflowRepeat
-  type: subflow
-  workflowId: dosomethingandwaitformessage
-  repeat:
-    max: 10
+- name: ForEachItem
+  type: foreach
+  inputCollection: "${ .inputsArray }"
+  iterationParam: "${ .inputItem }"
+  outputCollection: "${ .outputsArray }"
+  workflowId: doSomethingAndWaitForMessage
   end: true
 ```
 
@@ -324,7 +326,43 @@ states:
 </table>
 
 * Note: We did not include the `dosomethingandwaitformessage` workflow in this example, which would just include
-a starting "operation" state transitioning to an "event" state that waits for the needed event.
+a starting "operation" state transitioning to an "event" state which waits for the needed event.
+
+### Loop Subprocess
+
+<table>
+<tr>
+    <th>BPMN2 Diagram</th>
+    <th>Serverless Workflow</th>
+</tr>
+<tr>
+<td valign="top">
+<p align="center">
+<img src="../media/comparisons/bpmn/loop-subprocess.png" width="500px" alt="BPMN2 Loop Subprocess Workflow"/>
+</p>
+</td>
+<td valign="top">
+
+```yaml
+id: subflowloop
+name: SubFlow Loop Workflow
+version: '1.0'
+start: SubflowLoop
+states:
+- name: SubflowLoop
+  type: subflow
+  workflowId: checkAndReplyToEmail
+  repeat:
+    max: 100
+  end: true
+```
+
+</td>
+</tr>
+</table>
+
+* Note: We did not include the `checkAndReplyToEmail` workflow in this example, which would include the 
+control-flow logic to check email and make a decision to reply to it or wait an hour.
 
 ### Approve Report
 
