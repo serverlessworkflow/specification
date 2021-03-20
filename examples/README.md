@@ -3799,6 +3799,7 @@ Its results are then merged back into the state data according to the "toStateDa
 {
     "id": "fillgrassofwater",
     "name": "Fill glass of water workflow",
+    "version": "1.0",
     "start": "Check if full",
     "functions": [
         {
@@ -3847,6 +3848,7 @@ Its results are then merged back into the state data according to the "toStateDa
 ```yaml
 id: fillgrassofwater
 name: Fill glass of water workflow
+version: '1.0'
 start: Check if full
 functions:
 - name: Increment Current Count Function
