@@ -17,6 +17,7 @@
           "type": "object",
           "$ref": "#/definitions/retrydef"
         },
+        "additionalItems": false,
         "minItems": 1
       }
     ]
@@ -74,6 +75,7 @@
           "description": "If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0 and 1). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format)"
         }
       },
+      "additionalProperties": false,
       "required": [
         "name",
         "maxAttempts"

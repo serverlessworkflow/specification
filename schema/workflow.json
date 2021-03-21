@@ -100,6 +100,7 @@
           }
         ]
       },
+      "additionalItems": false,
       "minItems": 1
     }
   },
@@ -131,6 +132,7 @@
               "description": "Specific date and time (ISO 8601 format) when the cron expression invocation is no longer valid"
             }
           },
+          "additionalProperties": false,
           "required": ["expression"]
         }
       ]
@@ -154,6 +156,7 @@
           "minLength": 1
         }
       },
+      "additionalProperties": false,
       "required": [
         "duration"
       ]
@@ -180,7 +183,8 @@
               "items": {
                 "type": "object",
                 "$ref": "#/definitions/produceeventdef"
-              }
+              },
+              "additionalItems": false
             },
             "compensate": {
               "type": "boolean",
@@ -188,6 +192,7 @@
               "description": "If set to true, triggers workflow compensation when before this transition is taken. Default is false"
             }
           },
+          "additionalProperties": false,
           "required": [
             "nextState"
           ]
@@ -221,6 +226,7 @@
           "$ref": "#/definitions/end"
         }
       },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -245,7 +251,8 @@
           "minItems": 1,
           "items": {
             "type": "string"
-          }
+          },
+          "additionalItems": false
         },
         "actionMode": {
           "type": "string",
@@ -262,13 +269,15 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/action"
-          }
+          },
+          "additionalItems": false
         },
         "eventDataFilter": {
           "description": "Event data filter",
           "$ref": "#/definitions/eventdatafilter"
         }
       },
+      "additionalProperties": false,
       "required": [
         "eventRefs"
       ]
@@ -300,6 +309,7 @@
                   "description": "Function arguments"
                 }
               },
+              "additionalProperties": false,
               "required": [
                 "refName"
               ]
@@ -319,6 +329,7 @@
           "$ref": "#/definitions/actiondatafilter"
         }
       },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -359,6 +370,7 @@
           }
         }
       },
+      "additionalProperties": false,
       "required": [
         "triggerEventRef",
         "resultEventRef"
@@ -378,13 +390,15 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/action"
-          }
+          },
+          "additionalItems": false
         },
         "workflowId": {
           "type": "string",
           "description": "Unique Id of a workflow to be executed in this branch"
         }
       },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -436,7 +450,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "transition": {
           "description": "Next transition of the workflow after the time delay",
@@ -456,6 +471,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "if": {
         "properties": {
           "usedForCompensation": {
@@ -520,7 +536,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/onevents"
-          }
+          },
+          "additionalItems": false
         },
         "timeout": {
           "type": "string",
@@ -536,7 +553,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "transition": {
           "description": "Next transition of the workflow after all the actions have been performed",
@@ -555,6 +573,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -631,7 +650,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "transition": {
           "description": "Next transition of the workflow after all the actions have been performed",
@@ -651,6 +671,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "if": {
         "properties": {
           "usedForCompensation": {
@@ -726,7 +747,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/branch"
-          }
+          },
+          "additionalItems": false
         },
         "completionType": {
           "type": "string",
@@ -753,7 +775,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "transition": {
           "description": "Next transition of the workflow after all branches have completed execution",
@@ -773,6 +796,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "if": {
         "properties": {
           "usedForCompensation": {
@@ -854,7 +878,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/eventcondition"
-          }
+          },
+          "additionalItems": false
         },
         "onErrors": {
           "type": "array",
@@ -862,7 +887,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "eventTimeout": {
           "type": "string",
@@ -886,6 +912,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "required": [
         "name",
         "type",
@@ -920,7 +947,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/datacondition"
-          }
+          },
+          "additionalItems": false
         },
         "onErrors": {
           "type": "array",
@@ -928,7 +956,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "default": {
           "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition",
@@ -948,6 +977,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "required": [
         "name",
         "type",
@@ -965,6 +995,7 @@
           "$ref": "#/definitions/end"
         }
       },
+      "additionalProperties": false,
       "oneOf": [
         {
           "required": [
@@ -1003,15 +1034,16 @@
         "transition": {
           "description": "Next transition of the workflow if there is valid matches",
           "$ref": "#/definitions/transition"
+        },
+        "eventDataFilter": {
+          "description": "Event data filter definition",
+          "$ref": "#/definitions/eventdatafilter"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata"
         }
       },
-      "eventDataFilter": {
-        "description": "Event data filter definition",
-        "$ref": "#/definitions/eventdatafilter"
-      },
-      "metadata": {
-        "$ref": "common.json#/definitions/metadata"
-      },
+      "additionalProperties": false,
       "required": [
         "eventRef",
         "transition"
@@ -1032,15 +1064,16 @@
         "end": {
           "$ref": "#/definitions/end",
           "description": "Explicit transition to end"
+        },
+        "eventDataFilter": {
+          "description": "Event data filter definition",
+          "$ref": "#/definitions/eventdatafilter"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata"
         }
       },
-      "eventDataFilter": {
-        "description": "Event data filter definition",
-        "$ref": "#/definitions/eventdatafilter"
-      },
-      "metadata": {
-        "$ref": "common.json#/definitions/metadata"
-      },
+      "additionalProperties": false,
       "required": [
         "eventRef",
         "end"
@@ -1071,11 +1104,12 @@
         "transition": {
           "description": "Workflow transition if condition is evaluated to true",
           "$ref": "#/definitions/transition"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata"
         }
       },
-      "metadata": {
-        "$ref": "common.json#/definitions/metadata"
-      },
+      "additionalProperties": false,
       "required": [
         "condition",
         "transition"
@@ -1096,11 +1130,12 @@
         "end": {
           "$ref": "#/definitions/end",
           "description": "Workflow end definition"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata"
         }
       },
-      "metadata": {
-        "$ref": "common.json#/definitions/metadata"
-      },
+      "additionalProperties": false,
       "required": [
         "condition",
         "end"
@@ -1151,7 +1186,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "transition": {
           "description": "Next transition of the workflow after SubFlow has completed execution",
@@ -1171,6 +1207,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "if": {
         "properties": {
           "usedForCompensation": {
@@ -1254,6 +1291,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "if": {
         "properties": {
           "usedForCompensation": {
@@ -1338,7 +1376,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/action"
-          }
+          },
+          "additionalItems": false
         },
         "workflowId": {
           "type": "string",
@@ -1354,7 +1393,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "transition": {
           "description": "Next transition of the workflow after state has completed",
@@ -1374,6 +1414,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "if": {
         "properties": {
           "usedForCompensation": {
@@ -1479,7 +1520,8 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
-          }
+          },
+          "additionalItems": false
         },
         "transition": {
           "description": "Next transition of the workflow after all the actions have been performed",
@@ -1503,6 +1545,7 @@
           "$ref": "common.json#/definitions/metadata"
         }
       },
+      "additionalProperties": false,
       "if": {
         "properties": {
           "usedForCompensation": {
@@ -1565,6 +1608,7 @@
               "$ref": "#/definitions/schedule"
             }
           },
+          "additionalProperties": false,
           "required": [
             "stateName",
             "schedule"
@@ -1596,6 +1640,7 @@
               "description": "Timezone name used to evaluate the interval & cron-expression. (default: UTC)"
             }
           },
+          "additionalProperties": false,
           "oneOf": [
             {
               "required": [
@@ -1633,7 +1678,8 @@
               "items": {
                 "type": "object",
                 "$ref": "#/definitions/produceeventdef"
-              }
+              },
+              "additionalItems": false
             },
             "compensate": {
               "type": "boolean",
@@ -1641,6 +1687,7 @@
               "description": "If set to true, triggers workflow compensation. Default is false"
             }
           },
+          "additionalProperties": false,
           "required": [
           ]
         }
@@ -1669,6 +1716,7 @@
           }
         }
       },
+      "additionalProperties": false,
       "required": [
         "eventRef"
       ]
@@ -1685,6 +1733,7 @@
           "description": "Workflow expression that filters the state data output"
         }
       },
+      "additionalProperties": false,
       "required": []
     },
     "eventdatafilter": {
@@ -1699,6 +1748,7 @@
           "description": " Workflow expression that selects a state data element to which the event payload should be added/merged into. If not specified, denotes, the top-level state data element."
         }
       },
+      "additionalProperties": false,
       "required": []
     },
     "actiondatafilter": {
@@ -1717,6 +1767,7 @@
           "description": "Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified, denote, the top-level state data element"
         }
       },
+      "additionalProperties": false,
       "required": []
     },
     "repeat": {
@@ -1748,9 +1799,12 @@
           "minItems": 1,
           "items": {
             "type": "string"
-          }
+          },
+          "additionalItems": false
         }
-      }
+      },
+      "additionalProperties": false,
+      "required": []
     }
   }
 }
