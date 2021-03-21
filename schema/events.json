@@ -17,6 +17,7 @@
           "type": "object",
           "$ref": "#/definitions/eventdef"
         },
+        "additionalItems": false,
         "minItems": 1
       }
     ]
@@ -57,13 +58,15 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/correlationDef"
-          }
+          },
+          "additionalItems": false
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata",
           "description": "Metadata information"
         }
       },
+      "additionalProperties": false,
       "if": {
         "properties": {
           "kind": {
@@ -100,6 +103,7 @@
           "minLength": 1
         }
       },
+      "additionalProperties": false,
       "required": [
         "contextAttributeName"
       ]

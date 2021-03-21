@@ -17,6 +17,7 @@
           "type": "object",
           "$ref": "#/definitions/function"
         },
+        "additionalItems": false,
         "minItems": 1
       }
     ]
@@ -49,6 +50,7 @@
           "default": "rest"
         }
       },
+      "additionalProperties": false,
       "required": [
         "name",
         "operation"
