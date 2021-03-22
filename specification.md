@@ -1206,7 +1206,7 @@ Note that different data filters play a big role as to which parts of the states
 evaluated. Reference the 
 [State Data Filtering](#State-data-filters) section for more information about state data filters.
 
-By default, all workflow expressions should be defined using the [jq](https://stedolan.github.io/jq/) syntax.
+By default, all workflow expressions should be defined using the [jq](https://stedolan.github.io/jq/) [version 1.6](https://github.com/stedolan/jq/releases/tag/jq-1.6) syntax.
 You can find more information on jq in its [manual](https://stedolan.github.io/jq/manual/).
 
 Serverless Workflow does not mandate the use of jq and it's possible to use an expression language 
