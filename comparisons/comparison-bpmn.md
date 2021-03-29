@@ -348,15 +348,28 @@ a starting "operation" state transitioning to an "event" state which waits for t
 id: subflowloop
 name: SubFlow Loop Workflow
 version: '1.0'
-start: SubflowLoop
+start: StartCount
 states:
+- name: StartCount
+  type: inject
+  data:
+    counter: 0
+  transition: SubflowRepeat
 - name: SubflowRepeat
-  type: foreach
-  inputCollection: ${ [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ..., 100 ] }
-  max: 1
+  type: operation
   actions:
   - subFlow: checkAndReplyToEmail
-  end: true
+  actionDataFilter:
+    fromStateData: ${ .someInput }
+    toStateData: ${ .someInput }
+  transition: CheckCount
+- name: CheckCount
+  type: Switch
+  dataConditions:
+  - condition: ${ .counter < 100 }
+    transition: SubflowRepeat
+  default:
+    end: true
 ```
 
 </td>
