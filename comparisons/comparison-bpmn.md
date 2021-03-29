@@ -365,6 +365,8 @@ states:
   transition: CheckCount
 - name: CheckCount
   type: Switch
+  stateDataFilter:
+    input: ${ .counter += 1 }
   dataConditions:
   - condition: ${ .counter < 100 }
     transition: SubflowRepeat
