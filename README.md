@@ -69,6 +69,9 @@ workflow ecosystem. Community contributions are welcome and much needed to foste
 See [here](community/contributors.md) for the list of community members that have contributed to the specification.
 
 To learn how to contribute to the specification reference the ['how to contribute'](contributing.md) doc.
+
+If you have any copyright questions when contributing to a CNCF project like this one,
+reference the [Ownership of Copyrights in CNCF Project Contributions](https://github.com/cncf/foundation/blob/master/copyright-notices.md) doc.
   
 ### Communication
 
