@@ -11,7 +11,7 @@
     },
     "key": {
       "type": "string",
-      "description": "Unique workflow key. Alternative to the workflow id",
+      "description": "Domain-specific workflow identifier",
       "minLength": 1
     },
     "name": {
@@ -28,7 +28,7 @@
       "description": "Workflow version",
       "minLength": 1
     },
-    "labels": {
+    "annotations": {
       "type": "array",
       "description": "List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities",
       "minItems": 1,
