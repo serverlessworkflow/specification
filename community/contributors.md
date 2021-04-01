@@ -69,5 +69,6 @@ us know in chat or team meeting.
     * Josh Lane
     * Chris Gillum
 
-    
+* **Neuroglia**
+    * Charles d'Avernas 
 
