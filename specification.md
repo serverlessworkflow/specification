@@ -3240,7 +3240,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | name |State name | string | yes |
 | type |State type | string | yes |
 | waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
-| workflowId |Sub-workflow unique id | boolean | yes |
+| workflowId |Sub-workflow unique id | string | yes |
 | [repeat](#Repeat-Definition) | SubFlow state repeat exec definition | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
