@@ -13,6 +13,7 @@ us know in chat or team meeting.
 * **Independent**
   * Louis Fourie
   * Achilleas Tzenetopoulos
+  * Antonio Mendoza Pérez
 
 * **Huawei**
   * Cathy Hong Zhang
@@ -71,4 +72,4 @@ us know in chat or team meeting.
 
 * **Neuroglia**
     * Charles d'Avernas 
-
+      
