@@ -3230,15 +3230,15 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | name |State name | string | yes |
 | type |State type | string | yes |
 | waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
-| workflowId |Sub-workflow unique id | boolean | no |
+| workflowId |Sub-workflow unique id | string | yes |
 | [repeat](#Repeat-Definition) | SubFlow state repeat exec definition | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is not defined) |
+| [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | if usedForCompensation is false: yes if end is not defined. if usedForCompensation is true: no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | If this state and end state | object | no |
+| [end](#End-Definition) | If this state and end state | object | if usedForCompensation is false: yes if transition is not defined. if usedForCompensation is true: no  |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
