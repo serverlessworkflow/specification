@@ -341,7 +341,7 @@
           "description": "References a 'trigger' and 'result' reusable event definitions",
           "$ref": "#/definitions/eventref"
         },
-        "subFlow": {
+        "subFlowRef": {
           "description": "References a sub-workflow to invoke",
           "$ref": "#/definitions/subflowref"
         },
@@ -368,7 +368,7 @@
         },
         {
           "required": [
-            "subFlow"
+            "subFlowRef"
           ]
         }
       ]

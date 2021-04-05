@@ -2277,9 +2277,9 @@ instance in case it is an end state without performing any actions.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique action name | string | no |
-| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlow` are not defined |
-| [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlow` are not defined |
-| subFlow | Either string containing the unique id of the sub-workflow to be invoked or a [subFlowRef](#SubFlowRef-Definition) object | object or string | yes if `eventRef` & `functionRef` are not defined |
+| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
+| [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
+| [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | timeout | Time period to wait for function execution to complete or the resultEventRef to be consumed (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 
@@ -2354,7 +2354,7 @@ multiple other workflow definitions.
 
 Reusable workflows are referenced by their `id` property via the SubFlow action `workflowId` parameter.
 
-For the simple case, `subFlow` can be a string containing the `id` of the sub-workflow to invoke.  
+For the simple case, `subFlowRef` can be a string containing the `id` of the sub-workflow to invoke.  
 If you want to specify other parameters then a [subFlowRef](#SubFlowRef-Definition) should be provided instead.
 
 Each referenced workflow receives the SubFlow actions data as workflow data input.
@@ -4138,7 +4138,7 @@ their execution followed by a transition another workflow state, given their con
 
 The `terminate` property, if set to `true`, completes the workflow instance execution, this any other active 
 execution paths.
-If a terminate end is reached inside a ForEach, or Parallel, the entire workflow instance is terminated.
+If a terminate end is reached inside a ForEach or Parallel state the entire workflow instance is terminated.
 
 The [`produceEvents`](#ProducedEvent-Definition) allows defining events which should be produced
 by the workflow instance before workflow stops its execution.

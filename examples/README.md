@@ -629,7 +629,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
     "type": "operation",
     "actions": [
       {
-        "subFlow": "handleApprovedVisaWorkflowID" 
+        "subFlowRef": "handleApprovedVisaWorkflowID" 
       }
     ],
     "end": true
@@ -639,7 +639,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
       "type": "operation",
       "actions": [
         {
-          "subFlow": "handleRejectedVisaWorkflowID" 
+          "subFlowRef": "handleRejectedVisaWorkflowID" 
         }
       ],
       "end": true
@@ -649,7 +649,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
       "type": "operation",
       "actions": [
         {
-          "subFlow": "handleNoVisaDecisionWorkfowId" 
+          "subFlowRef": "handleNoVisaDecisionWorkfowId" 
         }
       ],
       "end": true
@@ -688,17 +688,17 @@ states:
 - name: HandleApprovedVisa
   type: operation
   actions:
-    - subFlow: handleApprovedVisaWorkflowID
+    - subFlowRef: handleApprovedVisaWorkflowID
   end: true
 - name: HandleRejectedVisa
   type: operation
     actions:
-      - subFlow: handleRejectedVisaWorkflowID
+      - subFlowRef: handleRejectedVisaWorkflowID
   end: true
 - name: HandleNoVisaDecision
   type: operation
     actions:
-      - subFlow: handleNoVisaDecisionWorkfowId
+      - subFlowRef: handleNoVisaDecisionWorkfowId
   end: true
 ```
 
@@ -779,7 +779,7 @@ If the applicants age is over 18 we start the application (subflow action). Othe
         "type": "operation",
         "actions": [
           {
-            "subFlow": "startApplicationWorkflowId" 
+            "subFlowRef": "startApplicationWorkflowId" 
           }
         ],
         "end": true
@@ -829,7 +829,7 @@ states:
 - name: StartApplication
   type: operation
   actions: 
-    - subFlow: startApplicationWorkflowId
+    - subFlowRef: startApplicationWorkflowId
   end: true
 - name: RejectApplication
   type: operation
@@ -937,7 +937,7 @@ The data output of the workflow contains the information of the exception caught
    "type": "operation",
    "actions": [
      {
-       "subFlow": "handleMissingIdExceptionWorkflow"
+       "subFlowRef": "handleMissingIdExceptionWorkflow"
      }
    ],
    "end": true
@@ -947,7 +947,7 @@ The data output of the workflow contains the information of the exception caught
    "type": "operation",
    "actions": [
      {
-       "subFlow": "handleMissingItemExceptionWorkflow"
+       "subFlowRef": "handleMissingItemExceptionWorkflow"
      }
    ],
    "end": true
@@ -957,7 +957,7 @@ The data output of the workflow contains the information of the exception caught
    "type": "operation",
    "actions": [
      {
-       "subFlow": "handleMissingQuantityExceptionWorkflow"
+       "subFlowRef": "handleMissingQuantityExceptionWorkflow"
      }
    ],
    "end": true
@@ -967,7 +967,7 @@ The data output of the workflow contains the information of the exception caught
    "type": "operation",
    "actions": [
      {
-       "subFlow": "applyOrderWorkflowId"
+       "subFlowRef": "applyOrderWorkflowId"
      }
    ],
    "end": true
@@ -1010,22 +1010,22 @@ states:
 - name: MissingId
   type: operation
   actions:
-  - subFlow: handleMissingIdExceptionWorkflow
+  - subFlowRef: handleMissingIdExceptionWorkflow
   end: true
 - name: MissingItem
   type: operation
   actions:
-  - subFlow: handleMissingItemExceptionWorkflow
+  - subFlowRef: handleMissingItemExceptionWorkflow
   end: true
 - name: MissingQuantity
   type: operation
   actions:
-  - subFlow: handleMissingQuantityExceptionWorkflow
+  - subFlowRef: handleMissingQuantityExceptionWorkflow
   end: true
 - name: ApplyOrder
   type: operation
   actions:
-  - subFlow: applyOrderWorkflowId
+  - subFlowRef: applyOrderWorkflowId
   end: true
 ```
 
@@ -1122,7 +1122,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       "type": "operation",
       "actions": [
         {
-          "subFlow": "handleJobSubmissionErrorWorkflow"
+          "subFlowRef": "handleJobSubmissionErrorWorkflow"
         }
       ],
       "end": true
@@ -1246,7 +1246,7 @@ states:
 - name: SubmitError
   type: operation
   actions:
-  - subFlow: handleJobSubmissionErrorWorkflow
+  - subFlowRef: handleJobSubmissionErrorWorkflow
   end: true
 - name: WaitForCompletion
   type: delay
@@ -1977,7 +1977,7 @@ And for denied credit check, for example:
             "type": "operation",
             "actions": [
               {
-                "subFlow": "startApplicationWorkflowId"
+                "subFlowRef": "startApplicationWorkflowId"
               }
             ],
             "end": true
@@ -2045,7 +2045,7 @@ states:
 - name: StartApplication
   type: operation
   actions:
-  - subFlow: startApplicationWorkflowId
+  - subFlowRef: startApplicationWorkflowId
   end: true
 - name: RejectApplication
   type: operation
@@ -3301,8 +3301,8 @@ In this example we need to check car vital signs while our car is driving.
 The workflow should start when we receive the "carOn" event and stop when the "carOff" event is consumed.
 While the car is driving our workflow should repeatedly check the vitals every 2 minutes.
 
-For this example we use the workflow [SubFlow](../specification.md#SubFlow-State) state and its 
-[repeat definition](../specification.md#Repeat-Definition) to repeat execution of the vitals checks.
+For this example we use the workflow [SubFlow](../specification.md#SubFlow-Action) actions and looping to repeat 
+execution of the vitals checks.
 
 #### Workflow Diagram
 
@@ -3344,7 +3344,7 @@ We fist define our top-level workflow for this example:
           "type": "operation",
           "actions": [
             {
-              "subFlow": {
+              "subFlowRef": {
                 "workflowId": "vitalscheck",
                 "waitForCompletion": false
               },
@@ -3355,7 +3355,6 @@ We fist define our top-level workflow for this example:
        {
           "name": "WaitForCarStopped",
           "type": "event",
-          "workflowId": "vitalscheck",
           "onEvents": [
              {
                 "eventRefs": ["CarTurnedOffEvent"],
@@ -3415,13 +3414,12 @@ states:
 - name: DoCarVitalsChecks
   type: operation
   actions:
-  - subFlow:
+  - subFlowRef:
     workflowId: vitalscheck
     waitForCompletion: false
   transition: WaitForCarStopped
-- name: WaitForCarStopped,
-  type: event,
-  workflowId: vitalscheck,
+- name: WaitForCarStopped
+  type: event
   onEvents:
   - eventRefs: 
     - CarTurnedOffEvent
@@ -3515,8 +3513,7 @@ And then our reusable sub-workflow which performs the checking of our car vitals
             {
               "eventRefs": ["StopVitalsCheck"],
               "eventDataFilter": {
-                "data": "${ true }",
-                "toStateData": "${ .stopRecieved }"
+                "toStateData": "${ .stopReceived }"
               }
             }
          ],
@@ -3528,7 +3525,7 @@ And then our reusable sub-workflow which performs the checking of our car vitals
          "dataConditions": [
             {
                "name": "Stop Event Received",
-               "condition": "${ .stopRecieved }",
+               "condition": "${ has(\"stopReceived\") }",
                "end": {
                   "produceEvents": [
                      {
@@ -3617,14 +3614,13 @@ states:
   - eventRefs: 
     - StopVitalsCheck
     eventDataFilter:
-      data: ${ true }
-      toStateData: ${ .stopRecieved }
+      toStateData: ${ .stopReceived }
   transition: ShouldStopOrContinue
 - name: ShouldStopOrContinue
   type: switch
   dataConditions:
   - name: Stop Event Received
-    condition: ${ .stopRecieved }
+    condition: ${ has("stopReceived") }
     end:
       produceEvents:
       - eventRef: VitalsCheckingStopped
@@ -4050,7 +4046,7 @@ structure and the available services:
 <img src="../media/examples/example-foodorder-outline.png" height="450px" alt="Online Food Ordering Structure"/>
 </p>
 
-Our workflow starts with the "Place Order" [Subflow](../specification.md#SubFlow-State), which is responsible
+Our workflow starts with the "Place Order" [Subflow](../specification.md#SubFlow-Action), which is responsible
 to send the received order to the requested restaurant and the estimated order ETA. 
 We then wait for the ETA time when our workflow should go into the "Deliver Order" SubFlow, responsible
 for dispatching a Courier and sending her/him off to pick up the order. Once the order is picked up, the Courier needs to deliver the order to the customer. 
@@ -4162,7 +4158,7 @@ states:
 - name: Place Order
   type: operation
   actions:
-  - subFlow: placeorderworkflow
+  - subFlowRef: placeorderworkflow
   transition: Wait for ETA Deadline
 - name: Wait for ETA Deadline
   type: event
@@ -4176,7 +4172,7 @@ states:
 - name: Deliver Order
   type: operation
   actions: 
-  - subFlow: deliverorderworkflow
+  - subFlowRef: deliverorderworkflow
   transition: Charge For Order
 - name: Charge For Order
   type: operation
