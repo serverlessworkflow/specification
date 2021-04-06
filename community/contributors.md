@@ -34,10 +34,12 @@ us know in chat or team meeting.
   
 * **WSO2**
   * Chathura Ekanayake
-  
+
+* **Temporal Technologies**
+  * Tihomir Surdilovic
+
 * **Red Hat**
   * Ruben Romero Montes
-  * Tihomir Surdilovic
   * Ricardo Zanini 
   * Lucas Caparelli
   * Paul Morie
@@ -71,5 +73,6 @@ us know in chat or team meeting.
     * Chris Gillum
 
 * **Neuroglia**
-    * Charles d'Avernas 
+    * Charles d'Avernas
+  
       
