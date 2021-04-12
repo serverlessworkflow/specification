@@ -1,0 +1,230 @@
+{
+   "$id":"https://serverlessworkflow.org/core/actions.json",
+   "$schema":"http://json-schema.org/draft-07/schema#",
+   "description":"Serverless Workflow specification - actions schema",
+   "type":"object",
+   "actions":{
+      "oneOf":[
+         {
+            "type":"string",
+            "format":"uri",
+            "description":"URI to a resource containing function definitions (json or yaml)"
+         },
+         {
+            "type":"array",
+            "description":"Workflow action definitions",
+            "items":{
+               "type":"object",
+               "$ref":"#/definitions/action"
+            },
+            "additionalItems":false,
+            "minItems":1
+         }
+      ]
+   },
+   "required":[
+      "actions"
+   ],
+   "definitions":{
+      "action":{
+         "type":"object",
+         "properties":{
+            "name":{
+               "type":"string",
+               "description":"Unique action name",
+               "minLength":1
+            },
+            "type":{
+               "type":"string",
+               "enum":[
+                  "function",
+                  "asyncFunction",
+                  "consumeEvent",
+                  "produceEvent"
+               ],
+               "description":"Action type"
+            }
+         },
+         "additionalProperties":false,
+         "required":[
+            "name",
+            "type"
+         ],
+         "discriminator":"type"
+      },
+      "function":{
+         "allOf":[
+            {
+               "$ref":"#/definitions/action"
+            },
+            {
+               "type":"object",
+               "description":"Function Reference",
+               "properties":{
+                  "refName":{
+                     "type":"string",
+                     "description":"Name of the referenced function"
+                  },
+                  "arguments":{
+                     "type":"object",
+                     "description":"Function arguments"
+                  }
+               },
+               "additionalProperties":false,
+               "required":[
+                  "refName"
+               ]
+            }
+         ]
+      },
+      "asyncFunction":{
+         "allOf":[
+            {
+               "$ref":"#/definitions/action"
+            },
+            {
+               "type":"object",
+               "description":"Async function reference",
+               "properties":{
+                  "triggerEventRef":{
+                     "type":"string",
+                     "description":"Reference to the unique name of a 'produced' event definition"
+                  },
+                  "resultEventRef":{
+                     "type":"string",
+                     "description":"Reference to the unique name of a 'consumed' event definition"
+                  },
+                  "data":{
+                     "$ref":"#/definitions/stringOrObject",
+                     "description":"If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by 'triggerEventRef'. If object type, a custom object to become the data (payload) of the event referenced by 'triggerEventRef'."
+                  },
+                  "contextAttributes":{
+                     "type":"object",
+                     "description":"Add additional extension context attributes to the produced event",
+                     "additionalProperties":{
+                        "type":"string"
+                     }
+                  }
+               },
+               "additionalProperties":false,
+               "required":[
+                  "triggerEventRef",
+                  "resultEventRef"
+               ]
+            }
+         ]
+      },
+      "consumeEvent":{
+         "allOf":[
+            {
+               "$ref":"#/definitions/action"
+            },
+            {
+               "type":"object",
+               "description":"Consume event",
+               "properties":{
+                  "refName":{
+                     "type":"string",
+                     "description":"Reference to the unique name of a 'consumed' event definition"
+                  },
+                  "correlation":{
+                     "$ref":"#/definitions/correlationDef"
+                  }
+               },
+               "required":[
+                  "refName"
+               ]
+            }
+         ]
+      },
+      "correlationDef":{
+         "type":"object",
+         "description":"Definition of a consumed event's correlation",
+         "properties":{
+            "contextAttributes":{
+               "type":"array",
+               "description":"Cloud event context attribute correlation",
+               "items":{
+                  "type":"object",
+                  "properties":{
+                     "name":{
+                        "type":"string",
+                        "description":"The name of the cloud event context attribute to match"
+                     },
+                     "value":{
+                        "$ref":"#/definitions/stringOrObject",
+                        "description":"If string type, an expression which selects parts of the states data to use for correlation. If object type, the data used for correlation."
+                     }
+                  }
+               },
+               "required":[
+                  "name"
+               ]
+            },
+            "dataProperties":{
+               "type":"array",
+               "description":"Cloud event data property correlation",
+               "items":{
+                  "type":"object",
+                  "properties":{
+                     "name":{
+                        "type":"string",
+                        "description":"The name of the cloud event data property to match"
+                     },
+                     "value":{
+                        "$ref":"#/definitions/stringOrObject",
+                        "description":"If string type, an expression which selects parts of the states data to use for correlation. If object type, the data used for correlation."
+                     }
+                  }
+               },
+               "required":[
+                  "name"
+               ]
+            }
+         }
+      },
+      "produceEvent":{
+         "allOf":[
+            {
+               "$ref":"#/definitions/action"
+            },
+            {
+               "type":"object",
+               "description":"Produce event",
+               "properties":{
+                  "refName":{
+                     "type":"string",
+                     "description":"Reference to the unique name of a 'produced' event definition"
+                  },
+                  "data":{
+                     "$ref":"#/definitions/stringOrObject",
+                     "description":"If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by 'triggerEventRef'. If object type, a custom object to become the data (payload) of the event referenced by 'triggerEventRef'."
+                  },
+                  "contextAttributes":{
+                     "type":"object",
+                     "description":"Add additional extension context attributes to the produced event",
+                     "additionalProperties":{
+                        "type":"string"
+                     }
+                  }
+               },
+               "additionalProperties":false,
+               "required":[
+                  "triggerEventRef",
+                  "resultEventRef"
+               ]
+            }
+         ]
+      },
+      "stringOrObject":{
+         "anyOf":[
+            {
+               "type":"string"
+            },
+            {
+               "type":"object"
+            }
+         ]
+      }
+   }
+}
