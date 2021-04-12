@@ -1483,6 +1483,9 @@ If `dataInputSchema` has the string type, it has the following definition:
 ```
 In this case the `failOnValidationErrors` default value of `true` is assumed. 
 
+The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). In case of 
+a starting [Event state](#Event-state), it is not used to validate its event payloads.
+
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
 The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
