@@ -353,15 +353,15 @@ states:
 - name: SubflowRepeat
   type: operation
   actions:
-  - subFlowRef: checkAndReplyToEmail
-  actionDataFilter:
-    fromStateData: ${ .someInput }
-    toStateData: ${ .someInput }
+  - functionRef: checkAndReplyToEmail
+    actionDataFilter:
+      fromStateData: ${ .someInput }
+      toStateData: ${ .someInput }
   stateDataFilter:
     output: ${ .maxChecks -= 1 }
   transition: CheckCount
 - name: CheckCount
-  type: Switch
+  type: switch
   dataConditions:
   - condition: ${ .maxChecks > 0 }
     transition: SubflowRepeat
