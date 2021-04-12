@@ -2227,7 +2227,7 @@ This is visualized in the diagram below:
 
 The event state timeout period is described in the ISO 8601 data and time format.
 You can specify for example "PT15M" to represent 15 minutes or "P2DT3H4M" to represent 2 days, 3 hours and 4 minutes.
-Timeout values should always be represented as durations and not as time/repeating intervals.
+Timeout values should always be represented as durations and not as specific time intervals.
 
 The timeout property needs to be described in detail as it depends on whether or not the Event state is a workflow starting
 state or not.
@@ -3952,7 +3952,7 @@ If the start definition is of type `object`, it has the following structure:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | stateName | Name of the starting workflow state | object | yes |
-| [schedule](#Schedule-Definition) | Define the time/repeating intervals or cron at which workflow instances should be automatically started. | object | yes |
+| [schedule](#Schedule-Definition) | Define the recurring time intervals or cron expressions at which workflow instances should be automatically started. | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3995,7 +3995,7 @@ If `string` type, it defines the name of the workflow starting state.
 If `object` type, it provides the ability to set the workflow starting state name, as well as the `schedule` property.
 
 The `schedule` property allows to define scheduled workflow instance creation. 
-Scheduled starts have two different choices. You can define a repeating interval or cron-based schedule at which a workflow 
+Scheduled starts have two different choices. You can define a recurring time interval or cron-based schedule at which a workflow 
 instance **should** be created (automatically). 
 
 You can also define cron-based scheduled starts, which allows you to specify periodically started workflow instances based on a [cron](http://crontab.org/) definition.
