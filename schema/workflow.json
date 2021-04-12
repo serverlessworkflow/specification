@@ -37,6 +37,36 @@
       },
       "additionalItems": false
     },
+    "dataInputSchema": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "URI of the JSON Schema used to validate the workflow data input",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "description": "Workflow data input schema definition",
+          "properties": {
+            "schema": {
+              "type": "string",
+              "description": "URI of the JSON Schema used to validate the workflow data input",
+              "minLength": 1
+            },
+            "failOnValidationErrors": {
+              "type": "boolean",
+              "default": true,
+              "description": "Determines if workfow execution should continue if there are validation errors"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "schema",
+            "failOnValidationErrors"
+          ]
+        }
+      ]
+    },
     "start": {
       "$ref": "#/definitions/startdef"
     },

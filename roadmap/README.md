@@ -22,6 +22,7 @@ _Status description:_
 | Status | Description | Comments |
 | --- | --- |  --- |
 | ✔️| Add workflow `key` and `annotations` properties | [spec doc](../specification.md) |
+| ✔️| Add workflow `dataInputSchema` property | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 

@@ -1384,6 +1384,7 @@ definition "id" must be a constant value.
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
+| dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
 | schemaVersion | Workflow schema version | string | no |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
@@ -1463,6 +1464,27 @@ The `version` property can be used to provide a specific workflow version.
 
 The `annotations` property defines a list of helpful terms describing the workflows intended purpose, subject areas, or other important qualities,
 for example "machine learning", "monitoring", "networking", etc
+
+The `dataInputSchema` property can be used to validate the workflow data input against a defined JSON Schema.
+This check should be done before any states are executed. `dataInputSchema` can have two different types.
+If it is an object type it has the following definition: 
+```json
+"dataInputSchema": {
+   "schema": "URL_to_json_schema",
+   "failOnValidationErrors": false
+}
+```
+It's `schema` property is an URI which points to the JSON schema used to validate the workflow data input.
+It' `failOnValidationErrors` property  determines if workflow execution should continue in case of validation
+errors. The default value of `failOnValidationErrors` is `true`.
+If `dataInputSchema` has the string type, it has the following definition:
+```json
+"dataInputSchema": "URL_to_json_schema"
+```
+In this case the `failOnValidationErrors` default value of `true` is assumed. 
+
+The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). In case of 
+a starting [Event state](#Event-state), it is not used to validate its event payloads.
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
