@@ -40,7 +40,8 @@
                   "function",
                   "asyncFunction",
                   "consumeEvent",
-                  "produceEvent"
+                  "produceEvent",
+                  "subflow"
                ],
                "description":"Action type"
             }
@@ -216,15 +217,52 @@
             }
          ]
       },
-      "stringOrObject":{
-         "anyOf":[
-            {
-               "type":"string"
+      "subflow":{
+         "type":"object",
+         "description":"Defines a sub-workflow to be executed",
+         "properties":{
+            "id":{
+               "type":"string",
+               "description":"Unique state id",
+               "minLength":1
             },
-            {
-               "type":"object"
+            "name":{
+               "type":"string",
+               "description":"State name"
+            },
+            "type":{
+               "type":"string",
+               "const":"subflow",
+               "description":"State type"
+            },
+            "end":{
+               "$ref":"#/definitions/end",
+               "description":"State end definition"
+            },
+            "waitForCompletion":{
+               "type":"boolean",
+               "default":false,
+               "description":"Workflow execution must wait for sub-workflow to finish before continuing"
+            },
+            "workflowId":{
+               "type":"string",
+               "description":"Sub-workflow unique id"
+            },
+            "repeat":{
+               "$ref":"#/definitions/repeat",
+               "description":"SubFlow state repeat exec definition"
             }
-         ]
+         },
+         "stringOrObject":{
+            "anyOf":[
+               {
+                  "type":"string"
+               },
+               {
+                  "type":"object"
+               }
+            ]
+         }
       }
    }
 }
