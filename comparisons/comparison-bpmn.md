@@ -317,7 +317,8 @@ states:
   inputCollection: "${ .inputsArray }"
   iterationParam: "${ .inputItem }"
   outputCollection: "${ .outputsArray }"
-  workflowId: doSomethingAndWaitForMessage
+  actions:
+  - subFlowRef: doSomethingAndWaitForMessage
   end: true
 ```
 
@@ -347,19 +348,32 @@ a starting "operation" state transitioning to an "event" state which waits for t
 id: subflowloop
 name: SubFlow Loop Workflow
 version: '1.0'
-start: SubflowLoop
+start: SubflowRepeat
 states:
-- name: SubflowLoop
-  type: subflow
-  workflowId: checkAndReplyToEmail
-  repeat:
-    max: 100
-  end: true
+- name: SubflowRepeat
+  type: operation
+  actions:
+  - subFlowRef: checkAndReplyToEmail
+  actionDataFilter:
+    fromStateData: ${ .someInput }
+    toStateData: ${ .someInput }
+  stateDataFilter:
+    output: ${ .maxChecks -= 1 }
+  transition: CheckCount
+- name: CheckCount
+  type: Switch
+  dataConditions:
+  - condition: ${ .maxChecks > 0 }
+    transition: SubflowRepeat
+  default:
+    end: true
 ```
 
 </td>
 </tr>
 </table>
+
+This workflow assumes that the input to the workflow includes a maxChecks attribute set to an integer value.
 
 * Note: We did not include the `checkAndReplyToEmail` workflow in this example, which would include the 
 control-flow logic to check email and make a decision to reply to it or wait an hour.
@@ -448,8 +462,9 @@ version: '1.0'
 start: A
 states:
 - name: A
-  type: subflow
-  workflowId: asubflowid
+  type: operation
+  actions:
+    - subFlowRef: asubflowid
   transition: Event Decision
 - name: Event Decision
   type: switch

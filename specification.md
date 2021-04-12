@@ -112,7 +112,7 @@ and the [Workflow Model](#Workflow-Model) It defines a blueprint used by runtime
 
 A business solution can be composed of any number of related workflow definitions.
 Their relationships are explicitly modeled with the Serverless Workflow language (for example
-by using [SubFlow](#SubFlow-State) states).
+by using [SubFlow](#SubFlow-Action) actions).
 
 Runtimes can initialize workflow definitions for some particular set of data inputs or events
 which forms [workflow instances](#Workflow-Instance).
@@ -1973,7 +1973,6 @@ States define building blocks of the Serverless Workflow. The specification defi
 | **[Switch](#Switch-State)** | Define data-based or event-based workflow transitions | no | yes | no | yes | no | yes | yes | no |
 | **[Delay](#Delay-State)** | Delay workflow execution | no | yes | no | yes | no | no | yes | yes |
 | **[Parallel](#Parallel-State)** | Causes parallel execution of branches (set of states) | no | yes | no | yes | yes | no | yes | yes |
-| **[SubFlow](#SubFlow-State)** | Represents the invocation of another workflow from within a workflow | no | yes | no | yes | no | no | yes | yes |
 | **[Inject](#Inject-State)** | Inject static data into state data | no | yes | no | yes | no | no | yes | yes |
 | **[ForEach](#ForEach-State)** | Parallel execution of states for each element of a data array | no | yes | no | yes | yes | no | yes | yes |
 | **[Callback](#Callback-State)** | Manual decision step. Executes a function and waits for callback event that indicates completion of the manual decision | yes | yes | yes | yes | no | no | yes | yes |
@@ -2278,8 +2277,9 @@ instance in case it is an end state without performing any actions.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique action name | string | no |
-| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` is not used |
-| [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` is not used |
+| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
+| [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
+| [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | timeout | Time period to wait for function execution to complete or the resultEventRef to be consumed (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 
@@ -2325,12 +2325,13 @@ timeout: PT15M
 
 </details>
 
-Actions specify invocations of services during workflow execution.
+Actions specify invocations of services or other workflows during workflow execution.
 Service invocation can be done in two different ways:
 
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
-* Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property. 
-In this scenario a service or a set of services we want to invoke
+* Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
+
+In the event-based scenario a service or a set of services we want to invoke
 are not exposed via a specific resource URI for example, but can only be invoked via events. 
 The [eventRef](#EventRef-Definition) defines the 
 referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
@@ -2341,6 +2342,25 @@ It is described in ISO 8601 format, so for example "PT2M" would mean the maximum
 its execution is two minutes. 
 
 Possible invocation timeouts should be handled via the states [onErrors](#Workflow-Error-Handling) definition.
+
+##### Subflow action
+
+Often you want to group your workflows into small logical units that solve a particular business problem and can be reused in 
+multiple other workflow definitions.
+
+<p align="center">
+<img src="media/spec/subflowstateref.png" height="350px" alt="Referencing reusable workflow via SubFlow actions"/>
+</p>
+
+Reusable workflows are referenced by their `id` property via the SubFlow action `workflowId` parameter.
+
+For the simple case, `subFlowRef` can be a string containing the `id` of the sub-workflow to invoke.  
+If you want to specify other parameters then a [subFlowRef](#SubFlowRef-Definition) should be provided instead.
+
+Each referenced workflow receives the SubFlow actions data as workflow data input.
+
+Referenced sub-workflows must declare their own [function](#Function-Definition) and [event](#Event-Definition) definitions.
+
 
 #### FunctionRef Definition
 
@@ -2463,6 +2483,50 @@ to be used as payload of the event referenced by `triggerEventRef`. If it is of 
 
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the trigger/produced event. 
+
+#### SubFlowRef Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
+| workflowId |Sub-workflow unique id | boolean | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+    "workflowId": "handleApprovedVisaWorkflowID"
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+workflowId: handleApprovedVisaWorkflowID
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+The `waitForCompletion` property defines if the SubFlow action should wait until the referenced reusable workflow
+has completed its execution. If it's set to "true" (default value), SubFlow action execution must wait until the referenced workflow has completed its execution.
+In this case the workflow data output of the referenced workflow will be used as the result data of the action.
+If it is set to "false" the parent workflow can continue its execution as soon as the referenced sub-workflow 
+has been invoked (fire-and-forget). For this case, the referenced (child) workflow data output will be ignored and the result data 
+of the action will be an empty json object (`{}`).
 
 #### Error Definition
 
@@ -3232,91 +3296,6 @@ parallel state should be considered as the workflow control flow logic has alrea
 
 For more information, see the [Workflow Error Handling](#Workflow-Error-Handling) sections.
 
-#### SubFlow State
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| id | Unique state id | string | no |
-| name |State name | string | yes |
-| type |State type | string | yes |
-| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
-| workflowId |Sub-workflow unique id | string | yes |
-| [repeat](#Repeat-Definition) | SubFlow state repeat exec definition | object | no |
-| [stateDataFilter](#State-data-filters) | State data filter | object | no |
-| [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | if usedForCompensation is false: yes if end is not defined. if usedForCompensation is true: no |
-| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
-| [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | If this state and end state | object | if usedForCompensation is false: yes if transition is not defined. if usedForCompensation is true: no  |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-    "name": "HandleApprovedVisa",
-    "type": "subflow",
-    "workflowId": "handleApprovedVisaWorkflowID",
-    "end": true
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-name: HandleApprovedVisa
-type: subflow
-workflowId: handleApprovedVisaWorkflowID
-end: true
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-Often you want to group your workflows into small logical units that solve a particular business problem and can be reused in 
-multiple other workflow definitions.
-
-<p align="center">
-<img src="media/spec/subflowstateref.png" height="350px" alt="Referencing reusable workflow via SubFlow states"/>
-</p>
-
-Reusable workflow are referenced by their `id` property via the SubFlow states`workflowId` parameter.
-
-Each referenced workflow receives the SubFlow states data as workflow data input.
-
-The `waitForCompletion` property defines if the SubFlow state should wait until the referenced reusable workflow
-has completed its execution. If it's set to "true" (default value), SubFlow state execution must wait until the referenced workflow has completed its execution.
-In this case the workflow data output of the referenced workflow can and should be merged with the SubFlow states state data.
-If it's set to "false" the parent workflow can continue its execution while the referenced sub-workflow 
-is being executed. For this case, the referenced (child) workflow data output cannot be merged with the SubFlow states
-state data (as by the time its completion the parent workflow execution has already continued).
-
-The `repeat` property defines the SubFlow states repeated execution (looping) behavior. This allows you to specify that 
-the sub-workflow should be executed multiple times repeatedly.
-If the `repeat` property is defined, the `waitForCompletion` should be assumed have the value of `true`.
-If the workflow explicitly triggers [compensation](#Workflow-Compensation) and the SubFlow state 
-was executed and defines its compensation state, it should be compensated once, no matter how many times
-its was executed as defined by the `repeat` property.
-After each execution of the SubFlow state, if `repeat` is defined, the SubFlow state data at the end of the 
-one execution should become the state data of the next execution.
-
-For more information about the `repeat` property see the [Repeat Definition](#Repeat-Definition) section.
-
-Referenced sub-workflows must declare their own [function](#Function-Definition) and [event](#Event-Definition) definitions.
-
 #### Inject State
 
 | Parameter | Description | Type | Required |
@@ -3326,7 +3305,7 @@ Referenced sub-workflows must declare their own [function](#Function-Definition)
 | type | State type | string | yes |
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filters) | State data filter | object | no |
-| [transition](#Transitions) | Next transition of the workflow after subflow has completed | object | yes (if end is set to false) |
+| [transition](#Transitions) | Next transition of the workflow after injection has completed | object | yes (if end is set to false) |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
@@ -3554,8 +3533,7 @@ This allows you to test if your workflow behaves properly for cases when there a
 | outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
 | iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
 | max | Specifies how upper bound on how many iterations may run in parallel | string or number | no |
-| [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes if subflowId is not defined |
-| workflowId | Unique Id of a workflow to be executed for each of the elements of inputCollection | string | yes if actions is not defined |
+| [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes (if end is not defined) |
@@ -3617,8 +3595,7 @@ actions:
 
 </details>
 
-ForEach states can be used to execute [actions](#Action-Definition), or a [sub-workflow](#SubFlow-State) for 
-each element of a data set.
+ForEach states can be used to execute [actions](#Action-Definition) for each element of a data set.
 
 Each iteration of the ForEach state should be executed in parallel.
 
@@ -3865,78 +3842,6 @@ The callback event payload is merged with the Callback state data and can be fil
 The Callback state `timeout` property defines a time period from the action execution until the callback event should be received.
 
 If the defined callback event has not been received during this time period, the state should transition to the next state or end workflow execution if it is an end state.
-
-#### Repeat Definition
-
-| Parameter | Description | Type | Required | 
-| --- | --- | --- | --- |
-| [expression](#Workflow-Expressions) | Workflow expression evaluated against state data. SubFlow will repeat execution as long as this expression is true or until the max property count is reached  | string | no |
-| checkBefore | If set to `true` (default value) the expression is evaluated before each repeat execution, if set to false the expression is evaluated after each repeat execution | boolean | no |
-| max | Sets the maximum amount of repeat executions | integer | no |
-| continueOnError | If set to `true` repeats executions in a case unhandled errors propagate from the sub-workflow to this state | boolean | no |
-| stopOnEvents | List referencing defined consumed workflow events. SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached | array | no |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-  "max": 10,
-  "continueOnError": true
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-max: 10
-continueOnError: true
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-Repeat definition can be used in [SubFlow](#SubFlow-State) states to define repeated execution (looping).
-
-The `expression` parameter is a [workflow expression](#Workflow-Expressions). It is 
-evaluated against SubFlow states data. 
-SubFlow state should repeat its execution as long as this expression evaluates to `true` (the expression returns a non-empty result),
-or until the `max` property limit is reached. This parameter allows you to stop repeat execution based on data.
-
-The `checkBefore` property can be used to decide if the `expression` evaluation should be done before or after 
-each SubFlow state execution. Default value of this property is `true`.
-
-The `max` property sets the maximum count of repeat executions. It should be a positive integer value.
-Runtime implementations must define an internal repeat/loop counter which is incremented for each of the 
-SubFlow state repeated executions. If this counter reaches the max value, repeated executions should end.
-
-The `continueOnError` property defines if repeated executions should continue or not in case unhandled errors are propagated
-by the sub-workflow to the SubFlow state. Default value of this property is `false`.
-Unhandled errors are errors which are not explicitly handled by the sub-workflow, and the SubFlow state 
-via its [`onErrors`](#Error-Definition) definition.
-
-If `continueOnError` is set to `false` (default value), and an unhandled error occurs, it should be handled 
-as any other unhandled workflow error, meaning repeat execution shall stop and workflow should stop its exception.
-
-If an error occurs which propagates to the SubFlow state, and is handled explicitly by the 
-SubFlow states [`onErrors`](#Error-Definition) definition, the control flow must take the path of the error handling definition
-and repeat execution must halt.
-
-An alternative way to limit repeat executions is via the `stopOnEvents` property. It contains a list of one or more 
-defined consumed workflow events (referenced by the unique event name). When `stopOnEvents` is defined,
-SubFlow will repeat execution until one of the defined events is consumed, or until the max property count is reached.
 
 #### Start Definition
 
@@ -4233,7 +4138,7 @@ their execution followed by a transition another workflow state, given their con
 
 The `terminate` property, if set to `true`, completes the workflow instance execution, this any other active 
 execution paths.
-If a terminate end is reached inside a ForEach, Parallel, or SubFlow state, the entire workflow instance is terminated.
+If a terminate end is reached inside a ForEach or Parallel state the entire workflow instance is terminated.
 
 The [`produceEvents`](#ProducedEvent-Definition) allows defining events which should be produced
 by the workflow instance before workflow stops its execution.
