@@ -1045,7 +1045,8 @@ Depending on the results of this we either return the results or transition back
 This is done until the job submission returns "SUCCEEDED" or "FAILED" and the job submission results are reported before workflow
 finishes execution.
 
-In the case job submission raises a runtime error, we transition to a SubFlow state which handles the job submission issue.
+In the case job submission raises a runtime error, we transition to an Operation state which invokes
+ a sub-flow responsible for handling the job submission issue.
 
 #### Workflow Diagram
 
@@ -1115,7 +1116,7 @@ In the case job submission raises a runtime error, we transition to a SubFlow st
       "stateDataFilter": {
           "output": "${ .jobuid }"
       },
-      "transition": "WaitForCompletion'"
+      "transition": "WaitForCompletion"
   },
   {
       "name": "SubmitError",
@@ -1961,7 +1962,7 @@ And for denied credit check, for example:
             "dataConditions": [
                 {
                     "condition": "${ .creditCheck | .decision == \"Approved\" }",
-                    "transition": "StartApplication'"
+                    "transition": "StartApplication"
                 },
                 {
                     "condition": "${ .creditCheck | .decision == \"Denied\" }",
