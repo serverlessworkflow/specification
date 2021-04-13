@@ -14,6 +14,7 @@ us know in chat or team meeting.
   * Louis Fourie
   * Achilleas Tzenetopoulos
   * Antonio Mendoza Pérez
+  * Richard Gibson
 
 * **Huawei**
   * Cathy Hong Zhang
