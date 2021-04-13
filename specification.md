@@ -2564,7 +2564,7 @@ which is set to `true`:
 ```
 
 If you need to define the `waitForCompletion` property value to `false`, you can use its
-`object` type which has the following properties: 
+`object` type which has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
@@ -2606,8 +2606,8 @@ The `workflowId` property defines the unique id of the sub-workflow to be invoke
 The `waitForCompletion` property defines if the SubFlow action should wait until the referenced reusable workflow
 has completed its execution. If it's set to "true" (default value), SubFlow action execution must wait until the referenced workflow has completed its execution.
 In this case the workflow data output of the referenced workflow will be used as the result data of the action.
-If it is set to "false" the parent workflow can continue its execution as soon as the referenced sub-workflow 
-has been invoked (fire-and-forget). For this case, the referenced (child) workflow data output will be ignored and the result data 
+If it is set to "false" the parent workflow can continue its execution as soon as the referenced sub-workflow
+has been invoked (fire-and-forget). For this case, the referenced (child) workflow data output will be ignored and the result data
 of the action will be an empty json object (`{}`).
 
 #### Error Definition

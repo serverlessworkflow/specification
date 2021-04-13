@@ -28,6 +28,7 @@ _Status description:_
 | ✔️| Add description of additional properties | [spec doc](../specification.md) |
 | ✔️| Rename Parallel `completionType` values | [spec doc](../specification.md) |
 | ✔️| Removed `workflowId` from ParallelState and ForEach states (use subFlow action instead) | [spec doc](../specification.md) |
+| ✔️| Add subflow actions `version` property | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
