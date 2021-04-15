@@ -1613,7 +1613,7 @@ You can reference the [specification examples](#Examples) to see the `keepActive
 
 ```json
 {  
-   "time": "PT2M",
+   "duration": "PT2M",
    "runBefore": "createandsendreport"
 }
 ```
@@ -1622,7 +1622,7 @@ You can reference the [specification examples](#Examples) to see the `keepActive
 <td valign="top">
 
 ```yaml
-time: PT2M
+duration: PT2M
 runBefore: createandsendreport
 ```
 
