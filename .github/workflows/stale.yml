@@ -34,4 +34,4 @@ jobs:
           stale-pr-label: 'Stale PR'
           exempt-pr-labels: 'Status: Blocked, Status: In progress, Status: On hold, Status: Awaiting response'
           days-before-stale: 45
-          days-before-close: 10
+          days-before-close: 20
