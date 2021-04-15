@@ -1129,7 +1129,7 @@ Our expression function definitions can now be referenced by workflow states whe
           "transition": "RejectApplication"
         }
      ],
-     "default": {
+     "defaultCondition": {
         "transition": "RejectApplication"
      }
   }
@@ -2881,7 +2881,7 @@ Once all actions have been performed, a transition to another state can occur.
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | eventTimeout | If eventConditions is used, defines the time period to wait for events (ISO 8601 format). For example: "PT15M" (15 minutes), or "P2DT3H4M" (2 days, 3 hours and 4 minutes)| string | yes only if eventConditions is defined |
-| default | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
+| defaultCondition | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2912,7 +2912,7 @@ Once all actions have been performed, a transition to another state can occur.
         }
      ],
      "eventTimeout": "PT1H",
-     "default": {
+     "defaultCondition": {
         "transition": "HandleNoVisaDecision"
      }
 }
@@ -2930,7 +2930,7 @@ eventConditions:
 - eventRef: visaRejectedEvent
   transition: HandleRejectedVisa
 eventTimeout: PT1H
-default:
+defaultCondition:
   transition: HandleNoVisaDecision
 ```
 
@@ -2953,13 +2953,13 @@ are ordered in both JSON and YAML. For example, let's say there are two `true` c
 Because A was defined first, its transition will be executed, not B's.
 
 In case of data-based conditions definition, switch state controls workflow transitions based on the states data.
-If no defined conditions can be matched, the state transitions is taken based on the `default` property.
+If no defined conditions can be matched, the state transitions is taken based on the `defaultCondition` property.
 This property can be either a `transition` to another workflow state, or an `end` definition meaning a workflow end.
 
 For event-based conditions, a switch state acts as a workflow wait state. It halts workflow execution 
 until one of the referenced events arrive, then making a transition depending on that event definition.
 If events defined in event-based conditions do not arrive before the states `eventTimeout` property expires, 
- state transitions are based on the defined `default` property.
+ state transitions are based on the defined `defaultCondition` property.
 
 #### <a name="switch-state-dataconditions"></a>Switch State: Data Conditions
 

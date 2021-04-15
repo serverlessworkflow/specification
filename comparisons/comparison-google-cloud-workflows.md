@@ -807,7 +807,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
                     "transition": "CallMedium"
                 }
             ],
-            "default": {
+            "defaultCondition": {
                 "transition": "CallLarge"
             }
         },
