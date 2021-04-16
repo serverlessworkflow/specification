@@ -31,6 +31,7 @@ _Status description:_
 | ✔️| Add subflow actions `version` property | [spec doc](../specification.md) |
 | ✔️| Renamed `schemaVersion` to `specVersion` and it is now a required parameter | [spec doc](../specification.md) |
 | ✔️| Add GraphQL support for function definitions | [spec doc](../specification.md) |
+| ✔️| Allow eventDataFilter to access entire event | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 

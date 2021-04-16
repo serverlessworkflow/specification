@@ -61,6 +61,11 @@
           },
           "additionalItems": false
         },
+        "dataOnly": {
+          "type": "boolean",
+          "default": true,
+          "description": "If `true`, only the Event payload is accessible to consuming Workflow states. If `false`, both event payload and context attributes should be accessible "
+        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata",
           "description": "Metadata information"
