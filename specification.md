@@ -2563,13 +2563,14 @@ which is set to `true`:
 "subFlowRef": "mySubFlowId"
 ```
 
-If you need to define the `waitForCompletion` property value to `false`, you can use its
-`object` type which has the following properties:
+If you need to define the `waitForCompletion` or the `version` properties, you can use its
+`object` type:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| workflowId | Unique id of the sub-workflow to be invoked | boolean | yes |
-| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | no |
+| workflowId | Sub-workflow unique id | boolean | yes |
+| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing (default is true) | boolean | no |
+| version | Sub-workflow version | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2584,7 +2585,8 @@ If you need to define the `waitForCompletion` property value to `false`, you can
 
 ```json
 {
-    "workflowId": "handleApprovedVisaWorkflowID"
+    "workflowId": "handleApprovedVisaWorkflowID",
+    "version": "2.0"
 }
 ```
 
@@ -2593,6 +2595,7 @@ If you need to define the `waitForCompletion` property value to `false`, you can
 
 ```yaml
 workflowId: handleApprovedVisaWorkflowID
+version: '2.0'
 ```
 
 </td>
@@ -2601,7 +2604,11 @@ workflowId: handleApprovedVisaWorkflowID
 
 </details>
 
-The `workflowId` property defines the unique id of the sub-workflow to be invoked.
+The `workflowId` property defined the unique ID of the sub-workflow to be invoked.
+
+The `version` property defined the unique version of the sub-workflow to be invoked.
+If this property is defined, runtimes should match both the `id` and the `version` properties
+defined in the sub-workflow definition. 
 
 The `waitForCompletion` property defines if the SubFlow action should wait until the referenced reusable workflow
 has completed its execution. If it's set to "true" (default value), SubFlow action execution must wait until the referenced workflow has completed its execution.

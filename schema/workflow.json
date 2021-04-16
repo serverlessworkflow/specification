@@ -458,7 +458,8 @@
             },
             "version": {
               "type": "string",
-              "description": "Version of the sub-workflow to be invoked"
+              "description": "Version of the sub-workflow to be invoked",
+              "default": "latest"
             }
           },
           "required": [
