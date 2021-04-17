@@ -4855,7 +4855,7 @@ The default value of `schemaVersion` is set to "latest", meaning that if this pr
 conforms to the latest specification release version.
 
 The Serverless Workflow specification does not mandate a specific versioning strategy
-for the top level and actions subflowRef definitions `version` property. It does not mandate the use 
+for the top level and actions subflowRef definitions `version` properties. It does not mandate the use 
 of a versioning strategy at all. We do recommend however that you do use a versioning strategy 
 for your workflow definitions especially in production environments. 
 
