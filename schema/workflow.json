@@ -74,6 +74,7 @@
     "schemaVersion": {
       "type": "string",
       "description": "Serverless Workflow schema version",
+      "default": "latest",
       "minLength": 1
     },
     "expressionLang": {

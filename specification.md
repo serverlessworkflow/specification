@@ -29,6 +29,7 @@ You can find the specification roadmap [here](roadmap/README.md).
     - [Defining Errors](#Defining-Errors)
     - [Defining Retries](#Defining-Retries)
   - [Workflow Compensation](#Workflow-Compensation)
+  - [Workflow Versioning](#Workflow-Versioning)  
   - [Workflow Metadata](#Workflow-Metadata)
 - [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
@@ -1386,7 +1387,7 @@ definition "id" must be a constant value.
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
-| schemaVersion | Workflow schema version | string | no |
+| schemaVersion | Workflow schema version (default value is `"latest"`) | string | no |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
@@ -1490,7 +1491,11 @@ a starting [Event state](#Event-state), it is not used to validate its event pay
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
 The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
-to validate this workflow markup. If not provided the latest released schema version is assumed.
+to validate this workflow markup. The default value of this property is `"latest"`, meaning that 
+if it is not specified, the latest specification release schema version is assumed.
+If `schemaVersion` is defined, it must follow the specification release versions (excluding the leading "v"), meaning that for 
+the [release version v0.6](https://github.com/serverlessworkflow/specification/releases/tag/v0.6) 
+its value should be set to `"0.6"`.
 
 The `expressionLang` property can be used to identify the expression language used for all expressions in
 the workflow definition. The default value of this property is ["jq"](https://stedolan.github.io/jq/). 
@@ -4831,6 +4836,32 @@ States that are marked as `usedForCompensation` can define [error handling](#Wor
 (errors not explicitly handled),
 workflow execution should be stopped, which is the same behavior as when not using compensation as well. 
 
+### Workflow Versioning
+
+In any application, regardless of size or type, one thing is for sure: changes happen.
+Versioning your workflow definitions is an important task to consider. Versions indicate 
+changes or updates to your workflow definitions to the associated execution runtimes. 
+
+There are three places in the [workflow definition](#Workflow-Definition-Structure) where versioning can be applied:
+1. Top level workflow definition `schemaVersion` property.
+2. Top level workflow definition `version` property.
+3. Actions [subflowRef](#SubFlowRef-Definition) `version` property.
+
+The top-level `schemaVersion` property follows the release versioning strategy of the specification (without the leading "v" 
+if the specification release includes it). 
+To give an example, to reference the  specification
+[release version v0.6](https://github.com/serverlessworkflow/specification/releases/tag/v0.6) its value should be set to `"0.6"`.
+The default value of `schemaVersion` is set to "latest", meaning that if this property is not defined, the workflow definition
+conforms to the latest specification release version.
+
+The Serverless Workflow specification does not mandate a specific versioning strategy
+for the top level and actions subflowRef definitions `version` property. It does not mandate the use 
+of a versioning strategy at all. We do recommend however that you do use a versioning strategy 
+for your workflow definitions especially in production environments. 
+
+To enhance portability when using versioning of your workflow and sub-workflow definitions,
+we recommend using an existing versioning standard such as [SemVer](https://semver.org/) for example.
+ 
 ### Workflow Metadata
 
 Metadata enables you to enrich the serverless workflow model with information beyond its core definitions.
