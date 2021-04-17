@@ -4840,7 +4840,7 @@ workflow execution should be stopped, which is the same behavior as when not usi
 
 In any application, regardless of size or type, one thing is for sure: changes happen.
 Versioning your workflow definitions is an important task to consider. Versions indicate 
-changes or updates to your workflow definitions to the associated execution runtimes. 
+changes or updates of your workflow definitions to the associated execution runtimes. 
 
 There are three places in the [workflow definition](#Workflow-Definition-Structure) where versioning can be applied:
 1. Top level workflow definition `schemaVersion` property.
