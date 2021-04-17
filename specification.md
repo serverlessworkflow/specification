@@ -1382,7 +1382,7 @@ definition "id" must be a constant value.
 | key | Domain-specific workflow identifier | string | yes if `id` not defined |
 | name | Workflow name | string | yes |
 | description | Workflow description | string | no |
-| version | Workflow version | string | no |
+| version | Workflow version (default value is `"latest"`) | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
@@ -1460,7 +1460,8 @@ The `name` property is the workflow logical name.
 
 The `description` property can be used to give further information about the workflow.
 
-The `version` property can be used to provide a specific workflow version.
+The `version` property can be used to provide a specific workflow version. The default
+value of this property (if not specified) is `"latest"`.
 
 The `annotations` property defines a list of helpful terms describing the workflows intended purpose, subject areas, or other important qualities,
 for example "machine learning", "monitoring", "networking", etc
@@ -2554,10 +2555,11 @@ to the trigger/produced event.
 
 #### SubFlowRef Definition
 
-`SubFlowRef` definition can have two types, either `string` or `object`.
-If `string`, it defines the unique id of the sub-workflow to be invoked.
-This can be used as a short-cut definition when you want to use the default value of the `waitForCompletion`,
-which is set to `true`:
+
+`subFlowRef` definition can have two types, either `string` or `object`.
+If `string` type, it defines the unique id of the sub-workflow to be invoked. 
+This short-hand definition can be used if sub-workflow lookup is done only by its `id`
+property and not its `version` property and if the default value of `waitForCompletion` is assumed.
 
 ```json
 "subFlowRef": "mySubFlowId"
@@ -2568,7 +2570,7 @@ If you need to define the `waitForCompletion` or the `version` properties, you c
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| workflowId | Sub-workflow unique id | boolean | yes |
+| workflowId | Sub-workflow unique id | string | yes |
 | waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing (default is true) | boolean | no |
 | version | Sub-workflow version | string | no |
 

@@ -26,6 +26,7 @@
     "version": {
       "type": "string",
       "description": "Workflow version",
+      "default": "latest",
       "minLength": 1
     },
     "annotations": {
@@ -459,7 +460,7 @@
             "version": {
               "type": "string",
               "description": "Version of the sub-workflow to be invoked",
-              "default": "latest"
+              "minLength": 1
             }
           },
           "required": [
