@@ -2248,7 +2248,7 @@ This is visualized in the diagram below:
 
 The event state timeout period is described in the ISO 8601 data and time format.
 You can specify for example "PT15M" to represent 15 minutes or "P2DT3H4M" to represent 2 days, 3 hours and 4 minutes.
-Timeout values should always be represented as durations and not as time/repeating intervals.
+Timeout values should always be represented as durations and not as specific time intervals.
 
 The timeout property needs to be described in detail as it depends on whether or not the Event state is a workflow starting
 state or not.
@@ -3879,7 +3879,7 @@ If the start definition is of type `object`, it has the following structure:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | stateName | Name of the starting workflow state | object | yes |
-| [schedule](#Schedule-Definition) | Define the time/repeating intervals or cron at which workflow instances should be automatically started. | object | yes |
+| [schedule](#Schedule-Definition) | Define the recurring time intervals or cron expressions at which workflow instances should be automatically started. | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3922,7 +3922,7 @@ If `string` type, it defines the name of the workflow starting state.
 If `object` type, it provides the ability to set the workflow starting state name, as well as the `schedule` property.
 
 The `schedule` property allows to define scheduled workflow instance creation. 
-Scheduled starts have two different choices. You can define a repeating interval or cron-based schedule at which a workflow 
+Scheduled starts have two different choices. You can define a recurring time interval or cron-based schedule at which a workflow 
 instance **should** be created (automatically). 
 
 You can also define cron-based scheduled starts, which allows you to specify periodically started workflow instances based on a [cron](http://crontab.org/) definition.
@@ -3969,8 +3969,8 @@ it with its `object` type which has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| interval | Time interval (must be repeating interval) described with ISO 8601 format. Declares when workflow instances will be automatically created. | string | yes if `cron` not defined |
-| [cron](#Cron-Definition) | Cron expression defining when workflow instances should be created (automatically) | object | yes if `interval` not defined |
+| interval | A recurring time interval expressed in the derivative of ISO 8601 format specified below. Declares that workflow instances should be automatically created at the start of each time interval in the series. | string | yes if `cron` not defined |
+| [cron](#Cron-Definition) | Cron expression defining when workflow instances should be automatically created | object | yes if `interval` not defined |
 | timezone | Timezone name used to evaluate the interval & cron-expression. If the interval specifies a date-time w/ timezone then proper timezone conversion will be applied. (default: UTC). | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -4003,14 +4003,14 @@ cron: 0 0/15 * * * ?
 
 </details>
 
-The `interval` property uses the ISO 8601 time repeating interval format to describe when workflow instances will be automatically created.
-There are a number of supported ways to express the repeating interval:
+The `interval` property uses a derivative of ISO 8601 recurring time interval format to describe a series of consecutive time intervals for workflow instances to be automatically created at the start of. Unlike full ISO 8601, this derivative format does not allow expression of an explicit number of recurrences or identification of a series by the date and time at the start and end of its first time interval.
+There are three ways to express a recurring interval:
 
 1. `R/<Start>/<Duration>`: Defines the start time and a duration, for example: "R/2020-03-20T13:00:00Z/PT2H", meaning workflow 
 instances will be automatically created every 2 hours starting from March 20th 2020 at 1pm UTC.
 2. `R/<Duration>/<End>`: Defines a duration and an end, for example: "R/PT2H/2020-05-11T15:30:00Z", meaning that workflow instances will be 
-automatically created every 2 hours until until May 11th 2020 at 3:30PM UTC.
-3. `R/<Duration>`: Defines a duration only, for example: "R/PT2H", meaning workflow instances will be automatically created every 2 hours.
+automatically created every 2 hours until until May 11th 2020 at 3:30pm UTC (i.e., the last instance will be created 2 hours prior to that, at 1:30pm UTC).
+3. `R/<Duration>`: Defines a duration only, for example: "R/PT2H", meaning workflow instances will be automatically created every 2 hours. The start time of the first interval may be indeterminate, but should be delayed by no more than the specified duration and must repeat on schedule after that (this is effectively supplying the start time "out-of-band" as permitted ISO ISO 8601-1:2019 section 5.6.1 NOTE 1). Each runtime implementation should document how the start time for a duration-only interval is established.
 
 The `cron` property uses a [cron expression](http://crontab.org/) 
 to describe a repeating interval upon which a workflow instance should be created automatically.
