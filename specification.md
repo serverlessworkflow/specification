@@ -3172,8 +3172,8 @@ Delay state waits for a certain amount of time before transitioning to a next st
 | name | State name | string | yes |
 | type | State type | string | yes |
 | [branches](#parallel-state-branch) | List of branches for this parallel state| array | yes |
-| completionType | Option types on how to complete branch execution. Default is "and" | enum | no |
-| n | Used when branchCompletionType is set to `n_of_m` to specify the `n` value. | string or number | no |
+| completionType | Option types on how to complete branch execution. Default is "allOf" | enum | no |
+| numCompleted | Used when branchCompletionType is set to `atLeast` to specify the least number of branches that must complete in order for the state to transition/end. | string or number | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes (if end is not defined) |
@@ -3197,7 +3197,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
  {  
      "name":"ParallelExec",
      "type":"parallel",
-     "completionType": "and",
+     "completionType": "allOf",
      "branches": [
         {
           "name": "Branch1",
@@ -3236,7 +3236,7 @@ Delay state waits for a certain amount of time before transitioning to a next st
 ```yaml
 name: ParallelExec
 type: parallel
-completionType: and
+completionType: allOf
 branches:
 - name: Branch1
   actions:
@@ -3261,14 +3261,13 @@ end: true
 
 Parallel state defines a collection of `branches` that are executed in parallel.
 A parallel state can be seen a state which splits up the current workflow instance execution path
-into multiple ones, one for each of each branch. These execution paths are performed in parallel
+into multiple ones, one for each branch. These execution paths are performed in parallel
 and are joined back into the current execution path depending on the defined `completionType` parameter value.
 
 The "completionType" enum specifies the different ways of completing branch execution:
-* and: All branches must complete execution before state can perform its transition. This is the default value in case this parameter is not defined in the parallel state definition.
-* xor: State can transition when one of the branches completes execution
-* n_of_m: State can transition once `n` number of branches have completed execution. In this case you should also
-specify the `n` property to define this number.
+* allOf: All branches must complete execution before the state can transition/end. This is the default value in case this parameter is not defined in the parallel state definition.
+* atLeast: State can transition/end once at least the specified number of branches have completed execution. In this case you must also
+specify the `numCompleted` property to define this number.
 
 Exceptions may occur during execution of branches of the Parallel state, this is described in detail in [this section](#parallel-state-exceptions).
 

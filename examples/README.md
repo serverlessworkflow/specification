@@ -485,7 +485,7 @@ states:
 #### Description
 
 This example uses a parallel state to execute two branches (simple wait states) at the same time.
-The completionType type is set to "and", which means the parallel state has to wait for both branches
+The completionType type is set to "allOf", which means the parallel state has to wait for both branches
 to finish execution before it can transition (end workflow execution in this case as it is an end state).
 
 #### Workflow Diagram
@@ -515,7 +515,7 @@ to finish execution before it can transition (end workflow execution in this cas
   {  
      "name": "ParallelExec",
      "type": "parallel",
-     "completionType": "and",
+     "completionType": "allOf",
      "branches": [
         {
           "name": "ShortDelayBranch",
@@ -544,7 +544,7 @@ start: ParallelExec
 states:
 - name: ParallelExec
   type: parallel
-  completionType: and
+  completionType: allOf
   branches:
   - name: ShortDelayBranch
     workflowId: shortdelayworkflowid
