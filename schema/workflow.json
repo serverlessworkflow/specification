@@ -377,7 +377,7 @@
         },
         "timeout": {
           "type": "string",
-          "description": "Time period to wait for function execution to complete"
+          "description": "Time period to wait for function execution to complete (ISO 8601 format)"
         },
         "actionDataFilter": {
           "description": "Action data filter",
