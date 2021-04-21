@@ -365,7 +365,7 @@ states:
   dataConditions:
   - condition: ${ .maxChecks > 0 }
     transition: SubflowRepeat
-  default:
+  defaultCondition:
     end: true
 ```
 

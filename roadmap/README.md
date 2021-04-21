@@ -24,6 +24,7 @@ _Status description:_
 | ✔️| Add workflow `key` and `annotations` properties | [spec doc](../specification.md) |
 | ✔️| Replaced SubFlow state with subflow action type | [spec doc](../specification.md) |
 | ✔️| Add workflow `dataInputSchema` property | [spec doc](../specification.md) |
+| ✔️| Rename switch state `default` to `defaultCondition` to avoid keyword conflicts for SDK's | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 

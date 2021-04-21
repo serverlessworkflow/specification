@@ -981,9 +981,9 @@
           "type": "string",
           "description": "If eventConditions is used, defines the time period to wait for events (ISO 8601 format)"
         },
-        "default": {
+        "defaultCondition": {
           "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition",
-          "$ref": "#/definitions/defaultdef"
+          "$ref": "#/definitions/defaultconditiondef"
         },
         "compensatedBy": {
           "type": "string",
@@ -1046,9 +1046,9 @@
           },
           "additionalItems": false
         },
-        "default": {
+        "defaultCondition": {
           "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition",
-          "$ref": "#/definitions/defaultdef"
+          "$ref": "#/definitions/defaultconditiondef"
         },
         "compensatedBy": {
           "type": "string",
@@ -1071,9 +1071,9 @@
         "dataConditions"
       ]
     },
-    "defaultdef": {
+    "defaultconditiondef": {
       "type": "object",
-      "description": "Default definition. Can be either a transition or end definition",
+      "description": "DefaultCondition definition. Can be either a transition or end definition",
       "properties": {
         "transition": {
           "$ref": "#/definitions/transition"
