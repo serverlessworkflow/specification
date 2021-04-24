@@ -54,6 +54,8 @@ In addition to the documentation mentioned above, there is also a set of SDKs be
 
 - [Go](https://github.com/serverlessworkflow/sdk-go)
 - [Java](https://github.com/serverlessworkflow/sdk-java)
+- [.NET](https://github.com/serverlessworkflow/sdk-net)
+- [TypeScript](https://github.com/serverlessworkflow/sdk-typescript)
 
 Being an open source community the Serverless Workflow team is open for new members as well open to their contributions. 
 In order to ensure that an SDK is going to be supported and maintained, the Serverless Workflow community would like to ensure that:
