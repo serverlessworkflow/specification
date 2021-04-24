@@ -30,10 +30,11 @@ Cloud Native Sandbox level project on July 14, 2020.
 ## CNCF Landscape
 
 Serverless Workflow project falls under the [CNCF "App Definition and Development"](https://landscape.cncf.io/card-mode?category=app-definition-and-development&grouping=category) category.
+
 It is a member project of the [CNCF Serverless Working Group](https://github.com/cncf/wg-serverless).
 
 <p align="center">
-<a href="https://landscape.cncf.io/?category=application-definition-image-build&grouping=category" target="_blank"><img src="media/landscape/cncf-landscape.png" width="600px" alt="CNCF Landscape"/></a>
+<a href="https://landscape.cncf.io/?category=application-definition-image-build&grouping=category" target="_blank"><img src="media/landscape/cncf-landscape.png" width="700px" alt="CNCF Landscape"/></a>
 </p>
 
 ## Releases
