@@ -71,7 +71,7 @@
     "start": {
       "$ref": "#/definitions/startdef"
     },
-    "schemaVersion": {
+    "specVersion": {
       "type": "string",
       "description": "Serverless Workflow schema version",
       "default": "latest",

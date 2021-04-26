@@ -1387,7 +1387,7 @@ definition "id" must be a constant value.
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
-| schemaVersion | Workflow schema version (default value is `"latest"`) | string | no |
+| specVersion | Serverless Workflow specification release version (default value is `"latest"`) | string | no |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
@@ -1490,10 +1490,10 @@ a starting [Event state](#Event-state), it is not used to validate its event pay
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
-The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
-to validate this workflow markup. The default value of this property is `"latest"`, meaning that 
-if it is not specified, the latest specification release schema version is assumed.
-If `schemaVersion` is defined, it must follow the specification release versions (excluding the leading "v"), meaning that for 
+The `specVersion` property can be used to set the specific Serverless Workflow specification release version 
+the workflow markup adheres to. The default value of this property is `"latest"`, meaning that 
+if it is not specified, the latest specification release version is assumed.
+If `specVersion` is defined, it must follow the specification release versions (excluding the leading "v"), meaning that for 
 the [release version v0.6](https://github.com/serverlessworkflow/specification/releases/tag/v0.6) 
 its value should be set to `"0.6"`.
 
@@ -4842,17 +4842,10 @@ In any application, regardless of size or type, one thing is for sure: changes h
 Versioning your workflow definitions is an important task to consider. Versions indicate 
 changes or updates of your workflow definitions to the associated execution runtimes. 
 
-There are three places in the [workflow definition](#Workflow-Definition-Structure) where versioning can be applied:
-1. Top level workflow definition `schemaVersion` property.
-2. Top level workflow definition `version` property.
-3. Actions [subflowRef](#SubFlowRef-Definition) `version` property.
+There are two places in the [workflow definition](#Workflow-Definition-Structure) where versioning can be applied:
 
-The top-level `schemaVersion` property follows the release versioning strategy of the specification (without the leading "v" 
-if the specification release includes it). 
-To give an example, to reference the  specification
-[release version v0.6](https://github.com/serverlessworkflow/specification/releases/tag/v0.6) its value should be set to `"0.6"`.
-The default value of `schemaVersion` is set to "latest", meaning that if this property is not defined, the workflow definition
-conforms to the latest specification release version.
+1. Top level workflow definition `version` property.
+2. Actions [subflowRef](#SubFlowRef-Definition) `version` property.
 
 The Serverless Workflow specification does not mandate a specific versioning strategy
 for the top level and actions subflowRef definitions `version` properties. It does not mandate the use 
