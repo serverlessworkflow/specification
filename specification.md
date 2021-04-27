@@ -1394,7 +1394,7 @@ definition "id" must be a constant value.
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
 | [states](#State-Definition) | Workflow states | array | yes |
-| [metadata](#Workflow-Metadata) | Metadata information| object | no |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -1590,6 +1590,52 @@ its [`execTimeout`](#ExecTimeout-Definition) time is reached.
 This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
 
 You can reference the [specification examples](#Examples) to see the `keepActive` property in action.
+
+#### Additional Properties
+
+Specifying additional properties, namely properties which are not defined by the specification
+are only allowed in the [Workflow Definition](#Workflow-Definition-Structure). 
+Additional properties serve the same purpose as [Workflow Metadata](#Workflow-Metadata).
+They allow you to enrich the workflow definition with custom information. 
+
+Additional properties, just like workflow metadata, should not affect workflow execution. 
+Implementations may choose to use additional properties or ignore them.
+
+It is recommended to use workflow metadata instead of additional properties in the workflow definition.
+
+Let's take a look at an example of additional properties:
+
+```json
+{  
+  "id": "myworkflow",
+  "version": "1.0",
+  "name": "My Test Workflow",
+  "start": "My First State",
+  "loglevel": "Info",
+  "environment": "Production",
+  "category": "Sales",
+  "states": [ ... ]
+}
+```
+
+In this example, we specify the `loglevel`, `environment`, and `category` additional properties.
+
+Note the same can be also specified using workflow metadata, which is the preferred approach:
+
+```json
+{
+  "id": "myworkflow",
+  "version": "1.0",
+  "name": "Py Test Workflow",
+  "start": "My First State",
+  "metadata": {
+    "loglevel": "Info",
+    "environment": "Production",
+    "category": "Sales"
+  },
+  "states": [ ... ]
+}
+```
 
 #### ExecTimeout Definition
 
