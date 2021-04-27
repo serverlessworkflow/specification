@@ -1618,7 +1618,7 @@ Let's take a look at an example of additional properties:
 }
 ```
 
-In this example we specify the "loglevel", "environment", and "category" additional properties.
+In this example, we specify the `loglevel`, `environment`, and `category` additional properties.
 
 Note the same can be also specified using workflow metadata, which is the preferred approach:
 
