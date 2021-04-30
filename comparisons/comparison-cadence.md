@@ -298,9 +298,11 @@ version: '1.0'
 start: GreetingSubFlow
 states:
 - name: GreetingSubFlow
-  type: subflow
-  workflowId: subflowgreet
-  waitForCompletion: false
+  type: operation
+  actions:
+  - subFlowRef:
+    workflowId: subflowgreet
+    waitForCompletion: false
   end: true
 functions:
 - name: greetingfunction

@@ -519,11 +519,15 @@ to finish execution before it can transition (end workflow execution in this cas
      "branches": [
         {
           "name": "ShortDelayBranch",
-          "workflowId": "shortdelayworkflowid"
+          "actions": [{
+            "subFlowRef": "shortdelayworkflowid"
+          }]
         },
         {
           "name": "LongDelayBranch",
-          "workflowId": "longdelayworkflowid"
+          "actions": [{
+            "subFlowRef": "longdelayworkflowid"
+          }]
         }
      ],
      "end": true
@@ -547,9 +551,11 @@ states:
   completionType: allOf
   branches:
   - name: ShortDelayBranch
-    workflowId: shortdelayworkflowid
+    actions: 
+    - subFlowRef: shortdelayworkflowid
   - name: LongDelayBranch
-    workflowId: longdelayworkflowid
+    actions:
+    - subFlowRef: longdelayworkflowid
   end: true
 ```
 

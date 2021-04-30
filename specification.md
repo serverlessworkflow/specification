@@ -2556,7 +2556,7 @@ to the trigger/produced event.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
+| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing (default is `true`) | boolean | yes |
 | workflowId |Sub-workflow unique id | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3276,8 +3276,7 @@ Exceptions may occur during execution of branches of the Parallel state, this is
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Branch name | string | yes |
-| [actions](#Action-Definition) | Actions to be executed in this branch | array | yes if workflowId is not defined |
-| workflowId | Unique Id of a workflow to be executed in this branch | string | yes if actions is not defined |
+| [actions](#Action-Definition) | Actions to be executed in this branch | array | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3352,7 +3351,7 @@ If the parallel states branch defines actions, all exceptions that arise from ex
  are propagated to the parallel state 
 and can be handled with the parallel states `onErrors` definition.
 
-If the parallel states defines a `workflowId`, exceptions that occur during execution of the called workflow
+If the parallel states defines a subflow action, exceptions that occur during execution of the called workflow
 can chose to handle exceptions on their own. All unhandled exceptions from the called workflow
 execution however are propagated back to the parallel state and can be handled with the parallel states
 `onErrors` definition.
@@ -3681,10 +3680,6 @@ It should contain the unique element of the `inputCollection` array and passed a
 `iterationParam` should be created for each iteration, so it can be referenced/used in defined actions / workflow data input.
 
 The `actions` property defines actions to be executed in each state iteration.
-
-If actions are not defined, you can specify the `workflowid` to reference a workflow id which needs to be executed
-for each iteration. Note that `workflowid` should not be the same as the workflow id of the workflow where the ForEach state
-is defined.
 
 Let's take a look at an example:
 
