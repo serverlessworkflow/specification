@@ -3,7 +3,7 @@
 ## Abstract
 
 A specification that defines a vendor-neutral and declarative workflow language,
-targeting the serverless computing technology domain.
+targeting the Serverless computing technology domain.
  
 ## Status of this document
 
@@ -106,7 +106,7 @@ This section describes some of the core Serverless Workflow concepts:
 
 ### Workflow Definition
 
-A workflow definition is a single artefact written in the Serverless Workflow 
+A workflow definition is a single artifact written in the Serverless Workflow 
 language. It consists of the core [Workflow Definition Structure](#Workflow-Definition-Structure) 
 and the [Workflow Model](#Workflow-Model) It defines a blueprint used by runtimes for its execution. 
 
@@ -164,7 +164,7 @@ logic, so does the workflow data:
 <img src="media/spec/workflowdataflow.png" height="400" alt="Serverless Workflow Data Flow"/>
 </p>
  
-The initial [Workfow data input](#Workflow-data-input) is passed to the workflow starting state as its data input.
+The initial [Workflow data input](#Workflow-data-input) is passed to the workflow starting state as its data input.
 When a state finishes its execution, [its data output is passed as data input to the next state](#Information-passing-Between-States) that should be executed.
 
 When workflow execution ends, the last executed workflow state's data output becomes the final [Workflow data output](#Workflow-data-output).
@@ -1023,7 +1023,7 @@ gRPC uses [Protocol Buffers](https://developers.google.com/protocol-buffers/docs
 and the methods on those services that can be invoked. 
 
 Let's look at an example of invoking a service method using RPC. For this example let's say we have the following
-gRP protocol buffer definition in a myuserservice.proto file:
+gRPC protocol buffer definition in a myuserservice.proto file:
 
 ```text
 service UserService {
