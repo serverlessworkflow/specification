@@ -2556,7 +2556,7 @@ to the trigger/produced event.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | yes |
+| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing (default is `true`) | boolean | yes |
 | workflowId |Sub-workflow unique id | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>

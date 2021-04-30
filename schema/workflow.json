@@ -449,7 +449,7 @@
           "properties": {
             "waitForCompletion": {
               "type": "boolean",
-              "default": false,
+              "default": true,
               "description": "Workflow execution must wait for sub-workflow to finish before continuing"
             },
             "workflowId": {
