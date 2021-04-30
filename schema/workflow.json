@@ -840,21 +840,20 @@
         "completionType": {
           "type": "string",
           "enum": [
-            "and",
-            "xor",
-            "n_of_m"
+            "allOf",
+            "atLeast"
           ],
           "description": "Option types on how to complete branch execution.",
-          "default": "and"
+          "default": "allOf"
         },
-        "n": {
+        "numCompleted": {
           "type": [
             "number",
             "string"
           ],
           "minimum": 0,
           "minLength": 0,
-          "description": "Used when completionType is set to 'n_of_m' to specify the 'N' value"
+          "description": "Used when completionType is set to 'atLeast' to specify the minimum number of branches that must complete before the state will transition."
         },
         "onErrors": {
           "type": "array",

@@ -172,7 +172,7 @@ states:
   transition: parallelhello
 - name: parallelhello
   type: parallel
-  completionType: and
+  completionType: allOf
   branches:
   - name: hello2a-branch
     actions:
@@ -273,7 +273,7 @@ states:
   transition: parallelecho
 - name: parallelecho
   type: parallel
-  completionType: and
+  completionType: allOf
   branches:
   - name: B-branch
     actions:
