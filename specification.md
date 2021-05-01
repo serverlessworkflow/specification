@@ -1085,12 +1085,12 @@ If you want to use GraphQL services, you can also invoke them using a similar sy
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| inputs | object whose keys are the field's arguments name, and its value that argument value | object | no |
+| inputs | Object containing field argument names and their values | object | no |
 | selectionSet | A string containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes |
 
 And the outer `data` container object must be omitted from the response of successful queries and mutations, leaving only the selection set's specified fields. For exceptions the response must be returned in its entirety.
 
-We'll use the following [schema definition](https://graphql.org/learn/schema/) to show how that would work with both a query and a mutation:
+We'll use the following [GraphQL schema definition](https://graphql.org/learn/schema/) to show how that would work with both a query and a mutation:
 
 ```graphql
 type Query {
@@ -1119,7 +1119,7 @@ input PetInput {
 }
 ```
 
-#### Executing a `Query`
+#### Invoking a GraphQL `Query`
 
 In our workflow definition, we can then use a function definition for the `pet` query field as such:
 
@@ -1155,7 +1155,7 @@ In order to invoke this query, we would use the following `functionRef` paramete
 }
 ```
 
-Which would return the following action state:
+Which would return the following result:
 
 ```json
 {
@@ -1169,7 +1169,7 @@ Which would return the following action state:
 }
 ```
 
-#### Executing a `Mutation`
+#### Invoking a GraphQL `Mutation`
 
 Likewise, we would use the following function definition:
 
@@ -1233,7 +1233,7 @@ Note you can include [expressions](#Workflow-Expressions) in both both `inputs` 
 
 Expressions must be evaluated before executing the operation.
 
-Also note that at this time subscriptions are not supported due to the workflow model.
+Note that GraphQL Subscriptions are not supported at this time.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
