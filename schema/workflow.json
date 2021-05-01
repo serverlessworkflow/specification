@@ -26,7 +26,6 @@
     "version": {
       "type": "string",
       "description": "Workflow version",
-      "default": "latest",
       "minLength": 1
     },
     "annotations": {
@@ -74,7 +73,6 @@
     "specVersion": {
       "type": "string",
       "description": "Serverless Workflow schema version",
-      "default": "latest",
       "minLength": 1
     },
     "expressionLang": {
@@ -150,6 +148,7 @@
     {
       "required": [
         "id",
+        "specVersion",
         "name",
         "start",
         "states"
@@ -158,6 +157,7 @@
     {
       "required": [
         "key",
+        "specVersion",
         "name",
         "start",
         "states"

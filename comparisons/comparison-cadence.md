@@ -83,6 +83,7 @@ public class TripBookingWorkflowImpl implements TripBookingWorkflow {
 id: tripbookingwithcompensation
 name: Trip Booking With Compensation
 version: '1.0'
+specVersion: '0.6'
 start: BookTrip
 states:
 - name: BookTrip
@@ -191,6 +192,7 @@ public class FileProcessingWorkflowImpl implements FileProcessingWorkflow {
 id: fileprocessingwithretries
 name: File Processing Workflow With Retries
 version: '1.0'
+specVersion: '0.6'
 start: ProcessAndUpload
 states:
 - name: ProcessAndUpload
@@ -295,6 +297,7 @@ public static class GreetingWorkflowImpl implements GreetingWorkflow {
 id: subflowgreeting
 name: SubFlow Greeting Workflow
 version: '1.0'
+specVersion: '0.6'
 start: GreetingSubFlow
 states:
 - name: GreetingSubFlow

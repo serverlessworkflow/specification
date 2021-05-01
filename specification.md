@@ -113,7 +113,7 @@ and the [Workflow Model](#Workflow-Model) It defines a blueprint used by runtime
 
 A business solution can be composed of any number of related workflow definitions.
 Their relationships are explicitly modeled with the Serverless Workflow language (for example
-by using [SubFlow](#SubFlow-Action) actions).
+by using [SubFlowRef Definition](#SubFlowRef-Definition) in actions).
 
 Runtimes can initialize workflow definitions for some particular set of data inputs or events
 which forms [workflow instances](#Workflow-Instance).
@@ -546,6 +546,7 @@ a workflow with a single event state and show how data filters can be combined.
     "id": "GreetCustomersWorkflow",
     "name": "Greet Customers when they arrive",
     "version": "1.0",
+    "specVersion": "0.6",
     "start": "WaitForCustomerToArrive",
     "states":[
          {
@@ -1108,7 +1109,7 @@ Let's take a look at an example of such definitions:
 Here we define two reusable expression functions. Expressions in Serverless Workflow
 can be evaluated against the workflow, or workflow state data. Note that different data filters play a big role as to which parts of the 
 workflow data are being evaluated by the expressions. Reference the 
-[State Data Filtering](#State-Data-Filtering) section for more information on this.
+[State Data Filters](#State-data-filters) section for more information on this.
 
 Our expression function definitions can now be referenced by workflow states when they need to be evaluated. For example:
 
@@ -1367,7 +1368,8 @@ we can use this expression in the workflow "version" parameter:
 {
    "id": "MySampleWorkflow",
    "name": "Sample Workflow",
-   "version": "${ .inputVersion }"
+   "version": "${ .inputVersion }",
+   "specVersion": "0.6"
 }
 ```
 
@@ -1387,7 +1389,7 @@ definition "id" must be a constant value.
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
-| specVersion | Serverless Workflow specification release version (default value is `"latest"`) | string | no |
+| specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
@@ -1412,6 +1414,7 @@ definition "id" must be a constant value.
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
+   "specVersion": "0.6",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1428,6 +1431,7 @@ definition "id" must be a constant value.
 ```yaml
 id: sampleWorkflow
 version: '1.0'
+specVersion: '0.6'
 name: Sample Workflow
 description: Sample Workflow
 start: MyStartingState
@@ -1490,10 +1494,9 @@ a starting [Event state](#Event-state), it is not used to validate its event pay
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
-The `specVersion` property can be used to set the specific Serverless Workflow specification release version 
-the workflow markup adheres to. The default value of this property is `"latest"`, meaning that 
-if it is not specified, the latest specification release version is assumed.
-If `specVersion` is defined, it must follow the specification release versions (excluding the leading "v"), meaning that for 
+The `specVersion` property is used to set the Serverless Workflow specification release version 
+the workflow markup adheres to.
+It has to follow the specification release versions (excluding the leading "v"), meaning that for 
 the [release version v0.6](https://github.com/serverlessworkflow/specification/releases/tag/v0.6) 
 its value should be set to `"0.6"`.
 
@@ -1516,6 +1519,7 @@ Here is an example of using external resource for function definitions:
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
+   "specVersion": "0.6",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1550,6 +1554,7 @@ Here is an example of using external resource for event definitions:
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
+   "specVersion": "0.6",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1615,6 +1620,7 @@ Let's take a look at an example of additional properties:
 {  
   "id": "myworkflow",
   "version": "1.0",
+  "specVersion": "0.6",
   "name": "My Test Workflow",
   "start": "My First State",
   "loglevel": "Info",
@@ -1632,6 +1638,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 {
   "id": "myworkflow",
   "version": "1.0",
+  "specVersion": "0.6",
   "name": "Py Test Workflow",
   "start": "My First State",
   "metadata": {
@@ -2509,7 +2516,7 @@ Values of the `arguments` property can be either static values, or an expression
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | [triggerEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
-| [resultEventRef](#Event-Definitions) | Reference to the unique name of a `consumed` event definition | string | yes |
+| [resultEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | yes |
 | data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `triggerEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 
@@ -2560,8 +2567,8 @@ to the trigger/produced event.
 
 #### SubFlowRef Definition
 
+`SubFlowRef` definition can have two types, namely `string` or `object`.
 
-`subFlowRef` definition can have two types, either `string` or `object`.
 If `string` type, it defines the unique id of the sub-workflow to be invoked. 
 This short-hand definition can be used if sub-workflow lookup is done only by its `id`
 property and not its `version` property and if the default value of `waitForCompletion` is assumed.
@@ -3750,6 +3757,7 @@ and our workflow is defined as:
   "id": "sendConfirmWorkflow",
   "name": "SendConfirmationForCompletedOrders",
   "version": "1.0",
+  "specVersion": "0.6",
   "start": "SendConfirmState",
   "functions": [
   {
@@ -3786,6 +3794,7 @@ and our workflow is defined as:
 id: sendConfirmWorkflow
 name: SendConfirmationForCompletedOrders
 version: '1.0'
+specVersion: '0.6'
 start: SendConfirmState
 functions:
 - name: sendConfirmationFunction
@@ -4880,6 +4889,7 @@ Here is an example of metadata attached to the core workflow definition:
   "id": "processSalesOrders",
   "name": "Process Sales Orders",
   "version": "1.0",
+  "specVersion": "0.6",
   "start": "MyStartingState",
   "metadata": {
     "loglevel": "Info",
