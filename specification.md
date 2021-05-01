@@ -2564,7 +2564,7 @@ which is set to `true`:
 ```
 
 If you need to define the `waitForCompletion` property value to `false`, you can use its
-object` type which has the following properties: 
+`object` type which has the following properties: 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
