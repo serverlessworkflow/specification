@@ -2601,7 +2601,7 @@ workflowId: handleApprovedVisaWorkflowID
 
 </details>
 
-The `waitForCompletion` property defines the unique id of the sub-workflow to be invoked.
+The `workflowId` property defines the unique id of the sub-workflow to be invoked.
 
 The `waitForCompletion` property defines if the SubFlow action should wait until the referenced reusable workflow
 has completed its execution. If it's set to "true" (default value), SubFlow action execution must wait until the referenced workflow has completed its execution.
