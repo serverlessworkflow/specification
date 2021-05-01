@@ -13,7 +13,7 @@ Provides Serverless Workflow language examples
 - [Applicant Request Decision (Data-based Switch + SubFlows)](#Applicant-Request-Decision-Example)
 - [Provision Orders (Error Handling)](#Provision-Orders-Example)
 - [Monitor Job for completion (Polling)](#Monitor-Job-Example)
-- [Send CloudEvent on Workflow Completion](#Send-CloudEvent-On-Workfow-Completion-Example)
+- [Send CloudEvent on Workflow Completion](#Send-CloudEvent-On-Workflow-Completion-Example)
 - [Monitor Patient Vital Signs (Event state)](#Monitor-Patient-Vital-Signs-Example)
 - [Finalize College Application (Event state)](#Finalize-College-Application-Example)
 - [Perform Customer Credit Check (Callback state)](#Perform-Customer-Credit-Check-Example)
@@ -655,7 +655,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
       "type": "operation",
       "actions": [
         {
-          "subFlowRef": "handleNoVisaDecisionWorkfowId" 
+          "subFlowRef": "handleNoVisaDecisionWorkflowId" 
         }
       ],
       "end": true
@@ -704,7 +704,7 @@ states:
 - name: HandleNoVisaDecision
   type: operation
     actions:
-      - subFlowRef: handleNoVisaDecisionWorkfowId
+      - subFlowRef: handleNoVisaDecisionWorkflowId
   end: true
 ```
 
@@ -1305,7 +1305,7 @@ states:
 </tr>
 </table>
 
-### Send CloudEvent On Workfow Completion Example
+### Send CloudEvent On Workflow Completion Example
 
 #### Description
 

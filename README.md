@@ -9,7 +9,7 @@
 </p>
 
 A specification that defines a vendor-neutral and declarative workflow language,
-targeting the serverless computing technology domain.
+targeting the Serverless computing technology domain.
 
 Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
 Cloud Native Sandbox level project on July 14, 2020.
