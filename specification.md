@@ -1171,7 +1171,7 @@ Which would return the following action state:
 
 #### Executing a `Mutation`
 
-Likewise, we would use the following `functionRef`:
+Likewise, we would use the following function definition:
 
 ```json
 {
@@ -1185,7 +1185,7 @@ Likewise, we would use the following `functionRef`:
 }
 ```
 
-With the parameters:
+With the parameters for the `functionRef`:
 
 ```json
 {
@@ -1217,7 +1217,7 @@ Which would execute the mutation, creating the object and returning it the follo
 }
 ```
 
-Note you can include [expressions](#Workflow-Expressions) in both both `inputs` and `selectionSets`:
+Note you can include [expressions](#Workflow-Expressions) in both both `inputs` and `selectionSet`:
 
 ```json
 {
