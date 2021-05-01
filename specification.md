@@ -950,7 +950,7 @@ Merging number types should be done by overwriting the data from events data/act
 
 ### Workflow Functions
 
-Workflow [functions](#Function-Definition) are reusable definitions for RESTful service invocations and/or expression evaluation.
+Workflow [functions](#Function-Definition) are reusable definitions for service invocations and/or expression evaluation.
 They can be referenced by their domain-specific names inside workflow [states](#State-Definition).
 
 Reference the following sections to learn more about workflow functions:
@@ -1081,7 +1081,7 @@ For more information about functions, reference the [Functions definitions](#Fun
 
 ### Using Functions For GraphQL Service Invocations
 
-If you want to use GraphQL services, you can also invoke them using a similar syntax to the above methods with the caveat that your `functionRef`'s `arguments` property must have the following properties:
+If you want to use GraphQL services, you can also invoke them using a similar syntax to the above methods by passing in your `functionRef`'s `arguments` the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
@@ -1203,7 +1203,7 @@ With the parameters for the `functionRef`:
 }
 ```
 
-Which would execute the mutation, creating the object and returning it the following data:
+Which would execute the mutation, creating the object and returning the following data:
 
 ```json
 {
