@@ -449,7 +449,7 @@
           "properties": {
             "waitForCompletion": {
               "type": "boolean",
-              "default": false,
+              "default": true,
               "description": "Workflow execution must wait for sub-workflow to finish before continuing"
             },
             "workflowId": {
@@ -479,26 +479,12 @@
             "$ref": "#/definitions/action"
           },
           "additionalItems": false
-        },
-        "workflowId": {
-          "type": "string",
-          "description": "Unique Id of a workflow to be executed in this branch"
         }
       },
       "additionalProperties": false,
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "workflowId"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "actions"
-          ]
-        }
+      "required": [
+        "name",
+        "actions"
       ]
     },
     "delaystate": {
@@ -1408,31 +1394,11 @@
           "type",
           "inputCollection",
           "iterationParam",
-          "workflowId"
+          "actions"
         ]
       },
       "else": {
         "oneOf": [
-          {
-            "required": [
-              "name",
-              "type",
-              "inputCollection",
-              "iterationParam",
-              "workflowId",
-              "end"
-            ]
-          },
-          {
-            "required": [
-              "name",
-              "type",
-              "inputCollection",
-              "iterationParam",
-              "workflowId",
-              "transition"
-            ]
-          },
           {
             "required": [
               "name",
