@@ -76,8 +76,8 @@ For more information on the history, development and design rationale behind the
 <img src="media/spec/spec-parts.png" width="600" alt="Serverless Workflow Specification Focus On Standards"/>
 </p>
 
-Serverless Workflow language takes advantage of well-established and known standards such as [CloudEvents](https://cloudevents.io/), [OpenApi](https://www.openapis.org/) specifications,
-and [gRPC](https://grpc.io/).
+Serverless Workflow language takes advantage of well-established and known standards such as [CloudEvents](https://cloudevents.io/), [OpenAPI](https://www.openapis.org/) specifications,
+[gRPC](https://grpc.io/) and [GraphQL](https://graphql.org/).
 
 ## Project Components
 
@@ -955,7 +955,8 @@ They can be referenced by their domain-specific names inside workflow [states](#
 
 Reference the following sections to learn more about workflow functions:
 * [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
-* [Using functions for RPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
+* [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
+* [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
 
 ### Using Functions For RESTful Service Invocations
@@ -1069,6 +1070,7 @@ In our workflow definition, we can then use function definitions:
 ```
 
 Note that the `operation` property has the following format: 
+
 ```text
 <URI_to_proto_file>#<Service_Name>#<Service_Method_Name>
 ```
@@ -1077,9 +1079,151 @@ Note that the referenced function definition type in this case must be `rpc`.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
+### Using Functions For GraphQL Service Invocations
+
+If you want to use GraphQL services, you can also invoke them using a similar syntax to the above methods with the caveat that your `functionRef`'s `arguments` property must have the following properties:
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| inputs | object whose keys are the field's arguments name, and its value that argument value | object | no |
+| selectionSet | A string containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes |
+
+And the outer `data` container object must be omitted from the response of successful queries and mutations, leaving only the selection set's specified fields. For exceptions the response must be returned in its entirety.
+
+We'll use the following [schema definition](https://graphql.org/learn/schema/) to show how that would work with both a query and a mutation:
+
+```graphql
+type Query {
+    pets: [Pet]
+    pet(id: Int!): Pet
+}
+
+type Mutation {
+    createPet(pet: PetInput!): Pet
+}
+
+type Treat {
+    id: Int!
+}
+
+type Pet {
+    id: Int!
+    name: String!
+    favoriteTreat: Treat
+}
+
+input PetInput {
+    id: Int!
+    name: String!
+    favoriteTreatId: Int
+}
+```
+
+#### Executing a `Query`
+
+In our workflow definition, we can then use a function definition for the `pet` query field as such:
+
+```json
+{
+  "functions": [
+    {
+      "name": "getOnePet",
+      "operation": "https://example.com/pets/graphql#query#pet",
+      "type": "graphql"
+    }
+  ]
+}
+```
+
+Note that the `operation` property has the following format for the `graphql` type:
+
+```text
+<url_to_graphql_endpoint>#<literal "mutation" or "query">#<mutation_or_query_field>
+```
+
+In order to invoke this query, we would use the following `functionRef` parameters:
+
+```json
+{
+  "refName": "getOnePet",
+  "arguments": {
+    "inputs": {
+      "id": 42
+    },
+    "selectionSet": "{ id, name, favoriteTreat { id } }"
+  }
+}
+```
+
+Which would return the following action state:
+
+```json
+{
+  "pet": {
+    "id": 42,
+    "name": "Snuffles",
+    "favoriteTreat": {
+      "id": 9001
+    }
+  }
+}
+```
+
+#### Executing a `Mutation`
+
+Likewise, we would use the following `functionRef`:
+
+```json
+{
+  "functions": [
+    {
+      "name": "createPet",
+      "operation": "https://example.com/pets/graphql#mutation#createPet",
+      "type": "graphql"
+    }
+  ]
+}
+```
+
+With the parameters:
+
+```json
+{
+  "refName": "createPet",
+  "arguments": {
+    "inputs": {
+      "pet": {
+        "id": 43,
+        "name":"Sadaharu",
+        "favoriteTreatId": 9001
+      }
+    },
+    "selectionSet": "{ id, name, favoriteTreat { id } }"
+  }
+}
+```
+
+Which would execute the mutation, creating the object and returning it the following data:
+
+```json
+{
+  "pet": {
+    "id": 43,
+    "name": "Sadaharu",
+    "favoriteTreat": {
+      "id": 9001
+    }
+  }
+}
+```
+
+Also note that at this time subscriptions are not supported due to the workflow model.
+
+For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
 ### Using Functions For Expression Evaluation
 
-In addition to defining RESTful and RPC services and their operations, workflow [functions definitions](#Function-Definition)
+In addition to defining RESTful, RPC and GraphQL services and their operations, workflow [functions definitions](#Function-Definition)
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference
@@ -1713,7 +1857,7 @@ not obeyed in the workflow definition.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `expression`, defines the workflow expression. | string | no |
+| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `expression`, defines the workflow expression. | string | no |
 | type | Defines the function type. Is either `rest`, `rpc` or `expression`. Default is `rest` | enum | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
@@ -1757,6 +1901,8 @@ Depending on the function `type`, the `operation` property can be:
 * If `type` is `rest`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'. 
   For example `https://petstore.swagger.io/v2/swagger.json#getPetById`. 
 * If `type` is `rpc`, a combination of the gRPC proto document URI and the particular service name and service method name that needs to be invoked, separated by a '#'. 
+For example `file://myuserservice.proto#UserService#ListUsers`.
+* If `type` is `graphql`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'. 
 For example `file://myuserservice.proto#UserService#ListUsers`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
 
@@ -2458,7 +2604,7 @@ it with its `object` type which has the following properties:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | refName | Name of the referenced [function](#Function-Definition) | string | yes |
-| arguments | Arguments to be passed to the referenced function | object | no |
+| arguments | Arguments to be passed to the referenced function | object | only for GraphQL functions |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
