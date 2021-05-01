@@ -27,7 +27,7 @@ _Status description:_
 | ✔️| Rename switch state `default` to `defaultCondition` to avoid keyword conflicts for SDK's | [spec doc](../specification.md) |
 | ✔️| Add description of additional properties | [spec doc](../specification.md) |
 | ✔️| Rename Parallel `completionType` values | [spec doc](../specification.md) |
-| ✔️| Rename `workflowId` from ParallelState (use subFlow action instead) | [spec doc](../specification.md) |
+| ✔️| Removed `workflowId` from ParallelState and ForEach states (use subFlow action instead) | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
