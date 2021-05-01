@@ -1217,6 +1217,22 @@ Which would execute the mutation, creating the object and returning it the follo
 }
 ```
 
+Note you can include [expressions](#Workflow-Expressions) in both both `inputs` and `selectionSets`:
+
+```json
+{
+  "refName": "getOnePet",
+  "arguments": {
+    "inputs": {
+      "id": "${ .petId }"
+    },
+    "selectionSet": "{ id, name, age(useDogYears: ${ .isPetADog }) { dateOfBirth, years } }"
+  }
+}
+```
+
+Expressions must be evaluated before executing the operation.
+
 Also note that at this time subscriptions are not supported due to the workflow model.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
