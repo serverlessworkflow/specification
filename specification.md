@@ -1385,7 +1385,7 @@ definition "id" must be a constant value.
 | key | Domain-specific workflow identifier | string | yes if `id` not defined |
 | name | Workflow name | string | yes |
 | description | Workflow description | string | no |
-| version | Workflow version (default value is `"latest"`) | string | no |
+| version | Workflow version | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
@@ -1465,8 +1465,7 @@ The `name` property is the workflow logical name.
 
 The `description` property can be used to give further information about the workflow.
 
-The `version` property can be used to provide a specific workflow version. The default
-value of this property (if not specified) is `"latest"`.
+The `version` property can be used to provide a specific workflow version.
 
 The `annotations` property defines a list of helpful terms describing the workflows intended purpose, subject areas, or other important qualities,
 for example "machine learning", "monitoring", "networking", etc
