@@ -1081,14 +1081,7 @@ For more information about functions, reference the [Functions definitions](#Fun
 
 ### Using Functions For GraphQL Service Invocations
 
-If you want to use GraphQL services, you can also invoke them using a similar syntax to the above methods by passing in your `functionRef`'s `arguments` the following properties:
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| inputs | Object containing field argument names and their values | object | no |
-| selectionSet | A string containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes |
-
-And the outer `data` container object must be omitted from the response of successful queries and mutations, leaving only the selection set's specified fields. For exceptions the response must be returned in its entirety.
+If you want to use GraphQL services, you can also invoke them using a similar syntax to the above methods.
 
 We'll use the following [GraphQL schema definition](https://graphql.org/learn/schema/) to show how that would work with both a query and a mutation:
 
@@ -1147,11 +1140,9 @@ In order to invoke this query, we would use the following `functionRef` paramete
 {
   "refName": "getOnePet",
   "arguments": {
-    "inputs": {
-      "id": 42
-    },
-    "selectionSet": "{ id, name, favoriteTreat { id } }"
-  }
+    "id": 42
+  },
+  "selectionSet": "{ id, name, favoriteTreat { id } }"
 }
 ```
 
@@ -1191,15 +1182,13 @@ With the parameters for the `functionRef`:
 {
   "refName": "createPet",
   "arguments": {
-    "inputs": {
-      "pet": {
-        "id": 43,
-        "name":"Sadaharu",
-        "favoriteTreatId": 9001
-      }
-    },
-    "selectionSet": "{ id, name, favoriteTreat { id } }"
-  }
+    "pet": {
+      "id": 43,
+      "name":"Sadaharu",
+      "favoriteTreatId": 9001
+    }
+  },
+  "selectionSet": "{ id, name, favoriteTreat { id } }"
 }
 ```
 
@@ -1217,17 +1206,15 @@ Which would execute the mutation, creating the object and returning the followin
 }
 ```
 
-Note you can include [expressions](#Workflow-Expressions) in both both `inputs` and `selectionSet`:
+Note you can include [expressions](#Workflow-Expressions) in both `arguments` and `selectionSet`:
 
 ```json
 {
   "refName": "getOnePet",
   "arguments": {
-    "inputs": {
-      "id": "${ .petId }"
-    },
-    "selectionSet": "{ id, name, age(useDogYears: ${ .isPetADog }) { dateOfBirth, years } }"
-  }
+    "id": "${ .petId }"
+  },
+  "selectionSet": "{ id, name, age(useDogYears: ${ .isPetADog }) { dateOfBirth, years } }"
 }
 ```
 
@@ -2620,7 +2607,10 @@ it with its `object` type which has the following properties:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | refName | Name of the referenced [function](#Function-Definition) | string | yes |
-| arguments | Arguments to be passed to the referenced function | object | only for GraphQL functions |
+| arguments | Arguments (inputs) to be passed to the referenced function | object | yes if function type is `graphql`, otherwise no |
+| selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes if function type is `graphql`, otherwise no |
+
+tihomir
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2658,15 +2648,18 @@ arguments:
 </details>
 
 The `refName` property is the name of the referenced [function](#Function-Definition).
+
 The `arguments` property defines the arguments that are to be passed to the referenced function.
-Values of the `arguments` property can be either static values, or an expression, for example:
+Here is an example of using the `arguments` property:
 
 ```json
 {
    "refName": "checkFundsAvailabe",
    "arguments": {
-     "account": "${ .accountId }",
-     "forAmount": "${.payment.amount }",
+     "account": {
+       "id": "${ .accountId }"
+     },
+     "forAmount": "${ .payment.amount }",
      "insufficientMessage": "The requested amount is not available."
    }
 }
