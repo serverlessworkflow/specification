@@ -26,6 +26,7 @@ Cloud Native Sandbox level project on July 14, 2020.
     - [Meetings](#Meetings)
     - [Meeting Minutes](#Meeting-Minutes)
 - [Repository Structure](#Repository-Structure)
+- [Support](#Support)
 
 ## CNCF Landscape
 
@@ -36,6 +37,8 @@ It is a member project of the [CNCF Serverless Working Group](https://github.com
 <p align="center">
 <a href="https://landscape.cncf.io/?category=application-definition-image-build&grouping=category" target="_blank"><img src="media/landscape/cncf-landscape.png" width="700px" alt="CNCF Landscape"/></a>
 </p>
+
+Check out our project DevStates [here](https://serverlessworkflow.devstats.cncf.io/).
 
 ## Releases
 
@@ -169,3 +172,7 @@ documents:
 | [examples](examples) | Specification examples |
 | [comparisons](comparisons) | Comparisons of Serverless Workflow with other workflow DSLs |
 | [community](community) | Contains info on the spec community |
+
+## Support
+
+Support our project by [becoming a Sponsor](https://crowdfunding.lfx.linuxfoundation.org/projects/serverless-workflow).
