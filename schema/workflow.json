@@ -70,7 +70,7 @@
     "start": {
       "$ref": "#/definitions/startdef"
     },
-    "schemaVersion": {
+    "specVersion": {
       "type": "string",
       "description": "Serverless Workflow schema version",
       "minLength": 1
@@ -148,6 +148,7 @@
     {
       "required": [
         "id",
+        "specVersion",
         "name",
         "start",
         "states"
@@ -156,6 +157,7 @@
     {
       "required": [
         "key",
+        "specVersion",
         "name",
         "start",
         "states"
@@ -455,6 +457,11 @@
             "workflowId": {
               "type": "string",
               "description": "Unique id of the sub-workflow to be invoked"
+            },
+            "version": {
+              "type": "string",
+              "description": "Version of the sub-workflow to be invoked",
+              "minLength": 1
             }
           },
           "required": [

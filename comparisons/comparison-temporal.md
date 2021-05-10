@@ -132,7 +132,8 @@ public class HelloActivity {
 {
   "id": "HelloActivityRetry",
   "name": "Hello Activity Workflow",
-  "version": "1.0",
+  "version": "1.0", 
+  "specVersion": "0.6",
   "start": "GreetingState",
   "states": [
     {
@@ -268,6 +269,7 @@ public class HelloActivity {
   "id": "HelloCron",
   "name": "Hello Activity with Cron Workflow",
   "version": "1.0",
+  "specVersion": "0.6",
   "start": {
     "stateName": "GreetingState",
     "schedule": {
@@ -452,6 +454,7 @@ public class HelloActivity {
   "id": "HelloSaga",
   "name": "Hello SAGA compensation Workflow",
   "version": "1.0",
+  "specVersion": "0.6",
   "start": "ExecuteState",
   "states": [
     {
@@ -608,6 +611,7 @@ public class HelloActivityRetry {
   "id": "HelloActivityRetry",
   "name": "Hello Activity with Retries Workflow",
   "version": "1.0",
+  "specVersion": "0.6",
   "start": "GreetingState",
   "states": [
     {

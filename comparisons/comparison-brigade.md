@@ -65,6 +65,7 @@ function exec(e, p) {
 id: greeting
 name: Greeting Workflow
 version: '1.0'
+specVersion: '0.6'
 start: GreetingState
 events:
 - name: execEvent
@@ -144,6 +145,7 @@ async function exec(e, p) {
 id: greetingwitherrorcheck
 name: Greeting Workflow With Error Check
 version: '1.0'
+specVersion: '0.6'
 start: GreetingState
 events:
 - name: execEvent
@@ -227,6 +229,7 @@ events.on("push", () => {
 id: multieventworkflow
 name: Multiple Events Workflow
 version: '1.0'
+specVersion: '0.6'
 start: GreetingState
 events:
 - name: execEvent
@@ -311,6 +314,7 @@ events.on("exec", () => {
 id: groupActionsWorkflow
 name: Group Actions Workflow
 version: '1.0'
+specVersion: '0.6'
 start: FirstGreetGroup
 events:
 - name: execEvent
@@ -389,6 +393,7 @@ events.on("exec", (e, p) => {
 id: eventDataWorkflow
 name: Event Data Workflow
 version: '1.0'
+specVersion: '0.6'
 start: LogEventData
 events:
 - name: execEvent
@@ -464,6 +469,7 @@ events.on("exec", (e, p) => {
 id: actionResultsWorkflow
 name: Action Results Workflow
 version: '1.0'
+specVersion: '0.6'
 start: ExecActionsAndStoreResults
 events:
 - name: execEvent
@@ -554,6 +560,7 @@ events.on("next", (e) => {
 id: eventDataWorkflow
 name: Event Data Workflow
 version: '1.0'
+specVersion: '0.6'
 start: ExecEventState
 events:
 - name: execEvent

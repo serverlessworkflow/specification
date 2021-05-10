@@ -29,6 +29,7 @@ You can find the specification roadmap [here](roadmap/README.md).
     - [Defining Errors](#Defining-Errors)
     - [Defining Retries](#Defining-Retries)
   - [Workflow Compensation](#Workflow-Compensation)
+  - [Workflow Versioning](#Workflow-Versioning)  
   - [Workflow Metadata](#Workflow-Metadata)
 - [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
@@ -112,7 +113,7 @@ and the [Workflow Model](#Workflow-Model) It defines a blueprint used by runtime
 
 A business solution can be composed of any number of related workflow definitions.
 Their relationships are explicitly modeled with the Serverless Workflow language (for example
-by using [SubFlow](#SubFlow-Action) actions).
+by using [SubFlowRef Definition](#SubFlowRef-Definition) in actions).
 
 Runtimes can initialize workflow definitions for some particular set of data inputs or events
 which forms [workflow instances](#Workflow-Instance).
@@ -545,6 +546,7 @@ a workflow with a single event state and show how data filters can be combined.
     "id": "GreetCustomersWorkflow",
     "name": "Greet Customers when they arrive",
     "version": "1.0",
+    "specVersion": "0.6",
     "start": "WaitForCustomerToArrive",
     "states":[
          {
@@ -1107,7 +1109,7 @@ Let's take a look at an example of such definitions:
 Here we define two reusable expression functions. Expressions in Serverless Workflow
 can be evaluated against the workflow, or workflow state data. Note that different data filters play a big role as to which parts of the 
 workflow data are being evaluated by the expressions. Reference the 
-[State Data Filtering](#State-Data-Filtering) section for more information on this.
+[State Data Filters](#State-data-filters) section for more information on this.
 
 Our expression function definitions can now be referenced by workflow states when they need to be evaluated. For example:
 
@@ -1366,7 +1368,8 @@ we can use this expression in the workflow "version" parameter:
 {
    "id": "MySampleWorkflow",
    "name": "Sample Workflow",
-   "version": "${ .inputVersion }"
+   "version": "${ .inputVersion }",
+   "specVersion": "0.6"
 }
 ```
 
@@ -1386,7 +1389,7 @@ definition "id" must be a constant value.
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
-| schemaVersion | Workflow schema version | string | no |
+| specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
@@ -1411,6 +1414,7 @@ definition "id" must be a constant value.
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
+   "specVersion": "0.6",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1427,6 +1431,7 @@ definition "id" must be a constant value.
 ```yaml
 id: sampleWorkflow
 version: '1.0'
+specVersion: '0.6'
 name: Sample Workflow
 description: Sample Workflow
 start: MyStartingState
@@ -1488,8 +1493,11 @@ a starting [Event state](#Event-state), it is not used to validate its event pay
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
-The `schemaVersion` property can be used to set the specific Serverless Workflow schema version to use
-to validate this workflow markup. If not provided the latest released schema version is assumed.
+The `specVersion` property is used to set the Serverless Workflow specification release version 
+the workflow markup adheres to.
+It has to follow the specification release versions (excluding the leading "v"), meaning that for 
+the [release version v0.6](https://github.com/serverlessworkflow/specification/releases/tag/v0.6) 
+its value should be set to `"0.6"`.
 
 The `expressionLang` property can be used to identify the expression language used for all expressions in
 the workflow definition. The default value of this property is ["jq"](https://stedolan.github.io/jq/). 
@@ -1510,6 +1518,7 @@ Here is an example of using external resource for function definitions:
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
+   "specVersion": "0.6",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1544,6 +1553,7 @@ Here is an example of using external resource for event definitions:
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
+   "specVersion": "0.6",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1609,6 +1619,7 @@ Let's take a look at an example of additional properties:
 {  
   "id": "myworkflow",
   "version": "1.0",
+  "specVersion": "0.6",
   "name": "My Test Workflow",
   "start": "My First State",
   "loglevel": "Info",
@@ -1626,6 +1637,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 {
   "id": "myworkflow",
   "version": "1.0",
+  "specVersion": "0.6",
   "name": "Py Test Workflow",
   "start": "My First State",
   "metadata": {
@@ -2503,7 +2515,7 @@ Values of the `arguments` property can be either static values, or an expression
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | [triggerEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
-| [resultEventRef](#Event-Definitions) | Reference to the unique name of a `consumed` event definition | string | yes |
+| [resultEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | yes |
 | data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `triggerEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 
@@ -2554,22 +2566,24 @@ to the trigger/produced event.
 
 #### SubFlowRef Definition
 
-`SubFlowRef` definition can have two types, either `string` or `object`.
-If `string`, it defines the unique id of the sub-workflow to be invoked.
-This can be used as a short-cut definition when you want to use the default value of the `waitForCompletion`,
-which is set to `true`:
+`SubFlowRef` definition can have two types, namely `string` or `object`.
+
+If `string` type, it defines the unique id of the sub-workflow to be invoked. 
+This short-hand definition can be used if sub-workflow lookup is done only by its `id`
+property and not its `version` property and if the default value of `waitForCompletion` is assumed.
 
 ```json
 "subFlowRef": "mySubFlowId"
 ```
 
-If you need to define the `waitForCompletion` property value to `false`, you can use its
-`object` type which has the following properties: 
+If you need to define the `waitForCompletion` or the `version` properties, you can use its
+`object` type:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| workflowId | Unique id of the sub-workflow to be invoked | boolean | yes |
-| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing | boolean | no |
+| workflowId | Sub-workflow unique id | string | yes |
+| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing (default is true) | boolean | no |
+| version | Sub-workflow version | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2584,7 +2598,8 @@ If you need to define the `waitForCompletion` property value to `false`, you can
 
 ```json
 {
-    "workflowId": "handleApprovedVisaWorkflowID"
+    "workflowId": "handleApprovedVisaWorkflowID",
+    "version": "2.0"
 }
 ```
 
@@ -2593,6 +2608,7 @@ If you need to define the `waitForCompletion` property value to `false`, you can
 
 ```yaml
 workflowId: handleApprovedVisaWorkflowID
+version: '2.0'
 ```
 
 </td>
@@ -2601,13 +2617,17 @@ workflowId: handleApprovedVisaWorkflowID
 
 </details>
 
-The `workflowId` property defines the unique id of the sub-workflow to be invoked.
+The `workflowId` property defined the unique ID of the sub-workflow to be invoked.
+
+The `version` property defined the unique version of the sub-workflow to be invoked.
+If this property is defined, runtimes should match both the `id` and the `version` properties
+defined in the sub-workflow definition. 
 
 The `waitForCompletion` property defines if the SubFlow action should wait until the referenced reusable workflow
 has completed its execution. If it's set to "true" (default value), SubFlow action execution must wait until the referenced workflow has completed its execution.
 In this case the workflow data output of the referenced workflow will be used as the result data of the action.
-If it is set to "false" the parent workflow can continue its execution as soon as the referenced sub-workflow 
-has been invoked (fire-and-forget). For this case, the referenced (child) workflow data output will be ignored and the result data 
+If it is set to "false" the parent workflow can continue its execution as soon as the referenced sub-workflow
+has been invoked (fire-and-forget). For this case, the referenced (child) workflow data output will be ignored and the result data
 of the action will be an empty json object (`{}`).
 
 #### Error Definition
@@ -3736,6 +3756,7 @@ and our workflow is defined as:
   "id": "sendConfirmWorkflow",
   "name": "SendConfirmationForCompletedOrders",
   "version": "1.0",
+  "specVersion": "0.6",
   "start": "SendConfirmState",
   "functions": [
   {
@@ -3772,6 +3793,7 @@ and our workflow is defined as:
 id: sendConfirmWorkflow
 name: SendConfirmationForCompletedOrders
 version: '1.0'
+specVersion: '0.6'
 start: SendConfirmState
 functions:
 - name: sendConfirmationFunction
@@ -4822,6 +4844,25 @@ States that are marked as `usedForCompensation` can define [error handling](#Wor
 (errors not explicitly handled),
 workflow execution should be stopped, which is the same behavior as when not using compensation as well. 
 
+### Workflow Versioning
+
+In any application, regardless of size or type, one thing is for sure: changes happen.
+Versioning your workflow definitions is an important task to consider. Versions indicate 
+changes or updates of your workflow definitions to the associated execution runtimes. 
+
+There are two places in the [workflow definition](#Workflow-Definition-Structure) where versioning can be applied:
+
+1. Top level workflow definition `version` property.
+2. Actions [subflowRef](#SubFlowRef-Definition) `version` property.
+
+The Serverless Workflow specification does not mandate a specific versioning strategy
+for the top level and actions subflowRef definitions `version` properties. It does not mandate the use 
+of a versioning strategy at all. We do recommend however that you do use a versioning strategy 
+for your workflow definitions especially in production environments. 
+
+To enhance portability when using versioning of your workflow and sub-workflow definitions,
+we recommend using an existing versioning standard such as [SemVer](https://semver.org/) for example.
+ 
 ### Workflow Metadata
 
 Metadata enables you to enrich the serverless workflow model with information beyond its core definitions.
@@ -4847,6 +4888,7 @@ Here is an example of metadata attached to the core workflow definition:
   "id": "processSalesOrders",
   "name": "Process Sales Orders",
   "version": "1.0",
+  "specVersion": "0.6",
   "start": "MyStartingState",
   "metadata": {
     "loglevel": "Info",
