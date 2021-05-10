@@ -359,8 +359,9 @@
                 },
                 "arguments": {
                   "type": "object",
-                  "description": "Function arguments"
-                }
+                  "description": "Function arguments/inputs"
+                },
+                "selectionSet": "Only used if function type is 'graphql'. A string containing a valid GraphQL selection set"
               },
               "additionalProperties": false,
               "required": [
