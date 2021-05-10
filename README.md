@@ -38,7 +38,7 @@ It is a member project of the [CNCF Serverless Working Group](https://github.com
 <a href="https://landscape.cncf.io/?category=application-definition-image-build&grouping=category" target="_blank"><img src="media/landscape/cncf-landscape.png" width="700px" alt="CNCF Landscape"/></a>
 </p>
 
-Check out our project DevStates [here](https://serverlessworkflow.devstats.cncf.io/).
+Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.io).
 
 ## Releases
 
