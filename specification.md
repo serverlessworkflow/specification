@@ -536,9 +536,9 @@ Here is an example using an event filter:
 <img src="media/spec/event-data-filter-example1.png" height="400px" alt="Event Data Filter Example"/>
 </p>
 
-Note that the data input to the Event data filters depends on `dataOnly` of the associated [Event definition](#Event-Definition).
-If this property is set to `true`, expressions are evaluated against the event payload (the `data` only). If it is set to 
-false the expressions should be evaluated against the entire CloudEvent data (including its context attributes).
+Note that the data input to the Event data filters depends on the `dataOnly` property of the associated [Event definition](#Event-Definition).
+If this property is not defined (has default value of `true`), Event data filter expressions are evaluated against the event payload (the CloudEvents `data` attribute only). If it is set to
+`false`, the expressions should be evaluated against the entire CloudEvent (including its context attributes).
 
 #### Using multiple data filters
 
