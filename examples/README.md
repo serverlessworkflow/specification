@@ -107,7 +107,7 @@ states:
 
 #### Description
 
-This example shows a single Operation state with one action that calls the "greeting" function.
+This example shows a single [Operation State](../specification.md#operation-state) with one action that calls the "greeting" function.
 The workflow data input is assumed to be the name of the person to greet:
 
 ```json
@@ -215,7 +215,7 @@ states:
 
 #### Description
 
-This example shows a single Event state with one action that calls the "greeting" function.
+This example shows a single [Event State](../specification.md#event-state) with one action that calls the "greeting" function.
 The event state consumes cloud events of type "greetingEventType". When an even with this type
 is consumed, the Event state performs a single action that calls the defined "greeting" function.
 
@@ -382,7 +382,7 @@ states:
 
 #### Description
 
-In this example we show how to iterate over data using the ForEach state.
+In this example we show how to iterate over data using the [ForEach State](../specification.md#foreach-state).
 The state will iterate over a collection of simple math expressions which are
 passed in as the workflow data input:
 
@@ -492,7 +492,7 @@ states:
 
 #### Description
 
-This example uses a parallel state to execute two branches (simple wait states) at the same time.
+This example uses a [Parallel State](../specification.md#parallel-state) to execute two branches (simple wait states) at the same time.
 The completionType type is set to "allOf", which means the parallel state has to wait for both branches
 to finish execution before it can transition (end workflow execution in this case as it is an end state).
 
@@ -581,7 +581,7 @@ delay state.
 
 #### Description
 
-In this example we use an Event-based Switch state to wait for arrival
+In this example we use an Event-based [Switch State](../specification.md#switch-state) to wait for arrival
 of the "VisaApproved", or "VisaRejected" Cloud Events. Depending on which type of event happens,
 the workflow performs a different transition. If none of the events arrive in the defined 1 hour timeout
 period, the workflow transitions to the "HandleNoVisaDecision" state. 
@@ -728,7 +728,7 @@ states:
 
 #### Description
 
-This example shows off the switch state and the subflow action. The workflow is started with application information data as input:
+This example shows off the [Switch State](../specification.md#switch-state) and the subflow action. The workflow is started with application information data as input:
 
 ```json
     {
