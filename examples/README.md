@@ -317,7 +317,8 @@ filters what is selected to be the state data output which then becomes the work
      "onEvents": [{
          "eventRefs": ["GreetingEvent"],
          "eventDataFilter": {
-            "data": "${ .data.greet }"
+            "data": "${ .greet }",
+            "toStateData": "${ .greet }"
          },
          "actions":[  
             {  
@@ -363,7 +364,8 @@ states:
   - eventRefs:
     - GreetingEvent
     eventDataFilter:
-      data: "${ .data.greet }"
+      data: "${ .greet }"
+      toStateData: "${ .greet }"
     actions:
     - functionRef:
         refName: greetingFunction
@@ -3224,7 +3226,7 @@ the data for an hour, send report, and so on.
             }
           ],
           "eventDataFilter": {
-            "data": "${ .readings }"
+            "toStateData": "${ .readings }"
           }
         }
       ],
@@ -3307,7 +3309,7 @@ states:
     - functionRef:
         refName: LogReading
     eventDataFilter:
-      data: "${ .readings }"
+      toStateData: "${ .readings }"
   end: true
 - name: GenerateReport
   type: operation

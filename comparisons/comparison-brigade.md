@@ -398,6 +398,7 @@ start: LogEventData
 events:
 - name: execEvent
   type: exec
+  dataOnly: false
 functions:
 - name: consoleFunction
   type: console
@@ -408,7 +409,7 @@ states:
   - eventRefs:
     - execEvent
     eventDataFilter:
-      results: "${ .event }"
+      toStateData: "${ .event }"
     actions:
     - name: eventInfoAction
       functionRef:
@@ -490,7 +491,7 @@ states:
   - eventRefs:
     - execEvent
     eventDataFilter:
-      data: "${ .event }"
+      toStateData: "${ .event }"
     actions:
     - name: helloAction
       actionDataFilter:
@@ -565,6 +566,7 @@ start: ExecEventState
 events:
 - name: execEvent
   type: exec
+  dataOnly: false
 - name: nextEvent
   type: next
   kind: produced
@@ -579,7 +581,7 @@ states:
     - execEvent
     actions: []
     eventDataFilter:
-      data: "${ .execEvent }"
+      toStateData: "${ .execEvent }"
   transition:
     nextState: NextEventState
     produceEvents:
@@ -597,7 +599,7 @@ states:
   - eventRefs:
     - nextEvent
     eventDataFilter:
-      data: "${ .nextEvent }"
+      toStateData: "${ .nextEvent }"
     actions:
     - name: consoleLogAction
       functionRef:

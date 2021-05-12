@@ -536,6 +536,10 @@ Here is an example using an event filter:
 <img src="media/spec/event-data-filter-example1.png" height="400px" alt="Event Data Filter Example"/>
 </p>
 
+Note that the data input to the Event data filters depends on the `dataOnly` property of the associated [Event definition](#Event-Definition).
+If this property is not defined (has default value of `true`), Event data filter expressions are evaluated against the event payload (the CloudEvents `data` attribute only). If it is set to
+`false`, the expressions should be evaluated against the entire CloudEvent (including its context attributes).
+
 #### Using multiple data filters
 
 As [Event states](#Event-State) can take advantage of all defined data filters. In the example below, we define
@@ -1934,6 +1938,7 @@ defined via the `parameters` property in [function definitions](#FunctionRef-Def
 | type | CloudEvent type | string | yes |
 | kind | Defines the event is either `consumed` or `produced` by the workflow. Default is `consumed` | enum | no |
 | [correlation](#Correlation-Definition) | Define event correlation rules for this event. Only used for consumed events | array | no |
+| dataOnly | If `true` (default value), only the Event payload is accessible to consuming Workflow states. If `false`, both event payload and context attributes should be accessible | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2137,6 +2142,10 @@ says that these events must all have a context attribute named "department" with
 
 This allows developers to write orchestration workflows that are specifically targeted to patients that are in the hospital urgent care unit, 
 for example.
+
+The `dataOnly` property deals with what Event data is accessible by the consuming Workflow states.
+If its value is `true` (default value), only the Event payload is accessible to consuming Workflow states. 
+If `false`, both Event payload and context attributes should be accessible.
 
 #### Correlation Definition
 
