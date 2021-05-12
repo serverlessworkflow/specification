@@ -313,7 +313,7 @@
             "sequential",
             "parallel"
           ],
-          "description": "Specifies how actions are to be performed (in sequence of parallel)",
+          "description": "Specifies how actions are to be performed (in sequence or in parallel)",
           "default": "sequential"
         },
         "actions": {
