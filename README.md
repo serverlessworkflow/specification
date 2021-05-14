@@ -45,37 +45,39 @@ Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.i
 | | Latest release | Latest release branch | Working branch | 
 | --- |  :---: | :---: | :---: |
 | **Core Specification** | |
-| Serverless Workflow | [v0.6](https://github.com/serverlessworkflow/specification/releases) | [0.6.x](https://github.com/serverlessworkflow/specification/tree/0.6.x) | [main](https://github.com/serverlessworkflow/specification) |
+| [Serverless Workflow](https://github.com/serverlessworkflow/specification) | [v0.6](https://github.com/serverlessworkflow/specification/releases) | [0.6.x](https://github.com/serverlessworkflow/specification/tree/0.6.x) | [main](https://github.com/serverlessworkflow/specification) |
 | **Additional Components** | |
-| Java SDK | [2.0.0.Final](https://github.com/serverlessworkflow/sdk-java/releases) | [2.0.x](https://github.com/serverlessworkflow/sdk-java/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-java) |
-| GO SDK | [v1.0.0](https://github.com/serverlessworkflow/sdk-go/releases) | [1.0.x](https://github.com/serverlessworkflow/sdk-go/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-go) |
-| VSCode Extension | [1.6.0](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension) | | [main](https://github.com/serverlessworkflow/vscode-extension) |
+| [Synapse](https://github.com/serverlessworkflow/synapse) | [0.1.0-alpha1](https://github.com/serverlessworkflow/synapse/releases) |  | [main](https://github.com/serverlessworkflow/synapse) |
+| [GO SDK](https://github.com/serverlessworkflow/sdk-go) | [v1.0.0](https://github.com/serverlessworkflow/sdk-go/releases) | [1.0.x](https://github.com/serverlessworkflow/sdk-go/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-go) |
+| [Java SDK](https://github.com/serverlessworkflow/sdk-java) | [2.0.0.Final](https://github.com/serverlessworkflow/sdk-java/releases) | [2.0.x](https://github.com/serverlessworkflow/sdk-java/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-java) |
+| [.NET SDK](https://github.com/serverlessworkflow/sdk-net) | [v0.6.1](https://github.com/serverlessworkflow/sdk-net/releases) |  | [main](https://github.com/serverlessworkflow/sdk-net) |
+| [TypeScript SDK](https://github.com/serverlessworkflow/sdk-typescript) |  |  | [main](https://github.com/serverlessworkflow/sdk-typescript) |
+| [VSCode Extension](https://github.com/serverlessworkflow/vscode-extension) | [1.6.0](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension) | | [main](https://github.com/serverlessworkflow/vscode-extension) |
 
 ## SDKs
-
-In addition to the documentation mentioned above, there is also a set of SDKs being developed and are part of the specification:
 
 - [Go](https://github.com/serverlessworkflow/sdk-go)
 - [Java](https://github.com/serverlessworkflow/sdk-java)
 - [.NET](https://github.com/serverlessworkflow/sdk-net)
 - [TypeScript](https://github.com/serverlessworkflow/sdk-typescript)
 
-Being an open source community the Serverless Workflow team is open for new members as well open to their contributions. 
-In order to ensure that an SDK is going to be supported and maintained, the Serverless Workflow community would like to ensure that:
+Serverless Workflow encourages development of SDKs dedicated to help developers with 
+consuming, parsing, validating and testing their workflows that use the Serverless Workflow DSL.
 
-* Each SDK has active points of contact.
-* Each SDK supports the latest(N), and N-1, major releases of the specification.
-* Within the scope of a major release, only support for the latest minor version is needed.
+## Runtime
 
-Support for release candidates is not required, but strongly encouraged.
+- [Synapse](https://github.com/serverlessworkflow/synapse)
+
+Serverless Workflow is open to host open-source runtime implementations that would like to 
+be part and grow alongside the core specification.
+
+[Synapse](https://github.com/serverlessworkflow/synapse) is a Kubernetes-native workflow runtime which supports and is part of the Serverless
+Workflow eco-system.
 
 ## Tooling
 
 In order to enhance developer experience with the specification, we also provide a [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension).
 The sources of the extension are found [here](https://github.com/serverlessworkflow/vscode-extension).
-
-In order to ensure that the VSCode Extension is going to be supported and maintained, the Serverless Workflow community 
-would like to ensure that is has a dedicated point of contact.
 
 ## Community
 
