@@ -1657,7 +1657,7 @@ which contains an array of names of the secrets, for example:
 "secrets": "file://workflowsecrets.json"
 ```
 
-If `array` type, it defines an array (of string types) which contains the names of the secretes, for example:
+If `array` type, it defines an array (of string types) which contains the names of the secrets, for example:
 
 ```json
 "secrets": ["MY_PASSWORD", "MY_STORAGE_KEY", "MY_ACCOUNT"]
@@ -5155,7 +5155,7 @@ for example:
 "secrets": ["MY_PASSWORD", "MY_STORAGE_KEY", "MY_ACCOUNT"]
 ```
 
-If secretes are defined in a Workflow definition, runtimes must assure to provide their values
+If secrets are defined in a Workflow definition, runtimes must assure to provide their values
 during Workflow execution.
 
 Secrets can be used only in [Workflow expressions](#Workflow-Expressions) under the `SECRETS` namespace. 
