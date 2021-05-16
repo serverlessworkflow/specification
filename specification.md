@@ -5107,12 +5107,12 @@ Here is an example of using globals in Workflow expressions:
      "dataConditions": [
         {
           "name": "Applicant is adult",
-          "condition": "${ .applicant | .age >= AGE.MIN_ADULT }",
+          "condition": "${ .applicant | .age >= $AGE.MIN_ADULT }",
           "transition": "ApproveApplication"
         },
         {
           "name": "Applicant is minor",
-          "condition": "${ .applicant | .age < AGE.MIN_ADULT }",
+          "condition": "${ .applicant | .age < $AGE.MIN_ADULT }",
           "transition": "RejectApplication"
         }
      ],
@@ -5130,12 +5130,12 @@ for example:
 "functions": [
   {
     "name": "isAdult",
-    "operation": ".applicant | .age >= AGE.MIN_ADULT",
+    "operation": ".applicant | .age >= $AGE.MIN_ADULT",
     "type": "expression"
   },
   {
     "name": "isMinor",
-    "operation": ".applicant | .age < AGE.MIN_ADULT",
+    "operation": ".applicant | .age < $AGE.MIN_ADULT",
     "type": "expression"
   }
 ]
@@ -5170,8 +5170,8 @@ Here is an example on how to use secrets and pass them as arguments to a functio
 {
   "refName": "uploadToAzure",
     "arguments": {
-      "account": "${ SECRETS.AZURE_STORAGE_ACCOUNT }",
-      "account-key": "${ SECRETS.AZURE_STORAGE_KEY }",
+      "account": "${ $SECRETS.AZURE_STORAGE_ACCOUNT }",
+      "account-key": "${ $SECRETS.AZURE_STORAGE_KEY }",
       ...
     }
   
