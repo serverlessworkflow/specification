@@ -67,6 +67,12 @@
         }
       ]
     },
+    "secrets": {
+      "$ref": "secrets.json#/secrets"
+    },
+    "globals": {
+      "$ref": "globals.json#/globals"
+    },
     "start": {
       "$ref": "#/definitions/startdef"
     },

@@ -29,7 +29,8 @@ You can find the specification roadmap [here](roadmap/README.md).
     - [Defining Errors](#Defining-Errors)
     - [Defining Retries](#Defining-Retries)
   - [Workflow Compensation](#Workflow-Compensation)
-  - [Workflow Versioning](#Workflow-Versioning)  
+  - [Workflow Versioning](#Workflow-Versioning) 
+  - [Workflow Secrets](#Workflow-Secrets)  
   - [Workflow Metadata](#Workflow-Metadata)
 - [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
@@ -1539,6 +1540,8 @@ definition "id" must be a constant value.
 | version | Workflow version | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
+| [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
+| [globals](#Workflow-Globals) | Workflow globals | string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
@@ -1641,6 +1644,30 @@ In this case the `failOnValidationErrors` default value of `true` is assumed.
 
 The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). In case of 
 a starting [Event state](#Event-state), it is not used to validate its event payloads.
+
+The `secrets` property allows you to use sensitive information such as passwords, OAuth tokens, ssh keys, etc. inside your
+Workflow expressions. 
+
+It has two possible types, `string` or `array`. 
+If `string` type, it is an URI pointing to a JSON or YAML document
+which contains an array of names of the secrets, for example:
+
+```json
+"secrets": "file://workflowsecrets.json"
+```
+
+If `array` type, it defines an array (of string types) which contains the names of the secretes, for example:
+
+```json
+"secrets": ["MY_PASSWORD", "MY_STORAGE_KEY", "MY_ACCOUNT"]
+```
+
+For more information about Workflow secrets, reference the [Workflow Secrets section](#Workflow-Secrets).
+
+The `globals` property can be used to define Workflow global values
+which are accessible in [Workflow Expressions](#Workflow-Expressions) via their defined Namespace.
+
+For more information see the [Workflow Globals](#Workflow-Globals) section.
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
@@ -2618,8 +2645,6 @@ it with its `object` type which has the following properties:
 | refName | Name of the referenced [function](#Function-Definition) | string | yes |
 | arguments | Arguments (inputs) to be passed to the referenced function | object | yes if function type is `graphql`, otherwise no |
 | selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes if function type is `graphql`, otherwise no |
-
-tihomir
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -5026,7 +5051,133 @@ for your workflow definitions especially in production environments.
 
 To enhance portability when using versioning of your workflow and sub-workflow definitions,
 we recommend using an existing versioning standard such as [SemVer](https://semver.org/) for example.
- 
+
+### Workflow Globals
+
+Workflow globals are used to define static data which is available to [Workflow Expressions](#Workflow-Expressions).
+
+Globals can be defined via the via the [Workflow top-level "globals" property](#Workflow-Definition-Structure),
+for example:
+
+```json
+"globals": [
+{
+    "nameSpace": "MYNAMESPACE",
+    "name": "MYNAME",
+    "value": "myvalue"
+},
+{
+  "nameSpace": "OTHERNAMESPACE",
+  "name": "OTHERNAME",
+  "value": {
+    "a": "avalue",
+    "b": true
+  }   
+}
+]
+```
+
+Globals values must be assigned to a namespace. You can assign multiple global values to the 
+same namespace, however each namespace must contain a unique set of global names.
+Note that namespace names "SECRETS" is not allowed, as that namespace is reserved 
+for [Workflow Secrets](#Workflow-Secrets).
+
+Global values can have either a `string`, `boolean`, `number`, `array` or `object` types.
+
+Globals can be accessed in Workflow expressions under their defined namespace.
+Runtimes must make globals available to expressions.
+
+Here is an example of using globals in Workflow expressions:
+
+```json
+{
+...,
+"globals": [
+  {
+    "nameSpace": "AGE",
+    "name": "MIN_ADULT",
+    "value": 18
+  }
+],
+...
+"states":[  
+  {  
+     "name":"CheckApplicant",
+     "type":"switch",
+     "dataConditions": [
+        {
+          "name": "Applicant is adult",
+          "condition": "${ .applicant | .age >= AGE.MIN_ADULT }",
+          "transition": "ApproveApplication"
+        },
+        {
+          "name": "Applicant is minor",
+          "condition": "${ .applicant | .age < AGE.MIN_ADULT }",
+          "transition": "RejectApplication"
+        }
+     ],
+     ...
+  },
+  ...
+]
+}
+```
+Note that globals can also be used in [expression functions](#Using-Functions-for-Expression-Evaluation),
+for example:
+
+```json
+{
+"functions": [
+  {
+    "name": "isAdult",
+    "operation": ".applicant | .age >= AGE.MIN_ADULT",
+    "type": "expression"
+  },
+  {
+    "name": "isMinor",
+    "operation": ".applicant | .age < AGE.MIN_ADULT",
+    "type": "expression"
+  }
+]
+}
+```
+
+### Workflow Secrets
+
+Secrets allow you access sensitive information, such as passwords, OAuth tokens, ssh keys, etc
+inside your [Workflow Expressions](#Workflow-Expressions). 
+
+You can define the names of secrets via the [Workflow top-level "secrets" property](#Workflow-Definition-Structure), 
+for example:
+
+```json
+"secrets": ["MY_PASSWORD", "MY_STORAGE_KEY", "MY_ACCOUNT"]
+```
+
+If secretes are defined in a Workflow definition, runtimes must assure to provide their values
+during Workflow execution.
+
+Secrets can be used only in [Workflow expressions](#Workflow-Expressions) under the `SECRETS` namespace. 
+This is reserved namespace that should only be allowed for values defined by the `secrets` property.
+
+Here is an example on how to use secrets and pass them as arguments to a function invocation:
+
+```json
+"secrets": ["AZURE_STORAGE_ACCOUNT", "AZURE_STORAGE_KEY"],
+
+...
+        
+{
+  "refName": "uploadToAzure",
+    "arguments": {
+      "account": "${ SECRETS.AZURE_STORAGE_ACCOUNT }",
+      "account-key": "${ SECRETS.AZURE_STORAGE_KEY }",
+      ...
+    }
+  
+}
+```
+
 ### Workflow Metadata
 
 Metadata enables you to enrich the serverless workflow model with information beyond its core definitions.
