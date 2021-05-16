@@ -590,14 +590,6 @@
             "onEvents",
             "transition"
           ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "onEvents",
-            "end"
-          ]
         }
       ]
     },
@@ -702,14 +694,6 @@
               "type",
               "actions",
               "transition"
-            ]
-          },
-          {
-            "required": [
-              "name",
-              "type",
-              "actions",
-              "end"
             ]
           }
         ]
@@ -827,14 +811,6 @@
               "type",
               "branches",
               "transition"
-            ]
-          },
-          {
-            "required": [
-              "name",
-              "type",
-              "branches",
-              "end"
             ]
           }
         ]
