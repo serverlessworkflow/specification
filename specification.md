@@ -5163,6 +5163,10 @@ for example:
 }
 ```
 
+Workflow globals values should only contain static data, meaning that their value should not 
+contain Workflow expressions. 
+Workflow globals should not have access to [Workflow secrets definitions](#Workflow-Secrets).
+
 ### Workflow Secrets
 
 Secrets allow you access sensitive information, such as passwords, OAuth tokens, ssh keys, etc
