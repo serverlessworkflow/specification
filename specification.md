@@ -1668,6 +1668,26 @@ For more information about Workflow secrets, reference the [Workflow Secrets sec
 The `globals` property can be used to define Workflow global values
 which are accessible in [Workflow Expressions](#Workflow-Expressions) via their defined Namespace.
 
+It has two possible types, `string` or `array`.
+If `string` type, it is an URI pointing to a JSON or YAML document
+which contains an array of global definitions, for example:
+
+```json
+"globals": "file://workflowglobals.json"
+```
+
+If `array` type, it defines an array which contains the global definitions, for example:
+
+```json
+"globals": [
+ {
+   "nameSpace": "AGE",
+   "name": "MIN_ADULT",
+   "value": 18
+ }
+]
+```
+
 For more information see the [Workflow Globals](#Workflow-Globals) section.
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
