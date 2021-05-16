@@ -5077,7 +5077,7 @@ we recommend using an existing versioning standard such as [SemVer](https://semv
 
 Workflow globals are used to define static data which is available to [Workflow Expressions](#Workflow-Expressions).
 
-Globals can be defined via the via the [Workflow top-level "globals" property](#Workflow-Definition-Structure),
+Globals can be defined via the [Workflow top-level "globals" property](#Workflow-Definition-Structure),
 for example:
 
 ```json
