@@ -77,6 +77,7 @@ spec:
 id: hello-world-parameters
 name: Hello World with parameters
 version: '1.0'
+specVersion: '0.6'
 start: whalesay
 functions:
 - name: whalesayimage
@@ -155,6 +156,7 @@ spec:
 id: hello-hello-hello
 name: Multi Step Hello
 version: '1.0'
+specVersion: '0.6'
 start: hello1
 functions:
 - name: whalesayimage
@@ -172,7 +174,7 @@ states:
   transition: parallelhello
 - name: parallelhello
   type: parallel
-  completionType: and
+  completionType: allOf
   branches:
   - name: hello2a-branch
     actions:
@@ -256,6 +258,7 @@ spec:
 id: dag-diamond-
 name: DAG Diamond Example
 version: '1.0'
+specVersion: '0.6'
 start: A
 functions:
 - name: echo
@@ -273,7 +276,7 @@ states:
   transition: parallelecho
 - name: parallelecho
   type: parallel
-  completionType: and
+  completionType: allOf
   branches:
   - name: B-branch
     actions:
@@ -374,6 +377,7 @@ spec:
 id: scripts-bash-
 name: Scripts and Results Example
 version: '1.0'
+specVersion: '0.6'
 start: generate
 functions:
 - name: gen-random-int-bash
@@ -469,6 +473,7 @@ spec:
 id: loops-
 name: Loop over data example
 version: '1.0'
+specVersion: '0.6'
 start: injectdata
 functions:
 - name: whalesay
@@ -563,6 +568,7 @@ spec:
 id: coinflip-
 name: Conditionals Example
 version: '1.0'
+specVersion: '0.6'
 start: flip-coin
 functions:
 - name: flip-coin-function
@@ -655,6 +661,7 @@ spec:
 id: retry-backoff-
 name: Retry Example
 version: '1.0'
+specVersion: '0.6'
 start: retry-backoff
 functions:
 - name: fail-function
@@ -744,6 +751,7 @@ spec:
 id: coinflip-recursive-
 name: Recursion Example
 version: '1.0'
+specVersion: '0.6'
 start: flip-coin-state
 functions:
 - name: heads-function
@@ -853,6 +861,7 @@ spec:
 id: exit-handlers-
 name: Exit/Error Handling Example
 version: '1.0'
+specVersion: '0.6'
 start: intentional-fail-state
 functions:
 - name: intentional-fail-function

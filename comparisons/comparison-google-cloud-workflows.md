@@ -86,6 +86,7 @@ languages.
 {
     "id": "greetingwithargs",
     "name": "Greeting With Args",
+    "specVersion": "0.6", 
     "start": "Set Output",
     "states": [
         {
@@ -194,6 +195,7 @@ instance is created. See the Serverless Workflow ["Workflow Data"](../specificat
     "id": "concatarray",
     "name": "Concatenating array values",
     "start": "DoConcat",
+    "specVersion": "0.6",
     "states": [
         {
             "name": "DoConcat",
@@ -283,6 +285,7 @@ array values, however it would just unnecessarily complicate things.
 {
     "id": "stopcomputeengine",
     "name": "Stop Compute Engine",
+    "specVersion": "0.6",
     "start": "DoStop",
     "states": [
         {
@@ -413,6 +416,7 @@ as service invocations, where as Google Workflow uses the "call" keyword.
 {
     "id": "publishtotopicwitherrorhandling",
     "name": "Publish To Topic With Error Handling",
+    "specVersion": "0.6",
     "start": "DoPublish",
     "states": [
         {
@@ -576,6 +580,7 @@ to interested parties via events (CloudEvents specification format), which we ar
     "id": "errorhandlingwithretries",
     "name": "Error Handling with Retries",
     "start": "ReadItem",
+    "specVersion": "0.6",
     "states": [
         {
             "name": "ReadItem",
@@ -682,8 +687,12 @@ error handlers in the "retry" statement as an expression/variable.
     "states": [
         {
             "name": "CallSub",
-            "type":"subflow",
-            "workflowId": "calledsubflow",
+            "type":"operation",
+            "actions": [
+              {
+                "subFlowRef": "calledsubflow"
+              }
+            ],
             "end": true
         }
     ]
@@ -696,7 +705,7 @@ error handlers in the "retry" statement as an expression/variable.
 
 #### Notes
 
-Serverless Workflow has a specific [SubFlow state](../specification.md#SubFlow-State). When called the current workflow data
+Serverless Workflow has a specific [SubFlow action](../specification.md#SubFlow-Action). By default the current workflow data
 is passed to it, so there is no need to define specific arguments.
 We have omitted the definition of "calledsubflow" as it is pretty straight forward. It would be 
 a separate workflow definition with the "id" parameter set to "calledsubflow" in this example.
@@ -803,7 +812,7 @@ a separate workflow definition with the "id" parameter set to "calledsubflow" in
                     "transition": "CallMedium"
                 }
             ],
-            "default": {
+            "defaultCondition": {
                 "transition": "CallLarge"
             }
         },

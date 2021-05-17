@@ -53,6 +53,7 @@ For this reason, the event, function, retry, and data mapping defined in the ass
 id: processfile
 name: Process File Workflow
 version: '1.0'
+specVersion: '0.6'
 start: Process File
 states:
 - name: Process File
@@ -88,6 +89,7 @@ functions:
 id: processapplication
 name: Process Application
 version: '1.0'
+specVersion: '0.6'
 start: ProcessNewApplication
 states:
 - name: ProcessNewApplication
@@ -141,6 +143,7 @@ events:
 id: simplecompensation
 name: Simple Compensation
 version: '1.0'
+specVersion: '0.6'
 start: Step 1
 states:
 - name: Step 1
@@ -201,6 +204,7 @@ functions:
 id: errorwithretries
 name: Error Handling With Retries Workflow
 version: '1.0'
+specVersion: '0.6'
 start: Make Coffee
 states:
 - name: Make Coffee
@@ -258,6 +262,7 @@ functions:
 id: executiontimeout
 name: Execution Timeout Workflow
 version: '1.0'
+specVersion: '0.6'
 start: Purchase Parts
 execTimeout:
   duration: PT7D
@@ -310,6 +315,7 @@ functions:
 id: foreachWorkflow
 name: ForEach State Workflow
 version: '1.0'
+specVersion: '0.6'
 start: ForEachItem
 states:
 - name: ForEachItem
@@ -317,7 +323,8 @@ states:
   inputCollection: "${ .inputsArray }"
   iterationParam: "${ .inputItem }"
   outputCollection: "${ .outputsArray }"
-  workflowId: doSomethingAndWaitForMessage
+  actions:
+  - subFlowRef: doSomethingAndWaitForMessage
   end: true
 ```
 
@@ -347,19 +354,33 @@ a starting "operation" state transitioning to an "event" state which waits for t
 id: subflowloop
 name: SubFlow Loop Workflow
 version: '1.0'
-start: SubflowLoop
+specVersion: '0.6'
+start: SubflowRepeat
 states:
-- name: SubflowLoop
-  type: subflow
-  workflowId: checkAndReplyToEmail
-  repeat:
-    max: 100
-  end: true
+- name: SubflowRepeat
+  type: operation
+  actions:
+  - functionRef: checkAndReplyToEmail
+    actionDataFilter:
+      fromStateData: ${ .someInput }
+      toStateData: ${ .someInput }
+  stateDataFilter:
+    output: ${ .maxChecks -= 1 }
+  transition: CheckCount
+- name: CheckCount
+  type: switch
+  dataConditions:
+  - condition: ${ .maxChecks > 0 }
+    transition: SubflowRepeat
+  defaultCondition:
+    end: true
 ```
 
 </td>
 </tr>
 </table>
+
+This workflow assumes that the input to the workflow includes a maxChecks attribute set to an integer value.
 
 * Note: We did not include the `checkAndReplyToEmail` workflow in this example, which would include the 
 control-flow logic to check email and make a decision to reply to it or wait an hour.
@@ -383,6 +404,7 @@ control-flow logic to check email and make a decision to reply to it or wait an 
 id: approvereport
 name: Approve Report Workflow
 version: '1.0'
+specVersion: '0.6'
 start: Approve Report
 states:
 - name: Approve Report
@@ -445,11 +467,13 @@ functions:
 id: eventdecision
 name: Event Decision workflow
 version: '1.0'
+specVersion: '0.6'
 start: A
 states:
 - name: A
-  type: subflow
-  workflowId: asubflowid
+  type: operation
+  actions:
+    - subFlowRef: asubflowid
   transition: Event Decision
 - name: Event Decision
   type: switch

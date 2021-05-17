@@ -22,6 +22,16 @@ _Status description:_
 | Status | Description | Comments |
 | --- | --- |  --- |
 | ✔️| Add workflow `key` and `annotations` properties | [spec doc](../specification.md) |
+| ✔️| Replaced SubFlow state with subflow action type | [spec doc](../specification.md) |
+| ✔️| Add workflow `dataInputSchema` property | [spec doc](../specification.md) |
+| ✔️| Rename switch state `default` to `defaultCondition` to avoid keyword conflicts for SDK's | [spec doc](../specification.md) |
+| ✔️| Add description of additional properties | [spec doc](../specification.md) |
+| ✔️| Rename Parallel `completionType` values | [spec doc](../specification.md) |
+| ✔️| Removed `workflowId` from ParallelState and ForEach states (use subFlow action instead) | [spec doc](../specification.md) |
+| ✔️| Add subflow actions `version` property | [spec doc](../specification.md) |
+| ✔️| Renamed `schemaVersion` to `specVersion` and it is now a required parameter | [spec doc](../specification.md) |
+| ✔️| Add GraphQL support for function definitions | [spec doc](../specification.md) |
+| ✔️| Added "dataOnly" property to Event Definitions (allow event data filters to access entire event) | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 

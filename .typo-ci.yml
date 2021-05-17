@@ -22,7 +22,6 @@ excluded_files:
   - ".typo-ci.yml"
   - ".markdownlint.yaml"
   - "Makefile"
-  - "OWNERS"
   
 # Any typos we should ignore?
 excluded_words:

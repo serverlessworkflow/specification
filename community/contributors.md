@@ -14,6 +14,8 @@ us know in chat or team meeting.
   * Louis Fourie
   * Achilleas Tzenetopoulos
   * Antonio Mendoza Pérez
+  * Richard Gibson
+  * Lucas Stocksmeier
 
 * **Huawei**
   * Cathy Hong Zhang
@@ -74,5 +76,6 @@ us know in chat or team meeting.
 
 * **Neuroglia**
     * Charles d'Avernas
+    * Jean-Baptiste Bianchi
   
       
