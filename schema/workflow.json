@@ -343,35 +343,8 @@
           "description": "Unique action definition name"
         },
         "functionRef": {
-          "oneOf": [
-            {
-              "type": "string",
-              "description": "Name of the referenced function",
-              "minLength": 1
-            },
-            {
-              "type": "object",
-              "description": "Function Reference",
-              "properties": {
-                "refName": {
-                  "type": "string",
-                  "description": "Name of the referenced function"
-                },
-                "arguments": {
-                  "type": "object",
-                  "description": "Function arguments/inputs"
-                },
-                "selectionSet": {
-                  "type": "string",
-                  "description": "Only used if function type is 'graphql'. A string containing a valid GraphQL selection set"
-                }
-              },
-              "additionalProperties": false,
-              "required": [
-                "refName"
-              ]
-            }
-          ]
+          "description": "References a function to be invoked",
+          "$ref": "#/definitions/functionref"
         },
         "eventRef": {
           "description": "References a 'trigger' and 'result' reusable event definitions",
@@ -405,6 +378,37 @@
         {
           "required": [
             "subFlowRef"
+          ]
+        }
+      ]
+    },
+    "functionref": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Name of the referenced function",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "description": "Function Reference",
+          "properties": {
+            "refName": {
+              "type": "string",
+              "description": "Name of the referenced function"
+            },
+            "arguments": {
+              "type": "object",
+              "description": "Function arguments/inputs"
+            },
+            "selectionSet": {
+              "type": "string",
+              "description": "Only used if function type is 'graphql'. A string containing a valid GraphQL selection set"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "refName"
           ]
         }
       ]
