@@ -561,9 +561,11 @@
       },
       "additionalProperties": false,
       "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
+        "not": {
+          "properties": {
+            "usedForCompensation": {
+              "enum": [ false ]
+            }
           }
         }
       },
@@ -753,9 +755,11 @@
       },
       "additionalProperties": false,
       "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
+        "not": {
+          "properties": {
+            "usedForCompensation": {
+              "enum": [ false ]
+            }
           }
         }
       },
@@ -877,9 +881,11 @@
       },
       "additionalProperties": false,
       "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
+        "not": {
+          "properties": {
+            "usedForCompensation": {
+              "enum": [ false ]
+            }
           }
         }
       },
@@ -1262,9 +1268,11 @@
       },
       "additionalProperties": false,
       "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
+        "not": {
+          "properties": {
+            "usedForCompensation": {
+              "enum": [ false ]
+            }
           }
         }
       },
@@ -1381,9 +1389,11 @@
       },
       "additionalProperties": false,
       "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
+        "not": {
+          "properties": {
+            "usedForCompensation": {
+              "enum": [ false ]
+            }
           }
         }
       },
@@ -1492,9 +1502,11 @@
       },
       "additionalProperties": false,
       "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
+        "not": {
+          "properties": {
+            "usedForCompensation": {
+              "enum": [ false ]
+            }
           }
         }
       },
