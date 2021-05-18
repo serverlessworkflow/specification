@@ -1628,6 +1628,7 @@ for example "machine learning", "monitoring", "networking", etc
 The `dataInputSchema` property can be used to validate the workflow data input against a defined JSON Schema.
 This check should be done before any states are executed. `dataInputSchema` can have two different types.
 If it is an object type it has the following definition: 
+
 ```json
 "dataInputSchema": {
    "schema": "URL_to_json_schema",
@@ -1666,26 +1667,24 @@ If `array` type, it defines an array (of string types) which contains the names 
 For more information about Workflow secrets, reference the [Workflow Secrets section](#Workflow-Secrets).
 
 The `globals` property can be used to define Workflow global values
-which are accessible in [Workflow Expressions](#Workflow-Expressions) via their defined Namespace.
+which are accessible in [Workflow Expressions](#Workflow-Expressions).
 
-It has two possible types, `string` or `array`.
+It has two possible types, `string` or `object`.
 If `string` type, it is an URI pointing to a JSON or YAML document
-which contains an array of global definitions, for example:
+which contains an object of global definitions, for example:
 
 ```json
 "globals": "file://workflowglobals.json"
 ```
 
-If `array` type, it defines an array which contains the global definitions, for example:
+If `object` type, it defines an array which contains the global definitions, for example:
 
 ```json
-"globals": [
- {
-   "nameSpace": "AGE",
-   "name": "MIN_ADULT",
-   "value": 18
- }
-]
+{
+  "AGE": {
+    "MIN_ADULT": 18
+  }
+}
 ```
 
 For more information see the [Workflow Globals](#Workflow-Globals) section.
@@ -5081,45 +5080,30 @@ Globals can be defined via the [Workflow top-level "globals" property](#Workflow
 for example:
 
 ```json
-"globals": [
-{
-    "nameSpace": "MYNAMESPACE",
-    "name": "MYNAME",
-    "value": "myvalue"
-},
-{
-  "nameSpace": "OTHERNAMESPACE",
-  "name": "OTHERNAME",
-  "value": {
-    "a": "avalue",
-    "b": true
-  }   
+"globals": {
+  "Translations": {
+    "Dog": {
+      "Serbian": "pas",
+      "Spanish": "perro",
+      "French": "chien"
+    }
+  }
 }
-]
 ```
 
-Globals values must be assigned to a namespace. You can assign multiple global values to the 
-same namespace, however each namespace must contain a unique set of global names.
-Note that namespace names "SECRETS" is not allowed, as that namespace is reserved 
-for [Workflow Secrets](#Workflow-Secrets).
-
-Global values can have either a `string`, `boolean`, `number`, `array` or `object` types.
-
-Globals can be accessed in Workflow expressions under their defined namespace.
-Runtimes must make globals available to expressions.
+Globals can only be accessed inside Workflow expressions via the $GLOBALS namespace.
+Runtimes must make globals available to expressions under that namespace.
 
 Here is an example of using globals in Workflow expressions:
 
 ```json
 {
 ...,
-"globals": [
-  {
-    "nameSpace": "AGE",
-    "name": "MIN_ADULT",
-    "value": 18
+"globals": {
+  "AGE": {
+    "MIN_ADULT": 18
   }
-],
+},
 ...
 "states":[  
   {  
@@ -5128,12 +5112,12 @@ Here is an example of using globals in Workflow expressions:
      "dataConditions": [
         {
           "name": "Applicant is adult",
-          "condition": "${ .applicant | .age >= $AGE.MIN_ADULT }",
+          "condition": "${ .applicant | .age >= $GLOBALS.AGE.MIN_ADULT }",
           "transition": "ApproveApplication"
         },
         {
           "name": "Applicant is minor",
-          "condition": "${ .applicant | .age < $AGE.MIN_ADULT }",
+          "condition": "${ .applicant | .age < $GLOBALS.AGE.MIN_ADULT }",
           "transition": "RejectApplication"
         }
      ],
@@ -5151,12 +5135,12 @@ for example:
 "functions": [
   {
     "name": "isAdult",
-    "operation": ".applicant | .age >= $AGE.MIN_ADULT",
+    "operation": ".applicant | .age >= $GLOBALS.AGE.MIN_ADULT",
     "type": "expression"
   },
   {
     "name": "isMinor",
-    "operation": ".applicant | .age < $AGE.MIN_ADULT",
+    "operation": ".applicant | .age < $GLOBALS.AGE.MIN_ADULT",
     "type": "expression"
   }
 ]

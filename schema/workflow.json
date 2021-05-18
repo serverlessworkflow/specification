@@ -71,7 +71,17 @@
       "$ref": "secrets.json#/secrets"
     },
     "globals": {
-      "$ref": "globals.json#/globals"
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to a resource containing globals data (json or yaml)"
+        },
+        {
+          "type": "object",
+          "description": "Workflow globals data (object type)"
+        }
+      ]
     },
     "start": {
       "$ref": "#/definitions/startdef"
