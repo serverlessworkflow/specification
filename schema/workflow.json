@@ -561,13 +561,12 @@
       },
       "additionalProperties": false,
       "if": {
-        "not": {
-          "properties": {
-            "usedForCompensation": {
-              "enum": [ false ]
-            }
+        "properties": {
+          "usedForCompensation": {
+            "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -755,13 +754,12 @@
       },
       "additionalProperties": false,
       "if": {
-        "not": {
-          "properties": {
-            "usedForCompensation": {
-              "enum": [ false ]
-            }
+        "properties": {
+          "usedForCompensation": {
+            "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -881,13 +879,12 @@
       },
       "additionalProperties": false,
       "if": {
-        "not": {
-          "properties": {
-            "usedForCompensation": {
-              "enum": [ false ]
-            }
+        "properties": {
+          "usedForCompensation": {
+            "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -1268,13 +1265,12 @@
       },
       "additionalProperties": false,
       "if": {
-        "not": {
-          "properties": {
-            "usedForCompensation": {
-              "enum": [ false ]
-            }
+        "properties": {
+          "usedForCompensation": {
+            "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -1389,13 +1385,12 @@
       },
       "additionalProperties": false,
       "if": {
-        "not": {
-          "properties": {
-            "usedForCompensation": {
-              "enum": [ false ]
-            }
+        "properties": {
+          "usedForCompensation": {
+            "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -1502,13 +1497,12 @@
       },
       "additionalProperties": false,
       "if": {
-        "not": {
-          "properties": {
-            "usedForCompensation": {
-              "enum": [ false ]
-            }
+        "properties": {
+          "usedForCompensation": {
+            "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
