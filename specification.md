@@ -1677,7 +1677,7 @@ which contains an object of global definitions, for example:
 "globals": "file://workflowglobals.json"
 ```
 
-If `object` type, it defines an array which contains the global definitions, for example:
+If `object` type, it defines a JSON object which contains the global definitions, for example:
 
 ```json
 {
