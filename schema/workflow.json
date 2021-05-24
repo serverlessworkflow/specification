@@ -481,7 +481,8 @@
           "usedForCompensation": {
             "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -673,7 +674,8 @@
           "usedForCompensation": {
             "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -790,7 +792,8 @@
           "usedForCompensation": {
             "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -1277,7 +1280,8 @@
           "usedForCompensation": {
             "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -1400,7 +1404,8 @@
           "usedForCompensation": {
             "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
@@ -1531,7 +1536,8 @@
           "usedForCompensation": {
             "const": true
           }
-        }
+        },
+        "required": ["usedForCompensation"]
       },
       "then": {
         "required": [
