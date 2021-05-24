@@ -550,7 +550,7 @@ a workflow with a single event state and show how data filters can be combined.
     "id": "GreetCustomersWorkflow",
     "name": "Greet Customers when they arrive",
     "version": "1.0",
-    "specVersion": "0.6",
+    "specVersion": "0.7",
     "start": "WaitForCustomerToArrive",
     "states":[
          {
@@ -1520,7 +1520,7 @@ we can use this expression in the workflow "version" parameter:
    "id": "MySampleWorkflow",
    "name": "Sample Workflow",
    "version": "${ .inputVersion }",
-   "specVersion": "0.6"
+   "specVersion": "0.7"
 }
 ```
 
@@ -1565,7 +1565,7 @@ definition "id" must be a constant value.
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1582,7 +1582,7 @@ definition "id" must be a constant value.
 ```yaml
 id: sampleWorkflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Sample Workflow
 description: Sample Workflow
 start: MyStartingState
@@ -1669,7 +1669,7 @@ Here is an example of using external resource for function definitions:
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1704,7 +1704,7 @@ Here is an example of using external resource for event definitions:
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1770,7 +1770,7 @@ Let's take a look at an example of additional properties:
 {  
   "id": "myworkflow",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "name": "My Test Workflow",
   "start": "My First State",
   "loglevel": "Info",
@@ -1788,7 +1788,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 {
   "id": "myworkflow",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "name": "Py Test Workflow",
   "start": "My First State",
   "metadata": {
@@ -3920,7 +3920,7 @@ and our workflow is defined as:
   "id": "sendConfirmWorkflow",
   "name": "SendConfirmationForCompletedOrders",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "start": "SendConfirmState",
   "functions": [
   {
@@ -3957,7 +3957,7 @@ and our workflow is defined as:
 id: sendConfirmWorkflow
 name: SendConfirmationForCompletedOrders
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: SendConfirmState
 functions:
 - name: sendConfirmationFunction
@@ -5052,7 +5052,7 @@ Here is an example of metadata attached to the core workflow definition:
   "id": "processSalesOrders",
   "name": "Process Sales Orders",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "start": "MyStartingState",
   "metadata": {
     "loglevel": "Info",
