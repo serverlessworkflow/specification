@@ -125,7 +125,7 @@ an associated sample KPIs extension definition on the right.
 id: patientVitalsWorkflow
 name: Monitor Patient Vitals
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: MonitorVitals
 events:
 - name: HighBodyTemperature
