@@ -53,7 +53,7 @@ For this reason, the event, function, retry, and data mapping defined in the ass
 id: processfile
 name: Process File Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Process File
 states:
 - name: Process File
@@ -89,7 +89,7 @@ functions:
 id: processapplication
 name: Process Application
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: ProcessNewApplication
 states:
 - name: ProcessNewApplication
@@ -143,7 +143,7 @@ events:
 id: simplecompensation
 name: Simple Compensation
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Step 1
 states:
 - name: Step 1
@@ -204,7 +204,7 @@ functions:
 id: errorwithretries
 name: Error Handling With Retries Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Make Coffee
 states:
 - name: Make Coffee
@@ -262,7 +262,7 @@ functions:
 id: executiontimeout
 name: Execution Timeout Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Purchase Parts
 execTimeout:
   duration: PT7D
@@ -315,7 +315,7 @@ functions:
 id: foreachWorkflow
 name: ForEach State Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: ForEachItem
 states:
 - name: ForEachItem
@@ -354,7 +354,7 @@ a starting "operation" state transitioning to an "event" state which waits for t
 id: subflowloop
 name: SubFlow Loop Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: SubflowRepeat
 states:
 - name: SubflowRepeat
@@ -404,7 +404,7 @@ control-flow logic to check email and make a decision to reply to it or wait an 
 id: approvereport
 name: Approve Report Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Approve Report
 states:
 - name: Approve Report
@@ -467,7 +467,7 @@ functions:
 id: eventdecision
 name: Event Decision workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: A
 states:
 - name: A
