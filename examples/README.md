@@ -64,7 +64,7 @@ data output, which is:
 {  
 "id": "helloworld",
 "version": "1.0", 
-"specVersion": "0.6",
+"specVersion": "0.7",
 "name": "Hello World Workflow",
 "description": "Inject Hello World",
 "start": "Hello State",
@@ -87,7 +87,7 @@ data output, which is:
 ```yaml
 id: helloworld
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Hello World Workflow
 description: Inject Hello World
 start: Hello State
@@ -148,7 +148,7 @@ Which is added to the states data and becomes the workflow data output.
 {  
 "id": "greeting",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "name": "Greeting Workflow",
 "description": "Greet Someone",
 "start": "Greet",
@@ -187,7 +187,7 @@ Which is added to the states data and becomes the workflow data output.
 ```yaml
 id: greeting
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Greeting Workflow
 description: Greet Someone
 start: Greet
@@ -293,7 +293,7 @@ filters what is selected to be the state data output which then becomes the work
 {  
 "id": "eventbasedgreeting",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "name": "Event Based Greeting Workflow",
 "description": "Event Based Greeting",
 "start": "Greet",
@@ -317,7 +317,8 @@ filters what is selected to be the state data output which then becomes the work
      "onEvents": [{
          "eventRefs": ["GreetingEvent"],
          "eventDataFilter": {
-            "data": "${ .data.greet }"
+            "data": "${ .greet }",
+            "toStateData": "${ .greet }"
          },
          "actions":[  
             {  
@@ -345,7 +346,7 @@ filters what is selected to be the state data output which then becomes the work
 ```yaml
 id: eventbasedgreeting
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Event Based Greeting Workflow
 description: Event Based Greeting
 start: Greet
@@ -363,7 +364,8 @@ states:
   - eventRefs:
     - GreetingEvent
     eventDataFilter:
-      data: "${ .data.greet }"
+      data: "${ .greet }"
+      toStateData: "${ .greet }"
     actions:
     - functionRef:
         refName: greetingFunction
@@ -419,7 +421,7 @@ result of the workflow execution.
 {  
 "id": "solvemathproblems",
 "version": "1.0",
-"specVersion": "0.6", 
+"specVersion": "0.7", 
 "name": "Solve Math Problems Workflow",
 "description": "Solve math problems",
 "start": "Solve",
@@ -461,7 +463,7 @@ result of the workflow execution.
 ```yaml
 id: solvemathproblems
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Solve Math Problems Workflow
 description: Solve math problems
 start: Solve
@@ -516,7 +518,7 @@ to finish execution before it can transition (end workflow execution in this cas
 {  
 "id": "parallelexec",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "name": "Parallel Execution Workflow",
 "description": "Executes two branches in parallel",
 "start": "ParallelExec",
@@ -551,7 +553,7 @@ to finish execution before it can transition (end workflow execution in this cas
 ```yaml
 id: parallelexec
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Parallel Execution Workflow
 description: Executes two branches in parallel
 start: ParallelExec
@@ -606,7 +608,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
 {  
 "id": "eventbasedswitch",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "name": "Event Based Switch Transitions",
 "description": "Event Based Switch Transitions",
 "start": "CheckVisaStatus",
@@ -681,7 +683,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
 ```yaml
 id: eventbasedswitch
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Event Based Switch Transitions
 description: Event Based Switch Transitions
 start: CheckVisaStatus
@@ -765,7 +767,7 @@ If the applicants age is over 18 we start the application (subflow action). Othe
 {  
    "id": "applicantrequest",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "name": "Applicant Request Decision Workflow",
    "description": "Determine if applicant request is valid",
    "start": "CheckApplication",
@@ -829,7 +831,7 @@ If the applicants age is over 18 we start the application (subflow action). Othe
 ```yaml
 id: applicantrequest
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Applicant Request Decision Workflow
 description: Determine if applicant request is valid
 start: CheckApplication
@@ -909,7 +911,7 @@ The data output of the workflow contains the information of the exception caught
 {  
 "id": "provisionorders",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "name": "Provision Orders",
 "description": "Provision Orders and handle errors thrown",
 "start": "ProvisionOrder",
@@ -1003,7 +1005,7 @@ The data output of the workflow contains the information of the exception caught
 ```yaml
 id: provisionorders
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Provision Orders
 description: Provision Orders and handle errors thrown
 start: ProvisionOrder
@@ -1090,7 +1092,7 @@ In the case job submission raises a runtime error, we transition to an Operation
 {
   "id": "jobmonitoring",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "name": "Job Monitoring",
   "description": "Monitor finished execution of a submitted job",
   "start": "SubmitJob",
@@ -1238,7 +1240,7 @@ In the case job submission raises a runtime error, we transition to an Operation
 ```yaml
 id: jobmonitoring
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Job Monitoring
 description: Monitor finished execution of a submitted job
 start: SubmitJob
@@ -1405,7 +1407,7 @@ CloudEvent upon completion of the workflow could look like:
 {
 "id": "sendcloudeventonprovision",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "name": "Send CloudEvent on provision completion",
 "start": "ProvisionOrdersState",
 "events": [
@@ -1455,7 +1457,7 @@ CloudEvent upon completion of the workflow could look like:
 ```yaml
 id: sendcloudeventonprovision
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Send CloudEvent on provision completion
 start: ProvisionOrdersState
 events:
@@ -1539,7 +1541,7 @@ have the matching patient id.
 "id": "patientVitalsWorkflow",
 "name": "Monitor Patient Vitals",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "start": "MonitorVitals",
 "events": [
 {
@@ -1640,7 +1642,7 @@ have the matching patient id.
 id: patientVitalsWorkflow
 name: Monitor Patient Vitals
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: MonitorVitals
 events:
 - name: HighBodyTemperature
@@ -1734,7 +1736,7 @@ when all three of these events happened (in no particular order).
 "id": "finalizeCollegeApplication",
 "name": "Finalize College Application",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "start": "FinalizeApplication",
 "events": [
 {
@@ -1813,7 +1815,7 @@ when all three of these events happened (in no particular order).
 id: finalizeCollegeApplication
 name: Finalize College Application
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: FinalizeApplication
 events:
 - name: ApplicationSubmitted
@@ -1945,7 +1947,7 @@ And for denied credit check, for example:
 {
     "id": "customercreditcheck",
     "version": "1.0",
-    "specVersion": "0.6",
+    "specVersion": "0.7",
     "name": "Customer Credit Check Workflow",
     "description": "Perform Customer Credit Check",
     "start": "CheckCredit",
@@ -2040,7 +2042,7 @@ And for denied credit check, for example:
 ```yaml
 id: customercreditcheck
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Customer Credit Check Workflow
 description: Perform Customer Credit Check
 start: CheckCredit
@@ -2147,7 +2149,7 @@ Bidding is done via an online application and bids are received as events are as
 {
     "id": "handleCarAuctionBid",
     "version": "1.0",
-    "specVersion": "0.6",
+    "specVersion": "0.7",
     "name": "Car Auction Bidding Workflow",
     "description": "Store a single bid whole the car auction is active",
     "start": {
@@ -2197,7 +2199,7 @@ Bidding is done via an online application and bids are received as events are as
 ```yaml
 id: handleCarAuctionBid
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Car Auction Bidding Workflow
 description: Store a single bid whole the car auction is active
 start:
@@ -2277,7 +2279,7 @@ The results of the inbox service called is expected to be for example:
 "id": "checkInbox",
 "name": "Check Inbox Workflow",
 "version": "1.0",
-"specVersion": "0.6",
+"specVersion": "0.7",
 "description": "Periodically Check Inbox",
 "start": {
     "stateName": "CheckInbox",
@@ -2336,7 +2338,7 @@ id: checkInbox
 name: Check Inbox Workflow
 description: Periodically Check Inbox
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start:
   stateName: CheckInbox
   schedule:
@@ -2421,7 +2423,7 @@ For this example we assume that the workflow instance is started given the follo
     "name": "Vet Appointment Workflow",
     "description": "Vet service call via events",
     "version": "1.0",
-    "specVersion": "0.6",
+    "specVersion": "0.7",
     "start": "MakeVetAppointmentState",
     "events": [
         {
@@ -2467,7 +2469,7 @@ id: VetAppointmentWorkflow
 name: Vet Appointment Workflow
 description: Vet service call via events
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: MakeVetAppointmentState
 events:
 - name: MakeVetAppointment
@@ -2563,7 +2565,7 @@ In our workflow definition then we can reference these files rather than definin
 {
   "id": "paymentconfirmation",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "name": "Payment Confirmation Workflow",
   "description": "Performs Payment Confirmation",
   "functions": "functiondefs.json",
@@ -2664,7 +2666,7 @@ In our workflow definition then we can reference these files rather than definin
 ```yaml
 id: paymentconfirmation
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Payment Confirmation Workflow
 description: Performs Payment Confirmation
 functions: functiondefs.json
@@ -2767,7 +2769,7 @@ If the retries are not successful, we want to just gracefully end workflow execu
   "id": "patientonboarding",
   "name": "Patient Onboarding Workflow",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "start": "Onboard",
   "states": [
     {
@@ -2840,7 +2842,7 @@ If the retries are not successful, we want to just gracefully end workflow execu
 id: patientonboarding
 name: Patient Onboarding Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Onboard
 states:
 - name: Onboard
@@ -2920,7 +2922,7 @@ This example shows the use of the workflow [execTimeout definition](../specifica
   "id": "order",
   "name": "Purchase Order Workflow",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "start": "StartNewOrder",
   "execTimeout": {
     "duration": "PT30D",
@@ -3080,7 +3082,7 @@ This example shows the use of the workflow [execTimeout definition](../specifica
 id: order
 name: Purchase Order Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: StartNewOrder
 execTimeout:
   duration: PT30D
@@ -3202,7 +3204,7 @@ the data for an hour, send report, and so on.
   "id": "roomreadings",
   "name": "Room Temp and Humidity Workflow",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "start": "ConsumeReading",
   "execTimeout": {
     "duration": "PT1H",
@@ -3224,7 +3226,7 @@ the data for an hour, send report, and so on.
             }
           ],
           "eventDataFilter": {
-            "data": "${ .readings }"
+            "toStateData": "${ .readings }"
           }
         }
       ],
@@ -3290,7 +3292,7 @@ the data for an hour, send report, and so on.
 id: roomreadings
 name: Room Temp and Humidity Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: ConsumeReading
 execTimeout:
   duration: PT1H
@@ -3307,7 +3309,7 @@ states:
     - functionRef:
         refName: LogReading
     eventDataFilter:
-      data: "${ .readings }"
+      toStateData: "${ .readings }"
   end: true
 - name: GenerateReport
   type: operation
@@ -3374,7 +3376,7 @@ We fist define our top-level workflow for this example:
     "id": "checkcarvitals",
     "name": "Check Car Vitals Workflow",
     "version": "1.0",
-    "specVersion": "0.6",
+    "specVersion": "0.7",
     "start": "WhenCarIsOn",
     "states": [
        {
@@ -3451,7 +3453,7 @@ We fist define our top-level workflow for this example:
 id: checkcarvitals
 name: Check Car Vitals Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: WhenCarIsOn
 states:
 - name: WhenCarIsOn
@@ -3511,7 +3513,7 @@ And then our reusable sub-workflow which performs the checking of our car vitals
    "id": "vitalscheck",
    "name": "Car Vitals Check",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "start": "CheckVitals",
    "states": [
       {
@@ -3636,7 +3638,7 @@ And then our reusable sub-workflow which performs the checking of our car vitals
 id: vitalscheck
 name: Car Vitals Check
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: CheckVitals
 states:
 - name: CheckVitals
@@ -3754,7 +3756,7 @@ For the sake of the example we assume the functions and event definitions are de
    "id": "booklending",
    "name": "Book Lending Workflow",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "start": "Book Lending Request",
    "states": [
       {
@@ -3889,7 +3891,7 @@ For the sake of the example we assume the functions and event definitions are de
 id: booklending
 name: Book Lending Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Book Lending Request
 states:
 - name: Book Lending Request
@@ -4011,7 +4013,7 @@ Its results are then merged back into the state data according to the "toStateDa
     "id": "fillgrassofwater",
     "name": "Fill glass of water workflow",
     "version": "1.0",
-    "specVersion": "0.6",
+    "specVersion": "0.7",
     "start": "Check if full",
     "functions": [
         {
@@ -4061,7 +4063,7 @@ Its results are then merged back into the state data according to the "toStateDa
 id: fillgrassofwater
 name: Fill glass of water workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Check if full
 functions:
 - name: Increment Current Count Function
@@ -4206,7 +4208,7 @@ With the function and event definitions in place we can now start writing our ma
 id: foodorderworkflow
 name: Food Order Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Place Order
 functions: file://orderfunctions.yml
 events: file://orderevents.yml
@@ -4254,7 +4256,7 @@ With this in place we can start defining our sub-workflows:
 id: placeorderworkflow
 name: Place Order Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Submit Order
 states:
 - name: Submit Order
@@ -4288,7 +4290,7 @@ states:
 id: deliverorderworkflow
 name: Deliver Order Workflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: Dispatch Courier
 states:
 - name: Dispatch Courier

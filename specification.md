@@ -536,6 +536,10 @@ Here is an example using an event filter:
 <img src="media/spec/event-data-filter-example1.png" height="400px" alt="Event Data Filter Example"/>
 </p>
 
+Note that the data input to the Event data filters depends on the `dataOnly` property of the associated [Event definition](#Event-Definition).
+If this property is not defined (has default value of `true`), Event data filter expressions are evaluated against the event payload (the CloudEvents `data` attribute only). If it is set to
+`false`, the expressions should be evaluated against the entire CloudEvent (including its context attributes).
+
 #### Using multiple data filters
 
 As [Event states](#Event-State) can take advantage of all defined data filters. In the example below, we define
@@ -546,7 +550,7 @@ a workflow with a single event state and show how data filters can be combined.
     "id": "GreetCustomersWorkflow",
     "name": "Greet Customers when they arrive",
     "version": "1.0",
-    "specVersion": "0.6",
+    "specVersion": "0.7",
     "start": "WaitForCustomerToArrive",
     "states":[
          {
@@ -1516,7 +1520,7 @@ we can use this expression in the workflow "version" parameter:
    "id": "MySampleWorkflow",
    "name": "Sample Workflow",
    "version": "${ .inputVersion }",
-   "specVersion": "0.6"
+   "specVersion": "0.7"
 }
 ```
 
@@ -1561,7 +1565,7 @@ definition "id" must be a constant value.
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1578,7 +1582,7 @@ definition "id" must be a constant value.
 ```yaml
 id: sampleWorkflow
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 name: Sample Workflow
 description: Sample Workflow
 start: MyStartingState
@@ -1665,7 +1669,7 @@ Here is an example of using external resource for function definitions:
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1700,7 +1704,7 @@ Here is an example of using external resource for event definitions:
 {  
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.6",
+   "specVersion": "0.7",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1766,7 +1770,7 @@ Let's take a look at an example of additional properties:
 {  
   "id": "myworkflow",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "name": "My Test Workflow",
   "start": "My First State",
   "loglevel": "Info",
@@ -1784,7 +1788,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 {
   "id": "myworkflow",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "name": "Py Test Workflow",
   "start": "My First State",
   "metadata": {
@@ -1934,6 +1938,7 @@ defined via the `parameters` property in [function definitions](#FunctionRef-Def
 | type | CloudEvent type | string | yes |
 | kind | Defines the event is either `consumed` or `produced` by the workflow. Default is `consumed` | enum | no |
 | [correlation](#Correlation-Definition) | Define event correlation rules for this event. Only used for consumed events | array | no |
+| dataOnly | If `true` (default value), only the Event payload is accessible to consuming Workflow states. If `false`, both event payload and context attributes should be accessible | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2137,6 +2142,10 @@ says that these events must all have a context attribute named "department" with
 
 This allows developers to write orchestration workflows that are specifically targeted to patients that are in the hospital urgent care unit, 
 for example.
+
+The `dataOnly` property deals with what Event data is accessible by the consuming Workflow states.
+If its value is `true` (default value), only the Event payload is accessible to consuming Workflow states. 
+If `false`, both Event payload and context attributes should be accessible.
 
 #### Correlation Definition
 
@@ -2355,7 +2364,7 @@ the state should transition to the next state or can end the workflow execution 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
-| actionMode | Specifies how actions are to be performed (in sequence of parallel). Default is "sequential" | string | no |
+| actionMode | Specifies how actions are to be performed (in sequence or in parallel). Default is "sequential" | string | no |
 | [actions](#Action-Definition) | Actions to be performed | array | no |
 | [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 
@@ -3911,7 +3920,7 @@ and our workflow is defined as:
   "id": "sendConfirmWorkflow",
   "name": "SendConfirmationForCompletedOrders",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "start": "SendConfirmState",
   "functions": [
   {
@@ -3948,7 +3957,7 @@ and our workflow is defined as:
 id: sendConfirmWorkflow
 name: SendConfirmationForCompletedOrders
 version: '1.0'
-specVersion: '0.6'
+specVersion: '0.7'
 start: SendConfirmState
 functions:
 - name: sendConfirmationFunction
@@ -5043,7 +5052,7 @@ Here is an example of metadata attached to the core workflow definition:
   "id": "processSalesOrders",
   "name": "Process Sales Orders",
   "version": "1.0",
-  "specVersion": "0.6",
+  "specVersion": "0.7",
   "start": "MyStartingState",
   "metadata": {
     "loglevel": "Info",
