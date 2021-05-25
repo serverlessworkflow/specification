@@ -2364,7 +2364,7 @@ the state should transition to the next state or can end the workflow execution 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
-| actionMode | Specifies how actions are to be performed (in sequence of parallel). Default is "sequential" | string | no |
+| actionMode | Specifies how actions are to be performed (in sequence or in parallel). Default is "sequential" | string | no |
 | [actions](#Action-Definition) | Actions to be performed | array | no |
 | [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 
