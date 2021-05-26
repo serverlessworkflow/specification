@@ -2619,8 +2619,6 @@ it with its `object` type which has the following properties:
 | arguments | Arguments (inputs) to be passed to the referenced function | object | yes if function type is `graphql`, otherwise no |
 | selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes if function type is `graphql`, otherwise no |
 
-tihomir
-
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
 
@@ -3111,7 +3109,7 @@ end: true
 
 </details>
 
-Operationsss state defines a set of actions to be performed in sequence or in parallel.
+Operation state defines a set of actions to be performed in sequence or in parallel.
 Once all actions have been performed, a transition to another state can occur.
 
 #### Switch State
