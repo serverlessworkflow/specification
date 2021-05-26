@@ -2,8 +2,4 @@
 # the repo. Unless a later match takes precedence,
 # They will be requested for
 # review when someone opens a pull request.
-<<<<<<< HEAD
 *       @tsurdilo @ricardozanini @manuelstein @cdavernas @antmendoza
-=======
-*       @tsurdilo @ricardozanini @manuelstein @cdavernas @antmendoza
->>>>>>> b111ab1... Adding Antonio Mendoza Pérez to list of project maintainers (#378)
