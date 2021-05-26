@@ -3111,7 +3111,7 @@ end: true
 
 </details>
 
-Operation state defines a set of actions to be performed in sequence or in parallel.
+Operationsss state defines a set of actions to be performed in sequence or in parallel.
 Once all actions have been performed, a transition to another state can occur.
 
 #### Switch State
