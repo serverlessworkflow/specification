@@ -5190,6 +5190,8 @@ Here is an example on how to use secrets and pass them as arguments to a functio
 
 Note that secrets can also be used in [expression functions](#Using-Functions-for-Expression-Evaluation).
 
+Secrets are immutable, meaning that workflow expressions are not allowed to change their values.
+
 ### Workflow Metadata
 
 Metadata enables you to enrich the serverless workflow model with information beyond its core definitions.
