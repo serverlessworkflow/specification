@@ -2926,7 +2926,6 @@ This example shows the use of the workflow [execTimeout definition](../specifica
   "start": "StartNewOrder",
   "execTimeout": {
     "duration": "PT30D",
-    "interrupt": true,
     "runBefore": "CancelOrder"
   },
   "states": [
@@ -3086,7 +3085,6 @@ specVersion: '0.7'
 start: StartNewOrder
 execTimeout:
   duration: PT30D
-  interrupt: true
   runBefore: CancelOrder
 states:
 - name: StartNewOrder

@@ -1852,7 +1852,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | duration | Timeout duration (ISO 8601 duration format) | string | yes |
-| interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is stopped immediately. Default is `false`  | boolean | no |
+| interrupt | If `false`, workflow instance is allowed to finish its current execution paths. If `true`, current workflow execution is stopped immediately. Default is `true`  | boolean | no |
 | runBefore | Name of a workflow state to be executed before workflow instance is terminated | string | no |
 
 
@@ -1891,8 +1891,11 @@ runBefore: createandsendreport
 The `duration` property defines the time duration of the execution timeout. Once a workflow instance is created,
 and the amount of the defined time is reached, the workflow instance should be terminated.
 
-The `interrupt` property defines if the currently running instance should be allowed to finish its current 
-execution flow before it needs to be terminated. If set to `true`, the current instance execution should stop immediately.
+The `interrupt` property defines if the running workflow instance should be allowed to finish its current 
+execution flow before it needs to be terminated.
+The default value of `interrupt` is `true`, meaning that the currently workflow execution should be terminated.
+If set to `false`, the current execution path of the workflow execution should have a chance to complete (reach 
+an end definition).
 
 The `runBefore` property defines a name of a workflow state to be executed before workflow instance is terminated.
 States referenced by `runBefore` (as well as any other states that they transition to) must obey following rules:
