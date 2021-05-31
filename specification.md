@@ -30,7 +30,7 @@ You can find the specification roadmap [here](roadmap/README.md).
     - [Defining Retries](#Defining-Retries)
   - [Workflow Compensation](#Workflow-Compensation)
   - [Workflow Versioning](#Workflow-Versioning)
-  - [Workflow Globals](#Workflow-Globals)
+  - [Workflow Constants](#Workflow-Constants)
   - [Workflow Secrets](#Workflow-Secrets)  
   - [Workflow Metadata](#Workflow-Metadata)
 - [Extensions](#Extensions)
@@ -1541,8 +1541,8 @@ definition "id" must be a constant value.
 | version | Workflow version | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
+| [constants](#Workflow-Constants) | Workflow constants | string or object | no |
 | [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
-| [globals](#Workflow-Globals) | Workflow globals | string or object | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
@@ -1666,7 +1666,7 @@ If `array` type, it defines an array (of string types) which contains the names 
 
 For more information about Workflow secrets, reference the [Workflow Secrets section](#Workflow-Secrets).
 
-The `globals` property can be used to define Workflow global values
+The `constants` property can be used to define Workflow constants values
 which are accessible in [Workflow Expressions](#Workflow-Expressions).
 
 It has two possible types, `string` or `object`.
@@ -1674,10 +1674,10 @@ If `string` type, it is an URI pointing to a JSON or YAML document
 which contains an object of global definitions, for example:
 
 ```json
-"globals": "file://workflowglobals.json"
+"constants": "file://workflowconstants.json"
 ```
 
-If `object` type, it defines a JSON object which contains the global definitions, for example:
+If `object` type, it defines a JSON object which contains the constants definitions, for example:
 
 ```json
 {
@@ -1687,7 +1687,7 @@ If `object` type, it defines a JSON object which contains the global definitions
 }
 ```
 
-For more information see the [Workflow Globals](#Workflow-Globals) section.
+For more information see the [Workflow Constants](#Workflow-Constants) section.
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
@@ -5072,15 +5072,15 @@ for your workflow definitions especially in production environments.
 To enhance portability when using versioning of your workflow and sub-workflow definitions,
 we recommend using an existing versioning standard such as [SemVer](https://semver.org/) for example.
 
-### Workflow Globals
+### Workflow Constants
 
-Workflow globals are used to define static data which is available to [Workflow Expressions](#Workflow-Expressions).
+Workflow constants are used to define static, and immutable, data which is available to [Workflow Expressions](#Workflow-Expressions).
 
-Globals can be defined via the [Workflow top-level "globals" property](#Workflow-Definition-Structure),
+Constants can be defined via the [Workflow top-level "constants" property](#Workflow-Definition-Structure),
 for example:
 
 ```json
-"globals": {
+"constants": {
   "Translations": {
     "Dog": {
       "Serbian": "pas",
@@ -5091,15 +5091,15 @@ for example:
 }
 ```
 
-Globals can only be accessed inside Workflow expressions via the $GLOBALS namespace.
-Runtimes must make globals available to expressions under that namespace.
+Constants can only be accessed inside Workflow expressions via the $CONST namespace.
+Runtimes must make constants available to expressions under that namespace.
 
-Here is an example of using globals in Workflow expressions:
+Here is an example of using constants in Workflow expressions:
 
 ```json
 {
 ...,
-"globals": {
+"constants": {
   "AGE": {
     "MIN_ADULT": 18
   }
@@ -5112,12 +5112,12 @@ Here is an example of using globals in Workflow expressions:
      "dataConditions": [
         {
           "name": "Applicant is adult",
-          "condition": "${ .applicant | .age >= $GLOBALS.AGE.MIN_ADULT }",
+          "condition": "${ .applicant | .age >= $CONST.AGE.MIN_ADULT }",
           "transition": "ApproveApplication"
         },
         {
           "name": "Applicant is minor",
-          "condition": "${ .applicant | .age < $GLOBALS.AGE.MIN_ADULT }",
+          "condition": "${ .applicant | .age < $CONST.AGE.MIN_ADULT }",
           "transition": "RejectApplication"
         }
      ],
@@ -5127,7 +5127,7 @@ Here is an example of using globals in Workflow expressions:
 ]
 }
 ```
-Note that globals can also be used in [expression functions](#Using-Functions-for-Expression-Evaluation),
+Note that constants can also be used in [expression functions](#Using-Functions-for-Expression-Evaluation),
 for example:
 
 ```json
@@ -5135,21 +5135,22 @@ for example:
 "functions": [
   {
     "name": "isAdult",
-    "operation": ".applicant | .age >= $GLOBALS.AGE.MIN_ADULT",
+    "operation": ".applicant | .age >= $CONST.AGE.MIN_ADULT",
     "type": "expression"
   },
   {
     "name": "isMinor",
-    "operation": ".applicant | .age < $GLOBALS.AGE.MIN_ADULT",
+    "operation": ".applicant | .age < $CONST.AGE.MIN_ADULT",
     "type": "expression"
   }
 ]
 }
 ```
 
-Workflow globals values should only contain static data, meaning that their value should not 
+Workflow constants values should only contain static data, meaning that their value should not 
 contain Workflow expressions. 
-Workflow globals should not have access to [Workflow secrets definitions](#Workflow-Secrets).
+Workflow constants data must be immutable.
+Workflow constants should not have access to [Workflow secrets definitions](#Workflow-Secrets).
 
 ### Workflow Secrets
 
