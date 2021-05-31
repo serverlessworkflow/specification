@@ -29,7 +29,9 @@ You can find the specification roadmap [here](roadmap/README.md).
     - [Defining Errors](#Defining-Errors)
     - [Defining Retries](#Defining-Retries)
   - [Workflow Compensation](#Workflow-Compensation)
-  - [Workflow Versioning](#Workflow-Versioning)  
+  - [Workflow Versioning](#Workflow-Versioning)
+  - [Workflow Constants](#Workflow-Constants)
+  - [Workflow Secrets](#Workflow-Secrets)  
   - [Workflow Metadata](#Workflow-Metadata)
 - [Extensions](#Extensions)
 - [Use Cases](#Use-Cases)
@@ -1539,6 +1541,8 @@ definition "id" must be a constant value.
 | version | Workflow version | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
+| [constants](#Workflow-Constants) | Workflow constants | string or object | no |
+| [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
@@ -1624,6 +1628,7 @@ for example "machine learning", "monitoring", "networking", etc
 The `dataInputSchema` property can be used to validate the workflow data input against a defined JSON Schema.
 This check should be done before any states are executed. `dataInputSchema` can have two different types.
 If it is an object type it has the following definition: 
+
 ```json
 "dataInputSchema": {
    "schema": "URL_to_json_schema",
@@ -1641,6 +1646,48 @@ In this case the `failOnValidationErrors` default value of `true` is assumed.
 
 The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). In case of 
 a starting [Event state](#Event-state), it is not used to validate its event payloads.
+
+The `secrets` property allows you to use sensitive information such as passwords, OAuth tokens, ssh keys, etc. inside your
+Workflow expressions. 
+
+It has two possible types, `string` or `array`. 
+If `string` type, it is an URI pointing to a JSON or YAML document
+which contains an array of names of the secrets, for example:
+
+```json
+"secrets": "file://workflowsecrets.json"
+```
+
+If `array` type, it defines an array (of string types) which contains the names of the secrets, for example:
+
+```json
+"secrets": ["MY_PASSWORD", "MY_STORAGE_KEY", "MY_ACCOUNT"]
+```
+
+For more information about Workflow secrets, reference the [Workflow Secrets section](#Workflow-Secrets).
+
+The `constants` property can be used to define Workflow constants values
+which are accessible in [Workflow Expressions](#Workflow-Expressions).
+
+It has two possible types, `string` or `object`.
+If `string` type, it is an URI pointing to a JSON or YAML document
+which contains an object of global definitions, for example:
+
+```json
+"constants": "file://workflowconstants.json"
+```
+
+If `object` type, it defines a JSON object which contains the constants definitions, for example:
+
+```json
+{
+  "AGE": {
+    "MIN_ADULT": 18
+  }
+}
+```
+
+For more information see the [Workflow Constants](#Workflow-Constants) section.
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
 
@@ -5024,7 +5071,127 @@ for your workflow definitions especially in production environments.
 
 To enhance portability when using versioning of your workflow and sub-workflow definitions,
 we recommend using an existing versioning standard such as [SemVer](https://semver.org/) for example.
- 
+
+### Workflow Constants
+
+Workflow constants are used to define static, and immutable, data which is available to [Workflow Expressions](#Workflow-Expressions).
+
+Constants can be defined via the [Workflow top-level "constants" property](#Workflow-Definition-Structure),
+for example:
+
+```json
+"constants": {
+  "Translations": {
+    "Dog": {
+      "Serbian": "pas",
+      "Spanish": "perro",
+      "French": "chien"
+    }
+  }
+}
+```
+
+Constants can only be accessed inside Workflow expressions via the $CONST namespace.
+Runtimes must make constants available to expressions under that namespace.
+
+Here is an example of using constants in Workflow expressions:
+
+```json
+{
+...,
+"constants": {
+  "AGE": {
+    "MIN_ADULT": 18
+  }
+},
+...
+"states":[  
+  {  
+     "name":"CheckApplicant",
+     "type":"switch",
+     "dataConditions": [
+        {
+          "name": "Applicant is adult",
+          "condition": "${ .applicant | .age >= $CONST.AGE.MIN_ADULT }",
+          "transition": "ApproveApplication"
+        },
+        {
+          "name": "Applicant is minor",
+          "condition": "${ .applicant | .age < $CONST.AGE.MIN_ADULT }",
+          "transition": "RejectApplication"
+        }
+     ],
+     ...
+  },
+  ...
+]
+}
+```
+Note that constants can also be used in [expression functions](#Using-Functions-for-Expression-Evaluation),
+for example:
+
+```json
+{
+"functions": [
+  {
+    "name": "isAdult",
+    "operation": ".applicant | .age >= $CONST.AGE.MIN_ADULT",
+    "type": "expression"
+  },
+  {
+    "name": "isMinor",
+    "operation": ".applicant | .age < $CONST.AGE.MIN_ADULT",
+    "type": "expression"
+  }
+]
+}
+```
+
+Workflow constants values should only contain static data, meaning that their value should not 
+contain Workflow expressions. 
+Workflow constants data must be immutable.
+Workflow constants should not have access to [Workflow secrets definitions](#Workflow-Secrets).
+
+### Workflow Secrets
+
+Secrets allow you access sensitive information, such as passwords, OAuth tokens, ssh keys, etc
+inside your [Workflow Expressions](#Workflow-Expressions). 
+
+You can define the names of secrets via the [Workflow top-level "secrets" property](#Workflow-Definition-Structure), 
+for example:
+
+```json
+"secrets": ["MY_PASSWORD", "MY_STORAGE_KEY", "MY_ACCOUNT"]
+```
+
+If secrets are defined in a Workflow definition, runtimes must assure to provide their values
+during Workflow execution.
+
+Secrets can be used only in [Workflow expressions](#Workflow-Expressions) under the `SECRETS` namespace. 
+This is reserved namespace that should only be allowed for values defined by the `secrets` property.
+
+Here is an example on how to use secrets and pass them as arguments to a function invocation:
+
+```json
+"secrets": ["AZURE_STORAGE_ACCOUNT", "AZURE_STORAGE_KEY"],
+
+...
+        
+{
+  "refName": "uploadToAzure",
+    "arguments": {
+      "account": "${ $SECRETS.AZURE_STORAGE_ACCOUNT }",
+      "account-key": "${ $SECRETS.AZURE_STORAGE_KEY }",
+      ...
+    }
+  
+}
+```
+
+Note that secrets can also be used in [expression functions](#Using-Functions-for-Expression-Evaluation).
+
+Secrets are immutable, meaning that workflow expressions are not allowed to change their values.
+
 ### Workflow Metadata
 
 Metadata enables you to enrich the serverless workflow model with information beyond its core definitions.

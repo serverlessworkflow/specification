@@ -32,6 +32,7 @@ _Status description:_
 | ✔️| Renamed `schemaVersion` to `specVersion` and it is now a required parameter | [spec doc](../specification.md) |
 | ✔️| Add GraphQL support for function definitions | [spec doc](../specification.md) |
 | ✔️| Added "dataOnly" property to Event Definitions (allow event data filters to access entire event) | [spec doc](../specification.md) |
+| ✔️| Added support for Secrets and Constants | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 

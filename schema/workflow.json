@@ -67,6 +67,22 @@
         }
       ]
     },
+    "secrets": {
+      "$ref": "secrets.json#/secrets"
+    },
+    "constants": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri",
+          "description": "URI to a resource containing constants data (json or yaml)"
+        },
+        {
+          "type": "object",
+          "description": "Workflow constants data (object type)"
+        }
+      ]
+    },
     "start": {
       "$ref": "#/definitions/startdef"
     },
