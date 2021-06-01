@@ -1539,7 +1539,7 @@ definition "id" must be a constant value.
 | name | Workflow name | string | yes |
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
-| annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | string | no |
+| annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [constants](#Workflow-Constants) | Workflow constants | string or object | no |
 | [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
