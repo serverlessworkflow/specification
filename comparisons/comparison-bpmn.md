@@ -21,7 +21,6 @@ BPMN2 does provide graphical representation for things such as Data Objects. How
 available do not use them. Execution semantics such as task and event properties are also not visual.
 For this reason, the event, function, retry, and data mapping defined in the associated Serverless Workflow YAML are assumed.
 
-
 ## Table of Contents
 
 - [Simple File Processor](#Simple-File-Processor)

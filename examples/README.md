@@ -2516,6 +2516,7 @@ For the example we have two files, namely our "functiondefs.json" and "eventdefs
 These hold our function and event definitions which then can be referenced by multiple workflows.
 
 * functiondefs.json
+
 ```json
 {
   "functions": [
@@ -2536,6 +2537,7 @@ These hold our function and event definitions which then can be referenced by mu
 ```
 
 * eventdefs.yml
+
 ```yaml
 events:
 - name: PaymentReceivedEvent
@@ -2891,7 +2893,6 @@ retries:
 
 This example is used in our Serverless Workflow Hands-on series videos [#1](https://www.youtube.com/watch?v=0gmpuGLP-_o)
 and [#2](https://www.youtube.com/watch?v=6A6OYp5nygg).
-
 
 ### Purchase order deadline
 

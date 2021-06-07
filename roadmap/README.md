@@ -45,7 +45,6 @@ _Status description:_
 | 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
 | ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
 
-
 ## <a name="v06"></a> v0.6
 
 | Status | Description | Comments |
@@ -102,7 +101,6 @@ _Status description:_
 | ✔️| Update to function and events definitions - allow inline array def as well as uri reference to external resource | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.5.x/specification.md) |
 | ✔️| Enforce use of OpenAPI specification in function definitions for portability | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.5.x/specification.md) |
 | ✔️| Update workflow Error Handling | [spec doc](../specification.md) |
-
 
 ## <a name="v01"></a> v0.1
 

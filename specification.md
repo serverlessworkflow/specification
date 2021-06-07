@@ -3498,7 +3498,6 @@ reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 | [actions](#Action-Definition) | Actions to be executed in this branch | array | yes |
 | [timeouts](#Workflow-Timeouts) | Branch specific timeout settings | object | no |
 
-
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
 

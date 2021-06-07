@@ -520,7 +520,6 @@ Serverless Workflow defines explicit compensation, meaning it has to be explicit
 as part of the workflow control flow logic. For more information see the
 [Workflow Compensation](../specification.md#Workflow-Compensation) section.
 
-
 ### Error Handling and Retries
 
 [Full Temporal Example](https://github.com/temporalio/samples-java/blob/master/src/main/java/io/temporal/samples/hello/HelloActivityRetry.java)
