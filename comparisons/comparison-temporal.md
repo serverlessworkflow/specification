@@ -2,49 +2,49 @@
 
 [Temporal](https://temporal.io/) is an open source microservice orchestration platform. Temporal apps are written
 in code, and SDKs are currently available for Go, Java, PHP and Ruby. It provides two special functions, namely Workflow
-and Activity functions. 
+and Activity functions.
 
 Workflows in Temporal are cohesive functions with added support for retries, Saga pattern support
-rollbacks, and human intervention steps in case of failure. Overall Temporal promotes the "Workflows as Code" 
-paradigm which might feel natural to developers. Workflows in Temporal cannot call external APIs directly, but 
+rollbacks, and human intervention steps in case of failure. Overall Temporal promotes the "Workflows as Code"
+paradigm which might feel natural to developers. Workflows in Temporal cannot call external APIs directly, but
 rather orchestrate executions of Activities.
 
 Activities are object methods written in one of the supported languages. They can contain any code without restrictions,
 meaning they can be used to communicate with databases, call external APIs, etc.
 
 The purpose of this document is to compare and contrast the Temporal workflow code and the equivalent
-Serverless Workflow DSL. 
+Serverless Workflow DSL.
 This can hopefully help compare and contrast the two workflow languages and give a better understanding of both.
 
 Given that Temporal provides SDKs in multiple languages, in this document we will focus only on Temporal workflows
 written in Java.
 
 All Temporal examples used in this document are available in their [samples-java](https://github.com/temporalio/samples-java)
-Github repository. Note that in this document we only show the Temporal workflow Java code which is relevant to 
-the actual workflow implementation. Language constructs like imports are not included, but full examples can be found 
-in the repo mentioned above. The latest version of Temporal as of the time of writing this 
-document is [1.5.1](https://github.com/temporalio/temporal/releases/tag/v1.5.1). 
+Github repository. Note that in this document we only show the Temporal workflow Java code which is relevant to
+the actual workflow implementation. Language constructs like imports are not included, but full examples can be found
+in the repo mentioned above. The latest version of Temporal as of the time of writing this
+document is [1.5.1](https://github.com/temporalio/temporal/releases/tag/v1.5.1).
 
 We hope that these examples will give you a good start for comparing and contrasting the two workflow
 languages.
 
 ## Note when reading provided examples
 
-[Activities](https://docs.temporal.io/docs/concept-activities) in temporal are comparable with 
+[Activities](https://docs.temporal.io/docs/concept-activities) in temporal are comparable with
 [actions](https://github.com/serverlessworkflow/specification/blob/master/specification.md#Action-Definition) in Serverless Workflow
-language, namely actions that reference [function](https://github.com/serverlessworkflow/specification/blob/master/specification.md#function-definition) 
+language, namely actions that reference [function](https://github.com/serverlessworkflow/specification/blob/master/specification.md#function-definition)
 definitions. Serverless Workflow action execution involves invoking distributed functions via REST or via events.
 
 When looking at provided examples below, please note that the code defined in activities of
 Temporal code is assumed to be stand-alone distributed functions/services accessible over REST API
-and used in the compared Serverless Workflow DSL. 
+and used in the compared Serverless Workflow DSL.
 
 Activities in Temporal seem to be a wrapper that can be used to add custom code to invoke RESTful functions for example,
-where as in Serverless Workflow a wrapper is not used and RESTful function invocation is defined via the 
+where as in Serverless Workflow a wrapper is not used and RESTful function invocation is defined via the
 [OpenAPI specification](https://www.openapis.org/).
 
 ## Table of Contents
- 
+
 - [Single Activity](#Single-Activity)
 - [Periodical Execution (Cron)](#Periodical-Execution)
 - [Compensation Logic (SAGA)](#Compensation-Logic)
@@ -65,33 +65,33 @@ where as in Serverless Workflow a wrapper is not used and RESTful function invoc
 ```java
 public class HelloActivity {
     static final String TASK_QUEUE = "HelloActivity";
-    
+
    // workflow interface
    @WorkflowInterface
    public interface GreetingWorkflow {
     @WorkflowMethod
         String getGreeting(String name);
     }
-    // activity interface 
+    // activity interface
     @ActivityInterface
     public interface GreetingActivities {
         @ActivityMethod
         String composeGreeting(String greeting, String name);
     }
-    
+
     public static class GreetingWorkflowImpl implements GreetingWorkflow {
         private final GreetingActivities activities =
             Workflow.newActivityStub(
                 GreetingActivities.class,
                 ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(2)).build());
-    
+
         // workflow "getGreting" method that calls the activities methods
         @Override
         public String getGreeting(String name) {
           return activities.composeGreeting("Hello", name);
         }
     }
-    
+
     // impl of the activities method
     static class GreetingActivitiesImpl implements GreetingActivities {
       @Override
@@ -99,14 +99,14 @@ public class HelloActivity {
         return greeting + " " + name + "!";
       }
     }
-       
+
     // main method
     public static void main(String[] args) {
        WorkflowServiceStubs service = WorkflowServiceStubs.newInstance();
        WorkflowClient client = WorkflowClient.newInstance(service);
        WorkerFactory factory = WorkerFactory.newInstance(client);
        Worker worker = factory.newWorker(TASK_QUEUE);
-  
+
        // create workflow instance
        worker.registerWorkflowImplementationTypes(GreetingWorkflowImpl.class);
        // register activity
@@ -116,7 +116,7 @@ public class HelloActivity {
        // start workflow exec
        GreetingWorkflow workflow =
         client.newWorkflowStub(
-          GreetingWorkflow.class, 
+          GreetingWorkflow.class,
           WorkflowOptions.newBuilder().setTaskQueue(TASK_QUEUE).build());
        // exec workflow
        String greeting = workflow.getGreeting("World");
@@ -132,7 +132,7 @@ public class HelloActivity {
 {
   "id": "HelloActivityRetry",
   "name": "Hello Activity Workflow",
-  "version": "1.0", 
+  "version": "1.0",
   "specVersion": "0.7",
   "start": "GreetingState",
   "states": [
@@ -147,10 +147,12 @@ public class HelloActivity {
             "arguments": {
                "name": "World"
             }
-          },
-          "timeout": "PT2S"
-        }    
+          }
+        }
       ],
+      "timeouts": {
+          "actionExecTimeout": "PT2S"
+      },
       "end": true
     }
   ],
@@ -183,32 +185,32 @@ public class HelloActivity {
 public class HelloActivity {
         static final String TASK_QUEUE = "HelloCron";
     static final String CRON_WORKFLOW_ID = "HelloCron";
-    
+
    // workflow interface
    @WorkflowInterface
    public interface GreetingWorkflow {
     @WorkflowMethod
         String getGreeting(String name);
     }
-    // activity interface 
+    // activity interface
     @ActivityInterface
     public interface GreetingActivities {
         @ActivityMethod
         String greet(String greeting);
     }
-    
+
     public static class GreetingWorkflowImpl implements GreetingWorkflow {
         private final GreetingActivities activities =
             Workflow.newActivityStub(
                 GreetingActivities.class,
                 ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(10)).build());
-        
+
         @Override
         public String greet(String name) {
           activities.greet("Hello " + name + "!");
         }
     }
-    
+
     // impl of the activities method
     static class GreetingActivitiesImpl implements GreetingActivities {
       @Override
@@ -217,20 +219,20 @@ public class HelloActivity {
                   "From " + Activity.getExecutionContext().getInfo().getWorkflowId() + ": " + greeting);
       }
     }
-       
+
     // main method
     public static void main(String[] args) {
        WorkflowServiceStubs service = WorkflowServiceStubs.newInstance();
        WorkflowClient client = WorkflowClient.newInstance(service);
        WorkerFactory factory = WorkerFactory.newInstance(client);
        Worker worker = factory.newWorker(TASK_QUEUE);
-  
+
        // create workflow instance
        worker.registerWorkflowImplementationTypes(GreetingWorkflowImpl.class);
        // register activity
        worker.registerActivitiesImplementations(new GreetingActivitiesImpl());
        factory.start();
-    
+
        WorkflowOptions workflowOptions =
                WorkflowOptions.newBuilder()
                    .setWorkflowId(CRON_WORKFLOW_ID)
@@ -240,11 +242,11 @@ public class HelloActivity {
                    .setWorkflowRunTimeout(Duration.ofMinutes(1))
                    .build();
 
-        
+
        // start workflow exec
        GreetingWorkflow workflow =
         client.newWorkflowStub(
-          GreetingWorkflow.class, 
+          GreetingWorkflow.class,
           workflowOptions);
        // exec workflow
        try {
@@ -291,10 +293,12 @@ public class HelloActivity {
             "arguments": {
                "name": "World"
             }
-          },
-          "timeout": "PT2S"
-        }    
+          }
+        }
       ],
+      "timeouts": {
+          "actionExecTimeout": "PT2S"
+      },
       "end": true
     }
   ],
@@ -326,26 +330,26 @@ public class HelloActivity {
 ```java
 public class HelloActivity {
     static final String TASK_QUEUE = "HelloActivity";
-    
+
    // workflow interface
    @WorkflowInterface
    public interface ChildWorkflowOperation {
      @WorkflowMethod
      void execute(int amount);
    }
-  
+
    public static class ChildWorkflowOperationImpl implements ChildWorkflowOperation {
        ActivityOperation activity =
            Workflow.newActivityStub(
                ActivityOperation.class,
                ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(10)).build());
-    
+
        @Override
        public void execute(int amount) {
          activity.execute(amount);
        }
    }
-    
+
     @WorkflowInterface
     public interface ChildWorkflowCompensation {
       @WorkflowMethod
@@ -363,7 +367,7 @@ public class HelloActivity {
        activity.compensate(amount);
      }
     }
-    
+
     @ActivityInterface
     public interface ActivityOperation {
       @ActivityMethod
@@ -377,25 +381,25 @@ public class HelloActivity {
         public void execute(int amount) {
           System.out.println("ActivityOperationImpl.execute() is called with amount " + amount);
         }
-    
+
         @Override
         public void compensate(int amount) {
           System.out.println("ActivityCompensationImpl.compensate() is called with amount " + amount);
         }
       }
-    
+
       @WorkflowInterface
       public interface SagaWorkflow {
         @WorkflowMethod
         void execute();
     }
-  
+
     public static class SagaWorkflowImpl implements SagaWorkflow {
     ActivityOperation activity =
             Workflow.newActivityStub(
                 ActivityOperation.class,
                 ActivityOptions.newBuilder().setScheduleToCloseTimeout(Duration.ofSeconds(2)).build());
-    
+
         @Override
         public void execute() {
           Saga saga = new Saga(new Saga.Options.Builder().setParallelCompensation(false).build());
@@ -406,22 +410,22 @@ public class HelloActivity {
             ChildWorkflowCompensation c1 =
                 Workflow.newChildWorkflowStub(ChildWorkflowCompensation.class);
             saga.addCompensation(c1::compensate, -10);
-    
+
             // The following demonstrate how to compensate async invocations.
             Promise<Void> result = Async.procedure(activity::execute, 20);
             saga.addCompensation(activity::compensate, -20);
             result.get();
-    
+
             saga.addCompensation(
                 () -> System.out.println("Other compensation logic in main workflow."));
             throw new RuntimeException("some error");
-    
+
           } catch (Exception e) {
             saga.compensate();
           }
         }
     }
-       
+
     // main method
     public static void main(String[] args) {
        WorkflowServiceStubs service = WorkflowServiceStubs.newInstance();
@@ -470,7 +474,7 @@ public class HelloActivity {
                "amount": 10
             }
           }
-        }    
+        }
       ],
       "end": {
         "compensate": true
@@ -489,7 +493,7 @@ public class HelloActivity {
                "amount": -10
             }
           }
-        }    
+        }
       ]
     }
   ],
@@ -513,7 +517,7 @@ public class HelloActivity {
 #### Note
 
 Serverless Workflow defines explicit compensation, meaning it has to be explicitly invoked
-as part of the workflow control flow logic. For more information see the 
+as part of the workflow control flow logic. For more information see the
 [Workflow Compensation](../specification.md#Workflow-Compensation) section.
 
 
@@ -532,20 +536,20 @@ as part of the workflow control flow logic. For more information see the
 ```java
 public class HelloActivityRetry {
     static final String TASK_QUEUE = "HelloActivityRetry";
-    
+
    // workflow interface
    @WorkflowInterface
    public interface GreetingWorkflow {
     @WorkflowMethod
         String getGreeting(String name);
     }
-    // activity interface 
+    // activity interface
     @ActivityInterface
     public interface GreetingActivities {
         @ActivityMethod
         String composeGreeting(String greeting, String name);
     }
-    
+
     public static class GreetingWorkflowImpl implements GreetingWorkflow {
         private final GreetingActivities activities =
             Workflow.newActivityStub(
@@ -564,7 +568,7 @@ public class HelloActivityRetry {
           return activities.composeGreeting("Hello", name);
         }
     }
-    
+
     static class GreetingActivitiesImpl implements GreetingActivities {
     private int callCount;
     private long lastInvocationTime;
@@ -584,14 +588,14 @@ public class HelloActivityRetry {
       return greeting + " " + name + "!";
     }
   }
-       
+
     // main method
     public static void main(String[] args) {
        WorkflowServiceStubs service = WorkflowServiceStubs.newInstance();
        WorkflowClient client = WorkflowClient.newInstance(service);
        WorkerFactory factory = WorkerFactory.newInstance(client);
        Worker worker = factory.newWorker(TASK_QUEUE);
-  
+
        WorkflowOptions workflowOptions = WorkflowOptions.newBuilder().setTaskQueue(TASK_QUEUE).build();
        GreetingWorkflow workflow = client.newWorkflowStub(GreetingWorkflow.class, workflowOptions);
 
@@ -625,10 +629,12 @@ public class HelloActivityRetry {
             "arguments": {
                "name": "World"
             }
-          },
-          "timeout": "PT10S"
-        }    
+          }
+        }
       ],
+      "timeouts": {
+          "actionExecTimeout": "PT10S"
+      },
       "onErrors": [
         {
           "error": "IllegalStateException",

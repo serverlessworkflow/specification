@@ -97,13 +97,33 @@
       "default": "jq",
       "minLength": 1
     },
-    "execTimeout": {
-      "$ref": "#/definitions/exectimeout"
+    "timeouts": {
+      "type": "object",
+      "description": "Workflow default timeouts",
+      "properties": {
+        "workflowExecTimeout": {
+          "$ref": "#/definitions/workflowExecTimeout"
+        },
+        "stateExecTimeout": {
+          "$ref": "#/definitions/stateExecTimeout"
+        },
+        "actionExecTimeout": {
+          "$ref": "#/definitions/actionExecTimeout"
+        },
+        "branchExecTimeout": {
+          "$ref": "#/definitions/branchExecTimeout"
+        },
+        "eventTimeout": {
+          "$ref": "#/definitions/eventTimeout"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
     },
     "keepActive": {
       "type": "boolean",
       "default": false,
-      "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'execTimeout'"
+      "description": "If 'true', workflow instances is not terminated when there are no active execution paths. Instance can be terminated via 'terminate end definition' or reaching defined 'workflowExecTimeout'"
     },
     "metadata": {
       "$ref": "common.json#/definitions/metadata"
@@ -202,33 +222,64 @@
             }
           },
           "additionalProperties": false,
-          "required": ["expression"]
+          "required": [
+            "expression"
+          ]
         }
       ]
     },
-    "exectimeout": {
-      "type": "object",
-      "properties": {
-        "duration": {
+    "workflowExecTimeout": {
+      "oneOf": [
+        {
           "type": "string",
-          "description": "Timeout duration (ISO 8601 duration format)",
+          "description": "Workflow execution timeout duration (ISO 8601 duration format). If not specified should be 'unlimited'",
           "minLength": 1
         },
-        "interrupt": {
-          "type": "boolean",
-          "description": "If `false`, workflow instance is allowed to finish its current execution paths. If `true`, current workflow execution is stopped immediately. Default is `true`",
-          "default": true
-        },
-        "runBefore": {
-          "type": "string",
-          "description": "Name of a workflow state to be executed before workflow instance is terminated",
-          "minLength": 1
+        {
+          "type": "object",
+          "properties": {
+            "duration": {
+              "type": "string",
+              "description": "Workflow execution timeout duration (ISO 8601 duration format). If not specified should be 'unlimited'",
+              "minLength": 1
+            },
+            "interrupt": {
+              "type": "boolean",
+              "description": "If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted.",
+              "default": true
+            },
+            "runBefore": {
+              "type": "string",
+              "description": "Name of a workflow state to be executed before workflow instance is terminated",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "duration"
+          ]
         }
-      },
-      "additionalProperties": false,
-      "required": [
-        "duration"
       ]
+    },
+    "stateExecTimeout": {
+      "type": "string",
+      "description": "State execution timeout duration (ISO 8601 duration format)",
+      "minLength": 1
+    },
+    "actionExecTimeout": {
+      "type": "string",
+      "description": "Single actions definition execution timeout duration (ISO 8601 duration format)",
+      "minLength": 1
+    },
+    "branchExecTimeout": {
+      "type": "string",
+      "description": "Single branch execution timeout duration (ISO 8601 duration format)",
+      "minLength": 1
+    },
+    "eventTimeout": {
+      "type": "string",
+      "description": "Timeout duration to wait for consuming defined events (ISO 8601 duration format)",
+      "minLength": 1
     },
     "transition": {
       "oneOf": [
@@ -370,10 +421,6 @@
           "description": "References a sub-workflow to invoke",
           "$ref": "#/definitions/subflowref"
         },
-        "timeout": {
-          "type": "string",
-          "description": "Time period to wait for function execution to complete (ISO 8601 format)"
-        },
         "actionDataFilter": {
           "description": "Action data filter",
           "$ref": "#/definitions/actiondatafilter"
@@ -502,6 +549,19 @@
           "type": "string",
           "description": "Branch name"
         },
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "actionExecTimeout": {
+              "$ref": "#/definitions/actionExecTimeout"
+            },
+            "branchExecTimeout": {
+              "$ref": "#/definitions/branchExecTimeout"
+            }
+          },
+          "required": []
+        },
         "actions": {
           "type": "array",
           "description": "Actions to be executed in this branch",
@@ -548,6 +608,16 @@
           "type": "string",
           "description": "Amount of time (ISO 8601 format) to delay"
         },
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            }
+          },
+          "required": []
+        },
         "onErrors": {
           "type": "array",
           "description": "States error handling and retries definitions",
@@ -582,7 +652,9 @@
             "const": true
           }
         },
-        "required": ["usedForCompensation"]
+        "required": [
+          "usedForCompensation"
+        ]
       },
       "then": {
         "required": [
@@ -644,9 +716,21 @@
           },
           "additionalItems": false
         },
-        "timeout": {
-          "type": "string",
-          "description": "Time period to wait for incoming events (ISO 8601 format)"
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            },
+            "actionExecTimeout": {
+              "$ref": "#/definitions/actionExecTimeout"
+            },
+            "eventTimeout": {
+              "$ref": "#/definitions/eventTimeout"
+            }
+          },
+          "required": []
         },
         "stateDataFilter": {
           "description": "State data filter",
@@ -741,6 +825,19 @@
             "$ref": "#/definitions/action"
           }
         },
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            },
+            "actionExecTimeout": {
+              "$ref": "#/definitions/actionExecTimeout"
+            }
+          },
+          "required": []
+        },
         "onErrors": {
           "type": "array",
           "description": "States error handling and retries definitions",
@@ -775,7 +872,9 @@
             "const": true
           }
         },
-        "required": ["usedForCompensation"]
+        "required": [
+          "usedForCompensation"
+        ]
       },
       "then": {
         "required": [
@@ -839,6 +938,19 @@
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            },
+            "branchExecTimeout": {
+              "$ref": "#/definitions/branchExecTimeout"
+            }
+          },
+          "required": []
+        },
         "branches": {
           "type": "array",
           "description": "Branch Definitions",
@@ -900,7 +1012,9 @@
             "const": true
           }
         },
-        "required": ["usedForCompensation"]
+        "required": [
+          "usedForCompensation"
+        ]
       },
       "then": {
         "required": [
@@ -962,6 +1076,19 @@
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            },
+            "eventTimeout": {
+              "$ref": "#/definitions/eventTimeout"
+            }
+          },
+          "required": []
+        },
         "eventConditions": {
           "type": "array",
           "description": "Defines conditions evaluated against events",
@@ -979,10 +1106,6 @@
             "$ref": "#/definitions/error"
           },
           "additionalItems": false
-        },
-        "eventTimeout": {
-          "type": "string",
-          "description": "If eventConditions is used, defines the time period to wait for events (ISO 8601 format)"
         },
         "defaultCondition": {
           "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition",
@@ -1030,6 +1153,16 @@
         "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
+        },
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            }
+          },
+          "required": []
         },
         "dataConditions": {
           "type": "array",
@@ -1257,6 +1390,16 @@
           "type": "object",
           "description": "JSON object which can be set as states data input and can be manipulated via filters"
         },
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            }
+          },
+          "required": []
+        },
         "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
@@ -1286,7 +1429,9 @@
             "const": true
           }
         },
-        "required": ["usedForCompensation"]
+        "required": [
+          "usedForCompensation"
+        ]
       },
       "then": {
         "required": [
@@ -1368,6 +1513,19 @@
           },
           "additionalItems": false
         },
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            },
+            "actionExecTimeout": {
+              "$ref": "#/definitions/actionExecTimeout"
+            }
+          },
+          "required": []
+        },
         "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
@@ -1406,7 +1564,9 @@
             "const": true
           }
         },
-        "required": ["usedForCompensation"]
+        "required": [
+          "usedForCompensation"
+        ]
       },
       "then": {
         "required": [
@@ -1468,9 +1628,21 @@
           "type": "string",
           "description": "References an unique callback event name in the defined workflow events"
         },
-        "timeout": {
-          "type": "string",
-          "description": "Time period to wait for incoming events (ISO 8601 format)"
+        "timeouts": {
+          "type": "object",
+          "description": "State specific timeouts",
+          "properties": {
+            "stateExecTimeout": {
+              "$ref": "#/definitions/stateExecTimeout"
+            },
+            "actionExecTimeout": {
+              "$ref": "#/definitions/actionExecTimeout"
+            },
+            "eventTimeout": {
+              "$ref": "#/definitions/eventTimeout"
+            }
+          },
+          "required": []
         },
         "eventDataFilter": {
           "description": "Event data filter",
@@ -1518,15 +1690,16 @@
             "const": true
           }
         },
-        "required": ["usedForCompensation"]
+        "required": [
+          "usedForCompensation"
+        ]
       },
       "then": {
         "required": [
           "name",
           "type",
           "action",
-          "eventRef",
-          "timeout"
+          "eventRef"
         ]
       },
       "else": {
@@ -1537,7 +1710,6 @@
               "type",
               "action",
               "eventRef",
-              "timeout",
               "end"
             ]
           },
@@ -1547,7 +1719,6 @@
               "type",
               "action",
               "eventRef",
-              "timeout",
               "transition"
             ]
           }
@@ -1655,8 +1826,7 @@
             }
           },
           "additionalProperties": false,
-          "required": [
-          ]
+          "required": []
         }
       ]
     },
