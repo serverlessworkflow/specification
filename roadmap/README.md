@@ -33,7 +33,7 @@ _Status description:_
 | ✔️| Add GraphQL support for function definitions | [spec doc](../specification.md) |
 | ✔️| Added "dataOnly" property to Event Definitions (allow event data filters to access entire event) | [spec doc](../specification.md) |
 | ✔️| Added support for Secrets and Constants | [spec doc](../specification.md) |
-| ✔️| Changed default value of execution timeout `interrupt` property | [spec doc](../specification.md) |
+| ✔️| Changed default value of execution timeout `interrupt` property. This is a non-backwards compatible changes. | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
