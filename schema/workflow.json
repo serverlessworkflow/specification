@@ -216,8 +216,8 @@
         },
         "interrupt": {
           "type": "boolean",
-          "description": "If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted.",
-          "default": false
+          "description": "If `false`, workflow instance is allowed to finish its current execution paths. If `true`, current workflow execution is stopped immediately. Default is `true`",
+          "default": true
         },
         "runBefore": {
           "type": "string",
