@@ -1362,7 +1362,7 @@ evaluated. Reference the
 [State Data Filtering](#State-data-filters) section for more information about state data filters.
 
 By default, all workflow expressions should be defined using the [jq](https://stedolan.github.io/jq/) [version 1.6](https://github.com/stedolan/jq/releases/tag/jq-1.6) syntax.
-You can find more information on jq in its [manual](https://stedolan.github.io/jq/manual/).
+You can find more information on jq in its [manual](https://stedolan.github.io/jq/manual/v1.6/).
 
 Serverless Workflow does not mandate the use of jq and it's possible to use an expression language 
 of your choice with the restriction that a single one must be used for all expressions
@@ -1545,7 +1545,7 @@ definition "id" must be a constant value.
 | [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
 | [start](#Start-Definition) | Workflow start definition | string | yes |
 | specVersion | Serverless Workflow specification release version | string | yes |
-| expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
+| expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq", corresponding to [`jq` version 1.6](https://github.com/stedolan/jq/releases/tag/jq-1.6) | string | no |
 | [execTimeout](#ExecTimeout-Definition) | Defines the execution timeout for a workflow instance | object | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "execTimeout" | boolean | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
@@ -1698,7 +1698,7 @@ the [release version v0.6](https://github.com/serverlessworkflow/specification/r
 its value should be set to `"0.6"`.
 
 The `expressionLang` property can be used to identify the expression language used for all expressions in
-the workflow definition. The default value of this property is ["jq"](https://stedolan.github.io/jq/). 
+the workflow definition. The default value of this property is ["jq"](https://github.com/stedolan/jq/releases/tag/jq-1.6). 
 You should set this property if you chose to define [workflow expressions](#Workflow-Expressions) 
 with an expression language / syntax other than the default.
 
