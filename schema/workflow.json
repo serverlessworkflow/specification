@@ -1196,7 +1196,10 @@
           "usedForCompensation": {
             "const": true
           }
-        }
+        },
+        "required": [
+          "usedForCompensation"
+        ]
       },
       "then": {
         "required": [
