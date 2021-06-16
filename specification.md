@@ -4557,16 +4557,16 @@ execution. Error handling defined in one state cannot be used to handle errors t
 during workflow execution.
 
 Errors that may arise during workflow execution that are not explicitly handled within the workflow definition
-should be reported by runtime implementations and halt workflow execution, 
+should be reported by runtime implementations and halt workflow execution.
 
-Within workflow definitions, errors defined are `domain specific`, meaning they are defined within 
+Within workflow definitions, errors defined are **domain specific**, meaning they are defined within 
 the actual business domain, rather than their technical (programming-language-specific) description.
 
 For example, we can define errors such as "Order not found", or "Item not in inventory", rather than having to
 use terms such as "java.lang.IllegalAccessError", or "response.status == 404", which 
 might make little to no sense to our specific problem domain, as well as may not be portable across various runtime implementations.
 
-In addition to the domain specific error name, users have the option to also an optional error code
+In addition to the domain specific error name, users have the option to also add an optional error code
 to help runtime implementations with mapping defined errors to concrete underlying technical ones.
 
 Runtime implementations must be able to map the error domain specific name (and the optional error code)
@@ -4761,7 +4761,6 @@ onErrors:
 In this example we say that if the  "Inventory service timeout" error is encountered, we want to use our defined "Service Call Timeout Retry Strategy"
 which holds the needed retry information. If the error definition does not include a `retryRef` property
 it means that we do not want to perform retries for the defined error.
-
 
 When referencing a retry strategy in your states error definitions, if the maximum amount of unsuccessful retries is reached, 
 the workflow should transition to the next state
