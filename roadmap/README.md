@@ -34,16 +34,16 @@ _Status description:_
 | ✔️| Added "dataOnly" property to Event Definitions (allow event data filters to access entire event) | [spec doc](../specification.md) |
 | ✔️| Added support for Secrets and Constants | [spec doc](../specification.md) |
 | ✔️| Changed default value of execution timeout `interrupt` property. This is a non-backwards compatible changes. | [spec doc](../specification.md) |
+| ✔️| Updated workflow timeouts | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
-| 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) | 
+| 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) |
 | 🚩 | Uniqueness constraint for workflows | [issue](https://github.com/serverlessworkflow/specification/issues/146) |
 | 🚩 | OpenAPI endpoint selection |  |
 | 🚩 | Data triggers |  |
 | 🚩 | JSON schema checks |  |
 | 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
 | ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
-
 
 ## <a name="v06"></a> v0.6
 
@@ -101,7 +101,6 @@ _Status description:_
 | ✔️| Update to function and events definitions - allow inline array def as well as uri reference to external resource | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.5.x/specification.md) |
 | ✔️| Enforce use of OpenAPI specification in function definitions for portability | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.5.x/specification.md) |
 | ✔️| Update workflow Error Handling | [spec doc](../specification.md) |
-
 
 ## <a name="v01"></a> v0.1
 

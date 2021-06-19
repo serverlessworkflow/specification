@@ -33,7 +33,7 @@ Provides Serverless Workflow language examples
 
 #### Description
 
-In this simple example we use an [Inject State](../specification.md#Inject-State) to inject 
+In this simple example we use an [Inject State](../specification.md#Inject-State) to inject
 `Hello World` in the states data (as the value of the 'result' property).
 After the state execution completes, since it is an end state, its data output becomes the workflow
 data output, which is:
@@ -61,15 +61,15 @@ data output, which is:
 <td valign="top">
 
 ```json
-{  
+{
 "id": "helloworld",
-"version": "1.0", 
+"version": "1.0",
 "specVersion": "0.7",
 "name": "Hello World Workflow",
 "description": "Inject Hello World",
 "start": "Hello State",
-"states":[  
-  {  
+"states":[
+  {
      "name":"Hello State",
      "type":"inject",
      "data": {
@@ -145,7 +145,7 @@ Which is added to the states data and becomes the workflow data output.
 <td valign="top">
 
 ```json
-{  
+{
 "id": "greeting",
 "version": "1.0",
 "specVersion": "0.7",
@@ -158,12 +158,12 @@ Which is added to the states data and becomes the workflow data output.
      "operation": "file://myapis/greetingapis.json#greeting"
   }
 ],
-"states":[  
-  {  
+"states":[
+  {
      "name":"Greet",
      "type":"operation",
-     "actions":[  
-        {  
+     "actions":[
+        {
            "functionRef": {
               "refName": "greetingFunction",
               "arguments": {
@@ -290,7 +290,7 @@ filters what is selected to be the state data output which then becomes the work
 <td valign="top">
 
 ```json
-{  
+{
 "id": "eventbasedgreeting",
 "version": "1.0",
 "specVersion": "0.7",
@@ -310,8 +310,8 @@ filters what is selected to be the state data output which then becomes the work
      "operation": "file://myapis/greetingapis.json#greeting"
   }
 ],
-"states":[  
-  {  
+"states":[
+  {
      "name":"Greet",
      "type":"event",
      "onEvents": [{
@@ -320,8 +320,8 @@ filters what is selected to be the state data output which then becomes the work
             "data": "${ .greet }",
             "toStateData": "${ .greet }"
          },
-         "actions":[  
-            {  
+         "actions":[
+            {
                "functionRef": {
                   "refName": "greetingFunction",
                   "arguments": {
@@ -418,10 +418,10 @@ result of the workflow execution.
 <td valign="top">
 
 ```json
-{  
+{
 "id": "solvemathproblems",
 "version": "1.0",
-"specVersion": "0.7", 
+"specVersion": "0.7",
 "name": "Solve Math Problems Workflow",
 "description": "Solve math problems",
 "start": "Solve",
@@ -431,15 +431,15 @@ result of the workflow execution.
   "operation": "http://myapis.org/mapthapis.json#solveExpression"
 }
 ],
-"states":[  
+"states":[
 {
  "name":"Solve",
  "type":"foreach",
  "inputCollection": "${ .expressions }",
  "iterationParam": "singleexpression",
  "outputCollection": "${ .results }",
- "actions":[  
-   {  
+ "actions":[
+   {
       "functionRef": {
          "refName": "solveMathExpressionFunction",
          "arguments": {
@@ -515,15 +515,15 @@ to finish execution before it can transition (end workflow execution in this cas
 <td valign="top">
 
 ```json
-{  
+{
 "id": "parallelexec",
 "version": "1.0",
 "specVersion": "0.7",
 "name": "Parallel Execution Workflow",
 "description": "Executes two branches in parallel",
 "start": "ParallelExec",
-"states":[  
-  {  
+"states":[
+  {
      "name": "ParallelExec",
      "type": "parallel",
      "completionType": "allOf",
@@ -563,7 +563,7 @@ states:
   completionType: allOf
   branches:
   - name: ShortDelayBranch
-    actions: 
+    actions:
     - subFlowRef: shortdelayworkflowid
   - name: LongDelayBranch
     actions:
@@ -586,7 +586,7 @@ delay state.
 In this example we use an Event-based [Switch State](../specification.md#switch-state) to wait for arrival
 of the "VisaApproved", or "VisaRejected" Cloud Events. Depending on which type of event happens,
 the workflow performs a different transition. If none of the events arrive in the defined 1 hour timeout
-period, the workflow transitions to the "HandleNoVisaDecision" state. 
+period, the workflow transitions to the "HandleNoVisaDecision" state.
 
 #### Workflow Diagram
 
@@ -605,7 +605,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
 <td valign="top">
 
 ```json
-{  
+{
 "id": "eventbasedswitch",
 "version": "1.0",
 "specVersion": "0.7",
@@ -624,8 +624,8 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
     "source": "visaCheckSource"
 }
 ],
-"states":[  
-  {  
+"states":[
+  {
      "name":"CheckVisaStatus",
      "type":"switch",
      "eventConditions": [
@@ -648,7 +648,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
     "type": "operation",
     "actions": [
       {
-        "subFlowRef": "handleApprovedVisaWorkflowID" 
+        "subFlowRef": "handleApprovedVisaWorkflowID"
       }
     ],
     "end": true
@@ -658,7 +658,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
       "type": "operation",
       "actions": [
         {
-          "subFlowRef": "handleRejectedVisaWorkflowID" 
+          "subFlowRef": "handleRejectedVisaWorkflowID"
         }
       ],
       "end": true
@@ -668,7 +668,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
       "type": "operation",
       "actions": [
         {
-          "subFlowRef": "handleNoVisaDecisionWorkflowId" 
+          "subFlowRef": "handleNoVisaDecisionWorkflowId"
         }
       ],
       "end": true
@@ -764,7 +764,7 @@ If the applicants age is over 18 we start the application (subflow action). Othe
 <td valign="top">
 
 ```json
-{  
+{
    "id": "applicantrequest",
    "version": "1.0",
    "specVersion": "0.7",
@@ -777,8 +777,8 @@ If the applicants age is over 18 we start the application (subflow action). Othe
         "operation": "http://myapis.org/applicationapi.json#emailRejection"
      }
    ],
-   "states":[  
-      {  
+   "states":[
+      {
          "name":"CheckApplication",
          "type":"switch",
          "dataConditions": [
@@ -800,17 +800,17 @@ If the applicants age is over 18 we start the application (subflow action). Othe
         "type": "operation",
         "actions": [
           {
-            "subFlowRef": "startApplicationWorkflowId" 
+            "subFlowRef": "startApplicationWorkflowId"
           }
         ],
         "end": true
       },
-      {  
+      {
         "name":"RejectApplication",
         "type":"operation",
         "actionMode":"sequential",
-        "actions":[  
-           {  
+        "actions":[
+           {
               "functionRef": {
                  "refName": "sendRejectionEmailFunction",
                  "arguments": {
@@ -850,7 +850,7 @@ states:
     transition: RejectApplication
 - name: StartApplication
   type: operation
-  actions: 
+  actions:
     - subFlowRef: startApplicationWorkflowId
   end: true
 - name: RejectApplication
@@ -908,7 +908,7 @@ The data output of the workflow contains the information of the exception caught
 <td valign="top">
 
 ```json
-{  
+{
 "id": "provisionorders",
 "version": "1.0",
 "specVersion": "0.7",
@@ -921,13 +921,13 @@ The data output of the workflow contains the information of the exception caught
      "operation": "http://myapis.org/provisioningapi.json#doProvision"
   }
 ],
-"states":[  
-  {  
+"states":[
+  {
     "name":"ProvisionOrder",
     "type":"operation",
     "actionMode":"sequential",
-    "actions":[  
-       {  
+    "actions":[
+       {
           "functionRef": {
              "refName": "provisionOrderFunction",
              "arguments": {
@@ -1114,13 +1114,13 @@ In the case job submission raises a runtime error, we transition to an Operation
       "operation": "http://myapis.org/monitorapi.json#reportFailure"
     }
   ],
-  "states":[  
-    {  
+  "states":[
+    {
       "name":"SubmitJob",
       "type":"operation",
       "actionMode":"sequential",
-      "actions":[  
-      {  
+      "actions":[
+      {
           "functionRef": {
             "refName": "submitJob",
             "arguments": {
@@ -1159,12 +1159,12 @@ In the case job submission raises a runtime error, we transition to an Operation
       "timeDelay": "PT5S",
       "transition": "GetJobStatus"
   },
-  {  
+  {
       "name":"GetJobStatus",
       "type":"operation",
       "actionMode":"sequential",
-      "actions":[  
-      {  
+      "actions":[
+      {
         "functionRef": {
             "refName": "checkJobStatus",
             "arguments": {
@@ -1181,7 +1181,7 @@ In the case job submission raises a runtime error, we transition to an Operation
       },
       "transition": "DetermineCompletion"
   },
-  {  
+  {
     "name":"DetermineCompletion",
     "type":"switch",
     "dataConditions": [
@@ -1198,12 +1198,12 @@ In the case job submission raises a runtime error, we transition to an Operation
       "transition": "WaitForCompletion"
     }
   },
-  {  
+  {
       "name":"JobSucceeded",
       "type":"operation",
       "actionMode":"sequential",
-      "actions":[  
-      {  
+      "actions":[
+      {
         "functionRef": {
             "refName": "reportJobSuceeded",
             "arguments": {
@@ -1214,12 +1214,12 @@ In the case job submission raises a runtime error, we transition to an Operation
       ],
       "end": true
   },
-  {  
+  {
     "name":"JobFailed",
     "type":"operation",
     "actionMode":"sequential",
-    "actions":[  
-    {  
+    "actions":[
+    {
         "functionRef": {
           "refName": "reportJobFailed",
           "arguments": {
@@ -1359,7 +1359,7 @@ used is assumed to have the following results:
 
 After orders have been provisioned the ForEach states defines the end property which stops workflow execution.
 It defines its end definition to be of type "event" in which case a CloudEvent will be produced which can be consumed
-by other orchestration workflows or other interested consumers. 
+by other orchestration workflows or other interested consumers.
 
 Note that we define the event to be produced in the workflows "events" property.
 
@@ -1369,7 +1369,7 @@ CloudEvent upon completion of the workflow could look like:
 ```json
 {
   "specversion" : "1.0",
-  "type" : "provisionCompleteType",  
+  "type" : "provisionCompleteType",
   "datacontenttype" : "application/json",
   ...
   "data": {
@@ -1549,9 +1549,9 @@ have the matching patient id.
     "type": "org.monitor.highBodyTemp",
     "source": "monitoringSource",
     "correlation": [
-      { 
+      {
         "contextAttributeName": "patientId"
-      } 
+      }
     ]
 },
 {
@@ -1559,9 +1559,9 @@ have the matching patient id.
     "type": "org.monitor.highBloodPressure",
     "source": "monitoringSource",
     "correlation": [
-      { 
+      {
         "contextAttributeName": "patientId"
-      } 
+      }
     ]
 },
 {
@@ -1569,9 +1569,9 @@ have the matching patient id.
     "type": "org.monitor.highRespirationRate",
     "source": "monitoringSource",
     "correlation": [
-      { 
+      {
         "contextAttributeName": "patientId"
-      } 
+      }
     ]
 }
 ],
@@ -1744,9 +1744,9 @@ when all three of these events happened (in no particular order).
     "type": "org.application.submitted",
     "source": "applicationsource",
     "correlation": [
-    { 
+    {
       "contextAttributeName": "applicantId"
-    } 
+    }
    ]
 },
 {
@@ -1754,9 +1754,9 @@ when all three of these events happened (in no particular order).
     "type": "org.application.satscores",
     "source": "applicationsource",
     "correlation": [
-      { 
+      {
       "contextAttributeName": "applicantId"
-      } 
+      }
     ]
 },
 {
@@ -1764,9 +1764,9 @@ when all three of these events happened (in no particular order).
     "type": "org.application.recommendationLetter",
     "source": "applicationsource",
     "correlation": [
-      { 
+      {
       "contextAttributeName": "applicantId"
-      } 
+      }
     ]
 }
 ],
@@ -1863,10 +1863,10 @@ states:
 #### Description
 
 In this example our serverless workflow needs to integrate with an external microservice to perform
-a credit check. We assume that this external microservice notifies a human actor which has to make 
-the approval decision based on customer information. Once this decision is made the service emits a CloudEvent which 
+a credit check. We assume that this external microservice notifies a human actor which has to make
+the approval decision based on customer information. Once this decision is made the service emits a CloudEvent which
 includes the decision information as part of its payload.
-The workflow waits for this callback event and then triggers workflow transitions based on the 
+The workflow waits for this callback event and then triggers workflow transitions based on the
 credit check decision results.
 
 The workflow data input is assumed to be:
@@ -1890,7 +1890,7 @@ For approved credit check, for example:
 ```json
 {
   "specversion" : "1.0",
-  "type" : "creditCheckCompleteType",  
+  "type" : "creditCheckCompleteType",
   "datacontenttype" : "application/json",
   ...
   "data": {
@@ -1911,7 +1911,7 @@ And for denied credit check, for example:
 ```json
 {
   "specversion" : "1.0",
-  "type" : "creditCheckCompleteType",  
+  "type" : "creditCheckCompleteType",
   "datacontenttype" : "application/json",
   ...
   "data": {
@@ -1967,9 +1967,9 @@ And for denied credit check, for example:
             "type": "creditCheckCompleteType",
             "source": "creditCheckSource",
             "correlation": [
-              { 
+              {
                 "contextAttributeName": "customerId"
-              } 
+              }
            ]
         }
     ],
@@ -1986,7 +1986,9 @@ And for denied credit check, for example:
                 }
             },
             "eventRef": "CreditCheckCompletedEvent",
-            "timeout": "PT15M",
+            "timeouts": {
+              "stateExecTimeout": "PT15M"
+            },
             "transition": "EvaluateDecision"
         },
         {
@@ -2066,14 +2068,15 @@ states:
       arguments:
         customer: "${ .customer }"
   eventRef: CreditCheckCompletedEvent
-  timeout: PT15M
+  timeouts:
+    stateExecTimeout: PT15M
   transition: EvaluateDecision
 - name: EvaluateDecision
   type: switch
   dataConditions:
-  - condition: "${ .creditCheck | .decision == \"Approved\" }"
+  - condition: ${ .creditCheck | .decision == "Approved" }
     transition: StartApplication
-  - condition: "${ .creditCheck | .decision == \"Denied\" }"
+  - condition: ${ .creditCheck | .decision == "Denied" }
     transition: RejectApplication
   defaultCondition:
     transition: RejectApplication
@@ -2110,7 +2113,7 @@ Bidding is done via an online application and bids are received as events are as
 ```json
 {
   "specversion" : "1.0",
-  "type" : "carBidType",  
+  "type" : "carBidType",
   "datacontenttype" : "application/json",
   ...
   "data": {
@@ -2235,7 +2238,7 @@ states:
 
 #### Description
 
-In this example we show the use of scheduled cron-based start event property. The example workflow checks the users inbox every 15 minutes 
+In this example we show the use of scheduled cron-based start event property. The example workflow checks the users inbox every 15 minutes
 and send them a text message when there are important emails.
 
 The results of the inbox service called is expected to be for example:
@@ -2376,7 +2379,7 @@ states:
 #### Description
 
 In this example we want to make a Veterinary appointment for our dog Mia. The vet service can be invoked only
-via an event, and its completion results with the appointment day and time is returned via an event as well. 
+via an event, and its completion results with the appointment day and time is returned via an event as well.
 
 This shows a common scenario especially inside container environments where some services may not be exposed via
 a resource URI, but only accessible by submitting an event to the underlying container events manager.
@@ -2384,7 +2387,7 @@ a resource URI, but only accessible by submitting an event to the underlying con
 For this example we assume that that payload of the Vet service response event includes an "appointment"
 object which contains our appointment info.
 
-This info is then filtered to become the workflow data output. It could also be used to for example send us an 
+This info is then filtered to become the workflow data output. It could also be used to for example send us an
 appointment email, a text message reminder, etc.
 
 For this example we assume that the workflow instance is started given the following workflow data input:
@@ -2397,7 +2400,7 @@ For this example we assume that the workflow instance is started given the follo
         "age": 5,
         "reason": "Bee sting",
         "patientId": "Mia1"
-      }   
+      }
     }
 ```
 
@@ -2451,10 +2454,12 @@ For this example we assume that the workflow instance is started given the follo
                     },
                     "actionDataFilter": {
                         "results": "${ .appointmentInfo }"
-                    },
-                    "timeout": "PT15M"
+                    }
                 }
             ],
+            "timeouts": {
+              "actionExecTimeout": "PT15M"
+            },
             "end": true
         }
     ]
@@ -2489,7 +2494,8 @@ states:
       resultEventRef: VetAppointmentInfo
     actionDataFilter:
       results: "${ .appointmentInfo }"
-    timeout: PT15M
+  timeouts:
+    actionExecTimeout: PT15M
   end: true
 ```
 
@@ -2501,15 +2507,16 @@ states:
 
 #### Description
 
-This example shows how [function](../specification.md#Function-Definition) and [event](../specification.md#Event-Definition) definitions 
-can be declared independently and referenced by workflow definitions. 
-This is useful when you would like to reuse event and function definitions across multiple workflows. In those scenarios it allows you to make 
+This example shows how [function](../specification.md#Function-Definition) and [event](../specification.md#Event-Definition) definitions
+can be declared independently and referenced by workflow definitions.
+This is useful when you would like to reuse event and function definitions across multiple workflows. In those scenarios it allows you to make
 changed/updates to these definitions in a single place without having to modify multiple workflows.
 
 For the example we have two files, namely our "functiondefs.json" and "eventdefs.yml" (to show that they can be expressed in either JSON or YAML).
 These hold our function and event definitions which then can be referenced by multiple workflows.
 
 * functiondefs.json
+
 ```json
 {
   "functions": [
@@ -2530,6 +2537,7 @@ These hold our function and event definitions which then can be referenced by mu
 ```
 
 * eventdefs.yml
+
 ```yaml
 events:
 - name: PaymentReceivedEvent
@@ -2739,12 +2747,12 @@ patient information, for example:
 
 When this event is received we want to create a new workflow instance and invoke three services
 sequentially. The first service we want to invoke is responsible to store patient information,
-second is to assign a doctor to a patient given the patient condition, and third to assign a 
+second is to assign a doctor to a patient given the patient condition, and third to assign a
 new appoitment with the patient and the assigned doctor.
 
-In addition, in this example we need to handle a possible situation where one or all of the needed 
+In addition, in this example we need to handle a possible situation where one or all of the needed
 services are not available (the server returns a http 503 (Service Unavailable) error). If our workflow
-catches this error, we want to try to recover from this by issuing retries for the particular 
+catches this error, we want to try to recover from this by issuing retries for the particular
 service invocation that caused the error up to 10 times with three seconds in-between retries.
 If the retries are not successful, we want to just gracefully end workflow execution.
 
@@ -2886,13 +2894,12 @@ retries:
 This example is used in our Serverless Workflow Hands-on series videos [#1](https://www.youtube.com/watch?v=0gmpuGLP-_o)
 and [#2](https://www.youtube.com/watch?v=6A6OYp5nygg).
 
-
 ### Purchase order deadline
 
 #### Description
 
 In this example our workflow processes purchase orders. An order event triggers instance of our workflow.
-To complete the created order, our workflow must first wait for an order confirmation event (correlated to the 
+To complete the created order, our workflow must first wait for an order confirmation event (correlated to the
 order id), and then wait for the shipment sent event (also correlated to initial order id).
 We do not want to place an exact timeout limit for waiting for the confirmation and shipment events,
 as this might take a different amount of time depending on the size of the order. However we do have the requirement
@@ -2924,9 +2931,11 @@ This example shows the use of the workflow [execTimeout definition](../specifica
   "version": "1.0",
   "specVersion": "0.7",
   "start": "StartNewOrder",
-  "execTimeout": {
-    "duration": "PT30D",
-    "runBefore": "CancelOrder"
+  "timeouts": {
+    "workflowExecTimeout": {
+      "duration": "PT30D",
+      "runBefore": "CancelOrder"
+    }
   },
   "states": [
     {
@@ -3083,9 +3092,11 @@ name: Purchase Order Workflow
 version: '1.0'
 specVersion: '0.7'
 start: StartNewOrder
-execTimeout:
-  duration: PT30D
-  runBefore: CancelOrder
+
+timeouts:
+  workflowExecTimeout:
+    duration: PT30D
+    runBefore: CancelOrder
 states:
 - name: StartNewOrder
   type: event
@@ -3170,16 +3181,16 @@ functions:
 #### Description
 
 In this example we have two IoT sensors for each room in our house. One reads temperature values
-and the other humidity values of each room. We get these measurements for each of our rooms 
+and the other humidity values of each room. We get these measurements for each of our rooms
 as CloudEvents. We can correlate events send by our sensors by the room it is in.
 
-For the example we want to accumulate the temperature and humidity values for each and send hourly reports 
+For the example we want to accumulate the temperature and humidity values for each and send hourly reports
 to the home owner for each room.
 
 **Note:** In this example each rooms measurements will be accumulated by a single workflow instance per room.
 Once we receive events for 1 hour (per room) each of the room-based workflow instances will create the report. Events
-consumed after the report is created will trigger a new instance of our workflow (again, per room), accumulate 
-the data for an hour, send report, and so on.                                                                                                     
+consumed after the report is created will trigger a new instance of our workflow (again, per room), accumulate
+the data for an hour, send report, and so on.
 
 #### Workflow Diagram
 
@@ -3204,9 +3215,11 @@ the data for an hour, send report, and so on.
   "version": "1.0",
   "specVersion": "0.7",
   "start": "ConsumeReading",
-  "execTimeout": {
-    "duration": "PT1H",
-    "runBefore": "GenerateReport"
+  "timeouts": {
+    "workflowExecTimeout": {
+      "duration": "PT1H",
+      "runBefore": "GenerateReport"
+    }
   },
   "keepActive": true,
   "states": [
@@ -3292,9 +3305,10 @@ name: Room Temp and Humidity Workflow
 version: '1.0'
 specVersion: '0.7'
 start: ConsumeReading
-execTimeout:
-  duration: PT1H
-  runBefore: GenerateReport
+timeouts:
+  workflowExecTimeout:
+    duration: PT1H
+    runBefore: GenerateReport
 keepActive: true
 states:
 - name: ConsumeReading
@@ -3344,11 +3358,11 @@ functions:
 
 #### Description
 
-In this example we need to check car vital signs while our car is driving. 
+In this example we need to check car vital signs while our car is driving.
 The workflow should start when we receive the "carOn" event and stop when the "carOff" event is consumed.
 While the car is driving our workflow should repeatedly check the vitals every 2 minutes.
 
-For this example we use the workflow [SubFlow](../specification.md#SubFlow-Action) actions and looping to repeat 
+For this example we use the workflow [SubFlow](../specification.md#SubFlow-Action) actions and looping to repeat
 execution of the vitals checks.
 
 #### Workflow Diagram
@@ -3470,7 +3484,7 @@ states:
 - name: WaitForCarStopped
   type: event
   onEvents:
-  - eventRefs: 
+  - eventRefs:
     - CarTurnedOffEvent
       actions:
       - eventRef:
@@ -3547,7 +3561,7 @@ And then our reusable sub-workflow which performs the checking of our car vitals
                         "data": "${ .evaluations }"
                      }
                   ]
-                  
+
                }
             }
          ],
@@ -3558,7 +3572,6 @@ And then our reusable sub-workflow which performs the checking of our car vitals
       {
          "name": "WaitTwoMinutes",
          "type": "event",
-         "timeout": "PT2M",
          "onEvents": [
             {
               "eventRefs": ["StopVitalsCheck"],
@@ -3567,6 +3580,9 @@ And then our reusable sub-workflow which performs the checking of our car vitals
               }
             }
          ],
+         "timeouts": {
+           "eventTimeout": "PT2M"
+         },
          "transition": "ShouldStopOrContinue"
       },
       {
@@ -3582,7 +3598,7 @@ And then our reusable sub-workflow which performs the checking of our car vitals
                         "eventRef": "VitalsCheckingStopped"
                      }
                   ]
-                  
+
                }
             }
          ],
@@ -3660,12 +3676,13 @@ states:
     transition: WaitTwoMinutes
 - name: WaitTwoMinutes
   type: event
-  timeout: PT2M
   onEvents:
-  - eventRefs: 
+  - eventRefs:
     - StopVitalsCheck
     eventDataFilter:
-      toStateData: ${ .stopReceived }
+      toStateData: "${ .stopReceived }"
+  timeouts:
+    eventTimeout: PT2M
   transition: ShouldStopOrContinue
 - name: ShouldStopOrContinue
   type: switch
@@ -3678,15 +3695,15 @@ states:
   defaultCondition:
     transition: CheckVitals
 events:
-- name: DisplayFailedChecksOnDashboard
-  kind: produced
-  type: my.car.events
 - name: StopVitalsCheck
   type: car.events
   source: my/car
 - name: VitalsCheckingStopped
   type: car.events
   source: my/car
+- name: DisplayFailedChecksOnDashboard
+  kind: produced
+  type: my.car.events
 functions:
 - name: checkTirePressure
   operation: mycarservices.json#checktirepressure
@@ -3728,7 +3745,7 @@ This example expects the "Book Lending Request Event" event to have a payload of
 }
 ```
 
-where the "book" property defines the book to be lent out, and the "lender" property provides info 
+where the "book" property defines the book to be lent out, and the "lender" property provides info
 about the person wanting to lend the book.
 
 For the sake of the example we assume the functions and event definitions are defined in separate JSON files.
@@ -3982,7 +3999,7 @@ Our workflow definition is assumed to have the following data input:
   }
 }
 ```
- 
+
 Our workflow simulates filling up a glass of water one "count" at a time until "max" count is reached which
 represents our glass is full.
 Each time we increment the current count, the workflow checks if we need to keep refilling the glass.
@@ -4094,7 +4111,7 @@ states:
 
 #### Description
 
-In this example we want to create an online food ordering workflow. The below image outlines the workflow 
+In this example we want to create an online food ordering workflow. The below image outlines the workflow
 structure and the available services:
 
 <p align="center">
@@ -4102,15 +4119,15 @@ structure and the available services:
 </p>
 
 Our workflow starts with the "Place Order" [Subflow](../specification.md#SubFlow-Action), which is responsible
-to send the received order to the requested restaurant and the estimated order ETA. 
+to send the received order to the requested restaurant and the estimated order ETA.
 We then wait for the ETA time when our workflow should go into the "Deliver Order" SubFlow, responsible
-for dispatching a Courier and sending her/him off to pick up the order. Once the order is picked up, the Courier needs to deliver the order to the customer. 
-After the order has been delivered to the customer, our workflow needs to charge the customer. 
+for dispatching a Courier and sending her/him off to pick up the order. Once the order is picked up, the Courier needs to deliver the order to the customer.
+After the order has been delivered to the customer, our workflow needs to charge the customer.
 
-Our workflow needs to communicate with three services during its execution, namely the Order, Delivery, and 
-the Payment services. 
+Our workflow needs to communicate with three services during its execution, namely the Order, Delivery, and
+the Payment services.
 
-For the sake of the example, we assume that our workflow can communicate to the Order and Delivery services via REST and the Payment service via gRPC. 
+For the sake of the example, we assume that our workflow can communicate to the Order and Delivery services via REST and the Payment service via gRPC.
 Let's start by defining an example CloudEvent which triggers an instance of our workflow.
 This event can be sent by a web UI, for example, or be pushed onto a Kafka/MQTT topic to start our order workflow.
 
@@ -4149,8 +4166,8 @@ This event can be sent by a web UI, for example, or be pushed onto a Kafka/MQTT 
 ```
 
 Note the `orderid` CloudEvent context attribute, which contains the unique ID of the order specified in this event. [Event correlation](../specification.md#Correlation-Definition) is done against CE context attributes, and as such, to be able
-to correlate multiple order events to the same order id, it needs to be part of the CE context attributes, and 
-not its data (payload).  
+to correlate multiple order events to the same order id, it needs to be part of the CE context attributes, and
+not its data (payload).
 
 Now let's start defining our workflow. For the sake of this example, let's define our function and event definitions
 as separate YAML files (and then reference them inside our workflow definition). This is useful in cases
@@ -4227,7 +4244,7 @@ states:
   transition: Deliver Order
 - name: Deliver Order
   type: operation
-  actions: 
+  actions:
   - subFlowRef: deliverorderworkflow
   transition: Charge For Order
 - name: Charge For Order
