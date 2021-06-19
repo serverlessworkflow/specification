@@ -1,0 +1,96 @@
+{
+  "$id": "https://serverlessworkflow.io/schemas/0.7/timeouts.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Serverless Workflow specification - functions schema",
+  "type": "object",
+  "timeouts": {
+    "oneOf": [
+      {
+        "type": "string",
+        "format": "uri",
+        "description": "URI to a resource containing timeouts definitions (json or yaml)"
+      },
+      {
+        "type": "object",
+        "description": "Workflow default timeouts",
+        "properties": {
+          "workflowExecTimeout": {
+            "$ref": "#/definitions/workflowExecTimeout"
+          },
+          "stateExecTimeout": {
+            "$ref": "#/definitions/stateExecTimeout"
+          },
+          "actionExecTimeout": {
+            "$ref": "#/definitions/actionExecTimeout"
+          },
+          "branchExecTimeout": {
+            "$ref": "#/definitions/branchExecTimeout"
+          },
+          "eventTimeout": {
+            "$ref": "#/definitions/eventTimeout"
+          }
+        },
+        "additionalProperties": false,
+        "required": []
+      }
+    ]
+  },
+  "required": [
+    "timeouts"
+  ],
+  "definitions": {
+    "workflowExecTimeout": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Workflow execution timeout duration (ISO 8601 duration format). If not specified should be 'unlimited'",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "properties": {
+            "duration": {
+              "type": "string",
+              "description": "Workflow execution timeout duration (ISO 8601 duration format). If not specified should be 'unlimited'",
+              "minLength": 1
+            },
+            "interrupt": {
+              "type": "boolean",
+              "description": "If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted.",
+              "default": true
+            },
+            "runBefore": {
+              "type": "string",
+              "description": "Name of a workflow state to be executed before workflow instance is terminated",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "duration"
+          ]
+        }
+      ]
+    },
+    "stateExecTimeout": {
+      "type": "string",
+      "description": "State execution timeout duration (ISO 8601 duration format)",
+      "minLength": 1
+    },
+    "actionExecTimeout": {
+      "type": "string",
+      "description": "Single actions definition execution timeout duration (ISO 8601 duration format)",
+      "minLength": 1
+    },
+    "branchExecTimeout": {
+      "type": "string",
+      "description": "Single branch execution timeout duration (ISO 8601 duration format)",
+      "minLength": 1
+    },
+    "eventTimeout": {
+      "type": "string",
+      "description": "Timeout duration to wait for consuming defined events (ISO 8601 duration format)",
+      "minLength": 1
+    }
+  }
+}

@@ -4840,7 +4840,9 @@ Let's take a look all possible timeout definitions:
 
 #### Workflow Timeout Definition
 
-Workflow timeouts are defined with the top-level timeouts property. It has the following definition:
+Workflow timeouts are defined with the top-level timeouts property. It can have two types, `string` and `object`.
+If `string` type it defines an URI that points to a Json or Yaml file containing the workflow timeout definitions.
+If `object` type, it is used to define the timeout definitions in-line and has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |

@@ -98,27 +98,7 @@
       "minLength": 1
     },
     "timeouts": {
-      "type": "object",
-      "description": "Workflow default timeouts",
-      "properties": {
-        "workflowExecTimeout": {
-          "$ref": "#/definitions/workflowExecTimeout"
-        },
-        "stateExecTimeout": {
-          "$ref": "#/definitions/stateExecTimeout"
-        },
-        "actionExecTimeout": {
-          "$ref": "#/definitions/actionExecTimeout"
-        },
-        "branchExecTimeout": {
-          "$ref": "#/definitions/branchExecTimeout"
-        },
-        "eventTimeout": {
-          "$ref": "#/definitions/eventTimeout"
-        }
-      },
-      "additionalProperties": false,
-      "required": []
+      "$ref": "timeouts.json#/timeouts"
     },
     "keepActive": {
       "type": "boolean",
@@ -227,59 +207,6 @@
           ]
         }
       ]
-    },
-    "workflowExecTimeout": {
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "Workflow execution timeout duration (ISO 8601 duration format). If not specified should be 'unlimited'",
-          "minLength": 1
-        },
-        {
-          "type": "object",
-          "properties": {
-            "duration": {
-              "type": "string",
-              "description": "Workflow execution timeout duration (ISO 8601 duration format). If not specified should be 'unlimited'",
-              "minLength": 1
-            },
-            "interrupt": {
-              "type": "boolean",
-              "description": "If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is abrupted.",
-              "default": true
-            },
-            "runBefore": {
-              "type": "string",
-              "description": "Name of a workflow state to be executed before workflow instance is terminated",
-              "minLength": 1
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "duration"
-          ]
-        }
-      ]
-    },
-    "stateExecTimeout": {
-      "type": "string",
-      "description": "State execution timeout duration (ISO 8601 duration format)",
-      "minLength": 1
-    },
-    "actionExecTimeout": {
-      "type": "string",
-      "description": "Single actions definition execution timeout duration (ISO 8601 duration format)",
-      "minLength": 1
-    },
-    "branchExecTimeout": {
-      "type": "string",
-      "description": "Single branch execution timeout duration (ISO 8601 duration format)",
-      "minLength": 1
-    },
-    "eventTimeout": {
-      "type": "string",
-      "description": "Timeout duration to wait for consuming defined events (ISO 8601 duration format)",
-      "minLength": 1
     },
     "transition": {
       "oneOf": [
@@ -554,10 +481,10 @@
           "description": "State specific timeouts",
           "properties": {
             "actionExecTimeout": {
-              "$ref": "#/definitions/actionExecTimeout"
+              "$ref": "timeouts.json#/definitions/actionExecTimeout"
             },
             "branchExecTimeout": {
-              "$ref": "#/definitions/branchExecTimeout"
+              "$ref": "timeouts.json#/definitions/branchExecTimeout"
             }
           },
           "required": []
@@ -613,7 +540,7 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             }
           },
           "required": []
@@ -721,13 +648,13 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             },
             "actionExecTimeout": {
-              "$ref": "#/definitions/actionExecTimeout"
+              "$ref": "timeouts.json#/definitions/actionExecTimeout"
             },
             "eventTimeout": {
-              "$ref": "#/definitions/eventTimeout"
+              "$ref": "timeouts.json#/definitions/eventTimeout"
             }
           },
           "required": []
@@ -830,10 +757,10 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             },
             "actionExecTimeout": {
-              "$ref": "#/definitions/actionExecTimeout"
+              "$ref": "timeouts.json#/definitions/actionExecTimeout"
             }
           },
           "required": []
@@ -943,10 +870,10 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             },
             "branchExecTimeout": {
-              "$ref": "#/definitions/branchExecTimeout"
+              "$ref": "timeouts.json#/definitions/branchExecTimeout"
             }
           },
           "required": []
@@ -1081,10 +1008,10 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             },
             "eventTimeout": {
-              "$ref": "#/definitions/eventTimeout"
+              "$ref": "timeouts.json#/definitions/eventTimeout"
             }
           },
           "required": []
@@ -1159,7 +1086,7 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             }
           },
           "required": []
@@ -1395,7 +1322,7 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             }
           },
           "required": []
@@ -1518,10 +1445,10 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             },
             "actionExecTimeout": {
-              "$ref": "#/definitions/actionExecTimeout"
+              "$ref": "timeouts.json#/definitions/actionExecTimeout"
             }
           },
           "required": []
@@ -1633,13 +1560,13 @@
           "description": "State specific timeouts",
           "properties": {
             "stateExecTimeout": {
-              "$ref": "#/definitions/stateExecTimeout"
+              "$ref": "timeouts.json#/definitions/stateExecTimeout"
             },
             "actionExecTimeout": {
-              "$ref": "#/definitions/actionExecTimeout"
+              "$ref": "timeouts.json#/definitions/actionExecTimeout"
             },
             "eventTimeout": {
-              "$ref": "#/definitions/eventTimeout"
+              "$ref": "timeouts.json#/definitions/eventTimeout"
             }
           },
           "required": []
