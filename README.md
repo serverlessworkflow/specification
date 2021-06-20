@@ -4,16 +4,17 @@
 [<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://cloud-native.slack.com/messages/serverless-workflow) 
 [<img src="https://img.shields.io/twitter/follow/CNCFWorkflow?style=social">](https://twitter.com/CNCFWorkflow)
 
-CNCF Serverless Workflow defines a vendor-neutral,open-source, and fully community-driven
-ecosystem for defining and running workflows that target the Serverless technology domain.
+CNCF Serverless Workflow defines a vendor-neutral, open-source, and fully community-driven
+ecosystem for defining and running DSL-based workflows that target the Serverless technology domain.
 
 This project is composed of:
+
 * [Specification](specification.md) for defining DSL-based workflows
 * [Developer SDKs](#sdks) for different programming languages
 * [Workflow runtimes](#runtime) supporting the specification
 * Developer [tooling support](#tooling) for writing DSL-based workflows
 
-Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
+CNCF Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
 Cloud Native Sandbox level project on July 14, 2020.
 
 ## Table of Contents
