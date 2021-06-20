@@ -4,14 +4,19 @@
 [<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://cloud-native.slack.com/messages/serverless-workflow) 
 [<img src="https://img.shields.io/twitter/follow/CNCFWorkflow?style=social">](https://twitter.com/CNCFWorkflow)
 
-<p align="center">
-<img src="media/logos/serverlessworkflow-horizontal-color.png" width="500px" alt="Serverless Workflow Specification"/>
-</p>
+##  About
 
-A specification that defines a vendor-neutral and declarative workflow language,
-targeting the Serverless computing technology domain.
+CNCF Serverless Workflow defines a vendor-neutral, open-source, and fully community-driven
+ecosystem for defining and running DSL-based workflows that target the Serverless technology domain.</h3>
 
-Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
+This project is composed of:
+
+* [Specification](specification.md) for defining DSL-based workflows
+* [Developer SDKs](#sdks) for different programming languages
+* [Workflow runtimes](#runtime) supporting the specification
+* Developer [tooling support](#tooling) for writing DSL-based workflows
+
+CNCF Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
 Cloud Native Sandbox level project on July 14, 2020.
 
 ## Table of Contents
@@ -55,6 +60,16 @@ Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.i
 | [TypeScript SDK](https://github.com/serverlessworkflow/sdk-typescript) |  |  | [main](https://github.com/serverlessworkflow/sdk-typescript) |
 | [VSCode Extension](https://github.com/serverlessworkflow/vscode-extension) | [1.6.0](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension) | | [main](https://github.com/serverlessworkflow/vscode-extension) |
 
+## Runtime
+
+- [Synapse](https://github.com/serverlessworkflow/synapse)
+
+Serverless Workflow is open to host open-source runtime implementations that would like to
+be part and grow alongside the core specification.
+
+[Synapse](https://github.com/serverlessworkflow/synapse) is a Kubernetes-native workflow runtime which supports and is part of the Serverless
+Workflow eco-system.
+
 ## SDKs
 
 - [Go](https://github.com/serverlessworkflow/sdk-go)
@@ -64,16 +79,6 @@ Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.i
 
 Serverless Workflow encourages development of SDKs dedicated to help developers with 
 consuming, parsing, validating and testing their workflows that use the Serverless Workflow DSL.
-
-## Runtime
-
-- [Synapse](https://github.com/serverlessworkflow/synapse)
-
-Serverless Workflow is open to host open-source runtime implementations that would like to 
-be part and grow alongside the core specification.
-
-[Synapse](https://github.com/serverlessworkflow/synapse) is a Kubernetes-native workflow runtime which supports and is part of the Serverless
-Workflow eco-system.
 
 ## Tooling
 
