@@ -4,8 +4,10 @@
 [<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://cloud-native.slack.com/messages/serverless-workflow) 
 [<img src="https://img.shields.io/twitter/follow/CNCFWorkflow?style=social">](https://twitter.com/CNCFWorkflow)
 
+##  About
+
 CNCF Serverless Workflow defines a vendor-neutral, open-source, and fully community-driven
-ecosystem for defining and running DSL-based workflows that target the Serverless technology domain.
+ecosystem for defining and running DSL-based workflows that target the Serverless technology domain.</h3>
 
 This project is composed of:
 
