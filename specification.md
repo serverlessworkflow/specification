@@ -5059,8 +5059,8 @@ To show an example, let's say that we set the `exclusive`
 property to "PT10S", meaning 10 seconds. A workflow state "X" which defines this timeout when first executed has the max execution timeout 
 set to 10 seconds. If the state execution is then retried, each time it is retried, the individual retry max execution timeout is again 10 seconds.
 
-The `exclusive` property on the other hand defines a state execution timeout taking in account retries.
-This means when this state is executed, its execution timeout is the value of the `exclusive` property no matter how many retries
+The `inclusive` property on the other hand defines a state execution timeout taking in account retries.
+This means when this state is executed, its execution timeout is the value of the `inclusive` property no matter how many retries
 have to be performed. If a state execution includes zero or one hundred retries, the total execution timeout is set by this property.
 
 #### Branch Timeout Definition
