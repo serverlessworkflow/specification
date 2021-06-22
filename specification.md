@@ -28,7 +28,7 @@
     + [Using Functions For GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
       - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
       - [Invoking a GraphQL `Mutation`](#invoking-a-graphql-mutation)
-  * [Using Functions For Expression Evaluation](#using-functions-for-expression-evaluation)
+    + [Using Functions For Expression Evaluation](#using-functions-for-expression-evaluation)
   * [Workflow Expressions](#workflow-expressions)
   * [Workflow Definition Structure](#workflow-definition-structure)
     + [Workflow States](#workflow-states)
@@ -1293,7 +1293,7 @@ Note that GraphQL Subscriptions are not supported at this time.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
-### Using Functions For Expression Evaluation
+#### Using Functions For Expression Evaluation
 
 In addition to defining RESTful, RPC and GraphQL services and their operations, workflow [functions definitions](#Function-Definition)
 can also be used to define expressions that should be evaluated during workflow execution.
