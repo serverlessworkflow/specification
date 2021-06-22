@@ -5049,7 +5049,7 @@ If defined as object type it has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| single | Single state execution timeout, not including retries (ISO 8601 duration format) | string | yes |
+| single | Single state execution timeout, not including retries (ISO 8601 duration format) | string | no |
 | total | Total state execution timeout, including retries (ISO 8601 duration format)  | string | yes |
 
 The `single` property defines a single state execution timeout. This property does not take in account retries.
