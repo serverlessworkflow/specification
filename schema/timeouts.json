@@ -83,12 +83,12 @@
           "type": "object",
           "description": "Workflow default timeouts",
           "properties": {
-            "exclusive": {
+            "single": {
               "type": "string",
               "description": "Single state execution timeout, not including retries (ISO 8601 duration format)",
               "minLength": 1
             },
-            "inclusive": {
+            "total": {
               "type": "string",
               "description": "Total state execution timeout, including retries (ISO 8601 duration format)",
               "minLength": 1

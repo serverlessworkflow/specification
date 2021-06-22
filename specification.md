@@ -5049,18 +5049,18 @@ If defined as object type it has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| exclusive | Single state execution timeout, not including retries (ISO 8601 duration format) | string | yes |
-| inclusive | Total state execution timeout, including retries (ISO 8601 duration format)  | string | yes |
+| single | Single state execution timeout, not including retries (ISO 8601 duration format) | string | yes |
+| total | Total state execution timeout, including retries (ISO 8601 duration format)  | string | yes |
 
-The `exclusive` property defines a single state execution timeout. This property does not take in account retries.
+The `single` property defines a single state execution timeout. This property does not take in account retries.
 Each time the state is executed, whether when it is executes as part of standard control flow logic, or as part of a retry,
-its total execution timeouts is the value of the `exclusive` property. 
-To show an example, let's say that we set the `exclusive`
+its total execution timeouts is the value of the `single` property. 
+To show an example, let's say that we set the `single`
 property to "PT10S", meaning 10 seconds. A workflow state "X" which defines this timeout when first executed has the max execution timeout 
 set to 10 seconds. If the state execution is then retried, each time it is retried, the individual retry max execution timeout is again 10 seconds.
 
-The `inclusive` property on the other hand defines a state execution timeout taking in account retries.
-This means when this state is executed, its execution timeout is the value of the `inclusive` property no matter how many retries
+The `total` property on the other hand defines a state execution timeout taking in account retries.
+This means when this state is executed, its execution timeout is the value of the `total` property no matter how many retries
 have to be performed. If a state execution includes zero or one hundred retries, the total execution timeout is set by this property.
 
 #### Branch Timeout Definition
