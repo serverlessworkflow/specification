@@ -3409,7 +3409,7 @@ We fist define our top-level workflow for this example:
               "subFlowRef": {
                 "workflowId": "vitalscheck",
                 "waitForCompletion": false
-              },
+              }
             }
           ],
           "transition": "WaitForCarStopped"
@@ -3468,42 +3468,42 @@ version: '1.0'
 specVersion: '0.7'
 start: WhenCarIsOn
 states:
-- name: WhenCarIsOn
-  type: event
-  onEvents:
-  - eventRefs:
-    - CarTurnedOnEvent
-  transition: DoCarVitalsChecks
-- name: DoCarVitalsChecks
-  type: operation
-  actions:
-  - subFlowRef:
-    workflowId: vitalscheck
-    waitForCompletion: false
-  transition: WaitForCarStopped
-- name: WaitForCarStopped
-  type: event
-  onEvents:
-  - eventRefs:
-    - CarTurnedOffEvent
+ - name: WhenCarIsOn
+   type: event
+   onEvents:
+    - eventRefs:
+       - CarTurnedOnEvent
+   transition: DoCarVitalsChecks
+ - name: DoCarVitalsChecks
+   type: operation
+   actions:
+    - subFlowRef:
+       workflowId: vitalscheck
+       waitForCompletion: false
+   transition: WaitForCarStopped
+ - name: WaitForCarStopped
+   type: event
+   onEvents:
+    - eventRefs:
+       - CarTurnedOffEvent
       actions:
-      - eventRef:
-        triggerEventRef: StopVitalsCheck
-        resultEventRef:  VitalsCheckingStopped
-  end: true
+       - eventRef:
+          triggerEventRef: StopVitalsCheck
+          resultEventRef: VitalsCheckingStopped
+   end: true
 events:
-- name: CarTurnedOnEvent
-  type: car.events
-  source: my/car
-- name: CarTurnedOffEvent
-  type: car.events
-  source: my/car
-- name: StopVitalsCheck
-  type: car.events
-  source: my/car
-- name: VitalsCheckingStopped
-  type: car.events
-  source: my/car
+ - name: CarTurnedOnEvent
+   type: car.events
+   source: my/car
+ - name: CarTurnedOffEvent
+   type: car.events
+   source: my/car
+ - name: StopVitalsCheck
+   type: car.events
+   source: my/car
+ - name: VitalsCheckingStopped
+   type: car.events
+   source: my/car
 ```
 
 </td>
