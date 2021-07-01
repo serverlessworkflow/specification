@@ -1,0 +1,81 @@
+{
+    "$id": "https://serverlessworkflow.io/schemas/0.7/odata.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "Serverless Workflow specification - OData arguments schema",
+    "type": "object",
+    "id": {
+        "type": "string",
+        "description": "The unique identifier of the single entry to query",
+        "minLength": 1
+    },
+    "queryOptions":{
+        "$ref": "#/definitions/queryoptions"
+    },
+    "definitions": {
+      "queryoptions": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "string",
+            "description": "The $filter system query option allows clients to filter the set of resources that are addressed by a request URL. $filter specifies conditions that MUST be met by a resource for it to be returned in the set of matching resources",
+            "minLength": 1
+          },
+          "expand": {
+            "type": "string",
+            "description": "The $expand system query option allows clients to request related resources when a resource that satifies a particular request is retrieved",
+            "minLength": 1
+          },
+          "select": {
+            "type": "string",
+            "description": "The $select system query option allows clients to requests a limited set of information for each entity or complex type identified by the ResourcePath and other System Query Options like $filter, $top, $skip etc. The $select query option is often used in conjunction with the $expand query option, to first increase the scope of the resource graph returned ($expand) and then selectively prune that resource graph ($select)",
+            "minLength": 1
+          },
+          "orderby": {
+            "type": "string",
+            "description": "The $orderby system query option allows clients to request resource in a particular order",
+            "minLength": 1
+          },
+          "top": {
+            "type": "string",
+            "description": "The $top system query option allows clients a required number of resources. Usually used in conjunction with the $skip query options",
+            "minLength": 1
+          },
+          "skip": {
+            "type": "string",
+            "description": "The $skip system query option allows clients to skip a given number of resources. Usually used in conjunction with the $top query options",
+            "minLength": 1
+          },
+          "count": {
+            "type": "boolean",
+            "description": "The $count system query option allows clients to request a count of the matching resources included with the resources in the response"
+          },
+          "search": {
+            "type": "string",
+            "description": "The $search system query option allows clients to request items within a collection matching a free-text search expression",
+            "minLength": 1
+          },
+          "format": {
+            "type": "string",
+            "description": "The $format system query option if supported allows clients to request a response in a particular format",
+            "minLength": 1
+          },
+          "compute": {
+            "type": "string",
+            "description": "The $compute system query option allows clients to define computed properties that can be used in a $select or within a $filter or $orderby expression.",
+            "minLength": 1
+          },
+          "index": {
+            "type": "string",
+            "description": "The $index system query option allows clients to do a positional insert into a collection annotated with using the Core.PositionalInsert term (see http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#VocCore)",
+            "minLength": 1
+          },
+          "schemaversion": {
+            "type": "string",
+            "description": "The $schemaversion system query option allows clients to specify the version of the schema against which the request is made. The semantics of $schemaversion is covered in the OData-Protocol (http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#odata) document.",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }

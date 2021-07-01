@@ -28,6 +28,7 @@
     + [Using Functions For GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
       - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
       - [Invoking a GraphQL `Mutation`](#invoking-a-graphql-mutation)
+    + [Using Functions For OData Service Invocations](#using-functions-for-odata-service-invocations)
     + [Using Functions For Expression Evaluation](#using-functions-for-expression-evaluation)
   * [Workflow Expressions](#workflow-expressions)
   * [Workflow Definition Structure](#workflow-definition-structure)
@@ -1293,9 +1294,54 @@ Note that GraphQL Subscriptions are not supported at this time.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
+#### Using Functions For OData Service Invocations
+
+Similar to defining invocations of operations on GraphQL services, you can also use workflow
+[functions definitions](#Function-Definition) to execute complex queries on an [OData](https://www.odata.org/documentation/) service.
+
+##### Create an OData function definition
+
+```json
+{
+"functions": [
+  {
+    "name": "queryPersons",
+    "operation": "https://services.odata.org/V3/OData/OData.svc#Persons",
+    "type": "odata"
+  }
+]
+}
+```
+
+Note that the `operation` property must follow the following format:
+
+```text
+<URI_to_odata_service>#<Entity_Set_Name>
+```
+
+##### Invoking an OData function definition
+
+To invoke a defined [OData](https://www.odata.org/documentation/) function, simply reference it and set the function's arguments:
+
+```json
+{
+  "refName": "queryPersons",
+  "arguments": {
+    "queryOptions":{
+      "expand": "PersonDetail/Person",
+      "select": "Id, PersonDetail/Person/Name",
+      "top": 5,
+      "orderby": "PersonDetail/Person/Name"
+    }
+  }
+}
+```
+
+In order to work consistently accross runtimes, the `arguments` property of an [OData](https://www.odata.org/documentation/) function reference should follow [this Json schema](https://github.com/serverlessworkflow/specification/tree/main/schema/odata.json)
+
 #### Using Functions For Expression Evaluation
 
-In addition to defining RESTful, RPC and GraphQL services and their operations, workflow [functions definitions](#Function-Definition)
+In addition to defining RESTful, RPC, GraphQL and OData services and their operations, workflow [functions definitions](#Function-Definition)
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference

@@ -46,6 +46,7 @@
             "rest",
             "rpc",
             "graphql",
+            "odata",
             "expression"
           ],
           "default": "rest"
