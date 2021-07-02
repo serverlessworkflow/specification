@@ -1,9 +1,9 @@
 {
     "$id": "https://serverlessworkflow.io/schemas/0.7/odata.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "description": "Serverless Workflow specification - OData arguments schema",
+    "description": "Serverless Workflow specification - OData command options schema",
     "type": "object",
-    "id": {
+    "key": {
         "type": "string",
         "description": "The unique identifier of the single entry to query",
         "minLength": 1
@@ -30,7 +30,7 @@
             "description": "The $select system query option allows clients to requests a limited set of information for each entity or complex type identified by the ResourcePath and other System Query Options like $filter, $top, $skip etc. The $select query option is often used in conjunction with the $expand query option, to first increase the scope of the resource graph returned ($expand) and then selectively prune that resource graph ($select)",
             "minLength": 1
           },
-          "orderby": {
+          "orderBy": {
             "type": "string",
             "description": "The $orderby system query option allows clients to request resource in a particular order",
             "minLength": 1
@@ -69,7 +69,7 @@
             "description": "The $index system query option allows clients to do a positional insert into a collection annotated with using the Core.PositionalInsert term (see http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#VocCore)",
             "minLength": 1
           },
-          "schemaversion": {
+          "schemaVersion": {
             "type": "string",
             "description": "The $schemaversion system query option allows clients to specify the version of the schema against which the request is made. The semantics of $schemaversion is covered in the OData-Protocol (http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#odata) document.",
             "minLength": 1
