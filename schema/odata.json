@@ -36,12 +36,12 @@
             "minLength": 1
           },
           "top": {
-            "type": "string",
+            "type": "integer",
             "description": "The $top system query option allows clients a required number of resources. Usually used in conjunction with the $skip query options",
             "minLength": 1
           },
           "skip": {
-            "type": "string",
+            "type": "integer",
             "description": "The $skip system query option allows clients to skip a given number of resources. Usually used in conjunction with the $top query options",
             "minLength": 1
           },
