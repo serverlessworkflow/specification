@@ -24,10 +24,12 @@
     + [Data Merging](#data-merging)
   * [Workflow Functions](#workflow-functions)
     + [Using Functions For RESTful Service Invocations](#using-functions-for-restful-service-invocations)
+    + [Using Functions For Async API Invocations](#using-functions-for-async-api-invocations)
     + [Using Functions For RPC Service Invocations](#using-functions-for-rpc-service-invocations)
     + [Using Functions For GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
       - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
       - [Invoking a GraphQL `Mutation`](#invoking-a-graphql-mutation)
+    + [Using Functions For OData Service Invocations](#using-functions-for-odata-service-invocations)
     + [Using Functions For Expression Evaluation](#using-functions-for-expression-evaluation)
   * [Workflow Expressions](#workflow-expressions)
   * [Workflow Definition Structure](#workflow-definition-structure)
@@ -1024,8 +1026,10 @@ They can be referenced by their domain-specific names inside workflow [states](#
 Reference the following sections to learn more about workflow functions:
 
 * [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
+* [Using functions for Async API service invocation](#Using-Functions-For-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
+* [Using functions for OData service invocation](#Using-Functions-For-OData-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
 
 #### Using Functions For RESTful Service Invocations
@@ -1084,6 +1088,98 @@ For example:
 Note that the referenced function definition type in this case must be `rest` (default type).
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
+#### Using Functions For Async API Service Invocations
+
+[Functions](#Function-Definition) can be used to invoke PUBLISH and SUBSCRIBE operations on a message broker documented by the [Async API Specification](https://www.asyncapi.com/docs/specifications/v2.1.0).
+[Async API operations]() are bound to a [channel]() which describes the technology, security mechanisms, input and validation to use to execute them.
+
+Let's look at an hypothetical Async API document, defining a single publish operation:
+
+```yaml
+asyncapi: 2.1.0
+info:
+  title: Streetlights API
+  version: 1.0.0
+  description: |
+    The Smartylighting Streetlights API allows you
+    to remotely manage the city lights.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+  mosquitto:
+    url: mqtt://test.mosquitto.org
+    protocol: mqtt
+channels:
+  light/measured:
+    publish:
+      summary: Inform about environmental lighting conditions for a particular streetlight.
+      operationId: onLightMeasured
+      message:
+        name: LightMeasured
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              minimum: 0
+              description: Id of the streetlight.
+            lumens:
+              type: integer
+              minimum: 0
+              description: Light intensity measured in lumens.
+            sentAt:
+              type: string
+              format: date-time
+              description: Date and time when the message was sent.
+
+```
+
+We would then use the following [function definition](#Function-Definition) for the operation with id `onLightMeasured`:
+
+```json
+{
+  "functions": [
+  {
+    "name": "publishLightMeasurements",
+    "operation": "file://streetlightsapi.yaml#onLightMeasured",
+    "type": "asyncapi"
+  }]
+}
+```
+
+*Note that the [function definition](#Function-Definition)'s `operation` property **MUST HAVE** the following format:*
+
+```text
+<URI_to_asyncapi_file>#<OperationId>
+```
+
+*Note that the referenced function definition type in this case **MUST BE** `asyncapi`.*
+
+
+The function could be referenced like the following:
+
+```json
+{
+  "name": "Publish Measurements",
+  "type": "operation",
+  "actions":[
+    {
+      "name": "Publish Light Measurements",
+      "functionRef":{
+        "refName": "publishLightMeasurements",
+        "arguments":{
+          "id": "${ .currentLight.id }",
+          "lumens": "${ .currentLight.lumens }",
+          "sentAt": "${ now }"
+        }
+      }
+    }
+  ]
+}
+```
+
 
 #### Using Functions For RPC Service Invocations
 
@@ -1293,9 +1389,54 @@ Note that GraphQL Subscriptions are not supported at this time.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
+#### Using Functions For OData Service Invocations
+
+Similar to defining invocations of operations on GraphQL services, you can also use workflow
+[functions definitions](#Function-Definition) to execute complex queries on an [OData](https://www.odata.org/documentation/) service.
+
+##### Create an OData function definition
+
+```json
+{
+"functions": [
+  {
+    "name": "queryPersons",
+    "operation": "https://services.odata.org/V3/OData/OData.svc#Persons",
+    "type": "odata"
+  }
+]
+}
+```
+
+Note that the `operation` property must follow the following format:
+
+```text
+<URI_to_odata_service>#<Entity_Set_Name>
+```
+
+##### Invoking an OData function definition
+
+To invoke a defined [OData](https://www.odata.org/documentation/) function, simply reference it and set the function's arguments:
+
+```json
+{
+  "refName": "queryPersons",
+  "arguments": {
+    "queryOptions":{
+      "expand": "PersonDetail/Person",
+      "select": "Id, PersonDetail/Person/Name",
+      "top": 5,
+      "orderby": "PersonDetail/Person/Name"
+    }
+  }
+}
+```
+
+In order to work consistently accross runtimes, the `arguments` property of an [OData](https://www.odata.org/documentation/) function reference should follow [this Json schema](https://github.com/serverlessworkflow/specification/tree/main/schema/odata.json)
+
 #### Using Functions For Expression Evaluation
 
-In addition to defining RESTful, RPC and GraphQL services and their operations, workflow [functions definitions](#Function-Definition)
+In addition to defining RESTful, RPC, GraphQL and OData services and their operations, workflow [functions definitions](#Function-Definition)
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference
@@ -2944,8 +3085,8 @@ section.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `expression`, defines the workflow expression. | string | no |
-| type | Defines the function type. Is either `rest`, `rpc` or `expression`. Default is `rest` | enum | no |
+| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
+| type | Defines the function type. Is either `rest`, `asyncapi`, `rpc`, `graphql`, `odata` or `expression`. Default is `rest` | enum | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2992,6 +3133,8 @@ Depending on the function `type`, the `operation` property can be:
 For example `file://myuserservice.proto#UserService#ListUsers`.
 * If `type` is `graphql`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
 For example `file://myuserservice.proto#UserService#ListUsers`.
+* If `type` is `odata`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
+For example `https://https://services.odata.org/V3/OData/OData.svc#Products`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
 
 The [`metadata`](#Workflow-Metadata) property allows users to define custom information to function definitions.
