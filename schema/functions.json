@@ -44,6 +44,7 @@
           "description": "Defines the function type. Is either `rest`, `rpc`, `graphql` or `expression`. Default is `rest`",
           "enum": [
             "rest",
+            "asyncapi",
             "rpc",
             "graphql",
             "odata",

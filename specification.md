@@ -24,6 +24,7 @@
     + [Data Merging](#data-merging)
   * [Workflow Functions](#workflow-functions)
     + [Using Functions For RESTful Service Invocations](#using-functions-for-restful-service-invocations)
+    + [Using Functions For Async API Invocations](#using-functions-for-async-api-invocations)
     + [Using Functions For RPC Service Invocations](#using-functions-for-rpc-service-invocations)
     + [Using Functions For GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
       - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
@@ -1025,8 +1026,10 @@ They can be referenced by their domain-specific names inside workflow [states](#
 Reference the following sections to learn more about workflow functions:
 
 * [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
+* [Using functions for Async API service invocation](#Using-Functions-For-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
+* [Using functions for OData service invocation](#Using-Functions-For-OData-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
 
 #### Using Functions For RESTful Service Invocations
@@ -1085,6 +1088,98 @@ For example:
 Note that the referenced function definition type in this case must be `rest` (default type).
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
+#### Using Functions For Async API Service Invocations
+
+[Functions](#Function-Definition) can be used to invoke PUBLISH and SUBSCRIBE operations on a message broker documented by the [Async API Specification](https://www.asyncapi.com/docs/specifications/v2.1.0).
+[Async API operations]() are bound to a [channel]() which describes the technology, security mechanisms, input and validation to use to execute them.
+
+Let's look at an hypothetical Async API document, defining a single publish operation:
+
+```yaml
+asyncapi: 2.1.0
+info:
+  title: Streetlights API
+  version: 1.0.0
+  description: |
+    The Smartylighting Streetlights API allows you
+    to remotely manage the city lights.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+  mosquitto:
+    url: mqtt://test.mosquitto.org
+    protocol: mqtt
+channels:
+  light/measured:
+    publish:
+      summary: Inform about environmental lighting conditions for a particular streetlight.
+      operationId: onLightMeasured
+      message:
+        name: LightMeasured
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              minimum: 0
+              description: Id of the streetlight.
+            lumens:
+              type: integer
+              minimum: 0
+              description: Light intensity measured in lumens.
+            sentAt:
+              type: string
+              format: date-time
+              description: Date and time when the message was sent.
+
+```
+
+We would then use the following [function definition](#Function-Definition) for the operation with id `onLightMeasured`:
+
+```json
+{
+  "functions": [
+  {
+    "name": "publishLightMeasurements",
+    "operation": "file://streetlightsapi.yaml#onLightMeasured",
+    "type": "asyncapi"
+  }]
+}
+```
+
+*Note that the [function definition](#Function-Definition)'s `operation` property **MUST HAVE** the following format:*
+
+```text
+<URI_to_asyncapi_file>#<OperationId>
+```
+
+*Note that the referenced function definition type in this case **MUST BE** `asyncapi`.*
+
+
+The function could be referenced like the following:
+
+```json
+{
+  "name": "Publish Measurements",
+  "type": "operation",
+  "actions":[
+    {
+      "name": "Publish Light Measurements",
+      "functionRef":{
+        "refName": "publishLightMeasurements",
+        "arguments":{
+          "id": "${ .currentLight.id }",
+          "lumens": "${ .currentLight.lumens }",
+          "sentAt": "${ now }"
+        }
+      }
+    }
+  ]
+}
+```
+
 
 #### Using Functions For RPC Service Invocations
 
@@ -2990,8 +3085,8 @@ section.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
-| type | Defines the function type. Is either `rest`, `rpc`, `graphql`, `odata` or `expression`. Default is `rest` | enum | no |
+| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
+| type | Defines the function type. Is either `rest`, `asyncapi`, `rpc`, `graphql`, `odata` or `expression`. Default is `rest` | enum | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
