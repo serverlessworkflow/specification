@@ -49,6 +49,14 @@
             "expression"
           ],
           "default": "rest"
+        },
+        "authRef": {
+          "type": "string",
+          "description": "References an auth definition name to be used to access to resource defined in the operation parameter",
+          "minLength": 1
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata"
         }
       },
       "additionalProperties": false,

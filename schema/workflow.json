@@ -117,6 +117,9 @@
     "retries": {
       "$ref": "retries.json#/retries"
     },
+    "auth": {
+      "$ref": "auth.json#/auth"
+    },
     "states": {
       "type": "array",
       "description": "State definitions",

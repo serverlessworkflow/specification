@@ -1,6 +1,6 @@
 # Serverless Workflow Specification
 
-## Table of Contents 
+## Table of Contents
 
 - [Abstract](#abstract)
 - [Status of this document](#status-of-this-document)
@@ -43,6 +43,7 @@
     + [Related State Definition](#related-state-definition)
       - [Function Definition](#function-definition)
       - [Event Definition](#event-definition)
+      - [Auth Definition](#auth-definition)
       - [Correlation Definition](#correlation-definition)
       - [OnEvents Definition](#onevents-definition)
       - [Action Definition](#action-definition)
@@ -154,7 +155,7 @@ Serverless Workflow language takes advantage of well-established and known stand
 The specification has multiple components:
 
 * Definitions of the workflow language. This is defined via the [Workflow JSON Schema](schema/workflow.json). You can use both
-[JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats to model your workflows.
+  [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats to model your workflows.
 * Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java),
   and we plan to add them for more languages in the future.
 * Set of [Workflow Extensions](extensions/README.md) which
@@ -464,9 +465,9 @@ Each action can define this filter which can:
 
 * Filter the state data to select only the data that can be used within function definition arguments using its `fromStateData` property.
 * Filter the action results to select only the result data that should be added/merged back into the state data
-using its `results` property.
+  using its `results` property.
 * Select the part of state data which the action data results should be added/merged to
-using the `toStateData` property.
+  using the `toStateData` property.
 
 To give an example, let's say we have an action which returns a list of breads and pasta types.
 For our workflow, we are only interested into breads and not the pasta.
@@ -589,9 +590,9 @@ Event data filters can be used to filter consumed event payloads.
 They can be used to:
 
 * Filter the event payload to select only the data that should be added/merged into the state data
-using its `data` property.
+  using its `data` property.
 * Select the part of state data into which the event payload should be added/merged into
-using the `toStateData` property.
+  using the `toStateData` property.
 
 Allows event data to be filtered and added to or merged with the state data. All events have to be in the CloudEvents format
 and event data filters can filter both context attributes and the event payload (data) using the `data` property.
@@ -1611,6 +1612,7 @@ definition "id" must be a constant value.
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | object | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
+| [auth](#Auth-Definition) | Workflow authentication definitions | array or string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
@@ -1771,6 +1773,29 @@ with an expression language / syntax other than the default.
 The `timeouts` property is used to define the default workflow timeouts for workflow, state, action, and branch
 execution. For more information about timeouts and its use cases see the [Workflow Timeouts](#Workflow-Timeouts) section.
 
+The `auth` property can be either an inline [auth](#Auth-Definition) definition array, or a URI reference to
+a resource containing an array of [auth](#Auth-Definition) definitions.
+If defined in a separate resource file (Json or Yaml), `auth` definitions can be re-used by multiple workflow definitions.
+Auth definitions can be used to define authentication that should be used to access
+the resource defined in the `operation` property of the [function](#Function-Definition) definitions.
+If we have the following function definition:
+
+```json
+{
+   "functions": [
+      {
+         "name": "HelloWorldFunction",
+         "operation": "https://secure.resources.com/myapi.json#helloWorld",
+         "authRef": "My Basic Auth"
+      }
+   ]
+}
+```
+
+The `authRef` property is used to reference an authentication definition in
+the `auth` property and should be applied to access the "https://secure.resources.com/myapi.json"
+OpenApi definition file.
+
 The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
 a resource containing an array of [functions](#Function-Definition) definition.
 Referenced resource can be used by multiple workflow definitions.
@@ -1871,7 +1896,7 @@ You can reference the [specification examples](#Examples) to see the `keepActive
 
 #### Workflow States
 
-Workflow states define building blocks of the workflow execution instructions. They define the 
+Workflow states define building blocks of the workflow execution instructions. They define the
 control flow logic instructions on what the workflow is supposed to do.
 Serverless Workflow defines the following Workflow States:
 
@@ -2946,6 +2971,7 @@ section.
 | name | Unique function name | string | yes |
 | operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `expression`, defines the workflow expression. | string | no |
 | type | Defines the function type. Is either `rest`, `rpc` or `expression`. Default is `rest` | enum | no |
+| authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2989,10 +3015,13 @@ Depending on the function `type`, the `operation` property can be:
 * If `type` is `rest`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
   For example `https://petstore.swagger.io/v2/swagger.json#getPetById`.
 * If `type` is `rpc`, a combination of the gRPC proto document URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
-For example `file://myuserservice.proto#UserService#ListUsers`.
+  For example `file://myuserservice.proto#UserService#ListUsers`.
 * If `type` is `graphql`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
-For example `file://myuserservice.proto#UserService#ListUsers`.
+  For example `file://myuserservice.proto#UserService#ListUsers`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
+
+The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
+It is used to provide authentication info to access the resource defined in the `operation` property.
 
 The [`metadata`](#Workflow-Metadata) property allows users to define custom information to function definitions.
 This allows you for example to define functions that describe of a command executions on a Docker image:
@@ -3224,6 +3253,67 @@ for example.
 The `dataOnly` property deals with what Event data is accessible by the consuming Workflow states.
 If its value is `true` (default value), only the Event payload is accessible to consuming Workflow states.
 If `false`, both Event payload and context attributes should be accessible.
+
+##### Auth Definition
+
+Auth definitions can be used to define authentication information that should be applied
+to resources defined in the operation property of [function definitions](#Function-Definition).
+It is not used as authentication information for the function invocation, but just to access
+the resource containing the function invocation information.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Unique auth definition name | string | yes |
+| scheme | Auth scheme, can be "basic", "bearer", or "oauth2". Default is "basic" | enum | yes |
+| properties | Auth scheme properties. Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition) | object | yes |
+
+The `name` property defines the unique auth definition name.
+The `dataOnly` property defines the auth scheme to be used. Cane be "bearer", "basic" or "oath2".
+The `dataOnly` property defines the auth scheme information.
+Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition)
+
+###### Basic Properties Definition
+
+See [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#basic_authentication_scheme) for more information about Basic Authentication scheme.
+
+The Basic properties definition can have two types, either `string` or `object`. 
+If `string` type, it defines a workflow expression referencing a [workflow secret](#workflow-secrets) that contains all needed Basic auth information.
+If `object` type, it has the following properties:
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| username | String or a workflow expression. Contains the user name | string | yes |
+| password | String or a workflow expression. Contains the user password | string | yes |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
+
+###### Bearer Properties Definition
+
+See [here](https://datatracker.ietf.org/doc/html/rfc6750) for more information about Bearer Authentication scheme.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| token | String or a workflow expression. Contains the token information | string | yes |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
+
+###### OAuth2 Properties Definition
+
+See [here](https://oauth.net/2/) for more information about OAuth2 Authentication scheme.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| authority | String or a workflow expression. Contains the authority information | string | no |
+| grantType | Defines the grant type. Can be "password", "clientCredentials", or "tokenExchange" | enum | yes |
+| clientId | String or a workflow expression. Contains the client identifier | string | yes |
+| clientSecret | Workflow secret or a workflow expression. Contains the client secret | string | no |
+| scopes | Array containing strings or workflow expressions. Contains the OAuth2 scopes | array | no |
+| username | String or a workflow expression. Contains the user name. Used only if grantType is 'resourceOwner' | string | no |
+| password | String or a workflow expression. Contains the user password. Used only if grantType is 'resourceOwner' | string | no |
+| audiences | Array containing strings or workflow expressions. Contains the OAuth2 audiences | array | no |
+| subjectToken | String or a workflow expression. Contains the subject token | string | no |
+| requestedSubject | String or a workflow expression. Contains the client identifier | string | no |
+| requestedIssuer | String or a workflow expression. Contains the requested issuer | string | no |
+| requestedSubject | String or a workflow expression. Contains the client identifier | string | no |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 ##### Correlation Definition
 
@@ -4097,7 +4187,7 @@ By default, exceptions that are not handled within branches stop branch executio
 to the Parallel state and should be handled with its `onErrors` definition.
 
 If the parallel states branch defines actions, all exceptions that arise from executing these actions
- are propagated to the parallel state
+are propagated to the parallel state
 and can be handled with the parallel states `onErrors` definition.
 
 If the parallel states defines a subflow action, exceptions that occur during execution of the called workflow
@@ -4254,9 +4344,9 @@ The `interval` property uses a derivative of ISO 8601 recurring time interval fo
 There are three ways to express a recurring interval:
 
 1. `R/<Start>/<Duration>`: Defines the start time and a duration, for example: "R/2020-03-20T13:00:00Z/PT2H", meaning workflow
-instances will be automatically created every 2 hours starting from March 20th 2020 at 1pm UTC.
+   instances will be automatically created every 2 hours starting from March 20th 2020 at 1pm UTC.
 2. `R/<Duration>/<End>`: Defines a duration and an end, for example: "R/PT2H/2020-05-11T15:30:00Z", meaning that workflow instances will be
-automatically created every 2 hours until until May 11th 2020 at 3:30pm UTC (i.e., the last instance will be created 2 hours prior to that, at 1:30pm UTC).
+   automatically created every 2 hours until until May 11th 2020 at 3:30pm UTC (i.e., the last instance will be created 2 hours prior to that, at 1:30pm UTC).
 3. `R/<Duration>`: Defines a duration only, for example: "R/PT2H", meaning workflow instances will be automatically created every 2 hours. The start time of the first interval may be indeterminate, but should be delayed by no more than the specified duration and must repeat on schedule after that (this is effectively supplying the start time "out-of-band" as permitted ISO ISO 8601-1:2019 section 5.6.1 NOTE 1). Each runtime implementation should document how the start time for a duration-only interval is established.
 
 The `cron` property uses a [cron expression](http://crontab.org/)
@@ -4935,9 +5025,9 @@ States referenced by `runBefore` (as well as any other states that they transiti
 * They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
 * They cannot be states marked for compensation (have their `usedForCompensation` property and set to `true`)
 * If it is a single state, it must define an [end definition](#End-Definition), if it transitions to other states,
-at last one must define it.
+  at last one must define it.
 * They can transition only to states are also not part of the main control flow logic (and are not marked
-for compensation).
+  for compensation).
 
 Runtime implementations should raise compile time / parsing exceptions if any of the rules mentioned above are
 not obeyed in the workflow definition.
@@ -5513,7 +5603,7 @@ You can find many Serverless Workflow examples [here](examples/README.md).
 ## Comparison to other workflow languages
 
 You can find info how the Serverless Workflow language compares with
- other workflow languages [here](comparisons/README.md).
+other workflow languages [here](comparisons/README.md).
 
 ## References
 
