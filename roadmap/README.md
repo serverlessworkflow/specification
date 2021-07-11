@@ -37,15 +37,10 @@ _Status description:_
 | ✔️| Updated workflow timeouts | [spec doc](../specification.md) |
 | ✔️| Added Workflow Auth definitions | [spec doc](../specification.md) |
 | ✔️| Added State execution timeouts | [spec doc](../specification.md) |
-| 🚩 | Workflow invocation bindings |  |
-| 🚩 | CE Subscriptions & Discovery |  |
-| 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) |
-| 🚩 | Uniqueness constraint for workflows | [issue](https://github.com/serverlessworkflow/specification/issues/146) |
-| 🚩 | OpenAPI endpoint selection |  |
-| 🚩 | Data triggers |  |
-| 🚩 | JSON schema checks |  |
-| 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
-| ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
+| ✏️ | AsyncAPI operation support |  |
+| ✏️ | OData function definition support |  |
+| ✏️ | Update to retries - state specific rather than error specific |  |
+| ✏️ | Add batching and sync option for Foreach state |  |
 
 ## <a name="v06"></a> v0.6
 
