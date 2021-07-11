@@ -1793,7 +1793,7 @@ If we have the following function definition:
 ```
 
 The `authRef` property is used to reference an authentication definition in
-the `auth` property and should be applied to access the "https://secure.resources.com/myapi.json"
+the `auth` property and should be applied to access the `https://secure.resources.com/myapi.json`
 OpenApi definition file.
 
 The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
