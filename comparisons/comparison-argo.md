@@ -37,7 +37,7 @@ Serverless Workflow specification part.
 
 ### Hello World With Parameters
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#parameters)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#parameters)
 
 <table>
 <tr>
@@ -101,7 +101,7 @@ states:
 
 ### Multi Step Workflow
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#steps)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#steps)
 
 <table>
 <tr>
@@ -197,7 +197,7 @@ states:
 
 ### Directed Acyclic Graph
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#dag)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#dag)
 
 *Note*: Even tho this example can be described (has a single 
 starting task) using the specification, the spec does not currently support multiple
@@ -307,7 +307,7 @@ states:
 
 ### Scripts And Results
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#scripts--results)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#scripts--results)
 
 <table>
 <tr>
@@ -426,7 +426,7 @@ states:
 
 ### Loops
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#loops)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#loops)
 
 <table>
 <tr>
@@ -507,7 +507,7 @@ states:
 
 ### Conditionals
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#conditionals)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#conditionals)
 
 <table>
 <tr>
@@ -619,7 +619,7 @@ states:
 
 ### Retrying Failed Steps
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#retrying-failed-or-errored-steps)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#retrying-failed-or-errored-steps)
 
 <table>
 <tr>
@@ -697,7 +697,7 @@ states:
 
 ### Recursion
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#recursion)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#recursion)
 
 <table>
 <tr>
@@ -795,7 +795,7 @@ states:
 
 ### Exit Handlers
 
-[Argo Example](https://github.com/argoproj/argo/tree/master/examples#exit-handlers)
+[Argo Example](https://github.com/argoproj/argo-workflows/tree/master/examples#exit-handlers)
 
 *Note*: With Serverless Workflow specification we can handle Argos "onExit" functionality
 in a couple of ways. One is the "onErrors" functionality to define errors and transition to the parts
