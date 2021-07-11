@@ -3256,57 +3256,64 @@ If `false`, both Event payload and context attributes should be accessible.
 
 ##### Auth Definition
 
-Auth definition can have two types, namely `string` or `object`. If `string` type,
-it defines an URI to a resource containing auth definitions (json or yaml).
-If `object` type, it has the following properties:
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| name | Unique function name | string | yes |
-| type | Auth type | enum | yes |
-| [metadata](#Workflow-Metadata) | Metadata information | object | no |
-
-TODO - Finish definition parameters !
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{  
-   "name": "My Basic Auth",
-   "type": "basic"
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-name: My Basic Auth
-type: basic
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-Auth definitions are used to define authentication information that should be applied
+Auth definitions can be used to define authentication information that should be applied
 to resources defined in the operation property of [function definitions](#Function-Definition).
 It is not used as authentication information for the function invocation, but just to access
 the resource containing the function invocation information.
 
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Unique auth definition name | string | yes |
+| scheme | Auth scheme, can be "basic", "bearer", or "oauth2". Default is "basic" | enum | yes |
+| properties | Auth scheme properties. Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition) | object | yes |
 
-TODO - Finish parameter descriptions !
+The `name` property defines the unique auth definition name.
+The `dataOnly` property defines the auth scheme to be used. Cane be "bearer", "basic" or "oath2".
+The `dataOnly` property defines the auth scheme information.
+Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition)
+
+###### Basic Properties Definition
+
+See [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#basic_authentication_scheme) for more information about Basic Authentication scheme.
+
+The Basic properties definition can have two types, either `string` or `object`. 
+If `string` type, it defines a workflow expression referencing a [workflow secret](#workflow-secrets) that contains all needed Basic auth information.
+If `object` type, it has the following properties:
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| username | String or a workflow expression. Contains the user name | string | yes |
+| password | String or a workflow expression. Contains the user password | string | yes |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
+
+###### Bearer Properties Definition
+
+See [here](https://datatracker.ietf.org/doc/html/rfc6750) for more information about Bearer Authentication scheme.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| token | String or a workflow expression. Contains the token information | string | yes |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
+
+###### OAuth2 Properties Definition
+
+See [here](https://oauth.net/2/) for more information about OAuth2 Authentication scheme.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| authority | String or a workflow expression. Contains the authority information | string | no |
+| grantType | Defines the grant type. Can be "password", "clientCredentials", or "tokenExchange" | enum | yes |
+| clientId | String or a workflow expression. Contains the client identifier | string | yes |
+| clientSecret | Workflow secret or a workflow expression. Contains the client secret | string | no |
+| scopes | Array containing strings or workflow expressions. Contains the OAuth2 scopes | array | no |
+| username | String or a workflow expression. Contains the user name. Used only if grantType is 'resourceOwner' | string | no |
+| password | String or a workflow expression. Contains the user password. Used only if grantType is 'resourceOwner' | string | no |
+| audiences | Array containing strings or workflow expressions. Contains the OAuth2 audiences | array | no |
+| subjectToken | String or a workflow expression. Contains the subject token | string | no |
+| requestedSubject | String or a workflow expression. Contains the client identifier | string | no |
+| requestedIssuer | String or a workflow expression. Contains the requested issuer | string | no |
+| requestedSubject | String or a workflow expression. Contains the client identifier | string | no |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 ##### Correlation Definition
 

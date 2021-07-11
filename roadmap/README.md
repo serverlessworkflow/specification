@@ -35,6 +35,7 @@ _Status description:_
 | ✔️| Added support for Secrets and Constants | [spec doc](../specification.md) |
 | ✔️| Changed default value of execution timeout `interrupt` property. This is a non-backwards compatible changes. | [spec doc](../specification.md) |
 | ✔️| Updated workflow timeouts | [spec doc](../specification.md) |
+| ✔️| Added Workflow Auth definitions | [spec doc](../specification.md) |
 | 🚩 | Workflow invocation bindings |  |
 | 🚩 | CE Subscriptions & Discovery |  |
 | 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) |
