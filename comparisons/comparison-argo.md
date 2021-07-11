@@ -5,7 +5,7 @@ orchestrating parallel jobs on Kubernetes.
 The Argo markup is YAML based and workflows are implemented as a Kubernetes CRD (Custom Resource Definition).
 Argo is also a [CNCF](https://www.cncf.io/) Incubating project. 
 
-Argo has a number of [examples](https://github.com/argoproj/argo/tree/master/examples) which display 
+Argo has a number of [examples](https://github.com/argoproj/argo-workflows/tree/master/examples) which display 
 different Argo templates.
 
 The purpose of this document is to show side-by-side the Argo markup and the equivalent markup of the 
