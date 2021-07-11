@@ -4942,28 +4942,28 @@ Let's take a look all possible timeout definitions:
 
 #### Workflow Timeout Definition
 
-Workflow timeouts are defined with the top-level timeouts property. It can have two types, `string` and `object`.
+Workflow timeouts are defined with the top-level `timeouts` property. It can have two types, `string` and `object`.
 If `string` type it defines an URI that points to a Json or Yaml file containing the workflow timeout definitions.
 If `object` type, it is used to define the timeout definitions in-line and has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | workflowExecTimeout | Workflow execution timeout (ISO 8601 duration format) | string or object | no |
-| stateExecTimeout | Default workflow state execution timeout (ISO 8601 duration format) | string | no |
+| stateExecTimeout | Default workflow state execution timeout (ISO 8601 duration format) | string or object | no |
 | actionExecTimeouts | Default single actions definition execution timeout (ISO 8601 duration format) | string | no |
 | branchExecTimeout | Default single branch execution timeout (ISO 8601 duration format) | string | no |
 | eventTimeout | Default timeout for consuming defined events (ISO 8601 duration format) | string | no |
 
-The `eventTimeout` property defines the maximum amount of time to wait to consume defined events. If not specified it should be
+The `eventTimeout` property defines the maximum amount of time to wait to consume defined events. If not specified it should default to
 "unlimited".
 
-The `branchExecTimeout` property defines the maximum execution time for a single branch. If not specified it should be
+The `branchExecTimeout` property defines the maximum execution time for a single branch. If not specified it should default to
 "unlimited".
 
-The `actionExecTimeout` property defines the maximum execution time for a single actions definition. If not specified it should be
+The `actionExecTimeout` property defines the maximum execution time for a single actions definition. If not specified it should default to
 "unlimited". Note that an action definition can include multiple actions.
 
-The `stateExecTimeout` property defines the maximum execution time for a single state. If not specified it should be
+The `stateExecTimeout` property defines the maximum execution time for a single workflow state. If not specified it should default to
 "unlimited".
 
 The `workflowExecTimeout` property defines the workflow execution timeout.
@@ -5034,12 +5034,34 @@ not obeyed in the workflow definition.
 
 #### States Timeout Definition
 
-All workflow states can define the `timeout` property and can define different timeout
+All workflow states can define the `timeouts` property and can define different timeout
 settings depending on their state type.
 Please reference each [workflow state definitions](#Workflow-States) for more information on which
 timeout settings are available for each state type.
 
 Workflow states timeouts cannot define the `workflowExecTimeout` property.
+
+All workflow states can define the `stateExecTimeout` property. This property can have two types, namely string 
+and object.
+If defined as string type, it defines the total state execution timeout, including any [retries](#Retry-Definition) 
+as defined in the states retry policy.
+If defined as object type it has the following properties:
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| single | Single state execution timeout, not including retries (ISO 8601 duration format) | string | no |
+| total | Total state execution timeout, including retries (ISO 8601 duration format)  | string | yes |
+
+The `single` property defines a single state execution timeout. This property does not take in account retries.
+Each time the state is executed, whether when it is executes as part of standard control flow logic, or as part of a retry,
+its total execution timeouts is the value of the `single` property. 
+To show an example, let's say that we set the `single`
+property to "PT10S", meaning 10 seconds. A workflow state "X" which defines this timeout when first executed has the max execution timeout 
+set to 10 seconds. If the state execution is then retried, each time it is retried, the individual retry max execution timeout is again 10 seconds.
+
+The `total` property on the other hand defines a state execution timeout taking in account retries.
+This means when this state is executed, its execution timeout is the value of the `total` property no matter how many retries
+have to be performed. If a state execution includes zero or one hundred retries, the total execution timeout is set by this property.
 
 #### Branch Timeout Definition
 
