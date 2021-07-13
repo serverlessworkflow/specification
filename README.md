@@ -57,7 +57,7 @@ Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.i
 | [GO SDK](https://github.com/serverlessworkflow/sdk-go) | [v1.0.0](https://github.com/serverlessworkflow/sdk-go/releases) | [1.0.x](https://github.com/serverlessworkflow/sdk-go/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-go) |
 | [Java SDK](https://github.com/serverlessworkflow/sdk-java) | [2.0.0.Final](https://github.com/serverlessworkflow/sdk-java/releases) | [2.0.x](https://github.com/serverlessworkflow/sdk-java/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-java) |
 | [.NET SDK](https://github.com/serverlessworkflow/sdk-net) | [v0.6.1](https://github.com/serverlessworkflow/sdk-net/releases) |  | [main](https://github.com/serverlessworkflow/sdk-net) |
-| [TypeScript SDK](https://github.com/serverlessworkflow/sdk-typescript) | [v1.0.0](https://github.com/serverlessworkflow/sdk-typescript/releases) | [0.6.x](https://github.com/serverlessworkflow/specification/tree/0.6.x) | [main](https://github.com/serverlessworkflow/sdk-typescript) |
+| [TypeScript SDK](https://github.com/serverlessworkflow/sdk-typescript) | [v1.0.0](https://github.com/serverlessworkflow/sdk-typescript/releases) | [1.0.x](https://github.com/serverlessworkflow/sdk-typescript/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-typescript) |
 | [VSCode Extension](https://github.com/serverlessworkflow/vscode-extension) | [1.6.0](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension) | | [main](https://github.com/serverlessworkflow/vscode-extension) |
 
 ## Runtime
