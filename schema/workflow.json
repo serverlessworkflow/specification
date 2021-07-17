@@ -830,14 +830,6 @@
               "actions",
               "transition"
             ]
-          },
-          {
-            "required": [
-              "name",
-              "type",
-              "actions",
-              "end"
-            ]
           }
         ]
       }
