@@ -1,0 +1,48 @@
+id: workflow
+type: generic
+title: CNCF Serverless Workflow Extension
+description: Associate a Serverless Workflow and its event definitions
+version: 0.1.0
+author: Serverless Workflow Authors
+contact:
+  email: serverlessworkflow@gmail.com
+  url: https://serverlessworkflow.io
+  name: Serverless Workflow Project
+tags:
+  - workflow
+  - serverless
+definitions:
+- hooks:
+  - info
+  - channels.*.publish
+  - channels.*.subscribe
+  schema:
+    type: object
+    required: []
+    properties:
+      id:
+        type: string
+      version:
+        type: string
+      event:
+        type: string
+  examples:
+  - description: Example configurations for both info and publis/subscript
+    associateWorkflow:
+      info:
+        title: My workflow application
+        x-workflow:
+          id: myworkflowid
+          version: myworkflowversion
+    assignPublishEvent:
+      channels:
+        hello:
+          publish:
+            x-workflow:
+              event: 'My Consumed Event'
+    assignSubscribeEvent:
+      channels:
+        goodbye:
+          subscribe:
+            x-workflow:
+              event: 'My Produced Event'
