@@ -288,8 +288,8 @@ The workflow data output is the data output of the last executed workflow state.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| input | Workflow expression to filter the states data input | string | no |
-| output | Workflow expression that filters the states data output | string | no |
+| input | Workflow expression to filter the states data input | [expression](#workflow-expressions) | no |
+| output | Workflow expression that filters the states data output | [expression](#workflow-expressions) | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -419,9 +419,8 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
-| results | Workflow expression that filters the actions data results | string | no |
-| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
+| fromStateData | Workflow expression that selects state data that the action can use | [expression](#workflow-expressions) | no |
+| toStateData | Workflow expression to save the result of the operation provided in expression variable `$RESULT`. If not specified, the action result is merged at the top-level state data (default `${ . *= $RESULT }`) | [expression](#workflow-expressions) | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -437,9 +436,8 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 ```json
 {
   "actionDataFilter": {
-    "fromStateData": "${ .language }",
-    "results": "${ .results.greeting }",
-    "toStateData": "${ .finalgreeting }"
+    "fromStateData": "${ .language }", 
+    "toStateData": "${ .finalgreeting = $RESULT.greeting }"
   }
 }
 ```
@@ -450,8 +448,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 ```yaml
 actionDataFilter:
   fromStateData: "${ .language }"
-  results: "${ .results.greeting }"
-  toStateData: "${ .finalgreeting }"
+  toStateData: "${ .finalgreeting = $RESULT.greeting }"
 ```
 
 </td>
@@ -460,16 +457,22 @@ actionDataFilter:
 
 </details>
 
-Action data filters can be used inside [Action definitions.](#Action-Definition)
-Each action can define this filter which can:
+Action data filters can be used inside [Action definitions.](
+#Action-Definition).
 
-* Filter the state data to select only the data that can be used within function definition arguments using its `fromStateData` property.
-* Filter the action results to select only the result data that should be added/merged back into the state data
-  using its `results` property.
-* Select the part of state data which the action data results should be added/merged to
-  using the `toStateData` property.
+The `fromStateData` property filters the state data to select only the data that
+can be used within function definition arguments.
+By default, the workflow expressions are evaluated against the entire state
+data.
 
-To give an example, let's say we have an action which returns a list of breads and pasta types.
+The `toStateData` property can customize how the action's result will be
+embedded into the state data.
+The expression can access the action result through the `$RESULT` variable.
+If not set to a custom expression, the action result is merged at the top-level
+of state data (equivalent to `${ . *= $RESULT }`).
+
+To give an example, let's say we have an action which returns a list of breads
+and pasta types.
 For our workflow, we are only interested into breads and not the pasta.
 
 Action results:
@@ -481,7 +484,7 @@ Action results:
 }
 ```
 
-We can use an action data filter to filter only the breads data:
+We can use an action data filter to save only the breads:
 
 ```json
 {
@@ -489,7 +492,7 @@ We can use an action data filter to filter only the breads data:
     {
        "functionRef": "breadAndPastaTypesFunction",
        "actionDataFilter": {
-          "results": "${ {breads: .breads} }"
+          "toStateData": "${ .breads = $RESULT.breads} }"
        }
     }
  ]
@@ -525,8 +528,7 @@ and have the following action definition:
     {
        "functionRef": "breadAndPastaTypesFunction",
        "actionDataFilter": {
-          "results": "${ [ .breads[0], .pasta[1] ] }",
-          "toStateData": "${ .itemsToBuyAtStore }"
+          "toStateData": "${ .itemsToBuyAtStore = [ $RESULT.breads[0], $RESULT.pasta[1] ] }"
        }
     }
  ]
@@ -550,9 +552,7 @@ into. With this, after our action executes the state data would be:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| data | Workflow expression that filters the event data (payload) | string | no |
-| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
-
+| toStateData | Workflow expression to save the result of the event reception provided in expression variable `$RESULT`. If not specified, the event is merged at the top-level state data (default `${ . *= $RESULT }`) | [expression](#workflow-expressions) | no |
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
 
@@ -567,7 +567,7 @@ into. With this, after our action executes the state data would be:
 ```json
 {
     "eventDataFilter": {
-       "data": "${ .data.results }"
+       "toStateData": "${ .receivedEvent = $RESULT }"
     }
 }
 ```
@@ -577,7 +577,7 @@ into. With this, after our action executes the state data would be:
 
 ```yaml
 eventDataFilter:
-  data: "${ .data.results }"
+  toStateData: "${ .receivedEvent = $RESULT }"
 ```
 
 </td>
@@ -586,16 +586,16 @@ eventDataFilter:
 
 </details>
 
-Event data filters can be used to filter consumed event payloads.
-They can be used to:
+Event data filters can be used to customize how the consumed event will be
+embedded into the state data. An expression in the `toStateData` property can
+address the event through the `$RESULT` variable.
 
-* Filter the event payload to select only the data that should be added/merged into the state data
-  using its `data` property.
-* Select the part of state data into which the event payload should be added/merged into
-  using the `toStateData` property.
+When `toStateData` is not set to a custom expression, the event is merged at the
+top-level state data (equivalent to `${ . *= $RESULT }`).
 
-Allows event data to be filtered and added to or merged with the state data. All events have to be in the CloudEvents format
-and event data filters can filter both context attributes and the event payload (data) using the `data` property.
+All events have to be in the CloudEvents format. The [Event definition](#Event-Definition)'s `dataOnly` property decides whether `$RESULT` carries
+only the `data` attribute of the event (default, `dataOnly = true`) or whether
+it contains the entire event envelope (`dataOnly = false`).
 
 Here is an example using an event filter:
 
@@ -603,9 +603,11 @@ Here is an example using an event filter:
 <img src="media/spec/event-data-filter-example1.png" height="400px" alt="Event Data Filter Example"/>
 </p>
 
-Note that the data input to the Event data filters depends on the `dataOnly` property of the associated [Event definition](#Event-Definition).
-If this property is not defined (has default value of `true`), Event data filter expressions are evaluated against the event payload (the CloudEvents `data` attribute only). If it is set to
-`false`, the expressions should be evaluated against the entire CloudEvent (including its context attributes).
+If the [Event definition](#Event-Definition)'s `dataOnly` property is not
+defined (has default value of `true`), Event data filter expression will be
+provided only the event payload (the CloudEvents `data` attribute only) through
+the `$RESULT` variable. If the property is set to `false`, the expression
+should be given the entire CloudEvent (including its context attributes).
 
 #### Using multiple data filters
 
@@ -626,28 +628,26 @@ a workflow with a single event state and show how data filters can be combined.
             "onEvents": [{
                 "eventRefs": ["CustomerArrivesEvent"],
                 "eventDataFilter": {
-                    "data": "${ .customer }",
-                    "toStateData": "${ .customerInfo }"
+                    "toStateData": "${ .customerInfo = $RESULT.customer }"
                 },
                 "actions":[
                     {
                         "functionRef": {
                             "refName": "greetingFunction",
                             "arguments": {
-                                "greeting": "${ .spanish } ",
-                                "customerName": "${ .customerInfo.name } "
+                                "greeting": "${ .spanish }",
+                                "customerName": "${ .customerInfo.name }"
                             }
                         },
                         "actionDataFilter": {
                             "fromStateData": "${ .hello }",
-                            "results": "${ .greetingMessageResult }",
-                            "toStateData": "${ .finalCustomerGreeting }"
+                            "toStateData": "${ .finalCustomerGreeting = $RESULT.greetingMessageResult }"
                         }
                     }
                 ]
             }],
             "stateDataFilter": {
-                "input": "${ .greetings } ",
+                "input": "${ .greetings }",
                 "output": "${ .finalCustomerGreeting }"
             },
             "end": true
@@ -732,10 +732,12 @@ At this point our state data should be:
 }
 ```
 
-**(2) CloudEvent of type "customer-arrival-type" is consumed**: Once the event is consumed, the "eventDataFilter" is triggered.
-Its "data" expression selects the "customer" object from the events data. The "toStateData" expression
-says that we should add/merge this selected event data to the state data in its "customerInfo" property. If this property
-exists it should be merged, if it does not exist, one should be created.
+**(2) CloudEvent of type "customer-arrival-type" is consumed**: Once the event
+is consumed, the `eventDataFilter` is triggered.
+Its `toStateData` expression assign's the event's "customer" object
+(`$RESULT.customer`) to the state data's "customerInfo" property.
+If this property exists it should be merged, if it does not exist, one should be
+created.
 
 At this point our state data contains:
 
@@ -762,9 +764,10 @@ At this point our state data contains:
 ```
 
 **(3) Event state performs its actions**:
-Before the first action is executed, its actionDataFilter is invoked. Its "fromStateData" expression filters
-the current state data to select from its data that should be available to action arguments. In this example
-it selects the "hello" property from the current state data.
+Before the first action is executed, its actionDataFilter is invoked.
+Its `fromStateData` expression filters the current state data to select from its
+data that should be available to action arguments.
+In this example, it selects the "hello" property from the current state data.
 At this point the action is executed.
 We assume that for this example "greetingFunction" returns:
 
@@ -778,9 +781,8 @@ We assume that for this example "greetingFunction" returns:
 }
 ```
 
-After the action is executed, the actionDataFilter "results" expression is evaluated to filter the results returned from the action execution. In this case, we select only the "greetingMessageResult" element from the results.
-
-The action filters "toStateData" expression then defines that we want to add/merge this action result to
+After the action is executed, the actionDataFilter "toStateData" expression is
+evaluated to assign only the "greetingMessageResult" element from the result to
 state data under the "finalCustomerGreeting" element.
 
 At this point, our state data contains:
@@ -826,15 +828,15 @@ Because our event state is also an end state, its data output becomes the final 
 Consumed event data (payload) and action execution results should be merged into the state data.
 Event and action data filters can be used to give more details about this operation.
 
-By default, with no data filters specified, when an event is consumed, its entire data section (payload) should be merged
-to the state data. Merging should be applied to the entire state data JSON element.
+By default, with "toStateData" expression specified, when an event is consumed,
+its entire data section (payload) should be merged deep with the state data
+object.
+The jq equivalent expression of this is ". * $RESULT" and it should be noted
+that it deep-merges objects, but does not concatenate slices.
 
-In case of event and action filters, their "toStateData" property can be defined to select a specific element
-of the state data with which merging should be done against. If this element does not exist, a new one should
-be created first.
-
-When merging, the state data element and the data (payload)/action result should have the same type, meaning
-that you should not merge arrays with objects or objects with arrays etc.
+Note that when merging with jq using either `+` or `*` requires the elements to
+both have the object type, meaning that you can not merge arrays with objects or
+objects with arrays etc.
 
 When merging elements of type object should be done by inserting all the key-value pairs from both objects into
 a single combined object. If both objects contain a value for the same key, the object of the event data/action results
@@ -873,63 +875,9 @@ After merging the state data should be:
 }
 ```
 
-Merging array types should be done by concatenating them into a larger array including unique elements of both arrays.
-To give an example, merging:
-
-```json
-{
-    "customers": [
-      {
-        "name": "John",
-        "address": "1234 street",
-        "zip": "12345"
-      },
-      {
-        "name": "Jane",
-        "address": "4321 street",
-        "zip": "54321"
-      }
-    ]
-}
-```
-
-into state data:
-
-```json
-{
-    "customers": [
-      {
-        "name": "Michael",
-        "address": "6789 street",
-        "zip": "6789"
-      }
-    ]
-}
-```
-
-should produce state data:
-
-```json
-{
-    "customers": [
-      {
-        "name": "Michael",
-        "address": "6789 street",
-        "zip": "6789"
-      },
-      {
-        "name": "John",
-        "address": "1234 street",
-        "zip": "12345"
-      },
-      {
-        "name": "Jane",
-        "address": "4321 street",
-        "zip": "54321"
-      }
-    ]
-}
-```
+Deep-merging array types needs to be manually setup. For example, to concatenate
+two customer lists into a larger array of both arrays, the expression
+`${ .customers += $RESULT.customers }` can merge the two arrays.
 
 To give an example, merging:
 
@@ -988,12 +936,14 @@ should produce state data:
 }
 ```
 
-Merging number types should be done by overwriting the data from events data/action results into the merging element of the state data.
+Merging any other types (number, string) should be done by overwriting the data
+from events data/action results into the merging element of the state data.
 For example merging action results:
 
 ```json
 {
     "age": 30
+    "pet": "dog",
 }
 ```
 
@@ -1002,6 +952,7 @@ into state data:
 ```json
 {
     "age": 20
+    "pet": "cat",
 }
 ```
 
@@ -1010,12 +961,9 @@ would produce state data:
 ```json
 {
     "age": 30
+    "pet": "dog",
 }
 ```
-
-Merging string types should be done by overwriting the data from events data/action results into the merging element of the state data.
-
-Merging number types should be done by overwriting the data from events data/action results into the merging element of the state data.
 
 ### Workflow Functions
 
@@ -1276,7 +1224,9 @@ Which would execute the mutation, creating the object and returning the followin
 }
 ```
 
-Note you can include [expressions](#Workflow-Expressions) in both `arguments` and `selectionSet`:
+Note you can include [expressions](#Workflow-Expressions) in both `arguments` 
+and `selectionSet`. The following example uses JQ string interpolation to 
+generate a valid `selectionSet` string.
 
 ```json
 {
@@ -1284,7 +1234,7 @@ Note you can include [expressions](#Workflow-Expressions) in both `arguments` an
   "arguments": {
     "id": "${ .petId }"
   },
-  "selectionSet": "{ id, name, age(useDogYears: ${ .isPetADog }) { dateOfBirth, years } }"
+  "selectionSet": "${ '{ id, name, age(useDogYears: \\(.isPetADog)) { dateOfBirth, years }' }"
 }
 ```
 
@@ -1315,7 +1265,7 @@ Let's take a look at an example of such definitions:
     "type": "expression"
   },
   {
-    "name": "isMinor",
+    "name": " is a minor ?",
     "operation": ".applicant | .age < 18",
     "type": "expression"
   }
@@ -1339,12 +1289,12 @@ Our expression function definitions can now be referenced by workflow states whe
      "dataConditions": [
         {
           "name": "Applicant is adult",
-          "condition": "${ fn:isAdult }",
+          "condition": "$fn{isAdult}",
           "transition": "ApproveApplication"
         },
         {
           "name": "Applicant is minor",
-          "condition": "${ fn:isMinor }",
+          "condition": "$fn{ is a minor ?}",
           "transition": "RejectApplication"
         }
      ],
@@ -1420,45 +1370,111 @@ For more information about workflow expressions, reference the [Workflow Express
 ### Workflow Expressions
 
 Workflow model parameters can use expressions to select/manipulate workflow and/or state data.
+The JSON specification explicitly allows expressions when they can be used in
+leaf parameters.
 
-Note that different data filters play a big role as to which parts of the states data are to be used when the expression is
-evaluated. Reference the
-[State Data Filtering](#State-data-filters) section for more information about state data filters.
+Expressions are evaluated during execution of the workflow against the state
+data and are provided additional inputs through expression variables.
 
-By default, all workflow expressions should be defined using the [jq](https://stedolan.github.io/jq/) [version 1.6](https://github.com/stedolan/jq/releases/tag/jq-1.6) syntax.
-You can find more information on jq in its [manual](https://stedolan.github.io/jq/manual/).
+For example, expressions can be used for the following purposes:
+- filter state data upon entering and leaving a state, ([State Data Filter](
+  #State-data-filters) `input` and `output`)
+- select a subset of state data to be used in an action ([Action Data Filter](
+  #Action-data-filters) `fromStateData`, `result`)
+- set the arguments to an action from state data ([FunctionRef Definition](
+  #functionref-definition))
+- define functions that can be executed as an action ([using functions for
+  expression evaluation](#Using-Functions-For-Expression-Evaluation))
+- create the content of a produced event ([ProducedEvent Definition](
+  #producedevent-definition))
+- assign the result of an action to state data ([Action Data Filter](
+  #Action-data-filters) `toStateData`)
+- assign the result of a consumed event to state data ([Event Data Filter](
+  #Event-data-filters) `toStateData`)
+- create the data and context attributes of a produced event ([ProducedEvent 
+  Definition](#producedevent-definition))
+- select the array of inputs to actions in a [ForEach State](#foreach-state)
+  with its `inputCollection` expression
+- assemble the outputs from a [ForEach State](#foreach-state) with the
+  `outputCollection` expression
+- define a condition against state data in [Switch State Data Conditions](
+  #switch-state-data-conditions))
 
-Serverless Workflow does not mandate the use of jq and it's possible to use an expression language
-of your choice with the restriction that a single one must be used for all expressions
-in a workflow definition. If a different expression language needs to be used, make sure to set the workflow
-`expressionLang` property to identify it to runtime implementations.
+A workflow expression can be defined where it is applied as an _expression
+string_ or it can be defined as an [expression function definition](
+#Using-Functions-For-Expression-Evaluation) and then applied using an
+_expression reference string_.
 
-Note that using a non-default expression language could lower the portability of your workflow definitions
-across multiple container/cloud platforms.
+An _expression string_ starts with the `${` token and ends on `}`. All text
+between the curly brackets is evaluated using the workflow's specified
+[`expressionLang`](#Workflow-Definition-Structure).
+Note, that without the closing bracket at the very end of the string, it won't
+be evaluated as an expression.
 
-All workflow expressions in this document, [specification examples](examples/README.md) as well as [comparisons examples](comparisons/README.md)
-are written using the default jq syntax.
+A workflow expression can also be defined in an [expression function
+definition](#Using-Functions-For-Expression-Evaluation) and then applied by
+reference.
+To reference a expression function, an _expression reference string_ is used
+that starts with the `$fn{` token and ends with `}`.
+The _expression reference string_ has the format `$fn{<function name>}`, where
+`<function name>` has to match the user-specified `name` of the defined
+expression function of `type` `"expression"`.
 
-Workflow expressions have the following format:
+On the rare occasion that one needs to create a string that literally looks like
+an _expression string_ or an _expression reference string_, the dollar sign
+should be repeated.
+Only if the remainder matches a workflow expression markup, the runtime reduces
+the double dollar signs `$$` to a single dollar sign `$` and refrains from
+evaluating it as a workflow expression.
 
 ```text
-${ expression }
+"foo": "$${ this is text in a string starting with '${' and ending with a single '}' }"
+"foo": "$$fn{ this is text in a string starting with '$fn{' and ending with a single '}' }"
 ```
 
-Where `expression` can be either an in-line expression, or a reference to a
-defined [expression function definition](#Using-Functions-For-Expression-Evaluation).
+The expression language gives access to the state data to select or transform
+the state data when processing the workflow expression. It also provides access
+to [workflow secrets](#Workflow-secrets) and [workflow constants](
+#Workflow-constants).
 
-To reference a defined [expression function definition](#Using-Functions-For-Expression-Evaluation)
-the expression must have the following format, for example:
+Note that different data filters play a big role as to which parts of the
+states data are to be used when the expression is evaluated during workflow
+execution, e.g. a [State Data Filter](#State-data-filters) `input`
+expression can only access data that has been passed to that state, inside an
+action, only the data filtered by the [Action Data Filter](#Action-data-filters)
+`fromStateData` parameter are available to generate arguments to an action, etc.
+Please refer to the specification of filters for more inforamtion, e.g. [State
+Data Filter](#State-data-filters), [Action Data Filter](#Action-data-filters),
+[Event Data Filter](#Event-data-filters) and see the specification of individual
+parameters if you want to set them using an expression.
 
-```text
-${ fn:myExprFuncName }
-```
+The default expression language is [jq](https://stedolan.github.io/jq/).
+This version of the workflow language supports jq [version 1.6](
+https://github.com/stedolan/jq/releases/tag/jq-1.6) syntax.
+You can find more information on jq v1.6 in its [manual](
+https://stedolan.github.io/jq/manual/v1.6/).
 
-Where `fn` is the namespace of the defined expression functions and
-`myExprName` is the unique expression function name.
+JQ expressions provide the state data as the root document (`.`). 
+Global [secrets](#Workflow-secrets) and [constants](#Workflow-constants) can be
+accessed through the jq variables `$SECRETS` and `$CONST` respectively, which
+makes them reserved variable names in JQ expressions.
 
-To show some expression examples, let's say we have the following state data:
+Serverless Workflow does not mandate the use of jq and it is possible to use an
+expression language of your choice with the restriction that a single one must
+be used for all expressions in a workflow definition. If a different expression
+language needs to be used, make sure to set the workflow `expressionLang`
+property to identify it to runtime implementations.
+
+Note that using a non-default expression language could lower the portability of
+your workflow definitions across multiple container/cloud platforms.
+
+All workflow expressions in this document, [specification examples](
+examples/README.md) as well as [comparisons examples](comparisons/README.md) are
+written using the default jq syntax.
+
+#### Expression examples
+
+The examples below assume the following state data:
 
 ```json
 {
@@ -1484,22 +1500,10 @@ To show some expression examples, let's say we have the following state data:
 }
 ```
 
-In our workflow model we can define our reusable expression function:
+#### Inline Expression
 
-```json
-{
-"functions": [
-  {
-    "name": "IsAdultApplicant",
-    "operation": ".applicant | .age > 18",
-    "type": "expression"
-  }
-]
-}
-```
-
-We will get back to this function definition in just a bit, but now let's take a look at using
-an inline expression that sets an input parameter inside an action for example:
+Let's take a look at using an inline expression that sets an input parameter
+inside an action:
 
 ```json
 {
@@ -1517,6 +1521,55 @@ an inline expression that sets an input parameter inside an action for example:
 ```
 
 In this case our input parameter `applicantName` would be set to "John Doe".
+
+#### Path Expression
+
+Some parameters expect an expression to specify a path, e.g.:
+  - [Action Data Filter](#Action-data-filters) `toStateData`
+  - [Event Data Filter](#Event-data-filters) `toStateData` 
+  - [ForEach State](#Foreach-state) `outputCollection` and `iterationParam`
+
+Expressions that require a path to be specified are used as left-hand side
+expression in an assignment.
+Assume the `confirmApplicant` function of the previous example returned the
+following result object:
+```json
+{
+  "confirmationUuid": "123e4567-e89b-12d3-a456-426614174000"
+}
+```
+
+We can store the identifier with the applicant information in the state data by
+extending the previous example with an `actionDataFilter`:
+
+```json
+{
+"actions": [
+    {
+        "functionRef": {
+            "refName": "confirmApplicant",
+            "parameters": {
+                "applicantName": "${ .applicant.name }"
+            },
+            "actionDataFilter": {
+              "toStateData": "${ .applicant.confirmationId = .confirmationUuid }"
+            }
+        }
+    }
+]
+}
+```
+
+The `actionDataFilter` uses the `result` filter to reduce the result object to 
+the UUID string `"123e4567-e89b-12d3-a456-426614174000"`. Next, the `toStateData` 
+parameter selects the path to store this result to.
+
+This is equivalent to the following assignment:
+```text
+.applicant.confirmationId = "123e4567-e89b-12d3-a456-426614174000"
+```
+
+#### Filter Expression
 
 Expressions can also be used to select and manipulate state data, this is in particularly useful for
 state data filters.
@@ -1554,45 +1607,33 @@ This would set the data output of the particular state to:
 
 [Switch state](#Switch-State) [conditions](#Switch-State-Data-Conditions) require for expressions to be resolved to a boolean value (true / false).
 
-We can now get back to our previously defined "IsAdultApplicant" expression function and reference it:
+#### Defined Expression Functions
+
+In our workflow model we can define our reusable expression function:
+
+```json
+{
+"functions": [
+  { 
+    "name": "IsAdultApplicant",
+    "operation": "${ .applicant | .age > 18 }",
+    "type": "expression"
+  }
+]
+}
+```
+
+The function name `IsAdultApplicant` can be referenced anywhere where expressions are allowed.
+Its return type is boolean, so it makes a useful condition:
 
 ```json
 {
   "dataConditions": [ {
-    "condition": "${ fn:IsAdultApplicant }",
+    "condition": "$fn{IsAdultApplicant}",
     "transition": "StartApplication"
   }]
 }
 ```
-
-As previously mentioned, expressions are evaluated against certain subsets of data. For example
-the `parameters` param of the [functionRef definition](#FunctionRef-Definition) can evaluate expressions
-only against the data that is available to the [action](#Action-Definition) it belongs to.
-One thing to note here are the top-level [workflow definition](#Workflow-Definition-Structure) parameters. Expressions defined
-in them can only be evaluated against the initial [workflow data input](#Workflow-Data-Input).
-
-For example let's say that we have a workflow data input of:
-
-```json
-{
-   "inputVersion" : "1.0.0"
-}
-```
-
-we can use this expression in the workflow "version" parameter:
-
-```json
-{
-   "id": "MySampleWorkflow",
-   "name": "Sample Workflow",
-   "version": "${ .inputVersion }",
-   "specVersion": "0.7"
-}
-```
-
-which would set the workflow version to "1.0.0".
-Note that the workflow "id" property value is not allowed to use an expression. The workflow
-definition "id" must be a constant value.
 
 ### Workflow Definition Structure
 
@@ -2639,8 +2680,10 @@ The `timeouts` property can be used to define state specific timeout settings. I
 | id | Unique state id | string | no |
 | name | State name | string | yes |
 | type | State type | string | yes |
-| inputCollection | Workflow expression selecting an array element of the states data | string | yes |
-| outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
+| inputCollection | Array or a workflow expression returning an array | 
+[expression](#workflow-expressions) or array | yes |
+| outputCollection | Workflow expression merging the `$RESULT` of each iteration
+into states data | [expression](#workflow-expressions) | no |
 | iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
 | max | Specifies how upper bound on how many iterations may run in parallel | string or number | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes |
@@ -2670,7 +2713,7 @@ The `timeouts` property can be used to define state specific timeout settings. I
     "type": "foreach",
     "inputCollection": "${ .orders }",
     "iterationParam": "singleorder",
-    "outputCollection": "${ .provisionresults }",
+    "outputCollection": "${ .provisionresults += $RESULT }",
     "actions": [
         {
             "functionRef": {
@@ -2692,7 +2735,7 @@ name: ProvisionOrdersState
 type: foreach
 inputCollection: "${ .orders }"
 iterationParam: "singleorder"
-outputCollection: "${ .provisionresults }"
+outputCollection: "${ .provisionresults += $RESULT }"
 actions:
 - functionRef:
     refName: provisionOrderFunction
@@ -2708,17 +2751,25 @@ actions:
 
 ForEach states can be used to execute [actions](#Action-Definition) for each element of a data set.
 
-Each iteration of the ForEach state should be executed in parallel.
+The iterations of the ForEach state should be executed in parallel.
 
-You can use the `max` property to set the upper bound on how many iterations may run in parallel. The default
-of the `max` property is zero, which places no limit on number of parallel executions.
+You can use the `max` property to set the upper bound on how many iterations may
+run in parallel.
+The default of the `max` property is zero, which places no limit on number of
+parallel executions.
 
-The `inputCollection` property is a workflow expression which selects an array in the states data. All iterations
-are performed against data elements of this array. If this array does not exist, the runtime should throw
-an error. This error can be handled inside the states [`onErrors`](#Error-Definition) definition.
+The `inputCollection` property is a workflow expression which returns an array
+from the states data.
+One iteration is performed against each data element of this array.
+If this array does not exist or if the returned type is not an array, the
+runtime should throw an error.
+This error can be handled inside the states [`onErrors`](#Error-Definition)
+definition.
 
-The `outputCollection` property is a workflow expression which selects an array in the state data where the results
-of each iteration should be added to. If this array does not exist, it should be created.
+The `outputCollection` property is a workflow expression that can merge each
+result of an iteration to the state data. The expression is evaluated for every
+completed iteration. The result of the iteration is provided to the expression
+interpreter and should be made available as the `RESULT` variable.
 
 The `iterationParam` property defines the name of the iteration parameter passed to each parallel execution of the ForEach state.
 It should contain the unique element of the `inputCollection` array and passed as data input to the actions/workflow defined.
@@ -2781,7 +2832,7 @@ and our workflow is defined as:
       "type":"foreach",
       "inputCollection": "${ [.orders[] | select(.completed == true)] }",
       "iterationParam": "completedorder",
-      "outputCollection": "${ .confirmationresults }",
+      "outputCollection": "${ .confirmationresults += $RESULT }",
       "actions":[
       {
        "functionRef": {
@@ -2814,7 +2865,7 @@ states:
   type: foreach
   inputCollection: "${ [.orders[] | select(.completed == true)] }"
   iterationParam: completedorder
-  outputCollection: "${ .confirmationresults }"
+  outputCollection: "${ .confirmationresults += $RESULT }"
   actions:
   - functionRef:
       refName: sendConfirmationFunction
@@ -2831,10 +2882,11 @@ states:
 The workflow data input containing order information is passed to the `SendConfirmState` [ForEach](#ForEach-State) state.
 The ForEach state defines an `inputCollection` property which selects all orders that have the `completed` property set to `true`.
 
-For each element of the array selected by `inputCollection` a JSON object defined by `iterationParam` should be
-created containing an unique element of `inputCollection` and passed as the data input to the parallel executed actions.
+For each element of the completed orders, the list of actions is executed.
+The actions can refer to the iteration's element by the parameter defined in the
+`iterationParam` called `completedorder`.
 
-So for this example, we would have two parallel executions of the `sendConfirmationFunction`, the first one having data:
+In this example, we would have two parallel executions of the `sendConfirmationFunction`, the first one having data:
 
 ```json
 {
@@ -2858,7 +2910,9 @@ and the second:
 }
 ```
 
-The results of each parallel action execution are stored as elements in the state data array defined by the `outputCollection` property.
+For every completed parallel iteration, the exeution evaluates the workflow
+expression in the `outputCollection` property and provides the result of the
+iteration in the `$RESULT` variable.
 
 The `timeouts` property can be used to set state specific timeout settings. ForEach states can define the
 `stateExecTimeout` and `actionExecTimeout` settings. For more information on workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts)
@@ -3008,7 +3062,7 @@ operation: https://hellworldservice.api.com/api.json#helloWorld
 
 The `name` property defines an unique name of the function definition.
 
-The `type` property defines the function type. Its value can be either `rest` or `expression`. Default value is `rest`.
+The `type` property defines the function type. Its default value is `rest`.
 
 Depending on the function `type`, the `operation` property can be:
 
@@ -3571,8 +3625,8 @@ it with its `object` type which has the following properties:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | refName | Name of the referenced [function](#Function-Definition) | string | yes |
-| arguments | Arguments (inputs) to be passed to the referenced function | object | yes if function type is `graphql`, otherwise no |
-| selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes if function type is `graphql`, otherwise no |
+| arguments | Arguments (inputs) to be passed to the referenced function | object or [expression](#workflow-expressions) | yes if function type is `graphql`, otherwise no |
+| selectionSet | Used if function type is `graphql`. A string or an expression returning a valid GraphQL selection set | string or [expression](#workflow-expressions) | yes if function type is `graphql`, otherwise no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3633,8 +3687,8 @@ Here is an example of using the `arguments` property:
 | --- | --- | --- | --- |
 | [triggerEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
 | [resultEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | yes |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `triggerEventRef`. | string or object | no |
-| contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
+| data | The data (payload) of the produced event referenced by `triggerEventRef`. Workflow expressions can be used. | any | no |
+| contextAttributes | Add additional event extension context attributes to the trigger/produced event. Workflow expressions can be used. | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3673,13 +3727,19 @@ eventRef:
 
 </details>
 
-References a `produced` and `consumed` [event definitions](#Event-Definition) via the "triggerEventRef" and `resultEventRef` properties, respectively.
+References a `produced` and `consumed` [event definitions](#Event-Definition)
+via the `triggerEventRef` and `resultEventRef` properties, respectively.
 
-The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
-to be used as payload of the event referenced by `triggerEventRef`. If it is of object type, you can define a custom object to be the event payload.
+The `data` property can have any type. Expressions may be used to create values,
+e.g. it can be a single workflow expression or an object that has workflow
+expressions for parameter values. The [data content type of the CloudEvent](
+https://github.com/cloudevents/spec/blob/master/spec.md#datacontenttype) decides
+the encoding of the provided `data`.
 
-The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
-to the trigger/produced event.
+The `contextAttributes` property allows you to add one or more [extension
+context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+to the generated event. Expressions can be used to define the context
+attributes.
 
 ##### SubFlowRef Definition
 
@@ -4006,7 +4066,7 @@ Transitions allow you to move from one state (control-logic block) to another. F
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Data condition name | string | no |
-| [condition](#Workflow-Expressions) | Workflow expression evaluated against state data. Must evaluate to true or false | string | yes |
+| [condition](#Workflow-Expressions) | Boolean or a workflow expression evaluated against state data. Must evaluate to true or false | string | yes |
 | [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -4058,7 +4118,7 @@ to decide what to do, transition to another workflow state, or end workflow exec
 | --- | --- | --- | --- |
 | name | Event condition name | string | no |
 | eventRef | References an unique event name in the defined workflow events | string | yes |
-| [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
+| [transition](#Transitions) or [end](#End-Definition) | Defines what to do if the event occurs. Transition to another state, or end workflow | object | yes |
 | [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -4513,8 +4573,8 @@ is reached.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | eventRef | Reference to a defined unique event name in the [events](#Event-Definition) definition | string | yes |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the produced event. If object type, a custom object to become the data (payload) of produced event. | string or object | no |
-| contextAttributes | Add additional event extension context attributes | object | no |
+| data | The data (payload) of the produced event. Workflow expressions can be used. | any or [expression](#workflow-expressions) | no |
+| contextAttributes | Add additional event extension context attributes. Workflow expressions can be used. | object or [expression](#workflow-expressions) | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4557,11 +4617,16 @@ Defines the event (CloudEvent format) to be produced when workflow execution com
 The `eventRef` property must match the name of
 one of the defined `produced` events in the [events](#Event-Definition) definition.
 
-The `data` property can have two types, object or string. If of string type, it is an expression that can select parts of state data
-to be used as the event payload. If of object type, you can define a custom object to be the event payload.
+The `data` property can have any type. Expressions may be used to create values,
+e.g. it can be a single workflow expression or an object that has workflow
+expressions for parameter values. The [data content type of the CloudEvent](
+https://github.com/cloudevents/spec/blob/master/spec.md#datacontenttype) decides
+the encoding of the provided `data`.
 
-The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
-to the generated event.
+The `contextAttributes` property allows you to add one or more [extension
+context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+to the generated event. Expressions can be used to define the context
+attributes.
 
 Being able to produce events when workflow execution completes or during state transition
 allows for event-based orchestration communication.
@@ -5466,12 +5531,12 @@ Here is an example of using constants in Workflow expressions:
      "dataConditions": [
         {
           "name": "Applicant is adult",
-          "condition": "${ .applicant | .age >= $CONST.AGE.MIN_ADULT }",
+          "condition": "${.applicant | .age >= $CONST.AGE.MIN_ADULT}",
           "transition": "ApproveApplication"
         },
         {
           "name": "Applicant is minor",
-          "condition": "${ .applicant | .age < $CONST.AGE.MIN_ADULT }",
+          "condition": "${.applicant | .age < $CONST.AGE.MIN_ADULT}",
           "transition": "RejectApplication"
         }
      ],
@@ -5509,37 +5574,33 @@ Workflow constants should not have access to [Workflow secrets definitions](#Wor
 
 ### Workflow Secrets
 
-Secrets allow you access sensitive information, such as passwords, OAuth tokens, ssh keys, etc
-inside your [Workflow Expressions](#Workflow-Expressions).
+Secrets allow you access sensitive information, such as passwords, OAuth tokens,
+ssh keys, etc.
+They can be used in [Workflow Expressions](#Workflow-Expressions).
 
 You can define the names of secrets via the [Workflow top-level "secrets" property](#Workflow-Definition-Structure),
 for example:
 
 ```json
-"secrets": ["MY_PASSWORD", "MY_STORAGE_KEY", "MY_ACCOUNT"]
+"secrets": ["MY_ACCOUNT", "MY_PASSWORD", "urn:example:tenant:accessToken"]
 ```
 
-If secrets are defined in a Workflow definition, runtimes must assure to provide their values
-during Workflow execution.
+If secrets are only named in a Workflow definition, runtimes must assure to
+provide their values during execution.
 
-Secrets can be used only in [Workflow expressions](#Workflow-Expressions) under the `SECRETS` namespace.
-This is reserved namespace that should only be allowed for values defined by the `secrets` property.
-
-Here is an example on how to use secrets and pass them as arguments to a function invocation:
+Secrets can be used only in [workflow expressions](#Workflow-Expressions).
+The default expression language JQ provides secrets through the reserved
+`$SECRETS` variable. Here is an example on how to use secrets and pass them as
+arguments to a function invocation:
 
 ```json
-"secrets": ["AZURE_STORAGE_ACCOUNT", "AZURE_STORAGE_KEY"],
-
-...
-
 {
   "refName": "uploadToAzure",
     "arguments": {
-      "account": "${ $SECRETS.AZURE_STORAGE_ACCOUNT }",
-      "account-key": "${ $SECRETS.AZURE_STORAGE_KEY }",
-      ...
+      "user": "${ $SECRETS.MY_ACCOUNT }",
+      "pass": "${ $SECRETS.MY_PASSWORD }",
+      "token": "${ $SECRETS.\"urn:example:tenant:accessToken\" }"
     }
-
 }
 ```
 

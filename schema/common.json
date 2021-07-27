@@ -4,6 +4,100 @@
   "description": "Serverless Workflow specification - common schema",
   "type": "object",
   "definitions": {
+    "expressionMarkup": {
+      "type": "string",
+      "pattern": "^\\$\\{.*\\}$"
+    },
+    "functionMarkup": {
+      "type": "string",
+      "pattern": "^\\$fn\\{.*\\}$"
+    },
+    "markup": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/expressionMarkup"
+        },
+        {
+          "$ref": "#/definitions/functionMarkup"
+        }
+      ]
+    },
+    "booleanOrMarkup": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/markup"
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "numberOrMarkup": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/markup"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "stringOrMarkup": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/markup"
+        },
+        {
+          "type": "string",
+          "pattern": "^(?!\\$(fn)?\\{.*\\}$)"
+        }
+      ]
+    },
+    "arrayOrMarkup": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/markup"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/anyOrMarkup"
+          }          
+        }
+      ]
+    },
+    "objectOrMarkup": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/markup"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/anyOrMarkup"
+          }
+        }
+      ]
+    },
+    "anyOrMarkup": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/booleanOrMarkup"
+        },
+        {
+          "$ref": "#/definitions/numberOrMarkup"
+        },
+        {
+          "$ref": "#/definitions/stringOrMarkup"
+        },
+        {
+          "$ref": "#/definitions/arrayOrMarkup"
+        },
+        {
+          "$ref": "#/definitions/objectOrMarkup"
+        }
+      ]
+    },
     "metadata": {
       "type": "object",
       "description": "Metadata information",

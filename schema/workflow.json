@@ -391,12 +391,12 @@
               "description": "Name of the referenced function"
             },
             "arguments": {
-              "type": "object",
+              "$ref": "common.json#/definitions/objectOrMarkup",
               "description": "Function arguments/inputs"
             },
             "selectionSet": {
-              "type": "string",
-              "description": "Only used if function type is 'graphql'. A string containing a valid GraphQL selection set"
+              "$ref": "common.json#/definitions/stringOrMarkup",
+              "description": "Only used if function type is 'graphql'. A string or an expression returning a valid GraphQL selection set"
             }
           },
           "additionalProperties": false,
@@ -419,17 +419,14 @@
           "description": "Reference to the unique name of a 'consumed' event definition"
         },
         "data": {
-          "type": [
-            "string",
-            "object"
-          ],
-          "description": "If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by 'triggerEventRef'. If object type, a custom object to become the data (payload) of the event referenced by 'triggerEventRef'."
+          "$ref": "common.json#/definitions/anyOrMarkup",
+          "description": "The data (payload) of the produced event referenced by `triggerEventRef`. Workflow expressions can be used to create values."
         },
         "contextAttributes": {
           "type": "object",
-          "description": "Add additional extension context attributes to the produced event",
+          "description": "Add additional event extension context attributes to the trigger/produced event. Workflow expressions can be used to create values.",
           "additionalProperties": {
-            "type": "string"
+            "$ref": "common.json#/definitions/objectOrMarkup"
           }
         }
       },
@@ -1243,8 +1240,8 @@
           "description": "Data condition name"
         },
         "condition": {
-          "type": "string",
-          "description": "Workflow expression evaluated against state data. Must evaluate to true or false"
+          "$ref": "common.json#/definitions/booleanOrMarkup",
+          "description": "Boolean or a workflow expression evaluated against state data. Must evaluate to true or false"
         },
         "transition": {
           "description": "Workflow transition if condition is evaluated to true",
@@ -1270,7 +1267,7 @@
         },
         "condition": {
           "type": "string",
-          "description": "Workflow expression evaluated against state data. Must evaluate to true or false"
+          "description": "Boolean or a workflow expression evaluated against state data. Must evaluate to true or false"
         },
         "end": {
           "$ref": "#/definitions/end",
@@ -1406,16 +1403,16 @@
           "description": "State end definition"
         },
         "inputCollection": {
-          "type": "string",
-          "description": "Workflow expression selecting an array element of the states data"
+          "$ref": "common.json#/definitions/arrayOrMarkup",
+          "description": "Array or a workflow expression returning an array"
         },
         "outputCollection": {
-          "type": "string",
-          "description": "Workflow expression specifying an array element of the states data to add the results of each iteration"
+          "$ref": "common.json#/definitions/jsonpointer",
+          "description": "Workflow expression merging the `$RESULT` of each iteration into states data"
         },
         "iterationParam": {
           "type": "string",
-          "description": "Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array"
+          "description": "Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain a unique element of the inputCollection array"
         },
         "max": {
           "type": [
@@ -1761,17 +1758,14 @@
           "description": "References a name of a defined event"
         },
         "data": {
-          "type": [
-            "string",
-            "object"
-          ],
-          "description": "If String, expression which selects parts of the states data output to become the data of the produced event. If object a custom object to become the data of produced event."
+          "$ref": "common.json#/definitions/anyOrMarkup",
+          "description": "The data (payload) of the produced event. Workflow expressions can be used."
         },
         "contextAttributes": {
           "type": "object",
-          "description": "Add additional event extension context attributes",
+          "description": "An object containing additional event extension context attributes. Workflow expressions can be used.",
           "additionalProperties": {
-            "type": "string"
+            "$ref": "common.json#/definitions/objectOrMarkup"
           }
         }
       },
@@ -1784,11 +1778,11 @@
       "type": "object",
       "properties": {
         "input": {
-          "type": "string",
+          "$ref": "common.json#/definitions/markup",
           "description": "Workflow expression to filter the state data input"
         },
         "output": {
-          "type": "string",
+          "$ref": "common.json#/definitions/markup",
           "description": "Workflow expression that filters the state data output"
         }
       },
@@ -1798,13 +1792,9 @@
     "eventdatafilter": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "description": "Workflow expression that filters the received event/payload (default: '${ . }')"
-        },
         "toStateData": {
-          "type": "string",
-          "description": " Workflow expression that selects a state data element to which the filtered event should be added/merged into. If not specified, denotes, the top-level state data element."
+          "$ref": "common.json#/definitions/markup",
+          "description": "Workflow expression to save the result of the event reception provided in expression variable `$RESULT`. If not specified, the event is merged at the top-level state data (default `${ . *= $RESULT }`)"
         }
       },
       "additionalProperties": false,
@@ -1814,16 +1804,12 @@
       "type": "object",
       "properties": {
         "fromStateData": {
-          "type": "string",
-          "description": "Workflow expression that selects state data that the state action can use"
-        },
-        "results": {
-          "type": "string",
-          "description": "Workflow expression that filters the actions data results"
+          "$ref": "common.json#/definitions/markup",
+          "description": "Workflow expression that selects state data that the action can use"
         },
         "toStateData": {
-          "type": "string",
-          "description": "Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified, denote, the top-level state data element"
+          "$ref": "common.json#/definitions/jsonpointer",
+          "description": "Workflow expression to save the result of the operation provided in expression variable `$RESULT`. If not specified, the action result is merged at the top-level state data (default `${ . *= $RESULT }`)"
         }
       },
       "additionalProperties": false,
