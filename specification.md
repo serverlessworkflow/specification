@@ -23,12 +23,15 @@
     + [Using multiple data filters](#using-multiple-data-filters)
     + [Data Merging](#data-merging)
   * [Workflow Functions](#workflow-functions)
-    + [Using Functions For RESTful Service Invocations](#using-functions-for-restful-service-invocations)
-    + [Using Functions For RPC Service Invocations](#using-functions-for-rpc-service-invocations)
-    + [Using Functions For GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
+    + [Using Functions for RESTful Service Invocations](#using-functions-for-restful-service-invocations)
+    + [Using Functions for RPC Service Invocations](#using-functions-for-rpc-service-invocations)
+    + [Using Functions for GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
       - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
       - [Invoking a GraphQL `Mutation`](#invoking-a-graphql-mutation)
-    + [Using Functions For Expression Evaluation](#using-functions-for-expression-evaluation)
+    + [Using Functions for OData Service Invocations](#using-functions-for-odata-service-invocations)  
+      - [Creating an OData Function Definition](#creating-an-odata-function-definition)
+      - [Invoking an OData Function Definition](#invoking-an-odata-function-definition)
+    + [Using Functions for Expression Evaluation](#using-functions-for-expression-evaluation)
   * [Workflow Expressions](#workflow-expressions)
   * [Workflow Definition Structure](#workflow-definition-structure)
     + [Workflow States](#workflow-states)
@@ -1029,7 +1032,7 @@ Reference the following sections to learn more about workflow functions:
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
 
-#### Using Functions For RESTful Service Invocations
+#### Using Functions for RESTful Service Invocations
 
 [Functions](#Function-Definition) can be used to describe services and their operations that need to be invoked during
 workflow execution. They can be referenced by states [action definitions](#Action-Definition) to clearly
@@ -1086,7 +1089,7 @@ Note that the referenced function definition type in this case must be `rest` (d
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
-#### Using Functions For RPC Service Invocations
+#### Using Functions for RPC Service Invocations
 
 Similar to defining invocations of operations on RESTful services, you can also use the workflow
 [functions definitions](#Function-Definition) that follow the remote procedure call (RPC) protocol.
@@ -1149,7 +1152,7 @@ Note that the referenced function definition type in this case must be `rpc`.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
-#### Using Functions For GraphQL Service Invocations
+#### Using Functions for GraphQL Service Invocations
 
 If you want to use GraphQL services, you can also invoke them using a similar syntax to the above methods.
 
@@ -1294,9 +1297,60 @@ Note that GraphQL Subscriptions are not supported at this time.
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
-#### Using Functions For Expression Evaluation
+#### Using Functions for OData Service Invocations
 
-In addition to defining RESTful, RPC and GraphQL services and their operations, workflow [functions definitions](#Function-Definition)
+Similar to defining invocations of operations on GraphQL services, you can also use workflow
+[Functions Definitions](#Function-Definition) to execute complex queries on an [OData](https://www.odata.org/documentation/) service.
+
+##### Creating an OData Function Definition
+
+We start off by creating a workflow [Functions Definitions](#Function-Definition). For example:
+
+
+```json
+{
+"functions": [
+  {
+    "name": "queryPersons",
+    "operation": "https://services.odata.org/V3/OData/OData.svc#Persons",
+    "type": "odata"
+  }
+]
+}
+```
+
+Note that the `operation` property must follow the following format:
+
+```text
+<URI_to_odata_service>#<Entity_Set_Name>
+```
+
+##### Invoking an OData Function Definition
+
+In order to invoke the defined [OData](https://www.odata.org/documentation/) function, 
+simply reference it in a workflow [Action Definition](#Action-Definition) and set its  function arguments. For example:
+
+```json
+{
+  "refName": "queryPersons",
+  "arguments": {
+    "queryOptions":{
+      "expand": "PersonDetail/Person",
+      "select": "Id, PersonDetail/Person/Name",
+      "top": 5,
+      "orderby": "PersonDetail/Person/Name"
+    }
+  }
+}
+```
+
+In order to ensure compatibility of OData support across runtimes, 
+the`arguments` property of an [OData](https://www.odata.org/documentation/) function reference 
+should follow the Serverless Workflow [OData Json schema](https://github.com/serverlessworkflow/specification/tree/main/schema/odata.json)
+
+#### Using Functions for Expression Evaluation
+
+In addition to defining RESTful, RPC, GraphQL and OData services and their operations, workflow [functions definitions](#Function-Definition)
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference
@@ -2969,8 +3023,8 @@ section.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `expression`, defines the workflow expression. | string | no |
-| type | Defines the function type. Is either `rest`, `rpc` or `expression`. Default is `rest` | enum | no |
+| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
+| type | Defines the function type. Is either `rest`, `rpc`, `odata` or `expression`. Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
@@ -3017,7 +3071,9 @@ Depending on the function `type`, the `operation` property can be:
 * If `type` is `rpc`, a combination of the gRPC proto document URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
   For example `file://myuserservice.proto#UserService#ListUsers`.
 * If `type` is `graphql`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
-  For example `file://myuserservice.proto#UserService#ListUsers`.
+  For example `file://myuserservice.proto#UserService#ListUsers`. 
+* If `type` is `odata`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
+  For example `https://https://services.odata.org/V3/OData/OData.svc#Products`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
 
 The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
