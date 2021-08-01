@@ -2259,7 +2259,7 @@ The `timeouts` property can be used to define state specific timeout settings. S
 
 ```json
 {
-      "name": "WaitForCompletion",
+      "name": "DelayState",
       "type": "delay",
       "timeDelay": "PT5S",
       "transition": "GetJobStatus"
@@ -2270,7 +2270,7 @@ The `timeouts` property can be used to define state specific timeout settings. S
 <td valign="top">
 
 ```yaml
-name: WaitForCompletion
+name: DelayState
 type: delay
 timeDelay: PT5S
 transition: GetJobStatus
@@ -3687,19 +3687,17 @@ to the trigger/produced event.
 
 If `string` type, it defines the unique id of the sub-workflow to be invoked.
 This short-hand definition can be used if sub-workflow lookup is done only by its `id`
-property and not its `version` property and if the default value of `waitForCompletion` is assumed.
+property and not its `version` property.
 
 ```json
 "subFlowRef": "mySubFlowId"
 ```
 
-If you need to define the `waitForCompletion` or the `version` properties, you can use its
-`object` type:
+If you need to define the `version` properties, you can use its `object` type:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | workflowId | Sub-workflow unique id | string | yes |
-| waitForCompletion | If workflow execution must wait for sub-workflow to finish before continuing (default is true) | boolean | no |
 | version | Sub-workflow version | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3740,12 +3738,7 @@ The `version` property defined the unique version of the sub-workflow to be invo
 If this property is defined, runtimes should match both the `id` and the `version` properties
 defined in the sub-workflow definition.
 
-The `waitForCompletion` property defines if the SubFlow action should wait until the referenced reusable workflow
-has completed its execution. If it's set to "true" (default value), SubFlow action execution must wait until the referenced workflow has completed its execution.
-In this case the workflow data output of the referenced workflow will be used as the result data of the action.
-If it is set to "false" the parent workflow can continue its execution as soon as the referenced sub-workflow
-has been invoked (fire-and-forget). For this case, the referenced (child) workflow data output will be ignored and the result data
-of the action will be an empty json object (`{}`).
+Subflow execution is currently performed synchronously. We are planning to add async subflow execution in the next spec releases.
 
 ##### Error Definition
 
