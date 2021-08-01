@@ -39,6 +39,7 @@ _Status description:_
 | ✔️| Added State execution timeouts | [spec doc](../specification.md) |
 | ✔️| Temporarily removed `waitForCompletion` for subflows | [spec doc](../specification.md) |
 | ✔️| Added function definition support for OData | [spec doc](../specification.md) |
+| ✔️| Added function definition support for AsyncAPI | [spec doc](../specification.md) |
 | ✏️ | AsyncAPI operation support |  |
 | ✏️ | OData function definition support |  |
 | ✏️ | Update to retries - state specific rather than error specific |  |

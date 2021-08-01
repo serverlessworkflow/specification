@@ -24,6 +24,7 @@
     + [Data Merging](#data-merging)
   * [Workflow Functions](#workflow-functions)
     + [Using Functions for RESTful Service Invocations](#using-functions-for-restful-service-invocations)
+    + [Using Functions for Async API Invocations](#using-functions-for-async-api-invocations)
     + [Using Functions for RPC Service Invocations](#using-functions-for-rpc-service-invocations)
     + [Using Functions for GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
       - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
@@ -1089,6 +1090,95 @@ Note that the referenced function definition type in this case must be `rest` (d
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
+#### Using Functions for Async API Service Invocations
+
+[Functions](#Function-Definition) can be used to invoke PUBLISH and SUBSCRIBE operations on a message broker documented by the [Async API Specification](https://www.asyncapi.com/docs/specifications/v2.1.0).
+[Async API operations](https://www.asyncapi.com/docs/specifications/v2.1.0#operationObject) are bound to a [channel](https://www.asyncapi.com/docs/specifications/v2.1.0#definitionsChannel) which describes the technology, security mechanisms, input and validation to be used for their execution.
+
+Let's take a look at a hypothetical Async API document (assumed its stored locally with the file name `streetlightsapi.yaml`) and define a single publish operation:
+
+```yaml
+asyncapi: 2.1.0
+info:
+  title: Streetlights API
+  version: 1.0.0
+  description: |
+    The Smartylighting Streetlights API allows you
+    to remotely manage the city lights.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+  mosquitto:
+    url: mqtt://test.mosquitto.org
+    protocol: mqtt
+channels:
+  light/measured:
+    publish:
+      summary: Inform about environmental lighting conditions for a particular streetlight.
+      operationId: onLightMeasured
+      message:
+        name: LightMeasured
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              minimum: 0
+              description: Id of the streetlight.
+            lumens:
+              type: integer
+              minimum: 0
+              description: Light intensity measured in lumens.
+            sentAt:
+              type: string
+              format: date-time
+              description: Date and time when the message was sent.
+```
+
+To define a workflow action invocation, we can then use the following workflow [Function Definition](#Function-Definition) and set the `operation` to `onLightMeasured`:
+
+```json
+{
+  "functions": [
+  {
+    "name": "publishLightMeasurements",
+    "operation": "file://streetlightsapi.yaml#onLightMeasured",
+    "type": "asyncapi"
+  }]
+}
+```
+
+Note that the [Function Definition](#Function-Definition)'s `operation` property must have the following format:
+
+```text
+<URI_to_asyncapi_file>#<OperationId>
+```
+
+Also note that the referenced function definition type in this case must have the value `asyncapi`.
+
+Our defined function definition can then we referenced in a workflow [action](#Action-Definition), for example:
+
+```json
+{
+  "name": "Publish Measurements",
+  "type": "operation",
+  "actions":[
+    {
+      "name": "Publish Light Measurements",
+      "functionRef":{
+        "refName": "publishLightMeasurements",
+        "arguments":{
+          "id": "${ .currentLight.id }",
+          "lumens": "${ .currentLight.lumens }",
+          "sentAt": "${ now }"
+        }
+      }
+    }
+  ]
+}
+```
+
 #### Using Functions for RPC Service Invocations
 
 Similar to defining invocations of operations on RESTful services, you can also use the workflow
@@ -1350,7 +1440,7 @@ should follow the Serverless Workflow [OData Json schema](https://github.com/ser
 
 #### Using Functions for Expression Evaluation
 
-In addition to defining RESTful, RPC, GraphQL and OData services and their operations, workflow [functions definitions](#Function-Definition)
+In addition to defining RESTful, AsyncAPI, RPC, GraphQL and OData services and their operations, workflow [functions definitions](#Function-Definition)
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference
@@ -3023,7 +3113,7 @@ section.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
+| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
 | type | Defines the function type. Is either `rest`, `rpc`, `odata` or `expression`. Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
@@ -3068,6 +3158,8 @@ Depending on the function `type`, the `operation` property can be:
 
 * If `type` is `rest`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
   For example `https://petstore.swagger.io/v2/swagger.json#getPetById`.
+* If `type` is `asyncapi`, a combination of the AsyncApi definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
+  For example `file://streetlightsapi.yaml#onLightMeasured`.
 * If `type` is `rpc`, a combination of the gRPC proto document URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
   For example `file://myuserservice.proto#UserService#ListUsers`.
 * If `type` is `graphql`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
