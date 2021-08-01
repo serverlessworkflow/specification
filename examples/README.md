@@ -3406,10 +3406,7 @@ We fist define our top-level workflow for this example:
           "type": "operation",
           "actions": [
             {
-              "subFlowRef": {
-                "workflowId": "vitalscheck",
-                "waitForCompletion": false
-              }
+              "subFlowRef": "vitalscheck"
             }
           ],
           "transition": "WaitForCarStopped"
@@ -3477,9 +3474,7 @@ states:
  - name: DoCarVitalsChecks
    type: operation
    actions:
-    - subFlowRef:
-       workflowId: vitalscheck
-       waitForCompletion: false
+    - subFlowRef: vitalscheck
    transition: WaitForCarStopped
  - name: WaitForCarStopped
    type: event

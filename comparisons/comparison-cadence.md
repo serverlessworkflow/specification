@@ -303,9 +303,7 @@ states:
 - name: GreetingSubFlow
   type: operation
   actions:
-  - subFlowRef:
-    workflowId: subflowgreet
-    waitForCompletion: false
+  - subFlowRef: "subflowgreet"
   end: true
 functions:
 - name: greetingfunction
