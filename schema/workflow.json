@@ -100,6 +100,9 @@
     "timeouts": {
       "$ref": "timeouts.json#/timeouts"
     },
+    "errors": {
+      "$ref": "errors.json#/errors"
+    },
     "keepActive": {
       "type": "boolean",
       "default": false,
@@ -283,27 +286,17 @@
     "error": {
       "type": "object",
       "properties": {
-        "error": {
+        "errorRef": {
           "type": "string",
-          "description": "Domain-specific error name, or '*' to indicate all possible errors",
-          "minLength": 1
-        },
-        "code": {
-          "type": "string",
-          "description": "Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions. Should not be defined if error is set to '*'",
-          "minLength": 1
-        },
-        "retryRef": {
-          "type": "string",
-          "description": "References a unique name of a retry definition.",
+          "description": "Reference to a unique workflow error definition.",
           "minLength": 1
         },
         "transition": {
-          "description": "Transition to next state to handle the error. If retryRef is defined, this transition is taken only if retries were unsuccessful.",
+          "description": "Transition to next state to handle the error.",
           "$ref": "#/definitions/transition"
         },
         "end": {
-          "description": "End workflow execution in case of this error. If retryRef is defined, this ends workflow only if retries were unsuccessful.",
+          "description": "End workflow execution in case of this error.",
           "$ref": "#/definitions/end"
         }
       },
@@ -311,13 +304,13 @@
       "oneOf": [
         {
           "required": [
-            "error",
+            "errorRef",
             "transition"
           ]
         },
         {
           "required": [
-            "error",
+            "errorRef",
             "end"
           ]
         }
@@ -385,6 +378,19 @@
         "sleep": {
           "description": "Defines time periods workflow execution should sleep before / after function execution",
           "$ref": "#/definitions/sleep"
+        }
+        "retryRef": {
+          "type": "string",
+          "description": "References a defined workflow retry definition. If not defined the default retry policy is assumed"
+        },
+        "nonRetryableErrors": {
+          "type": "array",
+          "description": "List of unique references to defined workflow errors for which the action should not be retried",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
         },
         "actionDataFilter": {
           "description": "Action data filter",
@@ -580,7 +586,7 @@
         },
         "onErrors": {
           "type": "array",
-          "description": "States error handling and retries definitions",
+          "description": "States error handling definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -698,7 +704,7 @@
         },
         "onErrors": {
           "type": "array",
-          "description": "States error handling and retries definitions",
+          "description": "States error handling definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -800,7 +806,7 @@
         },
         "onErrors": {
           "type": "array",
-          "description": "States error handling and retries definitions",
+          "description": "States error handling definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -932,7 +938,7 @@
         },
         "onErrors": {
           "type": "array",
-          "description": "States error handling and retries definitions",
+          "description": "States error handling definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -1052,7 +1058,7 @@
         },
         "onErrors": {
           "type": "array",
-          "description": "States error handling and retries definitions",
+          "description": "States error handling definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -1127,7 +1133,7 @@
         },
         "onErrors": {
           "type": "array",
-          "description": "States error handling and retries definitions",
+          "description": "States error handling definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -1484,7 +1490,7 @@
         },
         "onErrors": {
           "type": "array",
-          "description": "States error handling and retries definitions",
+          "description": "States error handling definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
@@ -1615,7 +1621,7 @@
         },
         "onErrors": {
           "type": "array",
-          "description": "States error handling and retries definitions",
+          "description": "States error handling definitions",
           "items": {
             "type": "object",
             "$ref": "#/definitions/error"
