@@ -921,6 +921,17 @@ The data output of the workflow contains the information of the exception caught
      "operation": "http://myapis.org/provisioningapi.json#doProvision"
   }
 ],
+"errors": [
+ {
+  "name": "Missing order id"
+ },
+ {
+  "name": "Missing order item"
+ },
+ {
+  "name": "Missing order quantity"
+ }
+],
 "states":[
   {
     "name":"ProvisionOrder",
@@ -942,15 +953,15 @@ The data output of the workflow contains the information of the exception caught
     "transition": "ApplyOrder",
     "onErrors": [
        {
-         "error": "Missing order id",
+         "errorRef": "Missing order id",
          "transition": "MissingId"
        },
        {
-         "error": "Missing order item",
+         "errorRef": "Missing order item",
          "transition": "MissingItem"
        },
        {
-        "error": "Missing order quantity",
+        "errorRef": "Missing order quantity",
         "transition": "MissingQuantity"
        }
     ]
@@ -1010,47 +1021,51 @@ name: Provision Orders
 description: Provision Orders and handle errors thrown
 start: ProvisionOrder
 functions:
-- name: provisionOrderFunction
-  operation: http://myapis.org/provisioningapi.json#doProvision
+ - name: provisionOrderFunction
+   operation: http://myapis.org/provisioningapi.json#doProvision
+errors:
+ - name: Missing order id
+ - name: Missing order item
+ - name: Missing order quantity
 states:
-- name: ProvisionOrder
-  type: operation
-  actionMode: sequential
-  actions:
-  - functionRef:
-      refName: provisionOrderFunction
-      arguments:
+ - name: ProvisionOrder
+   type: operation
+   actionMode: sequential
+   actions:
+    - functionRef:
+       refName: provisionOrderFunction
+       arguments:
         order: "${ .order }"
-  stateDataFilter:
+   stateDataFilter:
     output: "${ .exceptions }"
-  transition: ApplyOrder
-  onErrors:
-  - error: Missing order id
-    transition: MissingId
-  - error: Missing order item
-    transition: MissingItem
-  - error: Missing order quantity
-    transition: MissingQuantity
-- name: MissingId
-  type: operation
-  actions:
-  - subFlowRef: handleMissingIdExceptionWorkflow
-  end: true
-- name: MissingItem
-  type: operation
-  actions:
-  - subFlowRef: handleMissingItemExceptionWorkflow
-  end: true
-- name: MissingQuantity
-  type: operation
-  actions:
-  - subFlowRef: handleMissingQuantityExceptionWorkflow
-  end: true
-- name: ApplyOrder
-  type: operation
-  actions:
-  - subFlowRef: applyOrderWorkflowId
-  end: true
+   transition: ApplyOrder
+   onErrors:
+    - errorRef: Missing order id
+      transition: MissingId
+    - errorRef: Missing order item
+      transition: MissingItem
+    - errorRef: Missing order quantity
+      transition: MissingQuantity
+ - name: MissingId
+   type: operation
+   actions:
+    - subFlowRef: handleMissingIdExceptionWorkflow
+   end: true
+ - name: MissingItem
+   type: operation
+   actions:
+    - subFlowRef: handleMissingItemExceptionWorkflow
+   end: true
+ - name: MissingQuantity
+   type: operation
+   actions:
+    - subFlowRef: handleMissingQuantityExceptionWorkflow
+   end: true
+ - name: ApplyOrder
+   type: operation
+   actions:
+    - subFlowRef: applyOrderWorkflowId
+   end: true
 ```
 
 </td>
@@ -1132,26 +1147,10 @@ In the case job submission raises a runtime error, we transition to an Operation
           }
       }
       ],
-      "onErrors": [
-      {
-        "error": "*",
-        "transition": "SubmitError"
-      }
-      ],
       "stateDataFilter": {
           "output": "${ .jobuid }"
       },
       "transition": "WaitForCompletion"
-  },
-  {
-      "name": "SubmitError",
-      "type": "operation",
-      "actions": [
-        {
-          "subFlowRef": "handleJobSubmissionErrorWorkflow"
-        }
-      ],
-      "end": true
   },
   {
       "name": "WaitForCompletion",
@@ -1245,80 +1244,72 @@ name: Job Monitoring
 description: Monitor finished execution of a submitted job
 start: SubmitJob
 functions:
-- name: submitJob
-  operation: http://myapis.org/monitorapi.json#doSubmit
-- name: checkJobStatus
-  operation: http://myapis.org/monitorapi.json#checkStatus
-- name: reportJobSuceeded
-  operation: http://myapis.org/monitorapi.json#reportSucceeded
-- name: reportJobFailed
-  operation: http://myapis.org/monitorapi.json#reportFailure
+ - name: submitJob
+   operation: http://myapis.org/monitorapi.json#doSubmit
+ - name: checkJobStatus
+   operation: http://myapis.org/monitorapi.json#checkStatus
+ - name: reportJobSuceeded
+   operation: http://myapis.org/monitorapi.json#reportSucceeded
+ - name: reportJobFailed
+   operation: http://myapis.org/monitorapi.json#reportFailure
 states:
-- name: SubmitJob
-  type: operation
-  actionMode: sequential
-  actions:
-  - functionRef:
-      refName: submitJob
-      arguments:
+ - name: SubmitJob
+   type: operation
+   actionMode: sequential
+   actions:
+    - functionRef:
+       refName: submitJob
+       arguments:
         name: "${ .job.name }"
-    actionDataFilter:
-      results: "${ .jobuid }"
-  onErrors:
-  - error: "*"
-    transition: SubmitError
-  stateDataFilter:
+      actionDataFilter:
+       results: "${ .jobuid }"
+   stateDataFilter:
     output: "${ .jobuid }"
-  transition: WaitForCompletion
-- name: SubmitError
-  type: operation
-  actions:
-  - subFlowRef: handleJobSubmissionErrorWorkflow
-  end: true
-- name: WaitForCompletion
-  type: sleep
-  delay: PT5S
-  transition: GetJobStatus
-- name: GetJobStatus
-  type: operation
-  actionMode: sequential
-  actions:
-  - functionRef:
-      refName: checkJobStatus
-      arguments:
+   transition: WaitForCompletion
+ - name: WaitForCompletion
+   type: sleep
+   duration: PT5S
+   transition: GetJobStatus
+ - name: GetJobStatus
+   type: operation
+   actionMode: sequential
+   actions:
+    - functionRef:
+       refName: checkJobStatus
+       arguments:
         name: "${ .jobuid }"
-    actionDataFilter:
-      results: "${ .jobstatus }"
-  stateDataFilter:
+      actionDataFilter:
+       results: "${ .jobstatus }"
+   stateDataFilter:
     output: "${ .jobstatus }"
-  transition: DetermineCompletion
-- name: DetermineCompletion
-  type: switch
-  dataConditions:
-  - condition: "${ .jobstatus == \"SUCCEEDED\" }"
-    transition: JobSucceeded
-  - condition: "${ .jobstatus == \"FAILED\" }"
-    transition: JobFailed
-  defaultCondition:
+   transition: DetermineCompletion
+ - name: DetermineCompletion
+   type: switch
+   dataConditions:
+    - condition: ${ .jobStatus == "SUCCEEDED" }
+      transition: JobSucceeded
+    - condition: ${ .jobStatus == "FAILED" }
+      transition: JobFailed
+   defaultCondition:
     transition: WaitForCompletion
-- name: JobSucceeded
-  type: operation
-  actionMode: sequential
-  actions:
-  - functionRef:
-      refName: reportJobSuceeded
-      arguments:
+ - name: JobSucceeded
+   type: operation
+   actionMode: sequential
+   actions:
+    - functionRef:
+       refName: reportJobSuceeded
+       arguments:
         name: "${ .jobuid }"
-  end: true
-- name: JobFailed
-  type: operation
-  actionMode: sequential
-  actions:
-  - functionRef:
-      refName: reportJobFailed
-      arguments:
+   end: true
+ - name: JobFailed
+   type: operation
+   actionMode: sequential
+   actions:
+    - functionRef:
+       refName: reportJobFailed
+       arguments:
         name: "${ .jobuid }"
-  end: true
+   end: true
 ```
 
 </td>
@@ -2790,22 +2781,23 @@ If the retries are not successful, we want to just gracefully end workflow execu
           ],
           "actions": [
             {
-              "functionRef": "StorePatient"
+              "functionRef": "StorePatient",
+              "retryRef": "ServicesNotAvailableRetryStrategy"
             },
             {
-              "functionRef": "AssignDoctor"
+              "functionRef": "AssignDoctor",
+              "retryRef": "ServicesNotAvailableRetryStrategy"
             },
             {
-              "functionRef": "ScheduleAppt"
+              "functionRef": "ScheduleAppt",
+              "retryRef": "ServicesNotAvailableRetryStrategy"
             }
           ]
         }
       ],
       "onErrors": [
         {
-          "error": "ServiceNotAvailable",
-          "code": "503",
-          "retryRef": "ServicesNotAvailableRetryStrategy",
+          "errorRef": "ServiceNotAvailable",
           "end": true
         }
       ],
@@ -2833,6 +2825,12 @@ If the retries are not successful, we want to just gracefully end workflow execu
       "operation": "api/services.json#scheduleAppointment"
     }
   ],
+  "errors": [
+   {
+    "name": "ServiceNotAvailable",
+    "code": "503"
+   }
+  ],
   "retries": [
     {
       "name": "ServicesNotAvailableRetryStrategy",
@@ -2853,36 +2851,40 @@ version: '1.0'
 specVersion: '0.7'
 start: Onboard
 states:
-- name: Onboard
-  type: event
-  onEvents:
-  - eventRefs:
-    - NewPatientEvent
-    actions:
-    - functionRef: StorePatient
-    - functionRef: AssignDoctor
-    - functionRef: ScheduleAppt
-  onErrors:
-  - error: ServiceNotAvailable
-    code: '503'
-    retryRef: ServicesNotAvailableRetryStrategy
-    end: true
-  end: true
+ - name: Onboard
+   type: event
+   onEvents:
+    - eventRefs:
+       - NewPatientEvent
+      actions:
+       - functionRef: StorePatient
+         retryRef: ServicesNotAvailableRetryStrategy
+       - functionRef: AssignDoctor
+         retryRef: ServicesNotAvailableRetryStrategy
+       - functionRef: ScheduleAppt
+         retryRef: ServicesNotAvailableRetryStrategy
+   onErrors:
+    - errorRef: ServiceNotAvailable
+      end: true
+   end: true
 events:
-- name: StorePatient
-  type: new.patients.event
-  source: newpatient/+
+ - name: StorePatient
+   type: new.patients.event
+   source: newpatient/+
 functions:
-- name: StoreNewPatientInfo
-  operation: api/services.json#addPatient
-- name: AssignDoctor
-  operation: api/services.json#assignDoctor
-- name: ScheduleAppt
-  operation: api/services.json#scheduleAppointment
+ - name: StoreNewPatientInfo
+   operation: api/services.json#addPatient
+ - name: AssignDoctor
+   operation: api/services.json#assignDoctor
+ - name: ScheduleAppt
+   operation: api/services.json#scheduleAppointment
+errors:
+ - name: ServiceNotAvailable
+   code: '503'
 retries:
-- name: ServicesNotAvailableRetryStrategy
-  delay: PT3S
-  maxAttempts: 10
+ - name: ServicesNotAvailableRetryStrategy
+   delay: PT3S
+   maxAttempts: 10
 ```
 
 </td>

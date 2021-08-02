@@ -414,79 +414,76 @@ as service invocations, where as Google Workflow uses the "call" keyword.
 
 ```json
 {
-    "id": "publishtotopicwitherrorhandling",
-    "name": "Publish To Topic With Error Handling",
-    "specVersion": "0.7",
-    "start": "DoPublish",
-    "states": [
-        {
-            "name": "DoPublish",
-            "type": "operation",
-            "actions": [
-                {
-                    "functionRef": {
-                        "refName": "PublishToTopic",
-                        "arguments": {
-                            "project": "${ .project }",
-                            "topic": "${ .topic }",
-                            "message": "${ .message }"
-                        }
-                    }
-                }
-            ],
-            "onErrors": [
-                {
-                    "error": "PubSub Topic not found",
-                    "code": "404",
-                    "end": {
-                        "produceEvents": [
-                            {
-                                "eventRef": "TopicError",
-                                "data": { "message": "PubSub Topic not found"}
-                            }
-                        ]
-                    }
-                },
-                {
-                    "error": "Error authenticating to PubSub",
-                    "code": "403",
-                    "end": {
-                        "produceEvents": [
-                            {
-                                "eventRef": "TopicError",
-                                "data": { "message": "Error authenticating to PubSub"}
-                            }
-                        ]
-                    }
-                },
-                {
-                    "error": "*",
-                    "end": {
-                        "produceEvents": [
-                            {
-                                "eventRef": "TopicError",
-                                "data": { "message": "Error Performing PubSub"}
-                            }
-                        ]
-                    }
-                }
-            ],
-            "end": true
-        }
-    ],
-    "functions": [
-        {
-            "name": "PublishToTopic",
-            "operation": "pubsubapi.json#publish"
-        }
-    ],
-    "events": [
-        {
-            "name": "TopicError",
-            "source": "pubsub.topic.events",
-            "type": "pubsub/events"
-        }
-    ]
+  "id": "publishtotopicwitherrorhandling",
+  "name": "Publish To Topic With Error Handling",
+  "specVersion": "0.7",
+  "start": "DoPublish",
+  "errors": [
+    {
+      "name": "PubSub Topic not found",
+      "code": "404"
+    },
+    {
+      "name": "Error authenticating to PubSub",
+      "code": "403"
+    }
+  ],
+  "states": [
+      {
+          "name": "DoPublish",
+          "type": "operation",
+          "actions": [
+              {
+                  "functionRef": {
+                      "refName": "PublishToTopic",
+                      "arguments": {
+                          "project": "${ .project }",
+                          "topic": "${ .topic }",
+                          "message": "${ .message }"
+                      }
+                  }
+              }
+          ],
+          "onErrors": [
+              {
+                  "errorRef": "PubSub Topic not found",
+                  "end": {
+                      "produceEvents": [
+                          {
+                              "eventRef": "TopicError",
+                              "data": { "message": "PubSub Topic not found"}
+                          }
+                      ]
+                  }
+              },
+              {
+                  "errorRef": "Error authenticating to PubSub",
+                  "end": {
+                      "produceEvents": [
+                          {
+                              "eventRef": "TopicError",
+                              "data": { "message": "Error authenticating to PubSub"}
+                          }
+                      ]
+                  }
+              }
+          ],
+          "end": true
+      }
+  ],
+  "functions": [
+      {
+          "name": "PublishToTopic",
+          "operation": "pubsubapi.json#publish"
+      }
+  ],
+  "events": [
+      {
+          "name": "TopicError",
+          "source": "pubsub.topic.events",
+          "type": "pubsub/events"
+      }
+  ]
 }
 ```
 
@@ -587,14 +584,13 @@ to interested parties via events (CloudEvents specification format), which we ar
             "type": "operation",
             "actions": [
                 {
-                    "functionRef": "ReadItemFromApi"
+                    "functionRef": "ReadItemFromApi",
+                    "retryRef": "ServiceNotAvailableRetryPolicy"
                 }
             ],
             "onErrors": [
                 {
-                    "error": "Service Not Available",
-                    "code": "500",
-                    "retryRef": "ServiceNotAvailableRetry",
+                    "errorRef": "Service Not Available",
                     "end": true
                 }
             ],
@@ -607,9 +603,15 @@ to interested parties via events (CloudEvents specification format), which we ar
             "operation": "someapi.json#read"
         }
     ],
+    "errors": [
+      {
+        "name": "Service Not Available",
+        "code": "500"
+      }
+    ],
     "retries": [
         {
-            "name": "ServiceNotAvailableRetry",
+            "name": "ServiceNotAvailableRetryPolicy",
             "maxAttempts": 5,
             "delay": "PT2S",
             "maxDelay": "PT60S",
@@ -625,8 +627,12 @@ to interested parties via events (CloudEvents specification format), which we ar
 
 #### Notes
 
-Serverless Workflow defines [reusable retry definitions](../specification.md#Defining-Retries) which
-can be referenced by one or many error definitions in states. Google Workflow seems to reference the 
+Serverless Workflow defines [reusable retry definitions](../specification.md#Defining-Retries) which can be referenced by
+state actions. By default with Serverless workflow all actions are retried. You can however reference a defined 
+retry policy to perform specific retries on actions. If the error persists after defined retry attempts logic, 
+the workflow state can handle the error with its onErrors property.
+
+Google Workflow seems to reference the 
 error handlers in the "retry" statement as an expression/variable.
 
 ### Sub Workflows

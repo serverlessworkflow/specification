@@ -1755,7 +1755,7 @@ definition "id" must be a constant value.
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | string or object | no |
-| [errors](#TODO) | Defines checked errors that can be explicitly handled during workflow execution | string or array | no |
+| [errors](#Defining-Errors) | Defines checked errors that can be explicitly handled during workflow execution | string or array | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
 | [auth](#Auth-Definition) | Workflow authentication definitions | array or string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
@@ -1921,7 +1921,7 @@ The `timeouts` property is used to define the default workflow timeouts for work
 execution. For more information about timeouts and its use cases see the [Workflow Timeouts](#Workflow-Timeouts) section.
 
 The `error` property is used to define checked errors that can be explicitly handled during workflow execution.
-For more information about workflow error handling .... TODO - ADD LINK
+For more information about workflow error handling see [this section](#Defining-Errors).
 
 The `auth` property can be either an inline [auth](#Auth-Definition) definition array, or a URI reference to
 a resource containing an array of [auth](#Auth-Definition) definitions.
@@ -3642,8 +3642,8 @@ This is visualized in the diagram below:
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
-| retryRef (TODO - add link) | References a defined workflow retry definition. If not defined uses the default retry info (TODO - add link) | string | no |
-| nonRetryableErrors | List of references to defined workflow errors (TODO - ADD LINK) for which the action should not be retried | array | no |
+| [retryRef](#Defining-Retries) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
+| nonRetryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should not be retried | array | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 | sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
 
@@ -3692,18 +3692,26 @@ Service invocation can be done in two different ways:
 
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
 * Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
+* Reference a sub-workflow invocation via the `subFlowRef` property.
 
-In some scenarios a service or a set of services that need to be invoked
+In the event-based scenario a service, or a set of services we want to invoke
 are not exposed via a specific resource URI for example, but can only be invoked via events.
-The [eventRef](#EventRef-Definition) defines the
+The [eventRef](#EventRef-Definition) property defines the
 referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
 
 The `sleep` property can be used to define time periods that workflow execution should sleep
 before and/or after function execution. It can have two properties:
-* `before` -  defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
-* `after` -  defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
+* `before` - defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
+* `after` - defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
 
 Function invocation timeouts should be handled via the states [timeouts](#Workflow-Timeouts) definition.
+
+The `retryRef` property references one of the defined workflow retries by it's unique name. If not set, the action 
+should be retried according to the default retry policy of the runtime implementation. For more information about workflow
+retries reference [this section](#defining-retries).
+
+The `nonRetryableErrors` property is a list that references one or more unique names of workflow error definitions. 
+This is the list of known errors for which the action should not be retried for.
 
 ##### Subflow Action
 
@@ -3912,7 +3920,8 @@ Subflow execution is currently performed synchronously. We are planning to add a
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| errorRef | Reference to a unique workflow error definition | string | yes |
+| errorRef | Reference to a unique workflow error definition | string | yes if errorRefs is not used |
+| errorRefs | Reference one or more unique workflow error definition | array | yes if errorRef is not used |
 | [transition](#Transitions) or [end](#End-Definition) | Transition to next state to handle the error, or end workflow execution if this error is encountered | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3949,7 +3958,13 @@ transition: IssueRefundToCustomer
 
 Error definitions describe checked errors that can occur during workflow execution and how to handle them.
 
-The `errorRef`property references the unique workflow error definition (TODO - ADD LINK).
+The `errorRef` property references the unique workflow error definition. For more info on workflow error handling
+referece [this section](#Defining-Errors).
+
+The `errorRefs`property references at least one of the defined workflow error definitions. 
+Can be used when `errorRef` is not used. Usable when you want to define multiple error refs for which the same transition
+or end definition should be applied.For more info on workflow error handling
+referece [this section](#Defining-Errors).
 
 The `transition` property defines the transition to the next workflow state in cases when the defined
 error happens during runtime execution.
@@ -4338,12 +4353,13 @@ Exceptions can occur during execution of Parallel state branches.
 By default, exceptions that are not handled within branches stop branch execution and are propagated
 to the Parallel state and should be handled with its `onErrors` definition.
 
-If the parallel states branch defines actions, all exceptions that arise from executing these actions
+If the parallel states branch defines actions, all exceptions that arise from executing these actions (after all
+allotted retries are exhausted)
 are propagated to the parallel state
 and can be handled with the parallel states `onErrors` definition.
 
 If the parallel states defines a subflow action, exceptions that occur during execution of the called workflow
-can chose to handle exceptions on their own. All unhandled exceptions from the called workflow
+can choose to handle exceptions on their own. All unhandled exceptions from the called workflow
 execution however are propagated back to the parallel state and can be handled with the parallel states
 `onErrors` definition.
 
@@ -4802,7 +4818,7 @@ This allows error handling to become part of your orchestration activities and a
 solutions.
 
 The idea behind the way Serverless Workflow defines error handling is that workflows should only fail due to unknown bugs 
-during execution. In general, you should always write your workflows so that they do not fail on any known failures. 
+during execution. In general, you should always write your workflows so that they do not fail on any known failures.
 
 Each workflow state can define error handling, which is related only to errors that may arise during its
 execution. Error handling defined in one state cannot be used to handle errors that happened during execution of another state
@@ -4902,40 +4918,29 @@ actions `nonRetryableErrors` property.
 
 #### Defining Retries
 
-As previously mentioned, workflows in general should not fail on unknown errors. Errors can happen during workflow action execution.
-The Serverless Workflow retry policy is designed so that workflow actions are retried on any unknown errors and allow for users
-to defined a list of known errors for which they should not be retried for. 
+As previously mentioned, workflows in general should not fail on unknown errors. Errors can happen during action execution.
+The Serverless Workflow retry policy is designed so that workflow actions are retried by default on any errors and allow for users
+to defined a list of known errors for which they should not be retried for. The idea behind this is the ability
+for workflow execution to recover from issues, especially service invocation. Rather than failing on the first encounter of 
+an unknown error during service execution, we can retry it's invocation until the service code is fixed for example.
+This approach brings a much-needed failure recovery option to DSL-based workflows that so far has been missing.
 
-By default, all actions should be retried using workflow default retry policy. This policy should be used when 
+By default, all actions should be retried using the runtime default retry policy. This policy should be used when 
 an action does not reference a specific retry definition.
 
-The default retry policy should have the following settings:
-* `maxAttempts` should be `unlimited`, meaning that the action should be retried indefinitely until successful.
-* `delay` should be 1 second, meaning that there is 1 second delay between action retries.
-* `multiplier` should be set to 2 meaning that the delay should be multiplied by 2 for each retry attempt.
+Runtime implementations can define their own default retry policy. Serverless Workflow recommends the following settings:
 
-Runtime implementation should be responsible to apply this default retry policy when there is none defined in 
-a workflow action definition.
+* `maxAttempts` to be `unlimited`, meaning that the action should be retried indefinitely until successful.
+* `delay` to be set to one second, meaning that there is a one second delay between action retries.
+* `multiplier` to be set to two meaning that the delay should be multiplied by two for each retry attempt.
 
-TODO - Finish this section!
+Runtimes should document their default retry policy to users, so it's clear which
+property values they are using for the default.
 
+Workflow state actions can define for which known errors retries should not happen. This is done via the actions
+`nonRetryableErrors` property.
 
-TODO - Rewrite this section!
-
-Retries are related to errors. When certain errors are encountered we might want to retry the states execution.
-
-We can define retries within the workflow states [error definitions](#Defining-Errors).
-This is done by defining the [retry strategy](#Retry-Definition) as the workflow top-level parameter using its `retries` array, and then
-adding a `retryRef` parameter to the error definition which references these retry strategies for a specific error.
-
-If a defined retry for the defined error is successful, the defined workflow control flow logic of the state
-should be performed, meaning either workflow can transition according to the states `transition`
-definition, or end workflow execution in case the state defines an `end` definition.
-
-If the defined retry for the defined error is not successful, workflow control flow logic should follow the
-`transition` definition of the error definition where the retry is defined, to transition to the next state that can handle this problem.
-
-Let's take a look at an example of a top-level retries definition of a workflow:
+Let's take a look at some examples of defining retries. To start, let's define a workflow top-level retry definition:
 
 <table>
 <tr>
@@ -4949,9 +4954,18 @@ Let's take a look at an example of a top-level retries definition of a workflow:
 {
 "retries": [
   {
-    "name": "Service Call Timeout Retry Strategy",
+    "name": "FirstRetryStrategy",
     "delay": "PT1M",
-    "maxAttempts": 4
+    "maxAttempts": 5
+  },
+  {
+    "name": "SecondRetryStrategy",
+    "delay": "PT10M",
+    "maxAttempts": 10
+  },
+  {
+    "name": "DoNotRetryStrategy",
+    "maxAttempts": 1
   }
 ]
 }
@@ -4962,22 +4976,22 @@ Let's take a look at an example of a top-level retries definition of a workflow:
 
 ```yaml
 retries:
-- name: Service Call Timeout Retry Strategy
-  delay: PT1M
-  maxAttempts: 4
+  - name: FirstRetryStrategy
+    delay: PT1M
+    maxAttempts: 5
+  - name: SecondRetryStrategy
+    delay: PT10M
+    maxAttempts: 10
+  - name: DoNotRetryStrategy
+    maxAttempts: 1
+
 ```
 
 </td>
 </tr>
 </table>
 
-This defines a reusable retry strategy. It can be referenced by different workflow states if needed to define the
-retries that need to performed for some specific errors that might be encountered during workflow execution.
-
-In this particular case we define a retry strategy for "Service Call Timeouts" which says that the states
-control-flow logic should be retried up to 4 times, with a 1 minute delay between each retry attempt.
-
-Different states now can use the defined retry strategy. For example:
+Our retry definitions can be referenced by state actions. For example:
 
 <table>
 <tr>
@@ -4989,12 +5003,25 @@ Different states now can use the defined retry strategy. For example:
 
 ```json
 {
-"onErrors": [
-  {
-    "error": "Inventory service timeout",
-    "transition": "ReimburseCustomer"
-  }
-]
+  "actions": [
+    {
+      "functionRef": "MyFirstFunction",
+      "retryRef": "FirstRetryStrategy",
+      "nonRetryableErrors": ["SomeErrorOne", "SomeErrorTwo"]
+    },
+    {
+      "functionRef": "MySecondFunction",
+      "retryRef": "SecondRetryStrategy",
+      "nonRetryableErrors": ["SomeErrorTwo", "SomeErrorThree"]
+    },
+    {
+      "functionRef": "MyThirdFunction"
+    },
+    {
+      "functionRef": "MyFourthFunction",
+      "retryRef": "DoNotRetryStrategy"
+    }
+  ]
 }
 ```
 
@@ -5002,17 +5029,39 @@ Different states now can use the defined retry strategy. For example:
 <td valign="top">
 
 ```yaml
-onErrors:
-- error: Inventory service timeout
-  transition: ReimburseCustomer
+actions:
+  - functionRef: MyFirstFunction
+    retryRef: FirstRetryStrategy
+    nonRetryableErrors:
+      - SomeErrorOne
+      - SomeErrorTwo
+  - functionRef: MySecondFunction
+    retryRef: SecondRetryStrategy
+    nonRetryableErrors:
+      - SomeErrorTwo
+      - SomeErrorThree
+  - functionRef: MyThirdFunction
+  - functionRef: MyFourthFunction
+    retryRef: DoNotRetryStrategy
+
 ```
 
 </td>
 </tr>
 </table>
 
-In this example we say that if the  "Inventory service timeout" error is encountered, the workflow should transition to the next state
-as defined by the error definitions `transition` property.
+In our example the first action named `MyFirstFunction` is going to be retried according to the `FirstRetryStrategy`
+retry policy
+for all errors except `SomeErrorOne` and `SomeErrorTwo`.
+
+The seconds action named `MySecondFunction` is going to be retried according to the `SecondRetryStrategy`
+retry policy 
+for all errors except `SomeErrorTwo` and `SomeErrorThree`.
+
+The third action named `MyThirdFunction` is going to retried according to the default runtime retry policy.
+
+The fourth action named `MyFourthFunction` is going to be retried according to the `DoNotRetryStrategy`
+retry policy which has the `maxAttempts` property set to `1`, meaning that this action will not be retried.
 
 ### Workflow Timeouts
 

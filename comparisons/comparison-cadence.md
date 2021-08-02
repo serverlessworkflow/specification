@@ -86,39 +86,42 @@ version: '1.0'
 specVersion: '0.7'
 start: BookTrip
 states:
-- name: BookTrip
-  type: operation
-  compensatedBy: CancelTrip
-  actions:
-  - functionRef: reservecarfunction
-  - functionRef: reservehotelfunction
-  - functionRef: reserveflightfunction
-  onErrors:
-  - error: Activity Error
-    end:
-      compensate: true
-  end: true
-- name: CancelTrip
-  type: operation
-  usedForCompensation: true
-  actionMode: parallel
-  actions:
-  - functionRef: cancelcarreservationfunction
-  - functionRef: cancelhotelreservationfunction
-  - functionRef: cancelflightreservationfunction
+  - name: BookTrip
+    type: operation
+    compensatedBy: CancelTrip
+    actions:
+      - functionRef: reservecarfunction
+      - functionRef: reservehotelfunction
+      - functionRef: reserveflightfunction
+    onErrors:
+      - errorRef: Activity Error
+        end:
+          compensate: true
+    end: true
+  - name: CancelTrip
+    type: operation
+    usedForCompensation: true
+    actionMode: parallel
+    actions:
+      - functionRef: cancelcarreservationfunction
+      - functionRef: cancelhotelreservationfunction
+      - functionRef: cancelflightreservationfunction
+errors:
+  - name: Activity Error
+    code: '123'
 functions:
-- name: reservecarfunction
-  operation: myactionsapi.json#reservecar
-- name: reservehotelfunction
-  operation: myactionsapi.json#reservehotel
-- name: reserveflightfunction
-  operation: myactionsapi.json#reserveflight
-- name: cancelcarreservationfunction
-  operation: myactionsapi.json#cancelcar
-- name: cancelhotelreservationfunction
-  operation: myactionsapi.json#cancelhotel
-- name: cancelflightreservationfunction
-  operation: myactionsapi.json#cancelflight
+  - name: reservecarfunction
+    operation: myactionsapi.json#reservecar
+  - name: reservehotelfunction
+    operation: myactionsapi.json#reservehotel
+  - name: reserveflightfunction
+    operation: myactionsapi.json#reserveflight
+  - name: cancelcarreservationfunction
+    operation: myactionsapi.json#cancelcar
+  - name: cancelhotelreservationfunction
+    operation: myactionsapi.json#cancelhotel
+  - name: cancelflightreservationfunction
+    operation: myactionsapi.json#cancelflight
 ```
 
 </td>
@@ -195,33 +198,31 @@ version: '1.0'
 specVersion: '0.7'
 start: ProcessAndUpload
 states:
-- name: ProcessAndUpload
-  type: operation
-  actions:
-  - functionRef:
-      refName: processfilefunction
-      arguments:
-        filename: "${ .file.name }"
-    actionDataFilter:
-      results: "${ .processed }"
-  - functionRef:
-      refName: uploadfunction
-      arguments:
-        file: "${ .processed }"
-  onErrors:
-  - error: "*"
-    retryRef: fileprocessingretry
+  - name: ProcessAndUpload
+    type: operation
+    actions:
+      - functionRef:
+          refName: processfilefunction
+          arguments:
+            filename: "${ .file.name }"
+        retryRef: Processing Retry Policy
+        actionDataFilter:
+          results: "${ .processed }"
+      - functionRef:
+          refName: uploadfunction
+          arguments:
+            file: "${ .processed }"
+        retryRef: Processing Retry Policy
     end: true
-  end: true
 functions:
-- name: processfilefunction
-  operation: myactionsapi.json#process
-- name: uploadfilefunction
-  operation: myactionsapi.json#upload
+  - name: processfilefunction
+    operation: myactionsapi.json#process
+  - name: uploadfilefunction
+    operation: myactionsapi.json#upload
 retries:
-- name: fileprocessingretry
-  maxAttempts: 10
-  delay: PT1S
+  - name: Processing Retry Policy
+    maxAttempts: 10
+    delay: PT1S
 ```
 
 </td>

@@ -683,10 +683,6 @@ states:
       arguments:
         args:
         - import random; import sys; exit_code = random.choice([0, 1, 1]); sys.exit(exit_code)
-  onErrors:
-  - error: "*"
-    retryRef: All workflow errors retry strategy
-    end: true
   end: true
 ```
 
@@ -864,60 +860,66 @@ version: '1.0'
 specVersion: '0.7'
 start: intentional-fail-state
 functions:
-- name: intentional-fail-function
-  metadata:
-    image: alpine:latest
-    command: "[sh, -c]"
-- name: send-email-function
-  metadata:
-    image: alpine:latest
-    command: "[sh, -c]"
-- name: celebrate-cry-function
-  metadata:
-    image: alpine:latest
-    command: "[sh, -c]"
+  - name: intentional-fail-function
+    metadata:
+      image: alpine:latest
+      command: "[sh, -c]"
+  - name: send-email-function
+    metadata:
+      image: alpine:latest
+      command: "[sh, -c]"
+  - name: celebrate-cry-function
+    metadata:
+      image: alpine:latest
+      command: "[sh, -c]"
+errors:
+  - name: IntentionalError
+    code: '404'
 states:
-- name: intentional-fail-state
-  type: operation
-  actions:
-  - functionRef:
-      refName: intentional-fail-function
-      arguments:
-        args: echo intentional failure; exit 1
-  onErrors:
-  - error: "*"
-    transition: send-email-state
-- name: send-email-state
-  type: operation
-  actions:
-  - functionRef:
-      refName: send-email-function
-      arguments:
-        args: "echo send e-mail: ${ .workflow.name } ${ .workflow.status }"
-  transition: emo-state
-- name: emo-state
-  type: switch
-  dataConditions:
-  - condition: "${ .workflow| .status == \"Succeeded\" }"
-    transition: celebrate-state
-  - condition: "${ .workflow| .status != \"Succeeded\" }"
-    transition: cry-state
-- name: celebrate-state
-  type: operation
-  actions:
-  - functionRef:
-      refName: celebrate-cry-function
-      arguments:
-        args: echo hooray!
-  end: true
-- name: cry-state
-  type: operation
-  actions:
-  - functionRef:
-      refName: celebrate-cry-function
-      arguments:
-        args: echo boohoo!
-  end: true
+  - name: intentional-fail-state
+    type: operation
+    actions:
+      - functionRef:
+          refName: intentional-fail-function
+          arguments:
+            args: echo intentional failure; exit 1
+        nonRetryableErrors:
+          - IntentionalError
+    onErrors:
+      - errorRef: IntentionalError
+        transition: send-email-state
+    end: true
+  - name: send-email-state
+    type: operation
+    actions:
+      - functionRef:
+          refName: send-email-function
+          arguments:
+            args: 'echo send e-mail: ${ .workflow.name } ${ .workflow.status }'
+    transition: emo-state
+  - name: emo-state
+    type: switch
+    dataConditions:
+      - condition: ${ .workflow| .status == "Succeeded" }
+        transition: celebrate-state
+      - condition: ${ .workflow| .status != "Succeeded" }
+        transition: cry-state
+  - name: celebrate-state
+    type: operation
+    actions:
+      - functionRef:
+          refName: celebrate-cry-function
+          arguments:
+            args: echo hooray!
+    end: true
+  - name: cry-state
+    type: operation
+    actions:
+      - functionRef:
+          refName: celebrate-cry-function
+          arguments:
+            args: echo boohoo!
+    end: true
 ```
 
 </td>

@@ -627,7 +627,9 @@ public class HelloActivityRetry {
             "refName": "GreetingFunction",
             "arguments": {
                "name": "World"
-            }
+            },
+            "retryRef": "GreetingRetry",
+            "nonRetryableErrors": ["IllegalArgumentException"]
           }
         }
       ],
@@ -636,12 +638,7 @@ public class HelloActivityRetry {
       },
       "onErrors": [
         {
-          "error": "IllegalStateException",
-          "retryRef": "GreetingRetry",
-          "end": true
-        },
-        {
-          "error": "IllegalArgumentException",
+          "errorRefs": ["IllegalStateException", "IllegalArgumentException"],
           "end": true
         }
       ],
@@ -652,6 +649,14 @@ public class HelloActivityRetry {
     {
       "name": "GreetingFunction",
       "operation": "myactionsapi.json#composeGreeting"
+    }
+  ],
+  "errors": [
+    {
+      "name": "IllegalStateException"
+    },
+    {
+      "name": "IllegalArgumentException"
     }
   ],
   "retries": [

@@ -150,13 +150,17 @@ start: GreetingState
 events:
 - name: execEvent
   type: exec
+errors:
+- name: CommonError
+  code: '123'
 functions:
 - name: greetingFunction
   metadata:
     image: alpine:3.7
     command: echo
 - name: consoleLogFunction
-  type: console
+  metadata:
+    type: console
 states:
 - name: GreetingState
   type: event
@@ -169,18 +173,24 @@ states:
         refName: greetingFunction
         arguments:
           greeting: hello
+      nonRetryableErrors:
+      - CommonError
     - name: sayGoodbyeAction
       functionRef:
         refName: greetingFunction
         arguments:
           greeting: hello
+      nonRetryableErrors:
+      - CommonError
     - name: logDoneAction
       functionRef:
         refName: consoleLogFunction
         arguments:
           log: done
+      nonRetryableErrors:
+      - CommonError
   onErrors:
-  - error: "*"
+  - errorRef: CommonError
     transition: HandleErrorState
   end: true
 - name: HandleErrorState
@@ -190,7 +200,7 @@ states:
     functionRef:
       refName: consoleLogFunction
       arguments:
-        log: "Caught Exception ${ .exception }"
+        log: Caught Exception ${ .exception }
   end: true
 ```
 
