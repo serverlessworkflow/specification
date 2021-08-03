@@ -44,7 +44,7 @@
       - [Inject State](#inject-state)
       - [ForEach State](#foreach-state)
       - [Callback State](#callback-state)
-    + [Related State Definition](#related-state-definition)
+    + [Related State Definitions](#related-state-definitions)
       - [Function Definition](#function-definition)
       - [Event Definition](#event-definition)
       - [Auth Definition](#auth-definition)
@@ -3106,7 +3106,7 @@ The `timeouts` property defines state specific timeout settings. Callback states
 For more information on workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts)
 section.
 
-#### Related State Definition
+#### Related State Definitions
 
 ##### Function Definition
 
@@ -3114,7 +3114,7 @@ section.
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
 | operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
-| type | Defines the function type. Is either `rest`, `rpc`, `odata` or `expression`. Default is `rest` | enum | no |
+| type | Defines the function type. Is either `rest`, `asyncapi`, `rpc`, `graphql`, `odata` or `expression`. Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
