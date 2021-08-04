@@ -12,12 +12,12 @@ _Status description:_
 
 ## Releases
 
-- [Roadmap for next planned release](#v07)
-- [v0.6 released March 2021](#v06)
-- [v0.5 released November 2020](#v05)
-- [v0.1 released April 2020](#v01)
+- [v0.7 released August 2021](#release-version-07)
+- [v0.6 released March 2021](#release-version-06)
+- [v0.5 released November 2020](#release-version-05)
+- [v0.1 released April 2020](#release-version-01)
 
-## <a name="v07"></a> Next planned release
+## Release Version 0.7
 
 | Status | Description | Comments |
 | --- | --- |  --- |
@@ -40,12 +40,8 @@ _Status description:_
 | ✔️| Temporarily removed `waitForCompletion` for subflows | [spec doc](../specification.md) |
 | ✔️| Added function definition support for OData | [spec doc](../specification.md) |
 | ✔️| Added function definition support for AsyncAPI | [spec doc](../specification.md) |
-| ✏️ | AsyncAPI operation support |  |
-| ✏️ | OData function definition support |  |
-| ✏️ | Update to retries - state specific rather than error specific |  |
-| ✏️ | Add batching and sync option for Foreach state |  |
 
-## <a name="v06"></a> v0.6
+## Release Version 0.6
 
 | Status | Description | Comments |
 | --- | --- |  --- |
@@ -69,7 +65,7 @@ _Status description:_
 | ✔️| Updated schedule definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
 | ✔️| Update data filters | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
 
-## <a name="v05"></a> v0.5
+## Release Version 0.5
 
 | Status | Description | Comments |
 | --- | --- |  --- |
@@ -102,7 +98,7 @@ _Status description:_
 | ✔️| Enforce use of OpenAPI specification in function definitions for portability | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.5.x/specification.md) |
 | ✔️| Update workflow Error Handling | [spec doc](../specification.md) |
 
-## <a name="v01"></a> v0.1
+## Release Version 0.1
 
 | Status | Description | Comments |
 | :--: | --- |  --- |
