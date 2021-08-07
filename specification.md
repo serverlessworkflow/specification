@@ -3118,6 +3118,8 @@ section.
 | operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
 | type | Defines the function type. Is either `rest`, `asyncapi`, `rpc`, `graphql`, `odata` or `expression`. Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
+| sleepBefore | Amount of time (ISO 8601 duration format) to sleep before function invocation | string | no |
+| sleepAfter | Amount of time (ISO 8601 duration format) to sleep after function invocation | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3172,6 +3174,10 @@ Depending on the function `type`, the `operation` property can be:
 
 The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
 It is used to provide authentication info to access the resource defined in the `operation` property.
+
+The `sleepBefore` property defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
+
+The `sleepAfter` property defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
 
 The [`metadata`](#Workflow-Metadata) property allows users to define custom information to function definitions.
 This allows you for example to define functions that describe of a command executions on a Docker image:
