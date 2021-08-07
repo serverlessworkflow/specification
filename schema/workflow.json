@@ -1447,14 +1447,14 @@
           "type": "string",
           "description": "Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array"
         },
-        "max": {
+        "batchSize": {
           "type": [
             "number",
             "string"
           ],
           "minimum": 0,
           "minLength": 0,
-          "description": "Specifies how upper bound on how many iterations may run in parallel"
+          "description": "Specifies how many iterations may run in parallel at the same time. Used if 'mode' property is set to 'parallel' (default)"
         },
         "actions": {
           "type": "array",
@@ -1504,6 +1504,15 @@
           "type": "boolean",
           "default": false,
           "description": "If true, this state is used to compensate another state. Default is false"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "sequential",
+            "parallel"
+          ],
+          "description": "Specifies how iterations are to be performed (sequentially or in parallel)",
+          "default": "parallel"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"

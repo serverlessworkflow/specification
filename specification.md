@@ -2788,7 +2788,8 @@ The `timeouts` property can be used to define state specific timeout settings. I
 | inputCollection | Workflow expression selecting an array element of the states data | string | yes |
 | outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
 | iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
-| max | Specifies how upper bound on how many iterations may run in parallel | string or number | no |
+| batchSize | Specifies how many iterations may run in parallel at the same time. Used if `mode` property is set to `parallel` (default). If not specified, it's value should be the size of the `inputCollection` | string or number | no |
+| mode | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel` | string  | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
@@ -2854,10 +2855,18 @@ actions:
 
 ForEach states can be used to execute [actions](#Action-Definition) for each element of a data set.
 
-Each iteration of the ForEach state should be executed in parallel.
+Each iteration of the ForEach state is by default executed in parallel by default.
+Executing iterations sequentially is also possible by setting the value of the `mode` property to
+`sequential`.
 
-You can use the `max` property to set the upper bound on how many iterations may run in parallel. The default
-of the `max` property is zero, which places no limit on number of parallel executions.
+The `mode` property defines if iterations should be done sequentially or in parallel. By default 
+(if `mode` is not specified) iterations should be done in parallel.
+
+If the default `parallel` iteration mode is used, the `batchSize` property to the number of iterations (batch) 
+that can be executed at a time. To give an example, if the number of iterations is 55 and `batchSize`
+is set to `10`, 10 iterations are to be executed at a time, meaning that the state would execute 10 iterations in parallel,
+then execute the next batch of 10 iterations. After 5 such executions, the remaining 5 iterations are to be executed in the last batch.
+Batch size value must be greater than 1. If not specified, it's value should be the size of the `inputCollection` (all iterations).
 
 The `inputCollection` property is a workflow expression which selects an array in the states data. All iterations
 are performed against data elements of this array. If this array does not exist, the runtime should throw
