@@ -3118,8 +3118,6 @@ section.
 | operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
 | type | Defines the function type. Is either `rest`, `asyncapi`, `rpc`, `graphql`, `odata` or `expression`. Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
-| sleepBefore | Amount of time (ISO 8601 duration format) to sleep before function invocation | string | no |
-| sleepAfter | Amount of time (ISO 8601 duration format) to sleep after function invocation | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3174,10 +3172,6 @@ Depending on the function `type`, the `operation` property can be:
 
 The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
 It is used to provide authentication info to access the resource defined in the `operation` property.
-
-The `sleepBefore` property defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
-
-The `sleepAfter` property defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
 
 The [`metadata`](#Workflow-Metadata) property allows users to define custom information to function definitions.
 This allows you for example to define functions that describe of a command executions on a Docker image:
@@ -3634,6 +3628,8 @@ This is visualized in the diagram below:
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
+| sleepBefore | Amount of time (ISO 8601 duration format) to sleep before function invocation. Does not apply if 'eventRef' is defined. | string | no |
+| sleepAfter | Amount of time (ISO 8601 duration format) to sleep after function invocation. Does not apply if 'eventRef' is defined. | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3681,17 +3677,16 @@ Service invocation can be done in two different ways:
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
 * Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
 
-In the event-based scenario a service or a set of services we want to invoke
+In some scenarios a service or a set of services which need to be invoked
 are not exposed via a specific resource URI for example, but can only be invoked via events.
 The [eventRef](#EventRef-Definition) defines the
 referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
 
-The `timeout` property defines the amount of time to wait for function execution to complete, or the consumed event referenced by the
-`resultEventRef` to become available.
-It is described in ISO 8601 format, so for example "PT2M" would mean the maximum time for the function to complete
-its execution is two minutes.
+The `sleepBefore` property defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
 
-Possible invocation timeouts should be handled via the states [onErrors](#Workflow-Error-Handling) definition.
+The `sleepAfter` property defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
+
+Function invocation timeouts should be handled via the states [timeouts](#Workflow-Timeouts) definition.
 
 ##### Subflow Action
 

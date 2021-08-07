@@ -57,14 +57,6 @@
           "description": "References an auth definition name to be used to access to resource defined in the operation parameter",
           "minLength": 1
         },
-        "sleepBefore": {
-          "type": "string",
-          "description": "Amount of time (ISO 8601 duration format) to sleep before function invocation"
-        },
-        "sleepAfter": {
-          "type": "string",
-          "description": "Amount of time (ISO 8601 duration format) to sleep after function invocation"
-        },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }

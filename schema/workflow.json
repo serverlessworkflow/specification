@@ -351,6 +351,14 @@
           "description": "References a sub-workflow to invoke",
           "$ref": "#/definitions/subflowref"
         },
+        "sleepBefore": {
+          "type": "string",
+          "description": "Amount of time (ISO 8601 duration format) to sleep before function/subflow invocation. Does not apply if 'eventRef' is defined."
+        },
+        "sleepAfter": {
+          "type": "string",
+          "description": "Amount of time (ISO 8601 duration format) to sleep after function/subflow invocation. Does not apply if 'eventRef' is defined."
+        },
         "actionDataFilter": {
           "description": "Action data filter",
           "$ref": "#/definitions/actiondatafilter"
