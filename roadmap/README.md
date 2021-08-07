@@ -41,7 +41,7 @@ _Status description:_
 | ✔️| Added function definition support for OData | [spec doc](../specification.md) |
 | ✔️| Added function definition support for AsyncAPI | [spec doc](../specification.md) |
 | ✔️| Rename Delay state to Sleep state | [spec doc](../specification.md) |
-| ✔️| Added 'sleepBefore' and 'sleepAfter' properties to function definitions | [spec doc](../specification.md) |
+| ✔️| Added 'sleepBefore' and 'sleepAfter' properties to action definition | [spec doc](../specification.md) |
 | ✏️ | AsyncAPI operation support |  |
 | ✏️ | OData function definition support |  |
 | ✏️ | Update to retries - state specific rather than error specific |  |
