@@ -44,8 +44,6 @@ _Status description:_
 | ✔️| Added 'sleep' property to action definition | [spec doc](../specification.md) |
 | ✔️| Added Rate Limiting extension | [spec doc](../specification.md) |
 | ✔️| Update ForEach state - adding sequential exec option and batch size for parallel option | [spec doc](../specification.md) |
-| ✏️ | AsyncAPI operation support |  |
-| ✏️ | OData function definition support |  |
 | ✏️ | Update to retries - state specific rather than error specific |  |
 | ✏️ | Add batching and sync option for Foreach state |  |
 | 🚩 | Workflow invocation bindings |  |
