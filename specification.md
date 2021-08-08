@@ -3628,8 +3628,7 @@ This is visualized in the diagram below:
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
-| sleepBefore | Amount of time (ISO 8601 duration format) to sleep before function invocation. Does not apply if 'eventRef' is defined. | string | no |
-| sleepAfter | Amount of time (ISO 8601 duration format) to sleep after function invocation. Does not apply if 'eventRef' is defined. | string | no |
+| sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3682,9 +3681,10 @@ are not exposed via a specific resource URI for example, but can only be invoked
 The [eventRef](#EventRef-Definition) defines the
 referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
 
-The `sleepBefore` property defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
-
-The `sleepAfter` property defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
+The `sleep` property can be used to define time periods that workflow execution should sleep 
+before and/or  after function execution. It can have two properties:
+* `before` -  defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
+* `after` -  defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
 
 Function invocation timeouts should be handled via the states [timeouts](#Workflow-Timeouts) definition.
 
