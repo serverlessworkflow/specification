@@ -42,6 +42,7 @@ _Status description:_
 | ✔️| Added function definition support for AsyncAPI | [spec doc](../specification.md) |
 | ✔️| Rename Delay state to Sleep state | [spec doc](../specification.md) |
 | ✔️| Added 'sleep' property to action definition | [spec doc](../specification.md) |
+| ✔️| Added Rate Limiting extension | [spec doc](../specification.md) |
 | ✏️ | AsyncAPI operation support |  |
 | ✏️ | OData function definition support |  |
 | ✏️ | Update to retries - state specific rather than error specific |  |
