@@ -3681,8 +3681,8 @@ are not exposed via a specific resource URI for example, but can only be invoked
 The [eventRef](#EventRef-Definition) defines the
 referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
 
-The `sleep` property can be used to define time periods that workflow execution should sleep 
-before and/or  after function execution. It can have two properties:
+The `sleep` property can be used to define time periods that workflow execution should sleep
+before and/or after function execution. It can have two properties:
 * `before` -  defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
 * `after` -  defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
 
