@@ -39,7 +39,7 @@
       - [Event State](#event-state)
       - [Operation State](#operation-state)
       - [Switch State](#switch-state)
-      - [Delay State](#delay-state)
+      - [Sleep State](#sleep-state)
       - [Parallel State](#parallel-state)
       - [Inject State](#inject-state)
       - [ForEach State](#foreach-state)
@@ -163,7 +163,7 @@ The specification has multiple components:
 * Set of [Workflow Extensions](extensions/README.md) which
   allow users to define additional, non-execution-related workflow information. This information can be used to improve
   workflow performance.
-  Some example workflow extensions include Key Performance Indicators (KPIs), Simulation, Tracing, etc.
+  Some example workflow extensions include Key Performance Indicators (KPIs), Rate Limiting, Simulation, Tracing, etc.
 * Technology Compatibility Kit (TCK) to be used as a specification conformance tool for runtime implementations.
 
 ## Specification Details
@@ -2047,7 +2047,7 @@ Serverless Workflow defines the following Workflow States:
 | **[Event](#Event-State)** | Define events that trigger action execution | yes | yes | yes | yes | yes | no | yes | yes |
 | **[Operation](#Operation-State)** | Execute one or more actions | no | yes | yes | yes | yes | no | yes | yes |
 | **[Switch](#Switch-State)** | Define data-based or event-based workflow transitions | no | yes | no | yes | no | yes | yes | no |
-| **[Delay](#Delay-State)** | Delay workflow execution | no | yes | no | yes | no | no | yes | yes |
+| **[Sleep](#Sleep-State)** | Sleep workflow execution for a specific time duration | no | yes | no | yes | no | no | yes | yes |
 | **[Parallel](#Parallel-State)** | Causes parallel execution of branches (set of states) | no | yes | no | yes | yes | no | yes | yes |
 | **[Inject](#Inject-State)** | Inject static data into state data | no | yes | no | yes | no | no | yes | yes |
 | **[ForEach](#ForEach-State)** | Parallel execution of states for each element of a data array | no | yes | no | yes | yes | no | yes | yes |
@@ -2372,18 +2372,18 @@ The `timeouts` property can be used to define state specific timeout settings. S
 `stateExecTimeout` setting. If `eventConditions` is defined, the switch state can also define the
 `eventTimeout` property. For more information on workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 
-##### Delay State
+##### Sleep State
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | id | Unique state id | string | no |
-| name |State name | string | yes |
-| type |State type | string | yes |
-| timeDelay |Amount of time (ISO 8601 format) to delay when in this state. For example: "PT15M" (delay 15 minutes), or "P2DT3H4M" (delay 2 days, 3 hours and 4 minutes) | integer | yes |
+| name | State name | string | yes |
+| type | State type | string | yes |
+| duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | integer | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after the delay | object | yes (if end is not defined) |
+| [transition](#Transitions) | Next transition of the workflow after the sleep | object | yes (if end is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [end](#End-Definition) |If this state an end state | object | no |
@@ -2401,9 +2401,9 @@ The `timeouts` property can be used to define state specific timeout settings. S
 
 ```json
 {
-      "name": "DelayState",
-      "type": "delay",
-      "timeDelay": "PT5S",
+      "name": "SleepFiveSeconds",
+      "type": "sleep",
+      "duration": "PT5S",
       "transition": "GetJobStatus"
 }
 ```
@@ -2412,9 +2412,9 @@ The `timeouts` property can be used to define state specific timeout settings. S
 <td valign="top">
 
 ```yaml
-name: DelayState
-type: delay
-timeDelay: PT5S
+name: SleepFiveSeconds
+type: sleep
+duration: PT5S
 transition: GetJobStatus
 ```
 
@@ -2424,7 +2424,9 @@ transition: GetJobStatus
 
 </details>
 
-Delay state waits for a certain amount of time before transitioning to a next state. The amount of delay is specified by the `timeDelay` property in ISO 8601 format.
+Sleep state 
+suspends workflow execution for a given time duration. The delay is defined in its `duration` property using the ISO 8601 
+duration format.
 
 The `timeouts` property allows you to define state-specific timeouts.
 It can be used to define the `stateExecTimeout`. For more information on workflow timeouts
@@ -2784,7 +2786,8 @@ The `timeouts` property can be used to define state specific timeout settings. I
 | inputCollection | Workflow expression selecting an array element of the states data | string | yes |
 | outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
 | iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
-| max | Specifies how upper bound on how many iterations may run in parallel | string or number | no |
+| batchSize | Specifies how many iterations may run in parallel at the same time. Used if `mode` property is set to `parallel` (default). If not specified, its value should be the size of the `inputCollection` | string or number | no |
+| mode | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel` | string  | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
@@ -2850,10 +2853,18 @@ actions:
 
 ForEach states can be used to execute [actions](#Action-Definition) for each element of a data set.
 
-Each iteration of the ForEach state should be executed in parallel.
+Each iteration of the ForEach state is by default executed in parallel by default.
+However, executing iterations sequentially is also possible by setting the value of the `mode` property to
+`sequential`.
 
-You can use the `max` property to set the upper bound on how many iterations may run in parallel. The default
-of the `max` property is zero, which places no limit on number of parallel executions.
+The `mode` property defines if iterations should be done sequentially or in parallel. By default 
+(if `mode` is not specified) iterations should be done in parallel.
+
+If the default `parallel` iteration mode is used, the `batchSize` property to the number of iterations (batch) 
+that can be executed at a time. To give an example, if the number of iterations is 55 and `batchSize`
+is set to `10`, 10 iterations are to be executed at a time, meaning that the state would execute 10 iterations in parallel,
+then execute the next batch of 10 iterations. After 5 such executions, the remaining 5 iterations are to be executed in the last batch.
+The batch size value must be greater than 1. If not specified, its value should be the size of the `inputCollection` (all iterations).
 
 The `inputCollection` property is a workflow expression which selects an array in the states data. All iterations
 are performed against data elements of this array. If this array does not exist, the runtime should throw
@@ -3624,6 +3635,7 @@ This is visualized in the diagram below:
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
+| sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3671,17 +3683,17 @@ Service invocation can be done in two different ways:
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
 * Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
 
-In the event-based scenario a service or a set of services we want to invoke
+In some scenarios a service or a set of services that need to be invoked
 are not exposed via a specific resource URI for example, but can only be invoked via events.
 The [eventRef](#EventRef-Definition) defines the
 referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
 
-The `timeout` property defines the amount of time to wait for function execution to complete, or the consumed event referenced by the
-`resultEventRef` to become available.
-It is described in ISO 8601 format, so for example "PT2M" would mean the maximum time for the function to complete
-its execution is two minutes.
+The `sleep` property can be used to define time periods that workflow execution should sleep
+before and/or after function execution. It can have two properties:
+* `before` -  defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
+* `after` -  defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
 
-Possible invocation timeouts should be handled via the states [onErrors](#Workflow-Error-Handling) definition.
+Function invocation timeouts should be handled via the states [timeouts](#Workflow-Timeouts) definition.
 
 ##### Subflow Action
 
@@ -5738,7 +5750,7 @@ Some other examples of information that could be recorded in metadata are:
 ## Extensions
 
 The workflow extension mechanism allows you to enhance your model definitions with additional information useful for
-things like analytics, logging, simulation, debugging, tracing, etc.
+things like analytics, rate limiting, logging, simulation, debugging, tracing, etc.
 
 Model extensions do no influence control flow logic (workflow execution semantics).
 They enhance it with extra information that can be consumed by runtime systems or tooling and

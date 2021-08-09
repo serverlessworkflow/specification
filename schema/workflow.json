@@ -126,8 +126,8 @@
       "items": {
         "anyOf": [
           {
-            "title": "Delay State",
-            "$ref": "#/definitions/delaystate"
+            "title": "Sleep State",
+            "$ref": "#/definitions/sleepstate"
           },
           {
             "title": "Event State",
@@ -184,6 +184,37 @@
     }
   ],
   "definitions": {
+    "sleep": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "string",
+          "description": "Amount of time (ISO 8601 duration format) to sleep before function/subflow invocation. Does not apply if 'eventRef' is defined."
+        },
+        "after": {
+          "type": "string",
+          "description": "Amount of time (ISO 8601 duration format) to sleep after function/subflow invocation. Does not apply if 'eventRef' is defined."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "before"
+          ]
+        },
+        {
+          "required": [
+            "after"
+          ]
+        },
+        {
+          "required": [
+            "before",
+            "after"
+          ]
+        }
+      ]
+    },
     "crondef": {
       "oneOf": [
         {
@@ -351,6 +382,10 @@
           "description": "References a sub-workflow to invoke",
           "$ref": "#/definitions/subflowref"
         },
+        "sleep": {
+          "description": "Defines time periods workflow execution should sleep before / after function execution",
+          "$ref": "#/definitions/sleep"
+        },
         "actionDataFilter": {
           "description": "Action data filter",
           "$ref": "#/definitions/actiondatafilter"
@@ -503,9 +538,9 @@
         "actions"
       ]
     },
-    "delaystate": {
+    "sleepstate": {
       "type": "object",
-      "description": "Causes the workflow execution to delay for a specified duration",
+      "description": "Causes the workflow execution to sleep for a specified duration",
       "properties": {
         "id": {
           "type": "string",
@@ -518,7 +553,7 @@
         },
         "type": {
           "type": "string",
-          "const": "delay",
+          "const": "sleep",
           "description": "State type"
         },
         "end": {
@@ -529,9 +564,9 @@
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
-        "timeDelay": {
+        "duration": {
           "type": "string",
-          "description": "Amount of time (ISO 8601 format) to delay"
+          "description": "Duration (ISO 8601 duration format) to sleep"
         },
         "timeouts": {
           "type": "object",
@@ -553,7 +588,7 @@
           "additionalItems": false
         },
         "transition": {
-          "description": "Next transition of the workflow after the time delay",
+          "description": "Next transition of the workflow after the workflow sleep",
           "$ref": "#/definitions/transition"
         },
         "compensatedBy": {
@@ -585,7 +620,7 @@
         "required": [
           "name",
           "type",
-          "timeDelay"
+          "duration"
         ]
       },
       "else": {
@@ -594,7 +629,7 @@
             "required": [
               "name",
               "type",
-              "timeDelay",
+              "duration",
               "end"
             ]
           },
@@ -602,7 +637,7 @@
             "required": [
               "name",
               "type",
-              "timeDelay",
+              "duration",
               "transition"
             ]
           }
@@ -1412,14 +1447,14 @@
           "type": "string",
           "description": "Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array"
         },
-        "max": {
+        "batchSize": {
           "type": [
             "number",
             "string"
           ],
           "minimum": 0,
           "minLength": 0,
-          "description": "Specifies how upper bound on how many iterations may run in parallel"
+          "description": "Specifies how many iterations may run in parallel at the same time. Used if 'mode' property is set to 'parallel' (default)"
         },
         "actions": {
           "type": "array",
@@ -1469,6 +1504,15 @@
           "type": "boolean",
           "default": false,
           "description": "If true, this state is used to compensate another state. Default is false"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "sequential",
+            "parallel"
+          ],
+          "description": "Specifies how iterations are to be performed (sequentially or in parallel)",
+          "default": "parallel"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"

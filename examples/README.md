@@ -1155,8 +1155,8 @@ In the case job submission raises a runtime error, we transition to an Operation
   },
   {
       "name": "WaitForCompletion",
-      "type": "delay",
-      "timeDelay": "PT5S",
+      "type": "sleep",
+      "duration": "PT5S",
       "transition": "GetJobStatus"
   },
   {
@@ -1276,8 +1276,8 @@ states:
   - subFlowRef: handleJobSubmissionErrorWorkflow
   end: true
 - name: WaitForCompletion
-  type: delay
-  timeDelay: PT5S
+  type: sleep
+  delay: PT5S
   transition: GetJobStatus
 - name: GetJobStatus
   type: operation
@@ -3359,11 +3359,10 @@ functions:
 #### Description
 
 In this example we need to check car vital signs while our car is driving.
-The workflow should start when we receive the "carOn" event and stop when the "carOff" event is consumed.
-While the car is driving our workflow should repeatedly check the vitals every 2 minutes.
+The workflow should start when we receive the "CarTurnedOnEvent" event and stop when the "CarTurnedOffEvent" event is consumed.
+While the car is driving our workflow should repeatedly check the vitals every 1 second.
 
-For this example we use the workflow [SubFlow](../specification.md#SubFlow-Action) actions and looping to repeat
-execution of the vitals checks.
+For this example we use the workflow [SubFlow](../specification.md#SubFlow-Action) actions to perform the vital checks.
 
 #### Workflow Diagram
 
@@ -3385,74 +3384,63 @@ We fist define our top-level workflow for this example:
 
 ```json
 {
-    "id": "checkcarvitals",
-    "name": "Check Car Vitals Workflow",
-    "version": "1.0",
-    "specVersion": "0.7",
-    "start": "WhenCarIsOn",
-    "states": [
-       {
-          "name": "WhenCarIsOn",
-          "type": "event",
-          "onEvents": [
-             {
-                "eventRefs": ["CarTurnedOnEvent"]
-             }
-          ],
-          "transition": "DoCarVitalsChecks"
-       },
-       {
-          "name": "DoCarVitalsChecks",
-          "type": "operation",
-          "actions": [
-            {
-              "subFlowRef": "vitalscheck"
-            }
-          ],
-          "transition": "WaitForCarStopped"
-       },
-       {
-          "name": "WaitForCarStopped",
-          "type": "event",
-          "onEvents": [
-             {
-                "eventRefs": ["CarTurnedOffEvent"],
-                "actions": [
-                  {
-                    "eventRef": {
-                      "triggerEventRef": "StopVitalsCheck",
-                      "resultEventRef":  "VitalsCheckingStopped"
-                    }
-                  }
-                ]
-             }
-          ],
-          "end": true
-       }
-    ],
-    "events": [
-        {
-            "name": "CarTurnedOnEvent",
-            "type": "car.events",
-            "source": "my/car"
-        },
-        {
-            "name": "CarTurnedOffEvent",
-            "type": "car.events",
-            "source": "my/car"
-        },
-        {
-            "name": "StopVitalsCheck",
-            "type": "car.events",
-            "source": "my/car"
-        },
-        {
-            "name": "VitalsCheckingStopped",
-            "type": "car.events",
-            "source": "my/car"
-        }
-    ]
- }
+ "id": "checkcarvitals",
+ "name": "Check Car Vitals Workflow",
+ "version": "1.0",
+ "specVersion": "0.7",
+ "start": "WhenCarIsOn",
+ "states": [
+  {
+   "name": "WhenCarIsOn",
+   "type": "event",
+   "onEvents": [
+    {
+     "eventRefs": ["CarTurnedOnEvent"]
+    }
+   ],
+   "transition": "DoCarVitalChecks"
+  },
+  {
+   "name": "DoCarVitalChecks",
+   "type": "operation",
+   "actions": [
+    {
+     "subFlowRef": "vitalscheck",
+     "sleep": {
+      "after": "PT1S"
+     }
+    }
+   ],
+   "transition": "CheckContinueVitalChecks"
+  },
+  {
+   "name": "CheckContinueVitalChecks",
+   "type": "switch",
+   "eventConditions": [
+    {
+     "name": "Car Turned Off Condition",
+     "eventRef": "CarTurnedOffEvent",
+     "end": true
+    }
+   ],
+   "defaultCondition": {
+    "transition": "DoCarVitalsChecks"
+   }
+  }
+ ],
+ "events": [
+  {
+   "name": "CarTurnedOnEvent",
+   "type": "car.events",
+   "source": "my/car"
+  },
+  {
+   "name": "CarTurnedOffEvent",
+   "type": "car.events",
+   "source": "my/car"
+  }
+ ]
+}
 ```
 
 </td>
@@ -3470,33 +3458,27 @@ states:
    onEvents:
     - eventRefs:
        - CarTurnedOnEvent
-   transition: DoCarVitalsChecks
- - name: DoCarVitalsChecks
+   transition: DoCarVitalChecks
+ - name: DoCarVitalChecks
    type: operation
    actions:
     - subFlowRef: vitalscheck
-   transition: WaitForCarStopped
- - name: WaitForCarStopped
-   type: event
-   onEvents:
-    - eventRefs:
-       - CarTurnedOffEvent
-      actions:
-       - eventRef:
-          triggerEventRef: StopVitalsCheck
-          resultEventRef: VitalsCheckingStopped
-   end: true
+      sleep:
+       after: PT1S
+   transition: CheckContinueVitalChecks
+ - name: CheckContinueVitalChecks
+   type: switch
+   eventConditions:
+    - name: Car Turned Off Condition
+      eventRef: CarTurnedOffEvent
+      end: true
+   defaultCondition:
+    transition: DoCarVitalsChecks
 events:
  - name: CarTurnedOnEvent
    type: car.events
    source: my/car
  - name: CarTurnedOffEvent
-   type: car.events
-   source: my/car
- - name: StopVitalsCheck
-   type: car.events
-   source: my/car
- - name: VitalsCheckingStopped
    type: car.events
    source: my/car
 ```
@@ -3517,126 +3499,58 @@ And then our reusable sub-workflow which performs the checking of our car vitals
 
 ```json
 {
-   "id": "vitalscheck",
-   "name": "Car Vitals Check",
-   "version": "1.0",
-   "specVersion": "0.7",
-   "start": "CheckVitals",
-   "states": [
-      {
-         "name": "CheckVitals",
-         "type": "operation",
-         "actions": [
-            {
-               "functionRef": "checkTirePressure"
-            },
-            {
-               "functionRef": "checkOilPressure"
-            },
-            {
-               "functionRef": "checkCoolantLevel"
-            },
-            {
-               "functionRef": "checkBattery"
-            }
-         ],
-         "transition": "EvaluateChecks"
-      },
-      {
-         "name": "EvaluateChecks",
-         "type": "switch",
-         "dataConditions": [
-            {
-               "name": "Some Evaluations failed",
-               "condition": ".evaluations[?(@.check == 'failed')]",
-               "end": {
-                  "produceEvents": [
-                     {
-                        "eventRef": "DisplayFailedChecksOnDashboard",
-                        "data": "${ .evaluations }"
-                     }
-                  ]
-
-               }
-            }
-         ],
-         "defaultCondition": {
-            "transition": "WaitTwoMinutes"
-         }
-      },
-      {
-         "name": "WaitTwoMinutes",
-         "type": "event",
-         "onEvents": [
-            {
-              "eventRefs": ["StopVitalsCheck"],
-              "eventDataFilter": {
-                "toStateData": "${ .stopReceived }"
-              }
-            }
-         ],
-         "timeouts": {
-           "eventTimeout": "PT2M"
-         },
-         "transition": "ShouldStopOrContinue"
-      },
-      {
-         "name": "ShouldStopOrContinue",
-         "type": "switch",
-         "dataConditions": [
-            {
-               "name": "Stop Event Received",
-               "condition": "${ has(\"stopReceived\") }",
-               "end": {
-                  "produceEvents": [
-                     {
-                        "eventRef": "VitalsCheckingStopped"
-                     }
-                  ]
-
-               }
-            }
-         ],
-         "defaultCondition": {
-            "transition": "CheckVitals"
-         }
-      }
+ "id": "vitalscheck",
+ "name": "Car Vitals Check",
+ "version": "1.0",
+ "specVersion": "0.7",
+ "start": "CheckVitals",
+ "states": [
+  {
+   "name": "CheckVitals",
+   "type": "operation",
+   "actions": [
+    {
+     "functionRef": "Check Tire Pressure"
+    },
+    {
+     "functionRef": "Check Oil Pressure"
+    },
+    {
+     "functionRef": "Check Coolant Level"
+    },
+    {
+     "functionRef": "Check Battery"
+    }
    ],
-   "events": [
-      {
-          "name": "StopVitalsCheck",
-          "type": "car.events",
-          "source": "my/car"
-      },
-      {
-          "name": "VitalsCheckingStopped",
-          "type": "car.events",
-          "source": "my/car"
-      },
-      {
-         "name": "DisplayFailedChecksOnDashboard",
-         "kind": "produced",
-         "type": "my.car.events"
-      }
-   ],
-   "functions": [
-      {
-         "name": "checkTirePressure",
-         "operation": "mycarservices.json#checktirepressure"
-      },
-      {
-         "name": "checkOilPressure",
-         "operation": "mycarservices.json#checkoilpressure"
-      },
-      {
-         "name": "checkCoolantLevel",
-         "operation": "mycarservices.json#checkcoolantlevel"
-      },
-      {
-         "name": "checkBattery",
-         "operation": "mycarservices.json#checkbattery"
-      }
-   ]
+   "end": {
+    "produceEvents": [
+     {
+      "eventRef": "DisplayChecksOnDashboard",
+      "data": "${ .evaluations }"
+     }
+    ]
+
+   }
+  }
+ ],
+ "functions": [
+  {
+   "name": "checkTirePressure",
+   "operation": "mycarservices.json#checktirepressure"
+  },
+  {
+   "name": "checkOilPressure",
+   "operation": "mycarservices.json#checkoilpressure"
+  },
+  {
+   "name": "checkCoolantLevel",
+   "operation": "mycarservices.json#checkcoolantlevel"
+  },
+  {
+   "name": "checkBattery",
+   "operation": "mycarservices.json#checkbattery"
+  }
+ ]
 }
 ```
 
@@ -3650,64 +3564,26 @@ version: '1.0'
 specVersion: '0.7'
 start: CheckVitals
 states:
-- name: CheckVitals
-  type: operation
-  actions:
-  - functionRef: checkTirePressure
-  - functionRef: checkOilPressure
-  - functionRef: checkCoolantLevel
-  - functionRef: checkBattery
-  transition: EvaluateChecks
-- name: EvaluateChecks
-  type: switch
-  dataConditions:
-  - name: Some Evaluations failed
-    condition: ".evaluations[?(@.check == 'failed')]"
-    end:
-      produceEvents:
-      - eventRef: DisplayFailedChecksOnDashboard
-        data: "${ .evaluations }"
-  defaultCondition:
-    transition: WaitTwoMinutes
-- name: WaitTwoMinutes
-  type: event
-  onEvents:
-  - eventRefs:
-    - StopVitalsCheck
-    eventDataFilter:
-      toStateData: "${ .stopReceived }"
-  timeouts:
-    eventTimeout: PT2M
-  transition: ShouldStopOrContinue
-- name: ShouldStopOrContinue
-  type: switch
-  dataConditions:
-  - name: Stop Event Received
-    condition: ${ has("stopReceived") }
-    end:
-      produceEvents:
-      - eventRef: VitalsCheckingStopped
-  defaultCondition:
-    transition: CheckVitals
-events:
-- name: StopVitalsCheck
-  type: car.events
-  source: my/car
-- name: VitalsCheckingStopped
-  type: car.events
-  source: my/car
-- name: DisplayFailedChecksOnDashboard
-  kind: produced
-  type: my.car.events
+ - name: CheckVitals
+   type: operation
+   actions:
+    - functionRef: Check Tire Pressure
+    - functionRef: Check Oil Pressure
+    - functionRef: Check Coolant Level
+    - functionRef: Check Battery
+   end:
+    produceEvents:
+     - eventRef: DisplayChecksOnDashboard
+       data: "${ .evaluations }"
 functions:
-- name: checkTirePressure
-  operation: mycarservices.json#checktirepressure
-- name: checkOilPressure
-  operation: mycarservices.json#checkoilpressure
-- name: checkCoolantLevel
-  operation: mycarservices.json#checkcoolantlevel
-- name: checkBattery
-  operation: mycarservices.json#checkbattery
+ - name: checkTirePressure
+   operation: mycarservices.json#checktirepressure
+ - name: checkOilPressure
+   operation: mycarservices.json#checkoilpressure
+ - name: checkCoolantLevel
+   operation: mycarservices.json#checkcoolantlevel
+ - name: checkBattery
+   operation: mycarservices.json#checkbattery
 ```
 
 </td>
@@ -3856,12 +3732,12 @@ For the sake of the example we assume the functions and event definitions are de
                }
             }
          ],
-         "transition": "Wait two weeks"
+         "transition": "Sleep two weeks"
       },
       {
-         "name": "Wait two weeks",
-         "type": "delay",
-         "timeDelay": "PT2W",
+         "name": "Sleep two weeks",
+         "type": "sleep",
+         "duration": "PT2W",
          "transition": "Get Book Status"
       },
       {
@@ -3953,10 +3829,10 @@ states:
       arguments:
         bookid: "${ .book.id }"
         lender: "${ .lender }"
-  transition: Wait two weeks
-- name: Wait two weeks
-  type: delay
-  timeDelay: PT2W
+  transition: Sleep two weeks
+- name: Sleep two weeks
+  type: sleep
+  duration: PT2W
   transition: Get Book Status
 - name: Check Out Book
   type: operation
