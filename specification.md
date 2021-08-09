@@ -2856,7 +2856,7 @@ actions:
 ForEach states can be used to execute [actions](#Action-Definition) for each element of a data set.
 
 Each iteration of the ForEach state is by default executed in parallel by default.
-Executing iterations sequentially is also possible by setting the value of the `mode` property to
+However, executing iterations sequentially is also possible by setting the value of the `mode` property to
 `sequential`.
 
 The `mode` property defines if iterations should be done sequentially or in parallel. By default 
