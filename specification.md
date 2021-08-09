@@ -163,7 +163,7 @@ The specification has multiple components:
 * Set of [Workflow Extensions](extensions/README.md) which
   allow users to define additional, non-execution-related workflow information. This information can be used to improve
   workflow performance.
-  Some example workflow extensions include Key Performance Indicators (KPIs), Simulation, Tracing, etc.
+  Some example workflow extensions include Key Performance Indicators (KPIs), Rate Limiting, Simulation, Tracing, etc.
 * Technology Compatibility Kit (TCK) to be used as a specification conformance tool for runtime implementations.
 
 ## Specification Details
@@ -5741,7 +5741,7 @@ Some other examples of information that could be recorded in metadata are:
 ## Extensions
 
 The workflow extension mechanism allows you to enhance your model definitions with additional information useful for
-things like analytics, logging, simulation, debugging, tracing, etc.
+things like analytics, rate limiting, logging, simulation, debugging, tracing, etc.
 
 Model extensions do no influence control flow logic (workflow execution semantics).
 They enhance it with extra information that can be consumed by runtime systems or tooling and

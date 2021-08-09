@@ -13,4 +13,5 @@ Click on the `Extension Id` link to see detailed explanation of the extension.
 | Extension Id | Description | Json Schema |
 | --- | --- |  --- | 
 | [kpi](kpi.md) | Define workflow key performance indicators (KPIs) | [kpi.json](../schema/extensions/kpi.json) | 
+| [ratelimiting](ratelimiting.md) | Define numerous rate limiting options for a workflow per single or all instances | [ratelimiting.json](../schema/extensions/ratelimiting.json) | 
 
