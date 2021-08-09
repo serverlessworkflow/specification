@@ -2866,7 +2866,7 @@ If the default `parallel` iteration mode is used, the `batchSize` property to th
 that can be executed at a time. To give an example, if the number of iterations is 55 and `batchSize`
 is set to `10`, 10 iterations are to be executed at a time, meaning that the state would execute 10 iterations in parallel,
 then execute the next batch of 10 iterations. After 5 such executions, the remaining 5 iterations are to be executed in the last batch.
-Batch size value must be greater than 1. If not specified, it's value should be the size of the `inputCollection` (all iterations).
+The batch size value must be greater than 1. If not specified, its value should be the size of the `inputCollection` (all iterations).
 
 The `inputCollection` property is a workflow expression which selects an array in the states data. All iterations
 are performed against data elements of this array. If this array does not exist, the runtime should throw
