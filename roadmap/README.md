@@ -43,6 +43,7 @@ _Status description:_
 | ✔️| Rename Delay state to Sleep state | [spec doc](../specification.md) |
 | ✔️| Added 'sleep' property to action definition | [spec doc](../specification.md) |
 | ✔️| Added Rate Limiting extension | [spec doc](../specification.md) |
+| ✔️| Update ForEach state - adding sequential exec option and batch size for parallel option | [spec doc](../specification.md) |
 
 ## Release Version 0.6
 
