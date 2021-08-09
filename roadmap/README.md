@@ -40,6 +40,7 @@ _Status description:_
 | ✔️| Temporarily removed `waitForCompletion` for subflows | [spec doc](../specification.md) |
 | ✔️| Added function definition support for OData | [spec doc](../specification.md) |
 | ✔️| Added function definition support for AsyncAPI | [spec doc](../specification.md) |
+| ✔️| Rename Delay state to Sleep state | [spec doc](../specification.md) |
 
 ## Release Version 0.6
 

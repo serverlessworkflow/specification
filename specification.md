@@ -39,7 +39,7 @@
       - [Event State](#event-state)
       - [Operation State](#operation-state)
       - [Switch State](#switch-state)
-      - [Delay State](#delay-state)
+      - [Sleep State](#sleep-state)
       - [Parallel State](#parallel-state)
       - [Inject State](#inject-state)
       - [ForEach State](#foreach-state)
@@ -2047,7 +2047,7 @@ Serverless Workflow defines the following Workflow States:
 | **[Event](#Event-State)** | Define events that trigger action execution | yes | yes | yes | yes | yes | no | yes | yes |
 | **[Operation](#Operation-State)** | Execute one or more actions | no | yes | yes | yes | yes | no | yes | yes |
 | **[Switch](#Switch-State)** | Define data-based or event-based workflow transitions | no | yes | no | yes | no | yes | yes | no |
-| **[Delay](#Delay-State)** | Delay workflow execution | no | yes | no | yes | no | no | yes | yes |
+| **[Sleep](#Sleep-State)** | Sleep workflow execution for a specific time duration | no | yes | no | yes | no | no | yes | yes |
 | **[Parallel](#Parallel-State)** | Causes parallel execution of branches (set of states) | no | yes | no | yes | yes | no | yes | yes |
 | **[Inject](#Inject-State)** | Inject static data into state data | no | yes | no | yes | no | no | yes | yes |
 | **[ForEach](#ForEach-State)** | Parallel execution of states for each element of a data array | no | yes | no | yes | yes | no | yes | yes |
@@ -2372,18 +2372,18 @@ The `timeouts` property can be used to define state specific timeout settings. S
 `stateExecTimeout` setting. If `eventConditions` is defined, the switch state can also define the
 `eventTimeout` property. For more information on workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 
-##### Delay State
+##### Sleep State
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | id | Unique state id | string | no |
-| name |State name | string | yes |
-| type |State type | string | yes |
-| timeDelay |Amount of time (ISO 8601 format) to delay when in this state. For example: "PT15M" (delay 15 minutes), or "P2DT3H4M" (delay 2 days, 3 hours and 4 minutes) | integer | yes |
+| name | State name | string | yes |
+| type | State type | string | yes |
+| duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | integer | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after the delay | object | yes (if end is not defined) |
+| [transition](#Transitions) | Next transition of the workflow after the sleep | object | yes (if end is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [end](#End-Definition) |If this state an end state | object | no |
@@ -2401,9 +2401,9 @@ The `timeouts` property can be used to define state specific timeout settings. S
 
 ```json
 {
-      "name": "DelayState",
-      "type": "delay",
-      "timeDelay": "PT5S",
+      "name": "SleepFiveSeconds",
+      "type": "sleep",
+      "duration": "PT5S",
       "transition": "GetJobStatus"
 }
 ```
@@ -2412,9 +2412,9 @@ The `timeouts` property can be used to define state specific timeout settings. S
 <td valign="top">
 
 ```yaml
-name: DelayState
-type: delay
-timeDelay: PT5S
+name: SleepFiveSeconds
+type: sleep
+duration: PT5S
 transition: GetJobStatus
 ```
 
@@ -2424,7 +2424,9 @@ transition: GetJobStatus
 
 </details>
 
-Delay state waits for a certain amount of time before transitioning to a next state. The amount of delay is specified by the `timeDelay` property in ISO 8601 format.
+Sleep state 
+suspends workflow execution for a given time duration. The delay is defined in its `duration` property using the ISO 8601 
+duration format.
 
 The `timeouts` property allows you to define state-specific timeouts.
 It can be used to define the `stateExecTimeout`. For more information on workflow timeouts
