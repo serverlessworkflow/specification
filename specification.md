@@ -3676,7 +3676,7 @@ Service invocation can be done in two different ways:
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
 * Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
 
-In some scenarios a service or a set of services which need to be invoked
+In some scenarios a service or a set of services that need to be invoked
 are not exposed via a specific resource URI for example, but can only be invoked via events.
 The [eventRef](#EventRef-Definition) defines the
 referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
