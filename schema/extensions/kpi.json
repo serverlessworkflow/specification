@@ -18,6 +18,13 @@
           "minLength": 1,
           "description": "Workflow definition unique identifier (workflow id property)"
         },
+        "workflowVersions": {
+          "type": "array",
+          "description": "Workflow versions. If not defined, applies to all workflow instances (regardless of their associated workflow version)",
+          "items": {
+            "type": "string"
+          }
+        },
         "currency": {
           "type": "string",
           "default": "USD",

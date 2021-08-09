@@ -34,6 +34,7 @@ KPIs can be added for the model:
 | --- | --- | --- | --- |
 | extensionid | Unique extension Id (default is 'workflow-kpi-extension') | string | yes |
 | workflowid | Workflow definition unique identifier (workflow id property) | string | yes |
+| workflowVersions | Workflow versions. If not defined, applies to all workflow instances (regardless of their associated workflow version) | array | no |
 | [workflow](#Workflow-KPIs-Definition) | Workflow definition KPIs | object | no |
 | [events](#Event-KPIs-Definition) | Workflow event definitions KPIs | array | no |
 | [functions](#Function-KPIs-Definition) | Workflow function definitions KPIs | array | no |
