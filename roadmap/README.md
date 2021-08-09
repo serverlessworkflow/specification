@@ -41,6 +41,7 @@ _Status description:_
 | ✔️| Added function definition support for OData | [spec doc](../specification.md) |
 | ✔️| Added function definition support for AsyncAPI | [spec doc](../specification.md) |
 | ✔️| Rename Delay state to Sleep state | [spec doc](../specification.md) |
+| ✔️| Added 'sleep' property to action definition | [spec doc](../specification.md) |
 
 ## Release Version 0.6
 
