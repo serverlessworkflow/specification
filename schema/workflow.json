@@ -184,6 +184,37 @@
     }
   ],
   "definitions": {
+    "sleep": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "string",
+          "description": "Amount of time (ISO 8601 duration format) to sleep before function/subflow invocation. Does not apply if 'eventRef' is defined."
+        },
+        "after": {
+          "type": "string",
+          "description": "Amount of time (ISO 8601 duration format) to sleep after function/subflow invocation. Does not apply if 'eventRef' is defined."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "before"
+          ]
+        },
+        {
+          "required": [
+            "after"
+          ]
+        },
+        {
+          "required": [
+            "before",
+            "after"
+          ]
+        }
+      ]
+    },
     "crondef": {
       "oneOf": [
         {
@@ -350,6 +381,10 @@
         "subFlowRef": {
           "description": "References a sub-workflow to invoke",
           "$ref": "#/definitions/subflowref"
+        },
+        "sleep": {
+          "description": "Defines time periods workflow execution should sleep before / after function execution",
+          "$ref": "#/definitions/sleep"
         },
         "actionDataFilter": {
           "description": "Action data filter",

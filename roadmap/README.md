@@ -41,6 +41,7 @@ _Status description:_
 | ✔️| Added function definition support for OData | [spec doc](../specification.md) |
 | ✔️| Added function definition support for AsyncAPI | [spec doc](../specification.md) |
 | ✔️| Rename Delay state to Sleep state | [spec doc](../specification.md) |
+| ✔️| Added 'sleep' property to action definition | [spec doc](../specification.md) |
 | ✏️ | AsyncAPI operation support |  |
 | ✏️ | OData function definition support |  |
 | ✏️ | Update to retries - state specific rather than error specific |  |
@@ -54,7 +55,7 @@ _Status description:_
 | 🚩 | JSON schema checks |  |
 | 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
 | ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
->>>>>>> Rename Delay state to Sleep state and rename timeDelay to duration property
+
 
 ## <a name="v06"></a> v0.6
 
