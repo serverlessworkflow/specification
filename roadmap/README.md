@@ -43,8 +43,7 @@ _Status description:_
 | ✔️| Rename Delay state to Sleep state | [spec doc](../specification.md) |
 | ✔️| Added 'sleep' property to action definition | [spec doc](../specification.md) |
 | ✔️| Added Rate Limiting extension | [spec doc](../specification.md) |
-| ✏️ | AsyncAPI operation support |  |
-| ✏️ | OData function definition support |  |
+| ✔️| Update ForEach state - adding sequential exec option and batch size for parallel option | [spec doc](../specification.md) |
 | ✏️ | Update to retries - state specific rather than error specific |  |
 | ✏️ | Add batching and sync option for Foreach state |  |
 | 🚩 | Workflow invocation bindings |  |
@@ -56,7 +55,6 @@ _Status description:_
 | 🚩 | JSON schema checks |  |
 | 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
 | ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
-
 
 ## <a name="v06"></a> v0.6
 
