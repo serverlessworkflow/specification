@@ -126,8 +126,8 @@
       "items": {
         "anyOf": [
           {
-            "title": "Delay State",
-            "$ref": "#/definitions/delaystate"
+            "title": "Sleep State",
+            "$ref": "#/definitions/sleepstate"
           },
           {
             "title": "Event State",
@@ -503,9 +503,9 @@
         "actions"
       ]
     },
-    "delaystate": {
+    "sleepstate": {
       "type": "object",
-      "description": "Causes the workflow execution to delay for a specified duration",
+      "description": "Causes the workflow execution to sleep for a specified duration",
       "properties": {
         "id": {
           "type": "string",
@@ -518,7 +518,7 @@
         },
         "type": {
           "type": "string",
-          "const": "delay",
+          "const": "sleep",
           "description": "State type"
         },
         "end": {
@@ -529,9 +529,9 @@
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
-        "timeDelay": {
+        "duration": {
           "type": "string",
-          "description": "Amount of time (ISO 8601 format) to delay"
+          "description": "Duration (ISO 8601 duration format) to sleep"
         },
         "timeouts": {
           "type": "object",
@@ -553,7 +553,7 @@
           "additionalItems": false
         },
         "transition": {
-          "description": "Next transition of the workflow after the time delay",
+          "description": "Next transition of the workflow after the workflow sleep",
           "$ref": "#/definitions/transition"
         },
         "compensatedBy": {
@@ -585,7 +585,7 @@
         "required": [
           "name",
           "type",
-          "timeDelay"
+          "duration"
         ]
       },
       "else": {
@@ -594,7 +594,7 @@
             "required": [
               "name",
               "type",
-              "timeDelay",
+              "duration",
               "end"
             ]
           },
@@ -602,7 +602,7 @@
             "required": [
               "name",
               "type",
-              "timeDelay",
+              "duration",
               "transition"
             ]
           }

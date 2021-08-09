@@ -1155,8 +1155,8 @@ In the case job submission raises a runtime error, we transition to an Operation
   },
   {
       "name": "WaitForCompletion",
-      "type": "delay",
-      "timeDelay": "PT5S",
+      "type": "sleep",
+      "duration": "PT5S",
       "transition": "GetJobStatus"
   },
   {
@@ -1276,8 +1276,8 @@ states:
   - subFlowRef: handleJobSubmissionErrorWorkflow
   end: true
 - name: WaitForCompletion
-  type: delay
-  timeDelay: PT5S
+  type: sleep
+  delay: PT5S
   transition: GetJobStatus
 - name: GetJobStatus
   type: operation
@@ -3856,12 +3856,12 @@ For the sake of the example we assume the functions and event definitions are de
                }
             }
          ],
-         "transition": "Wait two weeks"
+         "transition": "Sleep two weeks"
       },
       {
-         "name": "Wait two weeks",
-         "type": "delay",
-         "timeDelay": "PT2W",
+         "name": "Sleep two weeks",
+         "type": "sleep",
+         "duration": "PT2W",
          "transition": "Get Book Status"
       },
       {
@@ -3953,10 +3953,10 @@ states:
       arguments:
         bookid: "${ .book.id }"
         lender: "${ .lender }"
-  transition: Wait two weeks
-- name: Wait two weeks
-  type: delay
-  timeDelay: PT2W
+  transition: Sleep two weeks
+- name: Sleep two weeks
+  type: sleep
+  duration: PT2W
   transition: Get Book Status
 - name: Check Out Book
   type: operation
