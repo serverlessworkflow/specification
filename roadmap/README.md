@@ -44,6 +44,7 @@ _Status description:_
 | ✔️| Added 'sleep' property to action definition | [spec doc](../specification.md) |
 | ✔️| Added Rate Limiting extension | [spec doc](../specification.md) |
 | ✔️| Update ForEach state - adding sequential exec option and batch size for parallel option | [spec doc](../specification.md) |
+| ✔️| Update to error handling and retries. Retries are now per action rather than per state. Added option of automatic retries for actions | [spec doc](../specification.md) |
 
 ## Release Version 0.6
 
