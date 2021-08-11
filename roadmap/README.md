@@ -44,17 +44,7 @@ _Status description:_
 | ✔️| Added 'sleep' property to action definition | [spec doc](../specification.md) |
 | ✔️| Added Rate Limiting extension | [spec doc](../specification.md) |
 | ✔️| Update ForEach state - adding sequential exec option and batch size for parallel option | [spec doc](../specification.md) |
-| ✏️ | Update to retries - state specific rather than error specific |  |
-| ✏️ | Add batching and sync option for Foreach state |  |
-| 🚩 | Workflow invocation bindings |  |
-| 🚩 | CE Subscriptions & Discovery |  |
-| 🚩 | Error types | [issue](https://github.com/serverlessworkflow/specification/issues/200) |
-| 🚩 | Uniqueness constraint for workflows | [issue](https://github.com/serverlessworkflow/specification/issues/146) |
-| 🚩 | OpenAPI endpoint selection |  |
-| 🚩 | Data triggers |  |
-| 🚩 | JSON schema checks |  |
-| 🚩 | Start discussions on Serverless Workflow Technology Compatibility Kit (TCK) |  |
-| ✏️ | Specification primer | [google doc](https://docs.google.com/document/d/11rD3Azj63G2Si0VpokSpr-1ib3mFRFHSwN6tJb-0LQM/edit#heading=h.paewfy83tetm) continued in [wiki](https://github.com/serverlessworkflow/specification/wiki) |
+| ✔️| Update to error handling and retries. Retries are now per action rather than per state. Added option of automatic retries for actions | [spec doc](../specification.md) |
 
 ## <a name="v06"></a> v0.6
 

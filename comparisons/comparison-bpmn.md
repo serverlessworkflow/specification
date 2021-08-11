@@ -200,42 +200,49 @@ functions:
 <td valign="top">
 
 ```yaml
+---
 id: errorwithretries
 name: Error Handling With Retries Workflow
 version: '1.0'
 specVersion: '0.7'
 start: Make Coffee
 states:
-- name: Make Coffee
-  type: operation
-  actions:
-  - functionRef: makeCoffee
-  transition: Add Milk
-- name: Add Milk
-  type: operation
-  actions:
-  - functionRef: addMilk
-  onErrors:
-  - error: D'oh! No more Milk!
-    retryRef: noMilkRetries
+  - name: Make Coffee
+    type: operation
+    actions:
+      - functionRef: makeCoffee
+    transition: Add Milk
+  - name: Add Milk
+    type: operation
+    actions:
+      - functionRef: addMilk
+        retryRef: noMilkRetries
+        retryableErrors:
+        - D'oh! No more Milk!
+    onErrors:
+      - errorRef: D'oh! No more Milk!
+        end: true
+    transition: Drink Coffee
+  - name: Drink Coffee
+    type: operation
+    actions:
+      - functionRef: drinkCoffee
     end: true
-  transition: Drink Coffee
-- name: Drink Coffee
-  type: operation
-  actions:
-  - functionRef: drinkCoffee
-  end: true
 retries:
-- name: noMilkRetries
-  delay: PT1M
-  maxAttempts: 10
+  - name: noMilkRetries
+    delay: PT1M
+    maxAttempts: 10
+errors:
+  - name: D'oh! No more Milk!
+    code: '123'
 functions:
-- name: makeCoffee
-  operation: file://myservice.json#make
-- name: addMilk
-  operation: file://myservice.json#add
-- name: drinkCoffee
-  operation: file://myservice.json#drink
+  - name: makeCoffee
+    operation: file://myservice.json#make
+  - name: addMilk
+    operation: file://myservice.json#add
+  - name: drinkCoffee
+    operation: file://myservice.json#drink
+
 ```
 
 </td>
