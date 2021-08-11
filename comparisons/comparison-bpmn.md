@@ -217,6 +217,8 @@ states:
     actions:
       - functionRef: addMilk
         retryRef: noMilkRetries
+        retryableErrors:
+        - D'oh! No more Milk!
     onErrors:
       - errorRef: D'oh! No more Milk!
         end: true

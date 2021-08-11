@@ -858,6 +858,7 @@ id: exit-handlers-
 name: Exit/Error Handling Example
 version: '1.0'
 specVersion: '0.7'
+autoRetries: true
 start: intentional-fail-state
 functions:
   - name: intentional-fail-function

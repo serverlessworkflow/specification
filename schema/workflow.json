@@ -117,6 +117,11 @@
     "functions": {
       "$ref": "functions.json#/functions"
     },
+    "autoRetries": {
+      "type": "boolean",
+      "default": false,
+      "description": "If set to true, actions should automatically be retried on unchecked errors. Default is false"
+    },
     "retries": {
       "$ref": "retries.json#/retries"
     },
@@ -406,7 +411,16 @@
         },
         "nonRetryableErrors": {
           "type": "array",
-          "description": "List of unique references to defined workflow errors for which the action should not be retried",
+          "description": "List of unique references to defined workflow errors for which the action should not be retried. Used only when `autoRetries` is set to `true`",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "additionalItems": false
+        },
+        "retryableErrors": {
+          "type": "array",
+          "description": "List of unique references to defined workflow errors for which the action should be retried. Used only when `autoRetries` is set to `false`",
           "minItems": 1,
           "items": {
             "type": "string"

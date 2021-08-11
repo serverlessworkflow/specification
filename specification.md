@@ -71,7 +71,9 @@
       - [Additional Properties](#additional-properties)
   * [Workflow Error Handling](#workflow-error-handling)
     + [Defining Errors](#defining-errors)
-    + [Defining Retries](#defining-retries)
+  * [Action Retries](#action-retries)
+    + [Retry actions on known errors](#retry-actions-on-known-errors)
+    + [Automatic retries on known and unknown errors](#automatic-retries-on-known-and-unknown-errors)
   * [Workflow Timeouts](#workflow-timeouts)
     + [Workflow Timeout Definition](#workflow-timeout-definition)
       - [WorkflowExecTimeout Definition](#workflowexectimeout-definition)
@@ -1760,6 +1762,7 @@ definition "id" must be a constant value.
 | [auth](#Auth-Definition) | Workflow authentication definitions | array or string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
+| autoRetries | If set to true, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is false | boolean| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
 | [states](#Workflow-States) | Workflow states | array | yes |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
@@ -3643,7 +3646,8 @@ This is visualized in the diagram below:
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | [retryRef](#Defining-Retries) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
-| nonRetryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should not be retried | array | no |
+| nonRetryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
+| retryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 | sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
 
@@ -3711,7 +3715,12 @@ should be retried according to the default retry policy of the runtime implement
 retries reference [this section](#defining-retries).
 
 The `nonRetryableErrors` property is a list that references one or more unique names of workflow error definitions. 
-This is the list of known errors for which the action should not be retried for.
+This is the list of known errors for which the action should not be retried for. 
+It should be used only when the workflow top-level `autoRetries` property is set to `true`.
+
+The `retryableErrors` property is a list that references one or more unique names of workflow error definitions.
+This is the list of known errors for which the action should be retried for.
+It should be used only when the workflow top-level `autoRetries` property is set to `false`.
 
 ##### Subflow Action
 
@@ -4022,7 +4031,7 @@ jitter: PT0.001S
 </details>
 
 Defines the states retry policy (strategy). This is an explicit definition and can be reused across multiple
-defined workflow state errors.
+defined state [actions](#Action-Definition).
 
 The `name` property specifies the unique name of the retry definition (strategy). This unique name
 can be referred by workflow states [error definitions](#Error-Definition).
@@ -4914,33 +4923,175 @@ errors:
 </table>
 
 These defined errors can then be referenced by their unique name in both states `onErrors` definitions as well as in 
-actions `nonRetryableErrors` property.
+actions `nonRetryableErrors` and `retryableErrors` properties.
 
-#### Defining Retries
+### Action retries
 
-As previously mentioned, workflows in general should not fail on unknown errors. Errors can happen during action execution.
-The Serverless Workflow retry policy is designed so that workflow actions are retried by default on any errors and allow for users
-to defined a list of known errors for which they should not be retried for. The idea behind this is the ability
-for workflow execution to recover from issues, especially service invocation. Rather than failing on the first encounter of 
-an unknown error during service execution, we can retry it's invocation until the service code is fixed for example.
-This approach brings a much-needed failure recovery option to DSL-based workflows that so far has been missing.
+Retries allow workflows to deal with intermittent failures of services they are trying to invoke.
+In addition, retries allow workflows to continue (not fail) execution and allow us to fix possible errors with invoked 
+services and continue execution after they are fixed. 
+Retries are important for both short-lived and long-lived workflows, as well as in both stateless and stateful 
+scenarios.
 
-By default, all actions should be retried using the runtime default retry policy. This policy should be used when 
-an action does not reference a specific retry definition.
+Serverless workflow supports two distinct ways of defining retries:
+1. Retrying on specified known (checked) errors.
+2. Automatic retrying on both known (checked) and not-known (unchecked) errors.
 
-Runtime implementations can define their own default retry policy. Serverless Workflow recommends the following settings:
+Which retry option the workflow should use by default is defined via the workflow top-level `autoRetries` property.
+By default, the value of the `autoRetries` is set to false, meaning that retry option 1) is used by default.
+You can enable automatic retrying (option 2) by setting `autoRetries` to true.
+
+Regardless of the chosen retries option, note that workflows in general should be designed to not fail. 
+Workflows should be able to recover from intermittent failures. 
+
+The next sections provide more details to each action retry option.
+
+#### Retry actions on known errors
+
+This is the default option when the workflow top-level `autoRetries` property is not specified or is set to `false`.
+This retry options is suited for stateless / short-running workflows where retries should  be performed when specifically
+wanted. Note that in this scenario when unknown (unchecked) errors happen during action execution (service invocation), 
+workflow execution should fail.
+
+Let's take a look at an example. To start, let's define a workflow top-level `retries` definition:
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+"retries": [
+  {
+    "name": "FirstRetryStrategy",
+    "delay": "PT1M",
+    "maxAttempts": 5
+  },
+  {
+    "name": "SecondRetryStrategy",
+    "delay": "PT10M",
+    "maxAttempts": 10
+  }
+]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+retries:
+  - name: FirstRetryStrategy
+    delay: PT1M
+    maxAttempts: 5
+  - name: SecondRetryStrategy
+    delay: PT10M
+    maxAttempts: 10
+
+```
+
+</td>
+</tr>
+</table>
+
+Our `retries` definitions can be referenced by actions. For example:
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "actions": [
+    {
+      "functionRef": "MyFirstFunction",
+      "retryRef": "FirstRetryStrategy",
+      "retryableErrors": ["SomeErrorOne", "SomeErrorTwo"]
+    },
+    {
+      "functionRef": "MySecondFunction",
+      "retryRef": "SecondRetryStrategy",
+      "retryableErrors": ["SomeErrorTwo", "SomeErrorThree"]
+    },
+    {
+      "functionRef": "MyThirdFunction"
+    }
+  ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+actions:
+  - functionRef: MyFirstFunction
+    retryRef: FirstRetryStrategy
+    nonRetryableErrors:
+      - SomeErrorOne
+      - SomeErrorTwo
+  - functionRef: MySecondFunction
+    retryRef: SecondRetryStrategy
+    nonRetryableErrors:
+      - SomeErrorTwo
+      - SomeErrorThree
+  - functionRef: MyThirdFunction
+```
+
+</td>
+</tr>
+</table>
+
+Each action can define the retry strategy it wants to use. If it does not define one, the action is in this case not retries.
+Actions can define a list of known errors in its `retryableErrors` array. If defined, then the action should be retried
+for those errors according to the referenced retry strategy.
+
+In our example, "MyFirstFunction" invocation should be retried according to the "FirstRetryStrategy" policy only on known errors
+"SomeErrorOne" and "SomeErrorTwo".
+
+If for a known error (defined in `retryableErrors`) the retry limit is reached and the error still persist, it can be handlerd in the states
+`onErrors` definition. 
+
+If an unknown (unchecked) error happens during action execution, this cannot be handled either in the states `onErrors` definition, in which case
+workflow execution should fail.
+
+#### Automatic retries on known and unknown errors
+
+This is the option used when the workflow top-level `autoRetries` property is set to `true`.
+Automatic retries are well suited to long-running and stateful workflow orchestrations. It allows workflows
+to recover from failures thus providing more resilience. There is a possible cost associated with automatic retries
+in terms of resource and computing power utilization. 
+
+With this retries option, action executions should be retried automatically for both known (checked) as well as unknown (unchecked)
+errors. This means that you do not have to define a retry strategy for actions for them to have retried, it's included by default.
+Users can still define a custom retry strategy for each action via the `retryRef` property.
+
+If a retry strategy is not defained, a default retry strategy should be used.
+Runtime implementations can define their own default retry strategy. Serverless Workflow recommends the following settings:
 
 * `maxAttempts` to be `unlimited`, meaning that the action should be retried indefinitely until successful.
 * `delay` to be set to one second, meaning that there is a one second delay between action retries.
 * `multiplier` to be set to two meaning that the delay should be multiplied by two for each retry attempt.
 
-Runtimes should document their default retry policy to users, so it's clear which
+Runtimes should document their default retry strategy to users, so it's clear which
 property values they are using for the default.
 
-Workflow state actions can define for which known errors retries should not happen. This is done via the actions
-`nonRetryableErrors` property.
+Actions can define for which known (checked) errors they should not be retried for. 
+This is done via the actions `nonRetryableErrors` property. If a known error happens during action execution 
+which is included in the `nonRetryableErrors` property array, that action should not be retried and the error 
+then should be handled in the workflow states `onErrors` property.
 
-Let's take a look at some examples of defining retries. To start, let's define a workflow top-level retry definition:
+Let's take a look at an examples of defining retries when using the automatic retries option. 
+This example assumes that the workfow top level `autoRetries` property is set to `true`.
+To start, let's define a workflow top-level `retries` definition:
 
 <table>
 <tr>
@@ -5059,6 +5210,7 @@ retry policy
 for all errors except `SomeErrorTwo` and `SomeErrorThree`.
 
 The third action named `MyThirdFunction` is going to retried according to the default runtime retry policy.
+It will be retried for all errors both known (checked) as well as unknown (unckecked).
 
 The fourth action named `MyFourthFunction` is going to be retried according to the `DoNotRetryStrategy`
 retry policy which has the `maxAttempts` property set to `1`, meaning that this action will not be retried.

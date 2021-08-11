@@ -615,6 +615,7 @@ public class HelloActivityRetry {
   "name": "Hello Activity with Retries Workflow",
   "version": "1.0",
   "specVersion": "0.7",
+  "autoRetries": true,
   "start": "GreetingState",
   "states": [
     {

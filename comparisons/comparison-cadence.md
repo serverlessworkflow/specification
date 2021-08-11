@@ -196,6 +196,7 @@ id: fileprocessingwithretries
 name: File Processing Workflow With Retries
 version: '1.0'
 specVersion: '0.7'
+autoRetries: true
 start: ProcessAndUpload
 states:
   - name: ProcessAndUpload

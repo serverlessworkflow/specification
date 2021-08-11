@@ -585,7 +585,8 @@ to interested parties via events (CloudEvents specification format), which we ar
             "actions": [
                 {
                     "functionRef": "ReadItemFromApi",
-                    "retryRef": "ServiceNotAvailableRetryPolicy"
+                    "retryRef": "ServiceNotAvailableRetryPolicy",
+                    "retryableErrors": ["Service Not Available"]
                 }
             ],
             "onErrors": [

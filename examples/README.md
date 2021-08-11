@@ -2782,15 +2782,18 @@ If the retries are not successful, we want to just gracefully end workflow execu
           "actions": [
             {
               "functionRef": "StorePatient",
-              "retryRef": "ServicesNotAvailableRetryStrategy"
+              "retryRef": "ServicesNotAvailableRetryStrategy",
+              "retryableErrors": ["ServiceNotAvailable"]
             },
             {
               "functionRef": "AssignDoctor",
-              "retryRef": "ServicesNotAvailableRetryStrategy"
+              "retryRef": "ServicesNotAvailableRetryStrategy",
+              "retryableErrors": ["ServiceNotAvailable"]
             },
             {
               "functionRef": "ScheduleAppt",
-              "retryRef": "ServicesNotAvailableRetryStrategy"
+              "retryRef": "ServicesNotAvailableRetryStrategy",
+              "retryableErrors": ["ServiceNotAvailable"]
             }
           ]
         }
@@ -2859,10 +2862,16 @@ states:
       actions:
        - functionRef: StorePatient
          retryRef: ServicesNotAvailableRetryStrategy
+         retryableErrors:
+         - ServiceNotAvailable
        - functionRef: AssignDoctor
          retryRef: ServicesNotAvailableRetryStrategy
+         retryableErrors:
+         - ServiceNotAvailable
        - functionRef: ScheduleAppt
          retryRef: ServicesNotAvailableRetryStrategy
+         retryableErrors:
+        - ServiceNotAvailable
    onErrors:
     - errorRef: ServiceNotAvailable
       end: true

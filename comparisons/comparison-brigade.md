@@ -146,6 +146,7 @@ id: greetingwitherrorcheck
 name: Greeting Workflow With Error Check
 version: '1.0'
 specVersion: '0.7'
+autoRetries: true
 start: GreetingState
 events:
 - name: execEvent
