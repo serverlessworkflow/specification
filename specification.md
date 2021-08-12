@@ -87,6 +87,7 @@
     + [Compensation and Active States](#compensation-and-active-states)
     + [Unrecoverable errors during compensation](#unrecoverable-errors-during-compensation)
   * [Continuing as a new Execution](#continuing-as-a-new-execution) 
+    + [ContinueAs in sub workflows](#continueas-in-sub-workflows)
   * [Workflow Versioning](#workflow-versioning)
   * [Workflow Constants](#workflow-constants)
   * [Workflow Secrets](#workflow-secrets)
@@ -5796,6 +5797,26 @@ If `object` type, the `continueAs` property has the following properties:
 | version | Version of the workflow to continue execution as. | string | no |
 | data | If string type, a workflow expression which selects parts of the states data output to become the workflow data input of continued execution. If object type, a custom object to become the workflow data input of the continued execution. | string or object | no |
 | [`workflowExecTimeout`](#Workflow-Timeouts) | Workflow execution timeout to be used by the workflow continuing execution. Overwrites any specific settings set by that workflow. | string or object | no |
+
+Continuing execution with `continueAs` can also be used inside sub-workflow executions, which brings its next use case.
+
+#### ContinueAs in sub workflows
+
+Workflows can invoke sub-workflows during their execution. In Serverless Workflow DSL, sub-workflows are invoked
+similarly to other function types via the [SubFlowRef Definition](#SubFlowRef-Definition) 
+in workflow states [Action](#Action-Definition) definitions.
+
+Just like "parent" workflows, sub-workflow can also be long-running, and can run into the same type of runtime/serverless platform
+limitations as previously discussed. As such they can also use `continueAs` to stop their current execution and continue it as 
+a new one of the same or different workflow id.
+
+Note that when a sub-workflow is invoked it can produce a result that is then merged into the parent workflow state data.
+This may bring up a question as to what happens when a sub-workflow calls `continueAs` in terms of what is returned as
+result to of its invocation by the parent workflow.
+
+No matter how many times sub-workflow may use `continueAs`, to the parent workflow it should be as a single invocation is performed,
+meaning that the results of the last sub-workflow invocation (triggered by `continueAs`) should be used as the 
+data returned by the invocation of the sub-workflow to the parent workflow.
 
 ### Workflow Versioning
 
