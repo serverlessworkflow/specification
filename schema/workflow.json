@@ -404,7 +404,7 @@
         "sleep": {
           "description": "Defines time periods workflow execution should sleep before / after function execution",
           "$ref": "#/definitions/sleep"
-        }
+        },
         "retryRef": {
           "type": "string",
           "description": "References a defined workflow retry definition. If not defined the default retry policy is assumed"
