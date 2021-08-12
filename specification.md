@@ -4629,7 +4629,7 @@ If the end definition is of type `object`, it has the following structure:
 | terminate | If true, terminates workflow instance execution | boolean | no |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Defines events that should be produced. | array | no |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before workflow execution completes. Default is `false` | boolean | no |
-| [continueAs](#Continuing as a new Execution) | Defines that current workflow execution should stop, and execution should continue as a new workflow instance of the provided id | string or object | no |
+| [continueAs](#continuing-as-a-new-execution) | Defines that current workflow execution should stop, and execution should continue as a new workflow instance of the provided id | string or object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
