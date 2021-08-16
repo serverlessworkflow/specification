@@ -250,6 +250,43 @@
         }
       ]
     },
+    "continueasdef": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Unique id of the workflow to be continue execution as. Entire state data is passed as data input to next execution",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "properties": {
+            "workflowId": {
+              "type": "string",
+              "description": "Unique id of the workflow to continue execution as"
+            },
+            "version": {
+              "type": "string",
+              "description": "Version of the workflow to continue execution as",
+              "minLength": 1
+            },
+            "data": {
+              "type": [
+                "string",
+                "object"
+              ],
+              "description": "If string type, an expression which selects parts of the states data output to become the workflow data input of continued execution. If object type, a custom object to become the workflow data input of the continued execution"
+            },
+            "workflowExecTimeout": {
+              "$ref": "timeouts.json#/definitions/workflowExecTimeout",
+              "description": "Workflow execution timeout to be used by the workflow continuing execution. Overwrites any specific settings set by that workflow"
+            }
+          },
+          "required": [
+            "workflowId"
+          ]
+        }
+      ]
+    },
     "transition": {
       "oneOf": [
         {
@@ -1825,6 +1862,9 @@
               "type": "boolean",
               "default": false,
               "description": "If set to true, triggers workflow compensation. Default is false"
+            },
+            "continueAs": {
+              "$ref": "#/definitions/continueasdef"
             }
           },
           "additionalProperties": false,

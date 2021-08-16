@@ -45,6 +45,7 @@ _Status description:_
 | ✔️| Added Rate Limiting extension | [spec doc](../specification.md) |
 | ✔️| Update ForEach state - adding sequential exec option and batch size for parallel option | [spec doc](../specification.md) |
 | ✔️| Update to error handling and retries. Retries are now per action rather than per state. Added option of automatic retries for actions | [spec doc](../specification.md) |
+| ✔️| Added "continueAs" property to end definitions | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
 
 ## Release Version 0.6
 
