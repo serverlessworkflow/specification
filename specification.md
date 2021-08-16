@@ -86,6 +86,8 @@
     + [Compensation Execution Details](#compensation-execution-details)
     + [Compensation and Active States](#compensation-and-active-states)
     + [Unrecoverable errors during compensation](#unrecoverable-errors-during-compensation)
+  * [Continuing as a new Execution](#continuing-as-a-new-execution) 
+    + [ContinueAs in sub workflows](#continueas-in-sub-workflows)
   * [Workflow Versioning](#workflow-versioning)
   * [Workflow Constants](#workflow-constants)
   * [Workflow Secrets](#workflow-secrets)
@@ -4616,8 +4618,8 @@ Can be either `boolean` or `object` type. If type boolean, must be set to `true`
 "end": true
 ```
 
-In this case it's assumed that the `terminate` property has its default value of `false`, and the `produceEvents` and
-`compensate` properties are not defined.
+In this case it's assumed that the `terminate` property has its default value of `false`, and the `produceEvents`,
+`compensate`, and  `continueAs` properties are not defined.
 
 If the end definition is of type `object`, it has the following structure:
 
@@ -4626,6 +4628,7 @@ If the end definition is of type `object`, it has the following structure:
 | terminate | If true, terminates workflow instance execution | boolean | no |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Defines events that should be produced. | array | no |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before workflow execution completes. Default is `false` | boolean | no |
+| [continueAs](#continuing-as-a-new-execution) | Defines that current workflow execution should stop, and execution should continue as a new workflow instance of the provided id | string or object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4667,8 +4670,8 @@ produceEvents:
 
 End definitions are used to explicitly define execution completion of a workflow instance or workflow execution path.
 A workflow definition must include at least one [workflow state](#Workflow-States).
-Note that [Switch states](#Switch-State) cannot declare to be workflow end states. Switch states must end
-their execution followed by a transition another workflow state, given their conditional evaluation.
+Note that [Switch states](#Switch-State) cannot declare to be workflow end states. Their conditions however can 
+define a stop of workflow execution.
 
 The `terminate` property, if set to `true`, completes the workflow instance execution, this any other active
 execution paths.
@@ -4682,6 +4685,15 @@ the only way to complete execution of the workflow instance
 is if workflow execution reaches a state that defines an end definition with `terminate` property set to `true`,
 or, if the [`workflowExecTimeout`](#Workflow-Timeouts) property is defined, the time defined in its `interval`
 is reached.
+
+The [compensate](#Workflow-Compensation) property defines that workflow compensation should be performed before the workflow 
+execution is completed.
+
+The [continueAs](#Continuing as a new Execution) property defines that the current workflow instance should stop its execution,
+and worklow execution should continue as a new instance of a new workflow.
+When defined, it should be assumed that `terminate` is `true`. If `continueAs` is defined, and `terminate` is explicitly
+set to false, runtimes should report this to users. Producing events, and compensation should still be performed (if defined)
+before the workflow execution is stopped, and continued as a new workflow instance with the defined workflow id.
 
 ##### ProducedEvent Definition
 
@@ -5743,6 +5755,66 @@ States that are marked as `usedForCompensation` can define [error handling](#Wor
 `onErrors` property just like any other workflow states. In case of unrecoverable errors during their execution
 (errors not explicitly handled),
 workflow execution should be stopped, which is the same behavior as when not using compensation as well.
+
+### Continuing as a new Execution
+
+In some cases our workflows are deployed and executed on runtimes and/or cloud platforms that expose some 
+execution limitations such as finite execution duration, finite number of workflow transitions, etc.
+Some runtimes, especially when dealing with stateful workflow orchestrations have a finite limit of 
+execution history log sizes, meaning that once a long-running workflow reaches these limits workflow executions is 
+likely to be forced to stop before reaching its completion. This can result in unexpected issues, especially with
+mission-critical workflows.
+
+For those cases, the Serverless Workflow DSL provides a way to explicitly define stopping the current workflow
+instance execution, and starting a new one (for the same workflow id or a different one).
+This can be done via the [end definitions](#end-definition) `continueAs` property.
+
+The end definitions `continueAs` can be either of type `string` or `object`.
+If string type, it contains the unique workflow id of the workflow that the execution should continue as, for example:
+
+
+```json
+{ 
+  "end": {
+    "continueAs": "myworkflowid"
+  }
+}
+```
+
+Defining this should stop the current workflow execution, and continue execution as a new workflow instance of the 
+workflow which defines the workflow id of "myworkflowid". The state data where this is define should 
+become the workflow data input of the workflow that is continuing the current workflow execution.
+
+Note that any defined `produceEvents` and `compensate` definitions should be honored before `continueAs` is applied.
+
+If `object` type, the `continueAs` property has the following properties:
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| workflowId | Unique id of the workflow to continue execution as. | string | yes |
+| version | Version of the workflow to continue execution as. | string | no |
+| data | If string type, a workflow expression which selects parts of the states data output to become the workflow data input of continued execution. If object type, a custom object to become the workflow data input of the continued execution. | string or object | no |
+| [`workflowExecTimeout`](#Workflow-Timeouts) | Workflow execution timeout to be used by the workflow continuing execution. Overwrites any specific settings set by that workflow. | string or object | no |
+
+Continuing execution with `continueAs` can also be used inside sub-workflow executions, which brings its next use case.
+
+#### ContinueAs in sub workflows
+
+Workflows can invoke sub-workflows during their execution. In Serverless Workflow DSL, sub-workflows are invoked
+similarly to other function types via the [SubFlowRef Definition](#SubFlowRef-Definition) 
+in workflow states [Action](#Action-Definition) definitions.
+
+Just like "parent" workflows, sub-workflow can also be long-running, and can run into the same type of runtime/serverless platform
+limitations as previously discussed. As such they can also use `continueAs` to stop their current execution and continue it as 
+a new one of the same or different workflow id.
+
+Note that when a sub-workflow is invoked it can produce a result that is then merged into the parent workflow state data.
+This may bring up a question as to what happens when a sub-workflow calls `continueAs` in terms of what is returned as
+result to of its invocation by the parent workflow.
+
+No matter how many times sub-workflow may use `continueAs`, to the parent workflow it should be as a single invocation is performed,
+meaning that the results of the last sub-workflow invocation (triggered by `continueAs`) should be used as the 
+data returned by the invocation of the sub-workflow to the parent workflow.
 
 ### Workflow Versioning
 
