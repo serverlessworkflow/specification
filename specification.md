@@ -1914,8 +1914,8 @@ The `start` property defines the workflow starting information. For more informa
 The `specVersion` property is used to set the Serverless Workflow specification release version
 the workflow markup adheres to.
 It has to follow the specification release versions (excluding the leading "v"), meaning that for
-the [release version v0.6](https://github.com/serverlessworkflow/specification/releases/tag/v0.6)
-its value should be set to `"0.6"`.
+the [release version v0.7](https://github.com/serverlessworkflow/specification/releases/tag/v0.7)
+its value should be set to `"0.7"`.
 
 The `expressionLang` property can be used to identify the expression language used for all expressions in
 the workflow definition. The default value of this property is ["jq"](https://stedolan.github.io/jq/).
