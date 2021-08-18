@@ -51,7 +51,7 @@ Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.i
 | | Latest release | Latest release branch | Working branch | 
 | --- |  :---: | :---: | :---: |
 | **Core Specification** | |
-| [Serverless Workflow](https://github.com/serverlessworkflow/specification) | [v0.6](https://github.com/serverlessworkflow/specification/releases) | [0.6.x](https://github.com/serverlessworkflow/specification/tree/0.6.x) | [main](https://github.com/serverlessworkflow/specification) |
+| [Serverless Workflow](https://github.com/serverlessworkflow/specification) | [v0.7](https://github.com/serverlessworkflow/specification/releases) | [0.6.x](https://github.com/serverlessworkflow/specification/tree/0.6.x) | [main](https://github.com/serverlessworkflow/specification) |
 | **Additional Components** | |
 | [Synapse](https://github.com/serverlessworkflow/synapse) | [0.1.0-alpha1](https://github.com/serverlessworkflow/synapse/releases) |  | [main](https://github.com/serverlessworkflow/synapse) |
 | [GO SDK](https://github.com/serverlessworkflow/sdk-go) | [v2.0.0](https://github.com/serverlessworkflow/sdk-go/releases) | [1.0.x](https://github.com/serverlessworkflow/sdk-go/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-go) |
