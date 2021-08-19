@@ -42,11 +42,17 @@
         "type": {
           "type": "string",
           "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, or `expression`. Default is `rest`",
-          "anyOf":[
+          "oneOf": [
             {
-              "type":"string",
-              "minLength": 1,
-              "default": "rest"
+              "type":"object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "default": "rest"
+                }
+              },
+              "required": ["name"]
             },
             {
               "enum": [
