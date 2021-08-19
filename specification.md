@@ -33,6 +33,7 @@
       - [Creating an OData Function Definition](#creating-an-odata-function-definition)
       - [Invoking an OData Function Definition](#invoking-an-odata-function-definition)
     + [Using Functions for Expression Evaluation](#using-functions-for-expression-evaluation)
+    + [Extending Function Definition Types](#extending-function-definition-types)
   * [Workflow Expressions](#workflow-expressions)
   * [Workflow Definition Structure](#workflow-definition-structure)
     + [Workflow States](#workflow-states)
@@ -86,7 +87,7 @@
     + [Compensation Execution Details](#compensation-execution-details)
     + [Compensation and Active States](#compensation-and-active-states)
     + [Unrecoverable errors during compensation](#unrecoverable-errors-during-compensation)
-  * [Continuing as a new Execution](#continuing-as-a-new-execution) 
+  * [Continuing as a new Execution](#continuing-as-a-new-execution)
     + [ContinueAs in sub workflows](#continueas-in-sub-workflows)
   * [Workflow Versioning](#workflow-versioning)
   * [Workflow Constants](#workflow-constants)
@@ -1033,9 +1034,12 @@ They can be referenced by their domain-specific names inside workflow [states](#
 Reference the following sections to learn more about workflow functions:
 
 * [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
+* [Using Functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
+* [Using Functions for OData Service Invocations](#Using-Functions-for-OData-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
+* [Extending Function Definition Types](#Extending-Function-Definition-Types)
 
 #### Using Functions for RESTful Service Invocations
 
@@ -1564,6 +1568,53 @@ Note that the used function definition type in this case must be `expression`.
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
 For more information about workflow expressions, reference the [Workflow Expressions](#Workflow-Expressions) section.
+
+#### Extending Function Definition Types
+
+Runtimes are encouraged to implement the functions as suggested by the specification, but can also offer their own function definition types.
+When defining a new function type, the runtime **must** state clearly how to proper define the `operation` for the given type.
+Preferribly, using a similar approach suggested by the types supported by the specification.
+
+For example:
+
+```json
+{
+"functions": [
+  {
+    "name": "sendOrderConfirmation",
+    "type": "typescript",
+    "operation": "file://functions/orders/confirmation.ts#sendOrderConfirmation"
+  }
+]
+}
+```
+
+In this example, the runtime would support the `typescript` function definition.
+The `operation` attribute describes where to find the [TypeScript](https://www.typescriptlang.org/) file,
+and within the file which method to represent the function.
+
+Later, the function can be used in an action as any other function supported by the specification:
+
+```json
+[{
+  "states": [{
+      "name": "handleOrder",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "sendOrderConfirmation",
+          "functionRef": {
+            "refName": "sendOrderConfirmation",
+            "arguments": {
+              "order": "${ .order }"
+            }
+          }
+        }
+      ],
+      "transition": "emailCustomer"
+  }]
+}]
+```
 
 ### Workflow Expressions
 
@@ -3136,7 +3187,7 @@ section.
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
 | operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
-| type | Defines the function type. Is either `rest`, `asyncapi`, `rpc`, `graphql`, `odata` or `expression`. Default is `rest` | enum | no |
+| type | Defines the function type. Can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression` or a [custom type defined by the runtime](#extending-function-definition-types). Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 

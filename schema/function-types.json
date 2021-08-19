@@ -1,0 +1,21 @@
+{
+    "$id": "https://serverlessworkflow.io/schemas/0.7/function-types.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "Serverless Workflow specification - function types schema",
+    "type": "object",
+    "definitions": {
+        "type": {
+            "type": "string",
+            "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, or `expression`. Default is `rest`",
+            "enum": [
+                "rest",
+                "asyncapi",
+                "rpc",
+                "graphql",
+                "odata",
+                "expression"
+            ],
+            "default": "rest"
+        }
+    }
+}
