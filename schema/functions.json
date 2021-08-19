@@ -40,21 +40,20 @@
           "minLength": 1
         },
         "type": {
-          "type": "string",
-          "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, or `expression`. Default is `rest`",
           "oneOf": [
             {
               "type":"object",
+              "description": "Defines a custom function type",
               "properties": {
                 "name": {
                   "type": "string",
-                  "minLength": 1,
-                  "default": "rest"
+                  "minLength": 1
                 }
               },
               "required": ["name"]
             },
             {
+              "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, or `expression`. Default is `rest`",
               "enum": [
                 "rest",
                 "asyncapi",
