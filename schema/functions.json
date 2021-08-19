@@ -39,7 +39,7 @@
           "description": "If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \\\"mutation\\\" or \\\"query\\\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression.",
           "minLength": 1
         },
-        "type": {
+        "type": { 
           "oneOf": [
             {
               "type":"object",
