@@ -45,7 +45,8 @@
           "oneOf":[
             {
               "type":"string",
-              "minLength": 1
+              "minLength": 1,
+              "default": "rest"
             },
             {
               "enum": [
@@ -55,10 +56,10 @@
                 "graphql",
                 "odata",
                 "expression"
-              ]
+              ],
+              "default": "rest"
             }
-          ],
-          "default": "rest"
+          ]
         },
         "authRef": {
           "type": "string",
