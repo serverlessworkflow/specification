@@ -40,15 +40,25 @@
           "minLength": 1
         },
         "type": {
-          "anyOf": [
+          "type": "string",
+          "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, or `expression`. Default is `rest`",
+          "oneOf":[
             {
-              "$ref": "function-types.json#/definitions/type"
+              "type":"string",
+              "minLength": 1
             },
             {
-              "type": "string",
-              "description": "Custom function definition type defined by implementations"
+              "enum": [
+                "rest",
+                "asyncapi",
+                "rpc",
+                "graphql",
+                "odata",
+                "expression"
+              ]
             }
-          ]
+          ],
+          "default": "rest"
         },
         "authRef": {
           "type": "string",
