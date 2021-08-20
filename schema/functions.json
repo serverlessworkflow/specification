@@ -39,13 +39,13 @@
           "description": "If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \\\"mutation\\\" or \\\"query\\\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression.",
           "minLength": 1
         },
-        "type": { 
+        "type": {
+          "description": "Defines the function type. If string type, can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`. If object type it can define a custom type defined by specific runtime. Default value if not specified should be string type with value `rest`",
           "oneOf": [
             {
               "type":"object",
-              "description": "Defines a custom function type",
               "properties": {
-                "name": {
+                "custom": {
                   "type": "string",
                   "minLength": 1
                 }
@@ -53,7 +53,6 @@
               "required": ["name"]
             },
             {
-              "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, or `expression`. Default is `rest`",
               "enum": [
                 "rest",
                 "asyncapi",
