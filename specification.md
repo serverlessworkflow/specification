@@ -33,7 +33,7 @@
       - [Creating an OData Function Definition](#creating-an-odata-function-definition)
       - [Invoking an OData Function Definition](#invoking-an-odata-function-definition)
     + [Using Functions for Expression Evaluation](#using-functions-for-expression-evaluation)
-    + [Extending Function Definition Types](#extending-function-definition-types)
+    + [Defining custom Function types](#defining-custom-function-types)
   * [Workflow Expressions](#workflow-expressions)
   * [Workflow Definition Structure](#workflow-definition-structure)
     + [Workflow States](#workflow-states)
@@ -1039,7 +1039,7 @@ Reference the following sections to learn more about workflow functions:
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
 * [Using Functions for OData Service Invocations](#Using-Functions-for-OData-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
-* [Extending Function Definition Types](#Extending-Function-Definition-Types)
+* [Defining custom function types](#defining-custom-function-types)
 
 #### Using Functions for RESTful Service Invocations
 
@@ -1569,7 +1569,7 @@ For more information about functions, reference the [Functions definitions](#Fun
 
 For more information about workflow expressions, reference the [Workflow Expressions](#Workflow-Expressions) section.
 
-#### Extending Function Definition Types
+#### Defining custom function types
 
 [Function definitions](#function-definition) `type` property defines a list of function types that are set by
 the specification. 
@@ -3169,7 +3169,7 @@ section.
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
 | operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
-| type | Defines the function type. If string type, can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`. If object type it can define a [custom type defined by specific runtime](#extending-function-definition-types). Default value if not specified should be string type with value `rest` | string or object | no |
+| type | Defines the function type. If string type, can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`. If object type it can define a [custom type defined by specific runtime](#defining-custom-function-types). Default value if not specified should be string type with value `rest` | string or object | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
@@ -3223,7 +3223,7 @@ Depending on the function `type`, the `operation` property can be:
   For example `https://https://services.odata.org/V3/OData/OData.svc#Products`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
 
-Defining custom function types is possible, for more information on that refer to the [Extending Function Definition Types](#extending-function-definition-types) section.
+Defining custom function types is possible, for more information on that refer to the [Defining custom function types](#defining-custom-function-types) section.
 
 The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
 It is used to provide authentication info to access the resource defined in the `operation` property.
