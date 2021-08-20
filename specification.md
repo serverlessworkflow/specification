@@ -1571,7 +1571,7 @@ For more information about workflow expressions, reference the [Workflow Express
 
 #### Extending Function Definition Types
 
-[Function definitions](#Function-Definition) `type` property defines a list of function types that are set by
+[Function definitions](#function-definition) `type` property defines a list of function types that are set by
 the specification. 
 Some runtime implementations might support additional function types that extend the ones 
 defined in the specification. In those cases you can define a custom function type with for example:
@@ -3222,6 +3222,8 @@ Depending on the function `type`, the `operation` property can be:
 * If `type` is `odata`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
   For example `https://https://services.odata.org/V3/OData/OData.svc#Products`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
+
+Defining custom function types is possible, for more information on that refer to the [Extending Function Definition Types](#extending-function-definition-types) section.
 
 The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
 It is used to provide authentication info to access the resource defined in the `operation` property.
