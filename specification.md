@@ -1581,7 +1581,7 @@ defined in the specification. In those cases you can define a custom function ty
 "functions": [
   {
     "name": "sendOrderConfirmation",
-    "operation": "file://functions/orders/confirmation.ts#sendOrderConfirmation",
+    "operation": "myCustomTypescriptOperationFormat",
     "type": {
       "custom": "typescript"
     }
