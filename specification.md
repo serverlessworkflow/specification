@@ -33,6 +33,7 @@
       - [Creating an OData Function Definition](#creating-an-odata-function-definition)
       - [Invoking an OData Function Definition](#invoking-an-odata-function-definition)
     + [Using Functions for Expression Evaluation](#using-functions-for-expression-evaluation)
+    + [Defining custom Function types](#defining-custom-function-types)
   * [Workflow Expressions](#workflow-expressions)
   * [Workflow Definition Structure](#workflow-definition-structure)
     + [Workflow States](#workflow-states)
@@ -86,7 +87,7 @@
     + [Compensation Execution Details](#compensation-execution-details)
     + [Compensation and Active States](#compensation-and-active-states)
     + [Unrecoverable errors during compensation](#unrecoverable-errors-during-compensation)
-  * [Continuing as a new Execution](#continuing-as-a-new-execution) 
+  * [Continuing as a new Execution](#continuing-as-a-new-execution)
     + [ContinueAs in sub workflows](#continueas-in-sub-workflows)
   * [Workflow Versioning](#workflow-versioning)
   * [Workflow Constants](#workflow-constants)
@@ -1033,9 +1034,12 @@ They can be referenced by their domain-specific names inside workflow [states](#
 Reference the following sections to learn more about workflow functions:
 
 * [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
+* [Using Functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
+* [Using Functions for OData Service Invocations](#Using-Functions-for-OData-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
+* [Defining custom function types](#defining-custom-function-types)
 
 #### Using Functions for RESTful Service Invocations
 
@@ -1564,6 +1568,56 @@ Note that the used function definition type in this case must be `expression`.
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
 For more information about workflow expressions, reference the [Workflow Expressions](#Workflow-Expressions) section.
+
+#### Defining custom function types
+
+[Function definitions](#function-definition) `type` property defines a list of function types that are set by
+the specification.
+
+Some runtime implementations might support additional function types that extend the ones
+defined in the specification. In those cases you can define a custom function type with for example:
+
+```json
+{
+"functions": [
+  {
+    "name": "sendOrderConfirmation",
+    "operation": "/path/to/my/script/order.ts#myFunction",
+    "type": "custom"
+  }
+]
+}
+```
+
+In this example we define a custom function type that is meant to execute an external [TypeScript](https://www.typescriptlang.org/) script.
+
+When a custom function type is specified, the operation property value has a **custom format**, meaning that
+its format is controlled by the runtime which provides the custom function type.
+
+Later, the function should be able to be used in an action as any other function supported by the specification:
+
+```json
+[{
+  "states": [{
+      "name": "handleOrder",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "sendOrderConfirmation",
+          "functionRef": {
+            "refName": "sendOrderConfirmation",
+            "arguments": {
+              "order": "${ .order }"
+            }
+          }
+        }
+      ],
+      "transition": "emailCustomer"
+  }]
+}]
+```
+
+Note that custom function types are not portable across runtimes.
 
 ### Workflow Expressions
 
@@ -3136,7 +3190,7 @@ section.
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
 | operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
-| type | Defines the function type. Is either `rest`, `asyncapi`, `rpc`, `graphql`, `odata` or `expression`. Default is `rest` | enum | no |
+| type | Defines the function type. Can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
@@ -3189,6 +3243,8 @@ Depending on the function `type`, the `operation` property can be:
 * If `type` is `odata`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
   For example `https://https://services.odata.org/V3/OData/OData.svc#Products`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
+
+Defining custom function types is possible, for more information on that refer to the [Defining custom function types](#defining-custom-function-types) section.
 
 The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
 It is used to provide authentication info to access the resource defined in the `operation` property.

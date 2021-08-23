@@ -41,14 +41,15 @@
         },
         "type": {
           "type": "string",
-          "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, or `expression`. Default is `rest`",
+          "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, `expression`, or `custom`. Default is `rest`",
           "enum": [
             "rest",
             "asyncapi",
             "rpc",
             "graphql",
             "odata",
-            "expression"
+            "expression",
+            "custom"
           ],
           "default": "rest"
         },

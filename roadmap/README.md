@@ -19,9 +19,10 @@ _Status description:_
 - [v0.1 released April 2020](#v01)
 
 ## <a name="v08"></a> Next planned release
+
 | Status | Description | Comments |
 | --- | --- |  --- |
-|  |  |  |
+| ✔️| Support custom function `type` definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 
 ## <a name="v07"></a> v0.7
 
