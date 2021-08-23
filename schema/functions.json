@@ -40,30 +40,18 @@
           "minLength": 1
         },
         "type": {
-          "description": "Defines the function type. If string type, can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`. If object type it can define a custom type defined by specific runtime. Default value if not specified should be string type with value `rest`",
-          "oneOf": [
-            {
-              "type":"object",
-              "properties": {
-                "custom": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              },
-              "required": ["name"]
-            },
-            {
-              "enum": [
-                "rest",
-                "asyncapi",
-                "rpc",
-                "graphql",
-                "odata",
-                "expression"
-              ],
-              "default": "rest"
-            }
-          ]
+          "type": "string",
+          "description": "Defines the function type. Is either `rest`, `asyncapi, `rpc`, `graphql`, `odata`, `expression`, or `custom`. Default is `rest`",
+          "enum": [
+            "rest",
+            "asyncapi",
+            "rpc",
+            "graphql",
+            "odata",
+            "expression",
+            "custom"
+          ],
+          "default": "rest"
         },
         "authRef": {
           "type": "string",

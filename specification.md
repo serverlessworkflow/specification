@@ -1572,8 +1572,9 @@ For more information about workflow expressions, reference the [Workflow Express
 #### Defining custom function types
 
 [Function definitions](#function-definition) `type` property defines a list of function types that are set by
-the specification. 
-Some runtime implementations might support additional function types that extend the ones 
+the specification.
+
+Some runtime implementations might support additional function types that extend the ones
 defined in the specification. In those cases you can define a custom function type with for example:
 
 ```json
@@ -1581,20 +1582,40 @@ defined in the specification. In those cases you can define a custom function ty
 "functions": [
   {
     "name": "sendOrderConfirmation",
-    "operation": "myCustomTypescriptOperationFormat",
-    "type": {
-      "custom": "typescript"
-    }
+    "operation": "/path/to/my/script/order.ts#myOperation",
+    "type": "custom"
   }
 ]
 }
 ```
 
-In this example we define a custom function type called `typescript`. Notice that in order to define custom 
-types you have to use the function definitions `type` property with its object type and define its `custom` property.
+In this example we define a custom function type that is meant to execute an external [TypeScript](https://www.typescriptlang.org/) script.
 
-When a custom function type is specified, the operation property value has a custom format, meaning that
+When a custom function type is specified, the operation property value has a **custom format**, meaning that
 its format is controlled by the runtime which provides the custom function type.
+
+Later, the function should be able to be used in an action as any other function supported by the specification:
+
+```json
+[{
+  "states": [{
+      "name": "handleOrder",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "sendOrderConfirmation",
+          "functionRef": {
+            "refName": "sendOrderConfirmation",
+            "arguments": {
+              "order": "${ .order }"
+            }
+          }
+        }
+      ],
+      "transition": "emailCustomer"
+  }]
+}]
+```
 
 Note that custom function types are not portable across runtimes.
 
@@ -3169,7 +3190,7 @@ section.
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
 | operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | no |
-| type | Defines the function type. If string type, can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`. If object type it can define a [custom type defined by specific runtime](#defining-custom-function-types). Default value if not specified should be string type with value `rest` | string or object | no |
+| type | Defines the function type. Can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
