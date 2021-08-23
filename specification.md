@@ -1582,7 +1582,7 @@ defined in the specification. In those cases you can define a custom function ty
 "functions": [
   {
     "name": "sendOrderConfirmation",
-    "operation": "/path/to/my/script/order.ts#myOperation",
+    "operation": "/path/to/my/script/order.ts#myFunction",
     "type": "custom"
   }
 ]
