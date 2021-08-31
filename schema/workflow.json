@@ -176,7 +176,6 @@
       "required": [
         "id",
         "specVersion",
-        "name",
         "start",
         "states"
       ]
@@ -185,7 +184,6 @@
       "required": [
         "key",
         "specVersion",
-        "name",
         "start",
         "states"
       ]

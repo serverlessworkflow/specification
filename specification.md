@@ -1802,7 +1802,7 @@ definition "id" must be a constant value.
 | --- | --- |  --- | --- |
 | id | Workflow unique identifier | string | yes if `key` not defined |
 | key | Domain-specific workflow identifier | string | yes if `id` not defined |
-| name | Workflow name | string | yes |
+| name | Workflow name | string | no |
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
