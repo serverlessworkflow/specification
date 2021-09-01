@@ -1809,7 +1809,7 @@ definition "id" must be a constant value.
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [constants](#Workflow-Constants) | Workflow constants | string or object | no |
 | [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
-| [start](#Start-Definition) | Workflow start definition | string | yes |
+| [start](#Start-Definition) | Workflow start definition | string | no |
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | string or object | no |
