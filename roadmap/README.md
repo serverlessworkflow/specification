@@ -23,6 +23,10 @@ _Status description:_
 | Status | Description | Comments |
 | --- | --- |  --- |
 | ✔️| Support custom function `type` definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✏️️| Support for async action invocation |   |
+| ✏️️| Start work on TCK  |   |
+| ✏️️| Add more samples  |   |
+
 
 ## <a name="v07"></a> v0.7
 
