@@ -149,13 +149,9 @@ http://www.thetimezoneconverter.com/?t=9:00%20am&tz=San%20Francisco&
 
 ### Meeting Minutes
 
-The minutes from our calls are available
-[here](https://docs.google.com/document/d/1xwcsWQmMiRN24a7o7oy9MstzMroAup31oOkM5Dru1jQ/edit#).
-
-Periodically, the group may have in-person meetings that coincide with a major
-conference. Please see the
-[meeting minutes](https://docs.google.com/document/d/1xwcsWQmMiRN24a7o7oy9MstzMroAup31oOkM5Dru1jQ/edit#)
-for any future plans.
+You can find meeting minutes [here](meetingminutes).
+Note that unfortunately we have lost our Google doc which contained meeting info for our prior meetings.
+We will move all meeting info to our github repo so that this never happens again.
 
 ## Repository Structure
 
@@ -181,6 +177,7 @@ documents:
 | [comparisons](comparisons) | Comparisons of Serverless Workflow with other workflow DSLs |
 | [community](community) | Contains info on the spec community |
 | [annualreviews](annualreviews) | Contains the project annual reviews presented to the CNCF TOC |
+| [meetingminutes](meetingminutes) | Contains the projects community meeting minutes |
 
 ## Support
 
