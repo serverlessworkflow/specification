@@ -180,6 +180,7 @@ documents:
 | [examples](examples) | Specification examples |
 | [comparisons](comparisons) | Comparisons of Serverless Workflow with other workflow DSLs |
 | [community](community) | Contains info on the spec community |
+| [annualreviews](annualreviews) | Contains the project annual reviews presented to the CNCF TOC |
 
 ## Support
 
