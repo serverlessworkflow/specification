@@ -23,6 +23,8 @@ _Status description:_
 | Status | Description | Comments |
 | --- | --- |  --- |
 | ✔️| Support custom function `type` definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️| Workflow "name" property no longer required | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️| Workflow "start" property no longer required | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✏️️| Support for async action invocation |   |
 | ✏️️| Start work on TCK  |   |
 | ✏️️| Add more samples  |   |
