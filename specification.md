@@ -1964,6 +1964,8 @@ If `object` type, it defines a JSON object which contains the constants definiti
 For more information see the [Workflow Constants](#Workflow-Constants) section.
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
+This property is not required. If not defined, the workflow starting state has to be 
+the very first state defined in the [workflow states array](#Workflow-States).
 
 The `specVersion` property is used to set the Serverless Workflow specification release version
 the workflow markup adheres to.
