@@ -4524,6 +4524,9 @@ Event states define that workflow instances are triggered by the existence of th
 Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues
 the needed events at the defined times to trigger workflow instance creation.
 
+Defining a start definition is not required. If it's not defined, the starting workflow
+state has to be the very first state defined in the [workflow stated array](#Workflow-States).
+
 ##### Schedule Definition
 
 `Schedule` definition can have two types, either `string` or `object`.
