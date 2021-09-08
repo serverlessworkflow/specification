@@ -1809,7 +1809,7 @@ definition "id" must be a constant value.
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [constants](#Workflow-Constants) | Workflow constants | string or object | no |
 | [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
-| [start](#Start-Definition) | Workflow start definition | string | yes |
+| [start](#Start-Definition) | Workflow start definition | string | no |
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | string or object | no |
@@ -1964,6 +1964,8 @@ If `object` type, it defines a JSON object which contains the constants definiti
 For more information see the [Workflow Constants](#Workflow-Constants) section.
 
 The `start` property defines the workflow starting information. For more information see the [start definition](#Start-Definition) section.
+This property is not required. If not defined, the workflow starting state has to be 
+the very first state defined in the [workflow states array](#Workflow-States).
 
 The `specVersion` property is used to set the Serverless Workflow specification release version
 the workflow markup adheres to.
@@ -4523,6 +4525,9 @@ One thing to discuss when dealing with cron-based scheduled starts is when the w
 Event states define that workflow instances are triggered by the existence of the defined event(s).
 Defining a cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues
 the needed events at the defined times to trigger workflow instance creation.
+
+Defining a start definition is not required. If it's not defined, the starting workflow
+state has to be the very first state defined in the [workflow stated array](#Workflow-States).
 
 ##### Schedule Definition
 
