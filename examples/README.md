@@ -3435,7 +3435,7 @@ We fist define our top-level workflow for this example:
     }
    ],
    "defaultCondition": {
-    "transition": "DoCarVitalsChecks"
+    "transition": "DoCarVitalChecks"
    }
   }
  ],
@@ -3484,7 +3484,7 @@ states:
       eventRef: CarTurnedOffEvent
       end: true
    defaultCondition:
-    transition: DoCarVitalsChecks
+    transition: DoCarVitalChecks
 events:
  - name: CarTurnedOnEvent
    type: car.events
