@@ -2854,7 +2854,7 @@ The `timeouts` property can be used to define state specific timeout settings. I
 | type | State type | string | yes |
 | inputCollection | Workflow expression selecting an array element of the states data | string | yes |
 | outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
-| iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | yes |
+| iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | no |
 | batchSize | Specifies how many iterations may run in parallel at the same time. Used if `mode` property is set to `parallel` (default). If not specified, its value should be the size of the `inputCollection` | string or number | no |
 | mode | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel` | string  | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes |
