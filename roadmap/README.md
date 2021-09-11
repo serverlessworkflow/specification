@@ -23,8 +23,9 @@ _Status description:_
 | Status | Description | Comments |
 | --- | --- |  --- |
 | ✔️| Support custom function `type` definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️| Workflow "name" no longer a required parameter | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️| Workflow "start" no longer a required parameter| [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️| Workflow "name" no longer a required property | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️| Workflow "start" no longer a required property| [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️| ForEach state "iterationParam" no longer a required property| [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✏️️| Support for async action invocation |   |
 | ✏️️| Start work on TCK  |   |
 | ✏️️| Add more samples  |   |

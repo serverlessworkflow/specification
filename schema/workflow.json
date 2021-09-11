@@ -1608,7 +1608,6 @@
           "name",
           "type",
           "inputCollection",
-          "iterationParam",
           "actions"
         ]
       },
@@ -1619,7 +1618,6 @@
               "name",
               "type",
               "inputCollection",
-              "iterationParam",
               "actions",
               "end"
             ]
@@ -1629,7 +1627,6 @@
               "name",
               "type",
               "inputCollection",
-              "iterationParam",
               "actions",
               "transition"
             ]
