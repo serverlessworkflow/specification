@@ -27,7 +27,11 @@ _Status description:_
 | ✔️| Workflow "start" no longer a required property| [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| ForEach state "iterationParam" no longer a required property| [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✏️️| Support for async action invocation |   |
+| ✏️️| Add "completedBy" functionality |   |
+| ✏️️| Define workflow context |   |
 | ✏️️| Start work on TCK  |   |
+| ✏️️| Add integration with open-source runtimes  |   |
+| ✏️️| Add SDKs for more languages (Python, PHP, Rust, etc) |   |
 | ✏️️| Add more samples  |   |
 
 
