@@ -2926,8 +2926,8 @@ Each iteration of the ForEach state is by default executed in parallel by defaul
 However, executing iterations sequentially is also possible by setting the value of the `mode` property to
 `sequential`.
 
-The `mode` property defines if iterations should be done sequentially or in parallel. By default 
-(if `mode` is not specified) iterations should be done in parallel.
+The `mode` property defines if iterations should be done sequentially or in parallel. By default,
+if `mode` is not specified, iterations should be done in parallel.
 
 If the default `parallel` iteration mode is used, the `batchSize` property to the number of iterations (batch) 
 that can be executed at a time. To give an example, if the number of iterations is 55 and `batchSize`
@@ -2942,9 +2942,10 @@ an error. This error can be handled inside the states [`onErrors`](#Error-Defini
 The `outputCollection` property is a workflow expression which selects an array in the state data where the results
 of each iteration should be added to. If this array does not exist, it should be created.
 
-The `iterationParam` property defines the name of the iteration parameter passed to each parallel execution of the ForEach state.
-It should contain the unique element of the `inputCollection` array and passed as data input to the actions/workflow defined.
-`iterationParam` should be created for each iteration, so it can be referenced/used in defined actions / workflow data input.
+The `iterationParam` property defines the name of the iteration parameter passed to each iteration of the ForEach state.
+It should contain the unique element of the `inputCollection` array and made available to actions of the ForEach state.
+If `iterationParam` is not explicitly defined, runtimes should create one and populate it with the value of the unique 
+iteration parameter for each iteration of the ForEach state.
 
 The `actions` property defines actions to be executed in each state iteration.
 
