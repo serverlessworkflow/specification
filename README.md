@@ -13,7 +13,7 @@ This project is composed of:
 
 * [Specification](specification.md) for defining DSL-based workflows
 * [Developer SDKs](#sdks) for different programming languages
-* [Workflow runtimes](#runtime) supporting the specification
+* [Workflow runtimes](#runtimes) supporting the specification
 * Developer [tooling support](#tooling) for writing DSL-based workflows
 
 CNCF Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
