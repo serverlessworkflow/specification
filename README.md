@@ -60,7 +60,7 @@ Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.i
 | [TypeScript SDK](https://github.com/serverlessworkflow/sdk-typescript) | [v2.0.0](https://github.com/serverlessworkflow/sdk-typescript/releases) | [2.0.x](https://github.com/serverlessworkflow/sdk-typescript/tree/2.0.x) | [main](https://github.com/serverlessworkflow/sdk-typescript) |
 | [VSCode Extension](https://github.com/serverlessworkflow/vscode-extension) | [1.6.0](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension) | | [main](https://github.com/serverlessworkflow/vscode-extension) |
 
-## Runtime
+## Runtimes
 
 - [Synapse](https://github.com/serverlessworkflow/synapse)
 
