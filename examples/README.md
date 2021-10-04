@@ -2422,7 +2422,7 @@ For this example we assume that the workflow instance is started given the follo
     "events": [
         {
             "name": "MakeVetAppointment",
-            "source": "VetServiceSoure",
+            "source": "VetServiceSource",
             "kind": "produced"
         },
         {
@@ -2469,7 +2469,7 @@ specVersion: '0.7'
 start: MakeVetAppointmentState
 events:
 - name: MakeVetAppointment
-  source: VetServiceSoure
+  source: VetServiceSource
   kind: produced
 - name: VetAppointmentInfo
   source: VetServiceSource
