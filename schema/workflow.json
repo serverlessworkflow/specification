@@ -1911,9 +1911,14 @@
     "eventdatafilter": {
       "type": "object",
       "properties": {
+        "useData": {
+          "type": "boolean",
+          "description": "If set to false, event payload is not added/merged to state data. In this case 'data' and 'toStateData' should be ignored. Default is true.",
+          "default": true
+        },
         "data": {
           "type": "string",
-          "description": "Workflow expression that filters the received event/payload (default: '${ . }')"
+          "description": "Workflow expression that filters the received event payload (default: '${ . }')"
         },
         "toStateData": {
           "type": "string",
@@ -1929,6 +1934,11 @@
         "fromStateData": {
           "type": "string",
           "description": "Workflow expression that selects state data that the state action can use"
+        },
+        "useResults": {
+          "type": "boolean",
+          "description": "If set to false, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is true.",
+          "default": true
         },
         "results": {
           "type": "string",

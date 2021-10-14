@@ -429,6 +429,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
+| useResults | If set to false, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is true.  | boolean | no |
 | results | Workflow expression that filters the actions data results | string | no |
 | toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
 
@@ -555,10 +556,14 @@ into. With this, after our action executes the state data would be:
 }
 ```
 
+In the case action results should not be added/merged to state data, we can set the `useResults` property to `true`.
+In this case, the `results` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
+
 #### Event data filters
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
+| useData | If set to false, event payload is not added/merged to state data. In this case 'data' and 'toStateData' should be ignored. Default is true. | boolean | no |
 | data | Workflow expression that filters the event data (payload) | string | no |
 | toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
 
@@ -615,6 +620,9 @@ Here is an example using an event filter:
 Note that the data input to the Event data filters depends on the `dataOnly` property of the associated [Event definition](#Event-Definition).
 If this property is not defined (has default value of `true`), Event data filter expressions are evaluated against the event payload (the CloudEvents `data` attribute only). If it is set to
 `false`, the expressions should be evaluated against the entire CloudEvent (including its context attributes).
+
+In the case event data/payload should not be added/merged to state data, we can set the `useData` property to `true`.
+In this case, the `data` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
 
 #### Using multiple data filters
 
