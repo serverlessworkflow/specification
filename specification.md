@@ -3939,7 +3939,7 @@ to be used as payload of the event referenced by `triggerEventRef`. If it is of 
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the trigger/produced event.
 
-The `resultEventTimeout` property defines the maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition).
+The `resultEventTimeout` property defines the maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
 If the event defined by the `resultEventRef` property is not received in that set time, action invocation should raise an error
 that can be handled in the states `onErrors` definition.
 
