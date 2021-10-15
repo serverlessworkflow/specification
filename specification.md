@@ -1059,7 +1059,7 @@ workflow execution. They can be referenced by states [action definitions](#Actio
 define when the service operations should be invoked during workflow execution, as well as the data parameters
 passed to them if needed.
 
-Note that with Serverless Workflow, we can also define service invocations via events.
+Note that with Serverless Workflow, we can also define invocation of services which are triggered via an event.
 To learn more about that, please reference the [event definitions](#Event-Definition) section,
 as well as the [actions definitions](#Action-Definition) [eventRef](#EventRef-Definition) property.
 
@@ -3771,7 +3771,7 @@ Service invocation can be done in two different ways:
 * Reference a sub-workflow invocation via the `subFlowRef` property.
 
 In the event-based scenario a service, or a set of services we want to invoke
-are not exposed via a specific resource URI for example, but can only be invoked via events.
+are not exposed via a specific resource URI for example, but can only be invoked via an event.
 The [eventRef](#EventRef-Definition) property defines the
 referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
 
@@ -3890,6 +3890,7 @@ Here is an example of using the `arguments` property:
 | --- | --- | --- | --- |
 | [triggerEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
 | [resultEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | yes |
+| resultEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
 | data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `triggerEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 
@@ -3937,6 +3938,10 @@ to be used as payload of the event referenced by `triggerEventRef`. If it is of 
 
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the trigger/produced event.
+
+The `resultEventTimeout` property defines the maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition).
+If the event defined by the `resultEventRef` property is not received in that set time, action invocation should raise an error
+that can be handled in the states `onErrors` definition.
 
 ##### SubFlowRef Definition
 
@@ -5374,7 +5379,7 @@ If `object` type, it is used to define the timeout definitions in-line and has t
 | --- | --- | --- | --- |
 | workflowExecTimeout | Workflow execution timeout (ISO 8601 duration format) | string or object | no |
 | stateExecTimeout | Default workflow state execution timeout (ISO 8601 duration format) | string or object | no |
-| actionExecTimeouts | Default single actions definition execution timeout (ISO 8601 duration format) | string | no |
+| actionExecTimeout | Default single actions definition execution timeout (ISO 8601 duration format) | string | no |
 | branchExecTimeout | Default single branch execution timeout (ISO 8601 duration format) | string | no |
 | eventTimeout | Default timeout for consuming defined events (ISO 8601 duration format) | string | no |
 
