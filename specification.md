@@ -558,6 +558,7 @@ into. With this, after our action executes the state data would be:
 
 In the case action results should not be added/merged to state data, we can set the `useResults` property to `false`.
 In this case, the `results` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
+If `useResults` is not specified (or it's value set to `true`, action results, if available, should be added/merged to state data.
 
 #### Event data filters
 
@@ -623,6 +624,8 @@ If this property is not defined (has default value of `true`), Event data filter
 
 In the case event data/payload should not be added/merged to state data, we can set the `useData` property to `false`.
 In this case, the `data` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
+If `useData` is not specified (or it's value set to `true`, event payload, if available, should be added/merged to state data.
+
 
 #### Using multiple data filters
 
