@@ -556,7 +556,7 @@ into. With this, after our action executes the state data would be:
 }
 ```
 
-In the case action results should not be added/merged to state data, we can set the `useResults` property to `true`.
+In the case action results should not be added/merged to state data, we can set the `useResults` property to `false`.
 In this case, the `results` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
 
 #### Event data filters
@@ -621,7 +621,7 @@ Note that the data input to the Event data filters depends on the `dataOnly` pro
 If this property is not defined (has default value of `true`), Event data filter expressions are evaluated against the event payload (the CloudEvents `data` attribute only). If it is set to
 `false`, the expressions should be evaluated against the entire CloudEvent (including its context attributes).
 
-In the case event data/payload should not be added/merged to state data, we can set the `useData` property to `true`.
+In the case event data/payload should not be added/merged to state data, we can set the `useData` property to `false`.
 In this case, the `data` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
 
 #### Using multiple data filters
