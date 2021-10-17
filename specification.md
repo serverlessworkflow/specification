@@ -1044,13 +1044,16 @@ They can be referenced by their domain-specific names inside workflow [states](#
 
 Reference the following sections to learn more about workflow functions:
 
-* [Using functions for RESTful service invocations](#Using-Functions-For-RESTful-Service-Invocations)
+* [Using functions for RESTful service invocations](#Using-Functions-for-RESTful-Service-Invocations)
 * [Using Functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
 * [Using Functions for OData Service Invocations](#Using-Functions-for-OData-Service-Invocations)
 * [Using functions for expression evaluations](#Using-Functions-For-Expression-Evaluation)
 * [Defining custom function types](#defining-custom-function-types)
+
+We can define if functions are invoked sync or async. Reference
+the [functionRef](#FunctionRef-Definition) to learn more on how to do this.
 
 #### Using Functions for RESTful Service Invocations
 
@@ -3713,7 +3716,8 @@ This is visualized in the diagram below:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique action name | string | no |
+| id | Unique action identifier | string | no |
+| name | Action name | string | no |
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
@@ -3770,6 +3774,12 @@ Service invocation can be done in two different ways:
 * Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
 * Reference a sub-workflow invocation via the `subFlowRef` property.
 
+Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, meaning that only of of them can be
+specified in a single action definition.
+
+The `name` property specifies the action name.
+The `id` property specifies the unique action id.
+
 In the event-based scenario a service, or a set of services we want to invoke
 are not exposed via a specific resource URI for example, but can only be invoked via an event.
 The [eventRef](#EventRef-Definition) property defines the
@@ -3815,12 +3825,14 @@ Referenced sub-workflows must declare their own [function](#Function-Definition)
 ##### FunctionRef Definition
 
 `FunctionRef` definition can have two types, either `string` or `object`.
-If `string`, it defines the name of the referenced [function](#Function-Definition).
-This can be used as a short-cut definition when you don't need to define any parameters, for example:
+If `string` type, it defines the name of the referenced [function](#Function-Definition).
+This can be used as a short-cut definition when you don't need to define any other parameters, for example:
 
 ```json
 "functionRef": "myFunction"
 ```
+
+Note that if used with `string` type, the invocation of the function is synchronous.
 
 If you need to define parameters in your `functionRef` definition, you can define
 it with its `object` type which has the following properties:
@@ -3830,6 +3842,7 @@ it with its `object` type which has the following properties:
 | refName | Name of the referenced [function](#Function-Definition) | string | yes |
 | arguments | Arguments (inputs) to be passed to the referenced function | object | yes if function type is `graphql`, otherwise no |
 | selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes if function type is `graphql`, otherwise no |
+| invoke | Specifies if the function should be invoked sync or async. Default is sync | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3884,7 +3897,18 @@ Here is an example of using the `arguments` property:
 }
 ```
 
+The `invoke` property defines how the function is invoked (sync or async). Default value of this property is
+`sync`, meaning that workflow execution should wait until the function completes. 
+If set to `async`, workflow execution should just invoke the function and should not wait until its completion.
+Note that in this case the action does not produce any results and the associated actions actionDataFilter as well as 
+its retry definition, if defined, should be ignored.
+In addition, functions that are invoked async do not propagate their errors to the associated action definition and the 
+workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states 
+onErrors definition. Note that errors raised during functions that are invoked async should not fail workflow execution.
+
 ##### EventRef Definition
+
+Allows defining invocation of a function via event. 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
@@ -3893,6 +3917,7 @@ Here is an example of using the `arguments` property:
 | resultEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
 | data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `triggerEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
+| invoke | Specifies if the function should be invoked sync or async. Default is sync | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3943,6 +3968,16 @@ The `resultEventTimeout` property defines the maximum amount of time (ISO 8601 f
 If the event defined by the `resultEventRef` property is not received in that set time, action invocation should raise an error
 that can be handled in the states `onErrors` definition.
 
+The `invoke` property defines how the function is invoked (sync or async). Default value of this property is
+`sync`, meaning that workflow execution should wait until the function completes (the result event is received).
+If set to `async`, workflow execution should just produce the trigger event and should not wait for the result event.
+Note that in this case the action does not produce any results (payload of the result event) and the associated actions eventDataFilter as well as
+its retry definition, if defined, should be ignored.
+Functions that are invoked via events (sync or async) do not propagate their errors to the associated action definition and the
+workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states
+onErrors definition. Note that errors raised during functions that are invoked sync or async in this case
+should not fail workflow execution.
+
 ##### SubFlowRef Definition
 
 `SubFlowRef` definition can have two types, namely `string` or `object`.
@@ -3961,6 +3996,8 @@ If you need to define the `version` properties, you can use its `object` type:
 | --- | --- | --- | --- |
 | workflowId | Sub-workflow unique id | string | yes |
 | version | Sub-workflow version | string | no |
+| invoke | Specifies if the subflow should be invoked sync or async. Default is sync | string | no |
+| onParentComplete | If invoke is 'async', specifies how subflow execution should behave when parent workflow completes. Default is 'terminate' | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4000,7 +4037,21 @@ The `version` property defined the unique version of the sub-workflow to be invo
 If this property is defined, runtimes should match both the `id` and the `version` properties
 defined in the sub-workflow definition.
 
-Subflow execution is currently performed synchronously. We are planning to add async subflow execution in the next spec releases.
+The `invoke` property defines how the subflow is invoked (sync or async). Default value of this property is
+`sync`, meaning that workflow execution should wait until the subflow completes.
+If set to `async`, workflow execution should just invoke the subflow and not wait for its results.
+Note that in this case the action does not produce any results, and the associated actions actionDataFilter as well as
+its retry definition, if defined, should be ignored.
+Subflows that are invoked async do not propagate their errors to the associated action definition and the
+workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states
+onErrors definition. Note that errors raised during subflows that are invoked async
+should not fail workflow execution.
+
+The `onParentComplete` property defines how subflow execution that is invoked async should behave if the parent workflow 
+completes execution before the subflow completes its own execution.
+The default value of this property is `terminate`, meaning that if the parent workflow (the workflow that invoked the subflow)
+completes, execution of the subflow should be terminated.
+If it is set to `continue`, if the parent workflow completes, the subflow execution is allowed to continue its own execution.
 
 ##### Error Definition
 

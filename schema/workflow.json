@@ -418,6 +418,10 @@
     "action": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique action identifier"
+        },
         "name": {
           "type": "string",
           "description": "Unique action definition name"
@@ -506,6 +510,15 @@
             "selectionSet": {
               "type": "string",
               "description": "Only used if function type is 'graphql'. A string containing a valid GraphQL selection set"
+            },
+            "invoke": {
+              "type": "string",
+              "enum": [
+                "sync",
+                "async"
+              ],
+              "description": "Specifies if the function should be invoked sync or async",
+              "default": "sync"
             }
           },
           "additionalProperties": false,
@@ -544,6 +557,15 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "invoke": {
+          "type": "string",
+          "enum": [
+            "sync",
+            "async"
+          ],
+          "description": "Specifies if the function should be invoked sync or async. Defauly is sync.",
+          "default": "sync"
         }
       },
       "additionalProperties": false,
@@ -571,6 +593,24 @@
               "type": "string",
               "description": "Version of the sub-workflow to be invoked",
               "minLength": 1
+            },
+            "onParentComplete": {
+              "type": "string",
+              "enum": [
+                "continue",
+                "terminate"
+              ],
+              "description": "If invoke is 'async', specifies how subflow execution should behave when parent workflow completes. Default is 'terminate'",
+              "default": "terminate"
+            },
+            "invoke": {
+              "type": "string",
+              "enum": [
+                "sync",
+                "async"
+              ],
+              "description": "Specifies if the subflow should be invoked sync or async",
+              "default": "sync"
             }
           },
           "required": [
