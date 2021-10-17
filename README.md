@@ -123,7 +123,7 @@ See our full project Code of Conduct information [here](code-of-conduct.md).
 
 * [CNCF public events calendar](https://www.cncf.io/calendar/)
 
-The Serverless Workflow team meets weekly, every Monday at 10AM PT (USA Pacific).
+The Serverless Workflow team meets weekly, every Wednesday at 11AM ET (USA Eastern Time).
 
 Join from PC, Mac, Linux, iOS or Android via [zoom](https://zoom.us/my/cncfserverlesswg?pwd=YjNqYzhOdjRRd01YWFkzS1lHbDZqUT09)
 
