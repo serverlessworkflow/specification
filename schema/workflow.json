@@ -527,6 +527,10 @@
           "type": "string",
           "description": "Reference to the unique name of a 'consumed' event definition"
         },
+        "resultEventTimeout": {
+          "type": "string",
+          "description": "Maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the actionExecutionTimeout"
+        },
         "data": {
           "type": [
             "string",
