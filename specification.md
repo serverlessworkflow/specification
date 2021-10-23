@@ -3552,7 +3552,6 @@ See [here](https://oauth.net/2/) for more information about OAuth2 Authenticatio
 | subjectToken | String or a workflow expression. Contains the subject token | string | no |
 | requestedSubject | String or a workflow expression. Contains the client identifier | string | no |
 | requestedIssuer | String or a workflow expression. Contains the requested issuer | string | no |
-| requestedSubject | String or a workflow expression. Contains the client identifier | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 ##### Correlation Definition
