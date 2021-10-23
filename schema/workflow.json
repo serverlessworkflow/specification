@@ -564,7 +564,7 @@
             "sync",
             "async"
           ],
-          "description": "Specifies if the function should be invoked sync or async. Defauly is sync.",
+          "description": "Specifies if the function should be invoked sync or async. Default is sync.",
           "default": "sync"
         }
       },
