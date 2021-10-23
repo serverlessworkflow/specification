@@ -1675,25 +1675,26 @@ To show some expression examples, let's say we have the following state data:
 
 ```json
 {
-    "applicant": {
-      "name": "John Doe",
-      "age"      : 26,
-      "address"  : {
-        "streetAddress": "Naist street",
-        "city"         : "Nara",
-        "postalCode"   : "630-0192"
+  "applicant": {
+    "name": "John Doe",
+    "age"      : 26,
+    "email": "johndoe@something.com",
+    "address"  : {
+      "streetAddress": "Naist street",
+      "city"         : "Nara",
+      "postalCode"   : "630-0192"
+    },
+    "phoneNumbers": [
+      {
+        "type"  : "iPhone",
+        "number": "0123-4567-8888"
       },
-      "phoneNumbers": [
-        {
-          "type"  : "iPhone",
-          "number": "0123-4567-8888"
-        },
-        {
-          "type"  : "home",
-          "number": "0123-4567-8910"
-        }
-      ]
-    }
+      {
+        "type"  : "home",
+        "number": "0123-4567-8910"
+      }
+    ]
+  }
 }
 ```
 
