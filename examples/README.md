@@ -28,6 +28,8 @@ Provides Serverless Workflow language examples
 - [Book Lending Workflow](#Book-Lending)
 - [Filling a glass of water (Expression functions)](#Filling-a-glass-of-water)
 - [Online Food Ordering](#Online-Food-Ordering)
+- [Online Food Ordering](#Online-Food-Ordering)
+- [Continuing as a new Execution](#Continuing-as-a-new-Execution)
 
 ### Hello World Example
 
@@ -4234,3 +4236,171 @@ For the example order event, the workflow output for a successful completion wou
   ]
 }
 ```
+
+### Continuing as a new Execution
+
+#### Description
+
+At times runtime implementations that we run our workflows on can have different quotas, such as 
+maximum execution durations, maximum consumed events, etc. We can use the Serverless workflow "continueAs"
+functionality which can be used to stop the current workflow execution, and start another one (of the same 
+or a different type). This is very useful in cases where we have to make sure that we don't reach 
+the imposed quotas of a single workflow execution.
+
+In this example we assume that the runtime we are using has a quota set to a maximum of one thousand consumed events
+per single workflow execution. 
+Our sample workflow consumes a single customer event at a time and invokes the emailCustomer function. 
+Note that we do not set a workflow `workflowExecTimeout`, so our intent is to have a long-running workflow,
+however because of the runtime restriction in this case we would run into the event consume limit and our workflow
+would have to terminate. We can fix this problem by using [`continueAs`](../specification.md#Continuing-as-a-new-Execution)
+which will alllow us to make sure that we reach the given limit and then continue our workflow execution as a new run.
+
+We assume that our workflow input has the runtime-imposed quota:
+
+```json
+{
+  "quota": {
+   "maxConsumedEvents": 1000
+  }
+}
+```
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-continueas.png" height="400px" alt="ContinueAs Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+ "id":"notifycustomerworkflow",
+ "name":"Notify Customer",
+ "version":"1.0",
+ "specVersion":"0.7",
+ "start":"WaitForCustomerEvent",
+ "states":[
+  {
+   "name":"WaitForCustomerEvent",
+   "type":"event",
+   "onEvents":[
+    {
+     "eventRefs":[
+      "CustomerEvent"
+     ],
+     "eventDataFilter":{
+      "data":"${ .customerId }",
+      "toStateData":"${ .eventCustomerId }"
+     },
+     "actions":[
+      {
+       "functionRef":{
+        "refName":"NotifyCustomerFunction",
+        "arguments":{
+         "customerId":"${ .eventCustomerId }"
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "stateDataFilter":{
+    "output":"${ .count = .count +1 }"
+   },
+   "transition":"CheckEventQuota"
+  },
+  {
+   "name":"CheckEventQuota",
+   "type":"switch",
+   "dataConditions":[
+    {
+     "condition":"${ try(.customerCount) != null and .customerCount > .quota.maxConsumedEvents }",
+     "end":{
+      "continueAs": {
+       "workflowId": "notifycustomerworkflow",
+       "version": "1.0",
+       "data": "${ del(.customerCount) }"
+      }
+     }
+    }
+   ],
+   "defaultCondition":{
+    "transition":"WaitForCustomerEvent"
+   }
+  }
+ ],
+ "events":[
+  {
+   "name":"CustomerEvent",
+   "type":"org.events.customerEvent",
+   "source":"customerSource"
+  }
+ ],
+ "functions":[
+  {
+   "name":"NotifyCustomerFunction",
+   "operation":"http://myapis.org/customerapis.json#notifyCustomer"
+  }
+ ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: notifycustomerworkflow
+name: Notify Customer
+version: '1.0'
+specVersion: '0.7'
+start: WaitForCustomerEvent
+states:
+ - name: WaitForCustomerEvent
+   type: event
+   onEvents:
+    - eventRefs:
+       - CustomerEvent
+      eventDataFilter:
+       data: "${ .customerId }"
+       toStateData: "${ .eventCustomerId }"
+      actions:
+       - functionRef:
+          refName: NotifyCustomerFunction
+          arguments:
+           customerId: "${ .eventCustomerId }"
+   stateDataFilter:
+    output: "${ .count = .count +1 }"
+   transition: CheckEventQuota
+ - name: CheckEventQuota
+   type: switch
+   dataConditions:
+    - condition: "${ try(.customerCount) != null and .customerCount > .quota.maxConsumedEvents
+      }"
+      end:
+       continueAs:
+        workflowId: notifycustomerworkflow
+        version: '1.0'
+        data: "${ del(.customerCount) }"
+   defaultCondition:
+    transition: WaitForCustomerEvent
+events:
+ - name: CustomerEvent
+   type: org.events.customerEvent
+   source: customerSource
+functions:
+ - name: NotifyCustomerFunction
+   operation: http://myapis.org/customerapis.json#notifyCustomer
+```
+
+</td>
+</tr>
+</table>

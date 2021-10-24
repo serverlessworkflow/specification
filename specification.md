@@ -2278,7 +2278,7 @@ the state should transition to the next state or can end the workflow execution 
 
 The `timeouts` property can be used to define state specific timeout settings. Event states can define the
 `stateExecTimeout`, `actionExecTimeout`, and `eventTimeout` properties.
-For more information about Event state specific event timeout settings reference [this section](#Event Timeout Definition).
+For more information about Event state specific event timeout settings reference [this section](#Event-Timeout-Definition).
 For more information about workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 
 ##### Operation State
@@ -4769,7 +4769,7 @@ is reached.
 The [compensate](#Workflow-Compensation) property defines that workflow compensation should be performed before the workflow 
 execution is completed.
 
-The [continueAs](#Continuing as a new Execution) property defines that the current workflow instance should stop its execution,
+The [continueAs](#Continuing-as-a-new-Execution) property defines that the current workflow instance should stop its execution,
 and worklow execution should continue as a new instance of a new workflow.
 When defined, it should be assumed that `terminate` is `true`. If `continueAs` is defined, and `terminate` is explicitly
 set to false, runtimes should report this to users. Producing events, and compensation should still be performed (if defined)
@@ -5786,6 +5786,10 @@ End definitions can trigger compensations by specifying the `compensate` propert
 This means that before workflow finishes its execution workflow compensation must be performed. Note that
 in case when the end definition has its `produceEvents` property set, compensation must be performed before
 producing the specified events and ending workflow execution.
+In the case the end definition has a `continueAs` property defined, compensation must be performed before 
+workflow execution continues as a new workflow invocation.
+In the case where the end definition has both `produceEvents` and `continueAs` compensation is performed first, 
+then the event should be produced, and then the workflow should continue its exection as a new workflow invocation.
 
 #### Compensation Execution Details
 
