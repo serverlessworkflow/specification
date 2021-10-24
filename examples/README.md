@@ -4314,7 +4314,7 @@ We assume that our workflow input has the runtime-imposed quota:
     }
    ],
    "stateDataFilter":{
-    "output":"${ .count = .count +1 }"
+    "output":"${ .count = .count + 1 }"
    },
    "transition":"CheckEventQuota"
   },
@@ -4378,7 +4378,7 @@ states:
           arguments:
            customerId: "${ .eventCustomerId }"
    stateDataFilter:
-    output: "${ .count = .count +1 }"
+    output: "${ .count = .count + 1 }"
    transition: CheckEventQuota
  - name: CheckEventQuota
    type: switch
