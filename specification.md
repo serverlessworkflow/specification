@@ -5788,8 +5788,8 @@ in case when the end definition has its `produceEvents` property set, compensati
 producing the specified events and ending workflow execution.
 In the case the end definition has a `continueAs` property defined, compensation must be performed before 
 workflow execution continues as a new workflow invocation.
-In the case where the end definition has both `produceEvents` and `continueAs` compensation is performed first, 
-then the event should be produced, and then the workflow should continue its exection as a new workflow invocation.
+In the case where the end definition has both `produceEvents`, and `continueAs` compensation is performed first, 
+then the event should be produced, and then the workflow should continue its execution as a new workflow invocation.
 
 #### Compensation Execution Details
 
