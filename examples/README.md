@@ -4243,13 +4243,9 @@ For the example order event, the workflow output for a successful completion wou
 
 Some runtime implementations on which we run our workflows can have different quotas, such as maximum execution durations, maximum consumed events, etc. We can use the Serverless workflow "continueAs" functionality that can be used to stop the current workflow execution and start another one (of the same or a different type). This is very useful in cases where we have to ensure we don't reach the imposed quotas of single workflow execution.
 
-In this example we assume that the runtime we are using has a quota set to a maximum of one thousand consumed events
-per single workflow execution. 
-Our sample workflow consumes a single customer event at a time and invokes the emailCustomer function. 
-Note that we do not set a workflow `workflowExecTimeout`, so our intent is to have a long-running workflow,
-however because of the runtime restriction in this case we would run into the event consume limit and our workflow
-would have to terminate. We can fix this problem by using [`continueAs`](../specification.md#Continuing-as-a-new-Execution)
-which will alllow us to make sure that we reach the given limit and then continue our workflow execution as a new run.
+This example assumes that the runtime we are using has a quota set to a maximum of one thousand consumed events per single workflow execution. 
+Our sample workflow consumes a single customer event at a time and invokes the `emailCustomer` function. 
+Note that we do not set a workflow `workflowExecTimeout`, so we intend to have a long-running workflow. However, because of the runtime restriction, in this case, we would run into the event consume limit, and our workflow would have to terminate. We can fix this problem by using [`continueAs`](../specification.md#Continuing-as-a-new-Execution), which will allow us to make sure that we reach the given limit and then continue our workflow execution as a new run.
 
 We assume that our workflow input has the runtime-imposed quota:
 
