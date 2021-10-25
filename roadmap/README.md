@@ -28,6 +28,7 @@ _Status description:_
 | ✔️| ForEach state "iterationParam" no longer a required property | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| Added "useData" for eventDataFilter, and "useResults" for actionDataFilter | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| Added "resultEventTimeout" for action eventref | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️| Added example for "continueAs" | [examples doc](https://github.com/serverlessworkflow/specification/blob/main/examples/README.md)  |
 | ✏️️| Support for async action invocation |   |
 | ✏️️| Add "completedBy" functionality |   |
 | ✏️️| Define workflow context |   |
