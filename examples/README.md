@@ -4241,11 +4241,7 @@ For the example order event, the workflow output for a successful completion wou
 
 #### Description
 
-At times runtime implementations that we run our workflows on can have different quotas, such as 
-maximum execution durations, maximum consumed events, etc. We can use the Serverless workflow "continueAs"
-functionality which can be used to stop the current workflow execution, and start another one (of the same 
-or a different type). This is very useful in cases where we have to make sure that we don't reach 
-the imposed quotas of a single workflow execution.
+Some runtime implementations on which we run our workflows can have different quotas, such as maximum execution durations, maximum consumed events, etc. We can use the Serverless workflow "continueAs" functionality that can be used to stop the current workflow execution and start another one (of the same or a different type). This is very useful in cases where we have to ensure we don't reach the imposed quotas of single workflow execution.
 
 In this example we assume that the runtime we are using has a quota set to a maximum of one thousand consumed events
 per single workflow execution. 
