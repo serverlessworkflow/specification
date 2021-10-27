@@ -9,6 +9,8 @@ Provides Serverless Workflow language examples
 - [Event-based greeting (Event State)](#Event-Based-Greeting-Example)
 - [Solving Math Problems (ForEach state)](#Solving-Math-Problems-Example)
 - [Parallel Execution](#Parallel-Execution-Example)
+- [Async Function Invocation](#Async-Function-Invocation-Example)
+- [Async SubFlow Invocation](#Async-SubFlow-Invocation-Example)
 - [Event Based Transitions (Event-based Switch)](#Event-Based-Transitions-Example)
 - [Applicant Request Decision (Data-based Switch + SubFlows)](#Applicant-Request-Decision-Example)
 - [Provision Orders (Error Handling)](#Provision-Orders-Example)
@@ -579,6 +581,179 @@ states:
 We assume that the two referenced workflows, namely `shortdelayworkflowid` and `longdelayworkflowid` both include a single delay state,
 with the `shortdelayworkflowid` workflow delay state defining its `timeDelay` property to be shorter than that of the `longdelayworkflowid` workflows
 delay state.
+
+### Async Function Invocation Example
+
+#### Description
+
+This example uses a [Operation State](../specification.md#operation-state) to invoke a function async. 
+This functions sends an email to a customer.
+Async function execution is a "fire-and-forget" type of invocation. The function is invoked and workflow execution
+does not wait for its results.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-asyncfunction.png" height="500px" alt="Async Function Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+ "id": "sendcustomeremail",
+ "version": "1.0",
+ "specVersion": "0.7",
+ "name": "Send customer email workflow",
+ "description": "Send email to a customer",
+ "start": "Send Email",
+ "functions": [
+  {
+   "name": "emailFunction",
+   "operation": "file://myapis/emailapis.json#sendEmail"
+  }
+ ],
+ "states":[
+  {
+   "name":"Send Email",
+   "type":"operation",
+   "actions":[
+    {
+     "functionRef": {
+      "invoke": "async",
+      "refName": "emailFunction",
+      "arguments": {
+       "customer": "${ .customer }"
+      }
+     }
+    }
+   ],
+   "end": true
+  }
+ ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: sendcustomeremail
+version: '1.0'
+specVersion: '0.7'
+name: Send customer email workflow
+description: Send email to a customer
+start: Send Email
+functions:
+ - name: emailFunction
+   operation: file://myapis/emailapis.json#sendEmail
+states:
+ - name: Send Email
+   type: operation
+   actions:
+    - functionRef:
+       invoke: async
+       refName: emailFunction
+       arguments:
+        customer: "${ .customer }"
+   end: true
+```
+
+</td>
+</tr>
+</table>
+
+### Async SubFlow Invocation Example
+
+#### Description
+
+This example uses a [Operation State](../specification.md#operation-state) to invoke a [SubFlow](../specification.md#Subflow-Action) async.
+This SubFlow is responsible for performing some customer business logic.
+Async SubFlow invocation is a "fire-and-forget" type of invocation. The SubFlow is invoked and workflow execution
+does not wait for its results. In addition, we specify that the SubFlow should be allowed to continue its execution 
+event if the parent workflow completes its own execution. This is done by defining the actions `onParentComplete`
+property to `continue`.
+
+#### Workflow Diagram
+
+<p align="center">
+<img src="../media/examples/example-asyncsubflow.png" height="500px" alt="Async SubFlow Example"/>
+</p>
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+ "id": "onboardcustomer",
+ "version": "1.0",
+ "specVersion": "0.7",
+ "name": "Onboard Customer",
+ "description": "Onboard a Customer",
+ "start": "Onboard",
+ "states":[
+  {
+   "name":"Onboard", 
+   "type":"operation",
+   "actions":[
+    {
+     "subFlowRef": {
+      "invoke": "async",
+      "onParentComplete": "continue",
+      "workflowId": "customeronboardingworkflow",
+      "version": "1.0"
+     }
+    }
+   ],
+   "end": true
+  }
+ ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: onboardcustomer
+version: '1.0'
+specVersion: '0.7'
+name: Onboard Customer
+description: Onboard a Customer
+start: Onboard
+states:
+ - name: Onboard
+   type: operation
+   actions:
+    - subFlowRef:
+       invoke: async
+       onParentComplete: continue
+       workflowId: customeronboardingworkflow
+       version: '1.0'
+   end: true
+```
+
+</td>
+</tr>
+</table>
+
+For the sake of the example, the definition of "customeronboardingworkflow" workflow invoked as a SubFlow 
+is not shown. 
 
 ### Event Based Transitions Example
 

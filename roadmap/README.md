@@ -29,7 +29,7 @@ _Status description:_
 | ✔️| Added "useData" for eventDataFilter, and "useResults" for actionDataFilter | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| Added "resultEventTimeout" for action eventref | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| Added example for "continueAs" | [examples doc](https://github.com/serverlessworkflow/specification/blob/main/examples/README.md)  |
-| ✏️️| Support for async action invocation |   |
+| ✔️️| Support for async action invocation | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✏️️| Add "completedBy" functionality |   |
 | ✏️️| Define workflow context |   |
 | ✏️️| Start work on TCK  |   |
