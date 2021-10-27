@@ -28,7 +28,6 @@ Provides Serverless Workflow language examples
 - [Book Lending Workflow](#Book-Lending)
 - [Filling a glass of water (Expression functions)](#Filling-a-glass-of-water)
 - [Online Food Ordering](#Online-Food-Ordering)
-- [Online Food Ordering](#Online-Food-Ordering)
 - [Continuing as a new Execution](#Continuing-as-a-new-Execution)
 
 ### Hello World Example
