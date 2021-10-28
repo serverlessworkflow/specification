@@ -2599,11 +2599,13 @@ For this example we assume that the workflow instance is started given the follo
         {
             "name": "MakeVetAppointment",
             "source": "VetServiceSource",
+            "type": "events.vet.appointments",
             "kind": "produced"
         },
         {
             "name": "VetAppointmentInfo",
             "source": "VetServiceSource",
+            "type": "events.vet.appointments",
             "kind": "consumed"
         }
     ],
@@ -2644,26 +2646,28 @@ version: '1.0'
 specVersion: '0.7'
 start: MakeVetAppointmentState
 events:
-- name: MakeVetAppointment
-  source: VetServiceSource
-  kind: produced
-- name: VetAppointmentInfo
-  source: VetServiceSource
-  kind: consumed
+ - name: MakeVetAppointment
+   source: VetServiceSource
+   type: events.vet.appointments
+   kind: produced
+ - name: VetAppointmentInfo
+   source: VetServiceSource
+   type: events.vet.appointments
+   kind: consumed
 states:
-- name: MakeVetAppointmentState
-  type: operation
-  actions:
-  - name: MakeAppointmentAction
-    eventRef:
-      triggerEventRef: MakeVetAppointment
-      data: "${ .patientInfo }"
-      resultEventRef: VetAppointmentInfo
-    actionDataFilter:
-      results: "${ .appointmentInfo }"
-  timeouts:
+ - name: MakeVetAppointmentState
+   type: operation
+   actions:
+    - name: MakeAppointmentAction
+      eventRef:
+       triggerEventRef: MakeVetAppointment
+       data: "${ .patientInfo }"
+       resultEventRef: VetAppointmentInfo
+      actionDataFilter:
+       results: "${ .appointmentInfo }"
+   timeouts:
     actionExecTimeout: PT15M
-  end: true
+   end: true
 ```
 
 </td>
@@ -3826,134 +3830,140 @@ For the sake of the example we assume the functions and event definitions are de
 
 ```json
 {
-   "id": "booklending",
-   "name": "Book Lending Workflow",
-   "version": "1.0",
-   "specVersion": "0.7",
-   "start": "Book Lending Request",
-   "states": [
-      {
-         "name": "Book Lending Request",
-         "type": "event",
-         "onEvents": [
-            {
-               "eventRefs": ["Book Lending Request Event"]
-            }
-         ],
-         "transition": "Get Book Status"
-      },
-      {
-         "name": "Get Book Status",
-         "type": "operation",
-         "actions": [
-            {
-               "functionRef": {
-                  "refName": "Get status for book",
-                  "arguments": {
-                     "bookid": "${ .book.id }"
-                  }
-               }
-            }
-         ],
-         "transition": "Book Status Decision"
-      },
-      {
-         "name": "Book Status Decision",
-         "type": "switch",
-         "dataConditions": [
-            {
-               "name": "Book is on loan",
-               "condition": "${ .book.status == \"onloan\" }",
-               "transition": "Report Status To Lender"
-            },
-            {
-               "name": "Check is available",
-               "condition": "${ .book.status == \"available\" }",
-               "transition": "Check Out Book"
-            }
-         ]
-      },
-      {
-         "name": "Report Status To Lender",
-         "type": "operation",
-         "actions": [
-            {
-               "functionRef": {
-                  "refName": "Send status to lender",
-                  "arguments": {
-                     "bookid": "${ .book.id }",
-                     "message": "Book ${ .book.title } is already on loan"
-                  }
-               }
-            }
-         ],
-         "transition": "Wait for Lender response"
-      },
-      {
-         "name": "Wait for Lender response",
-         "type": "switch",
-         "eventConditions": [
-            {
-               "name": "Hold Book",
-               "eventRef": "Hold Book Event",
-               "transition": "Request Hold"
-            },
-            {
-               "name": "Decline Book Hold",
-               "eventRef": "Decline Hold Event",
-               "transition": "Cancel Request"
-            }
-         ]
-      },
-      {
-         "name": "Request Hold",
-         "type": "operation",
-         "actions": [
-            {
-               "functionRef": {
-                  "refName": "Request hold for lender",
-                  "arguments": {
-                     "bookid": "${ .book.id }",
-                     "lender": "${ .lender }"
-                  }
-               }
-            }
-         ],
-         "transition": "Sleep two weeks"
-      },
-      {
-         "name": "Sleep two weeks",
-         "type": "sleep",
-         "duration": "PT2W",
-         "transition": "Get Book Status"
-      },
-      {
-         "name": "Check Out Book",
-         "type": "operation",
-         "actions": [
-            {
-               "functionRef": {
-                  "refName": "Check out book with id",
-                  "arguments": {
-                     "bookid": "${ .book.id }"
-                  }
-               }
-            },
-            {
-               "functionRef": {
-                  "refName": "Notify Lender for checkout",
-                  "arguments": {
-                     "bookid": "${ .book.id }",
-                     "lender": "${ .lender }"
-                  }
-               }
-            }
-         ],
-         "end": true
-      }
+ "id": "booklending",
+ "name": "Book Lending Workflow",
+ "version": "1.0",
+ "specVersion": "0.7",
+ "start": "Book Lending Request",
+ "states": [
+  {
+   "name": "Book Lending Request",
+   "type": "event",
+   "onEvents": [
+    {
+     "eventRefs": ["Book Lending Request Event"]
+    }
    ],
-   "functions": "file://books/lending/functions.json",
-   "events": "file://books/lending/events.json"
+   "transition": "Get Book Status"
+  },
+  {
+   "name": "Get Book Status",
+   "type": "operation",
+   "actions": [
+    {
+     "functionRef": {
+      "refName": "Get status for book",
+      "arguments": {
+       "bookid": "${ .book.id }"
+      }
+     }
+    }
+   ],
+   "transition": "Book Status Decision"
+  },
+  {
+   "name": "Book Status Decision",
+   "type": "switch",
+   "dataConditions": [
+    {
+     "name": "Book is on loan",
+     "condition": "${ .book.status == \"onloan\" }",
+     "transition": "Report Status To Lender"
+    },
+    {
+     "name": "Check is available",
+     "condition": "${ .book.status == \"available\" }",
+     "transition": "Check Out Book"
+    }
+   ],
+   "defaultCondition": {
+    "end": true
+   }
+  },
+  {
+   "name": "Report Status To Lender",
+   "type": "operation",
+   "actions": [
+    {
+     "functionRef": {
+      "refName": "Send status to lender",
+      "arguments": {
+       "bookid": "${ .book.id }",
+       "message": "Book ${ .book.title } is already on loan"
+      }
+     }
+    }
+   ],
+   "transition": "Wait for Lender response"
+  },
+  {
+   "name": "Wait for Lender response",
+   "type": "switch",
+   "eventConditions": [
+    {
+     "name": "Hold Book",
+     "eventRef": "Hold Book Event",
+     "transition": "Request Hold"
+    },
+    {
+     "name": "Decline Book Hold",
+     "eventRef": "Decline Hold Event",
+     "transition": "Cancel Request"
+    }
+   ],
+   "defaultCondition": {
+    "end": true
+   }
+  },
+  {
+   "name": "Request Hold",
+   "type": "operation",
+   "actions": [
+    {
+     "functionRef": {
+      "refName": "Request hold for lender",
+      "arguments": {
+       "bookid": "${ .book.id }",
+       "lender": "${ .lender }"
+      }
+     }
+    }
+   ],
+   "transition": "Sleep two weeks"
+  },
+  {
+   "name": "Sleep two weeks",
+   "type": "sleep",
+   "duration": "PT2W",
+   "transition": "Get Book Status"
+  },
+  {
+   "name": "Check Out Book",
+   "type": "operation",
+   "actions": [
+    {
+     "functionRef": {
+      "refName": "Check out book with id",
+      "arguments": {
+       "bookid": "${ .book.id }"
+      }
+     }
+    },
+    {
+     "functionRef": {
+      "refName": "Notify Lender for checkout",
+      "arguments": {
+       "bookid": "${ .book.id }",
+       "lender": "${ .lender }"
+      }
+     }
+    }
+   ],
+   "end": true
+  }
+ ],
+ "functions": "file://books/lending/functions.json",
+ "events": "file://books/lending/events.json"
 }
 ```
 
@@ -3967,73 +3977,77 @@ version: '1.0'
 specVersion: '0.7'
 start: Book Lending Request
 states:
-- name: Book Lending Request
-  type: event
-  onEvents:
-  - eventRefs:
-    - Book Lending Request Event
-  transition: Get Book Status
-- name: Get Book Status
-  type: operation
-  actions:
-  - functionRef:
-      refName: Get status for book
-      arguments:
+ - name: Book Lending Request
+   type: event
+   onEvents:
+    - eventRefs:
+       - Book Lending Request Event
+   transition: Get Book Status
+ - name: Get Book Status
+   type: operation
+   actions:
+    - functionRef:
+       refName: Get status for book
+       arguments:
         bookid: "${ .book.id }"
-  transition: Book Status Decision
-- name: Book Status Decision
-  type: switch
-  dataConditions:
-  - name: Book is on loan
-    condition: ${ .book.status == "onloan" }
-    transition: Report Status To Lender
-  - name: Check is available
-    condition: ${ .book.status == "available" }
-    transition: Check Out Book
-- name: Report Status To Lender
-  type: operation
-  actions:
-  - functionRef:
-      refName: Send status to lender
-      arguments:
+   transition: Book Status Decision
+ - name: Book Status Decision
+   type: switch
+   dataConditions:
+    - name: Book is on loan
+      condition: ${ .book.status == "onloan" }
+      transition: Report Status To Lender
+    - name: Check is available
+      condition: ${ .book.status == "available" }
+      transition: Check Out Book
+   defaultCondition:
+    end: true
+ - name: Report Status To Lender
+   type: operation
+   actions:
+    - functionRef:
+       refName: Send status to lender
+       arguments:
         bookid: "${ .book.id }"
         message: Book ${ .book.title } is already on loan
-  transition: Wait for Lender response
-- name: Wait for Lender response
-  type: switch
-  eventConditions:
-  - name: Hold Book
-    eventRef: Hold Book Event
-    transition: Request Hold
-  - name: Decline Book Hold
-    eventRef: Decline Hold Event
-    transition: Cancel Request
-- name: Request Hold
-  type: operation
-  actions:
-  - functionRef:
-      refName: Request fold for lender
-      arguments:
+   transition: Wait for Lender response
+ - name: Wait for Lender response
+   type: switch
+   eventConditions:
+    - name: Hold Book
+      eventRef: Hold Book Event
+      transition: Request Hold
+    - name: Decline Book Hold
+      eventRef: Decline Hold Event
+      transition: Cancel Request
+   defaultCondition:
+    end: true
+ - name: Request Hold
+   type: operation
+   actions:
+    - functionRef:
+       refName: Request hold for lender
+       arguments:
         bookid: "${ .book.id }"
         lender: "${ .lender }"
-  transition: Sleep two weeks
-- name: Sleep two weeks
-  type: sleep
-  duration: PT2W
-  transition: Get Book Status
-- name: Check Out Book
-  type: operation
-  actions:
-  - functionRef:
-      refName: Check out book with id
-      arguments:
+   transition: Sleep two weeks
+ - name: Sleep two weeks
+   type: sleep
+   duration: PT2W
+   transition: Get Book Status
+ - name: Check Out Book
+   type: operation
+   actions:
+    - functionRef:
+       refName: Check out book with id
+       arguments:
         bookid: "${ .book.id }"
-  - functionRef:
-      refName: Notify Lender for checkout
-      arguments:
+    - functionRef:
+       refName: Notify Lender for checkout
+       arguments:
         bookid: "${ .book.id }"
         lender: "${ .lender }"
-  end: true
+   end: true
 functions: file://books/lending/functions.json
 events: file://books/lending/events.json
 ```
@@ -4083,49 +4097,52 @@ Its results are then merged back into the state data according to the "toStateDa
 
 ```json
 {
-    "id": "fillgrassofwater",
-    "name": "Fill glass of water workflow",
-    "version": "1.0",
-    "specVersion": "0.7",
-    "start": "Check if full",
-    "functions": [
-        {
-            "name": "Increment Current Count Function",
-            "type": "expression",
-            "operation": ".counts.current += 1 | .counts.current"
-        }
-    ],
-    "states": [
-        {
-            "name": "Check if full",
-            "type": "switch",
-            "dataConditions": [
-                {
-                    "name": "Need to fill more",
-                    "condition": "${ .counts.current < .counts.max }",
-                    "transition": "Add Water"
-                },
-                {
-                    "name": "Glass full",
-                    "condition": ".counts.current >= .counts.max",
-                    "end": true
-                }
-            ]
-        },
-        {
-            "name": "Add Water",
-            "type": "operation",
-            "actions": [
-                {
-                    "functionRef": "Increment Current Count Function",
-                    "actionDataFilter": {
-                        "toStateData": ".counts.current"
-                    }
-                }
-            ],
-            "transition": "Check If Full"
-        }
-    ]
+ "id": "fillglassofwater",
+ "name": "Fill glass of water workflow",
+ "version": "1.0",
+ "specVersion": "0.7",
+ "start": "Check if full",
+ "functions": [
+  {
+   "name": "Increment Current Count Function",
+   "type": "expression",
+   "operation": ".counts.current += 1 | .counts.current"
+  }
+ ],
+ "states": [
+  {
+   "name": "Check if full",
+   "type": "switch",
+   "dataConditions": [
+    {
+     "name": "Need to fill more",
+     "condition": "${ .counts.current < .counts.max }",
+     "transition": "Add Water"
+    },
+    {
+     "name": "Glass full",
+     "condition": ".counts.current >= .counts.max",
+     "end": true
+    }
+   ],
+   "defaultCondition": {
+    "end": true
+   }
+  },
+  {
+   "name": "Add Water",
+   "type": "operation",
+   "actions": [
+    {
+     "functionRef": "Increment Current Count Function",
+     "actionDataFilter": {
+      "toStateData": ".counts.current"
+     }
+    }
+   ],
+   "transition": "Check if full"
+  }
+ ]
 }
 ```
 
@@ -4133,32 +4150,34 @@ Its results are then merged back into the state data according to the "toStateDa
 <td valign="top">
 
 ```yaml
-id: fillgrassofwater
+id: fillglassofwater
 name: Fill glass of water workflow
 version: '1.0'
 specVersion: '0.7'
 start: Check if full
 functions:
-- name: Increment Current Count Function
-  type: expression
-  operation: ".counts.current += 1 | .counts.current"
+ - name: Increment Current Count Function
+   type: expression
+   operation: ".counts.current += 1 | .counts.current"
 states:
-- name: Check if full
-  type: switch
-  dataConditions:
-  - name: Need to fill more
-    condition: "${ .counts.current < .counts.max }"
-    transition: Add Water
-  - name: Glass full
-    condition: ".counts.current >= .counts.max"
+ - name: Check if full
+   type: switch
+   dataConditions:
+    - name: Need to fill more
+      condition: "${ .counts.current < .counts.max }"
+      transition: Add Water
+    - name: Glass full
+      condition: ".counts.current >= .counts.max"
+      end: true
+   defaultCondition:
     end: true
-- name: Add Water
-  type: operation
-  actions:
-  - functionRef: Increment Current Count Function
-    actionDataFilter:
-      toStateData: ".counts.current"
-  transition: Check If Full
+ - name: Add Water
+   type: operation
+   actions:
+    - functionRef: Increment Current Count Function
+      actionDataFilter:
+       toStateData: ".counts.current"
+   transition: Check if full
 ```
 
 </td>
