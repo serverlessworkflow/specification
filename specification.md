@@ -116,7 +116,7 @@ You can find the specification roadmap [here](roadmap/README.md).
 
 ## Overview
 
-Workflows allow us to capture and organize business requirements in an unified manner.
+Workflows allow us to capture and organize business requirements in a unified manner.
 They can bridge the gap between how we express and model business logic.
 
 A key component of workflows is the domain-specific language (DSL) we use to model our
@@ -183,44 +183,45 @@ This section describes some of the core Serverless Workflow concepts:
 
 ### Workflow Definition
 
-A workflow definition is a single artifact written in the Serverless Workflow
-language. It consists of the core [Workflow Definition Structure](#Workflow-Definition-Structure)
+A workflow definition is a JSON or YAML file that conforms to the Serverless Workflow specification DSL. 
+It consists of the core [Workflow Definition Structure](#Workflow-Definition-Structure)
 and the [Workflow Model](#Workflow-Model) It defines a blueprint used by runtimes for its execution.
 
 A business solution can be composed of any number of related workflow definitions.
 Their relationships are explicitly modeled with the Serverless Workflow language (for example
 by using [SubFlowRef Definition](#SubFlowRef-Definition) in actions).
 
-Runtimes can initialize workflow definitions for some particular set of data inputs or events
-which forms [workflow instances](#Workflow-Instance).
+Runtimes can initialize workflow definitions for some particular set of data inputs or events.
 
 ### Workflow Instance
 
-A workflow instance represents a single workflow execution according to the given
-workflow definition. Instances should be kept isolated, but
-still be able to have access to other running instances.
+A workflow instance represents a single workflow execution corresponding to the instructions provided by a
+workflow definition. A workflow instance can be short or long-running. A single workflow instance
+should be isolated, meaning it should not share state and data with other workflow instances.
+Workflow instances should be able to communicate with each other via events.
 
 Depending on their workflow definition, workflow instances can be short-lived or
-can execute for days, weeks, or longer.
+can execute for days, weeks, or years.
 
 Each workflow instances should have its unique identifier, which should remain
 unchanged throughout its execution.
 
-Workflow definitions can describe how/when workflow instances should be created via
-its `start` property. This property is described in detail in the  [start definition section](#Start-Definition).
-For example, instance creation can be defined for some set of data, but other ways are also possible.
-For example you can enforce instance creations upon arrival of certain events with a starting [EventState](#Event-State), as well
-on a defined [schedule](#Schedule-Definition).
+Workflow instances can be started providing some data input. This is described in detail in the 
+[workflow data input](#Workflow-Data-Input) section.
+Workflow instances can also wait for examples to start their execution, which is the case
+where a workflow definition contains a [EventState](#Event-State) starting workflow state.
 
-Workflow instance termination is also explicitly described in the workflow definition.
-By default, instances should be terminated once there are no active workflow paths (all active
-paths reach a state containing the default [end definition](#End-Definition)). Other ways, such as
-using the `terminate` property of the [end definition](#End-Definition) to terminate instance execution,
+The workflow definition also explicitly defines when a workflow instance should be completed. 
+By default, instances should be completed once there are no active workflow paths (all active
+paths reach a state containing the default [end definition](#End-Definition)),
+or if the defined [`workflowExecTimeout`](#Workflow-Timeouts) time is reached.
+Other ways, such as using the `terminate` property of the [end definition](#End-Definition) to terminate instance execution,
 or defining an [`workflowExecTimeout`](#Workflow-Timeouts) property are also possible.
 
-This default behavior can be changed by setting the `keepActive` workflow property to `true`.
-In this case the only way to terminate a workflow instance is for its control flow to explicitly end with a "terminate" [end definition](#End-Definition),
-or if the defined [`workflowExecTimeout`](#Workflow-Timeouts) time is reached.
+For long-running workflow-executions, you can utilize the `keepActive` workflow property which 
+provides more control as to when exactly to terminate workflow execution. In cases where a
+workflow execution should be continued as a new one, the DSL also provides the `continueAs` property which is described
+in detail in the [Continuing a new Execution](#Continuing-as-a-new-Execution) section.
 
 ### Workflow Model
 
@@ -229,6 +230,8 @@ The Serverless Workflow language is composed of:
 * [Function definitions](#Function-Definition) -  Reusable functions that can declare services that need to be invoked, or expressions to be evaluated.
 * [Event definitions](#Event-Definition) - Reusable declarations of events that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
 * [Retry definitions](#Retry-Definition) - Reusable retry definitions. Can specify retry strategies for service invocations during workflow execution.
+* [Timeout definitions](#Workflow-Timeouts) - Reusable timeout definitions. Can specify default workflow execution timeout, as well as workflow state, action, and branch execution timeouts.
+* [Errors definition](#Defining-Errors) - Reusable error definitions. Provide domain-specific error definitions which can be referenced in workflow states error handling.
 * [State definitions](#Workflow-States) - Definition of states, the building blocks of workflow `control flow logic`. States can reference the reusable function, event and retry definitions.
 
 ### Workflow Data
