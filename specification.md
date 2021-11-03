@@ -24,16 +24,16 @@
     + [Data Merging](#data-merging)
   * [Workflow Functions](#workflow-functions)
     + [Using Functions for RESTful Service Invocations](#using-functions-for-restful-service-invocations)
-    + [Using Functions for Async API Invocations](#using-functions-for-async-api-invocations)
+    + [Using Functions for Async API Service Invocations](#using-functions-for-async-api-service-invocations)
     + [Using Functions for RPC Service Invocations](#using-functions-for-rpc-service-invocations)
     + [Using Functions for GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
       - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
       - [Invoking a GraphQL `Mutation`](#invoking-a-graphql-mutation)
-    + [Using Functions for OData Service Invocations](#using-functions-for-odata-service-invocations)  
+    + [Using Functions for OData Service Invocations](#using-functions-for-odata-service-invocations)
       - [Creating an OData Function Definition](#creating-an-odata-function-definition)
       - [Invoking an OData Function Definition](#invoking-an-odata-function-definition)
     + [Using Functions for Expression Evaluation](#using-functions-for-expression-evaluation)
-    + [Defining custom Function types](#defining-custom-function-types)
+    + [Defining custom function types](#defining-custom-function-types)
   * [Workflow Expressions](#workflow-expressions)
   * [Workflow Definition Structure](#workflow-definition-structure)
     + [Workflow States](#workflow-states)
@@ -49,6 +49,9 @@
       - [Function Definition](#function-definition)
       - [Event Definition](#event-definition)
       - [Auth Definition](#auth-definition)
+        - [Basic Properties Definition](#basic-properties-definition)
+        - [Bearer Properties Definition](#bearer-properties-definition)
+        - [OAuth2 Properties Definition](#oauth2-properties-definition)
       - [Correlation Definition](#correlation-definition)
       - [OnEvents Definition](#onevents-definition)
       - [Action Definition](#action-definition)
@@ -72,7 +75,7 @@
       - [Additional Properties](#additional-properties)
   * [Workflow Error Handling](#workflow-error-handling)
     + [Defining Errors](#defining-errors)
-  * [Action Retries](#action-retries)
+  * [Action retries](#action-retries)
     + [Retry actions on known errors](#retry-actions-on-known-errors)
     + [Automatic retries on known and unknown errors](#automatic-retries-on-known-and-unknown-errors)
   * [Workflow Timeouts](#workflow-timeouts)
@@ -127,7 +130,7 @@ Serverless Workflow focuses on defining a **vendor-neutral**, **platform-indepen
 language that targets the serverless computing technology domain.
 It can be used to significantly bridge the gap between your unique business domain and the target technology domain.
 
-### Why we need a specification
+### Why we need a specification?
 
 The lack of a common way to define and model workflows means that we must constantly re-learn
 how to write them. This also limits the potential for common libraries, tooling and
@@ -165,8 +168,7 @@ The specification has multiple components:
 
 * Definitions of the workflow language. This is defined via the [Workflow JSON Schema](schema/workflow.json). You can use both
   [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats to model your workflows.
-* Software Development Kits (SDKs) for both [Go](https://github.com/serverlessworkflow/sdk-go) and [Java](https://github.com/serverlessworkflow/sdk-java),
-  and we plan to add them for more languages in the future.
+* Software Development Kits (SDKs) for [Go](https://github.com/serverlessworkflow/sdk-go), [Java](https://github.com/serverlessworkflow/sdk-java), [.NET](https://github.com/serverlessworkflow/sdk-net) and [Typescript](https://github.com/serverlessworkflow/sdk-typescript), and we plan to add them for more languages in the future.
 * Set of [Workflow Extensions](extensions/README.md) which
   allow users to define additional, non-execution-related workflow information. This information can be used to improve
   workflow performance.
