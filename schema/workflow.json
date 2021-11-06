@@ -1117,14 +1117,14 @@
     "switchstate": {
       "oneOf": [
         {
-          "$ref": "#/definitions/databasedswitch"
+          "$ref": "#/definitions/databasedswitchstate"
         },
         {
-          "$ref": "#/definitions/eventbasedswitch"
+          "$ref": "#/definitions/eventbasedswitchstate"
         }
       ]
     },
-    "eventbasedswitch": {
+    "eventbasedswitchstate": {
       "type": "object",
       "description": "Permits transitions to other states based on events",
       "properties": {
@@ -1203,7 +1203,7 @@
         "defaultCondition"
       ]
     },
-    "databasedswitch": {
+    "databasedswitchstate": {
       "type": "object",
       "description": "Permits transitions to other states based on data conditions",
       "properties": {

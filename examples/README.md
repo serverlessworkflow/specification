@@ -782,7 +782,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
 
 ```json
 {
-"id": "eventbasedswitch",
+"id": "eventbasedswitchstate",
 "version": "1.0",
 "specVersion": "0.7",
 "name": "Event Based Switch Transitions",
@@ -857,7 +857,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
 <td valign="top">
 
 ```yaml
-id: eventbasedswitch
+id: eventbasedswitchstate
 version: '1.0'
 specVersion: '0.7'
 name: Event Based Switch Transitions
