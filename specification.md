@@ -3670,7 +3670,8 @@ actions:
 </details>
 
 OnEvent definition allow you to define which [actions](#Action-Definition) are to be performed
-for the one or more [events definitions](#Event-Definition) defined in the `eventRefs` property.
+for the one or more [events definitions](#Event-Definition) defined in the `eventRefs` array.
+Note that the values of `eventRefs` array must be unique.
 
 The `actionMode` property defines if the defined actions need to be performed sequentially or in parallel.
 
