@@ -385,6 +385,7 @@
           "items": {
             "type": "string"
           },
+          "uniqueItems": true,
           "additionalItems": false
         },
         "actionMode": {
