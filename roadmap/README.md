@@ -30,6 +30,7 @@ _Status description:_
 | ✔️| Added "resultEventTimeout" for action eventref | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| Added example for "continueAs" | [examples doc](https://github.com/serverlessworkflow/specification/blob/main/examples/README.md)  |
 | ✔️️| Support for async action invocation | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️️| Support for action condition | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✏️️| Add "completedBy" functionality |   |
 | ✏️️| Define workflow context |   |
 | ✏️️| Start work on TCK  |   |

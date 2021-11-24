@@ -3732,6 +3732,7 @@ This is visualized in the diagram below:
 | retryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 | sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
+| [condition](#Workflow-Expressions) | Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3809,6 +3810,10 @@ It should be used only when the workflow top-level `autoRetries` property is set
 The `retryableErrors` property is a list that references one or more unique names of workflow error definitions.
 This is the list of known errors for which the action should be retried for.
 It should be used only when the workflow top-level `autoRetries` property is set to `false`.
+
+The `condition` property is a [workflow expression](#Workflow-Expressions). If defined, it must evaluate to `true`
+for this action to be performed. If it evaluates to `false` the action is skipped. 
+If the `condition` property is not defined, the action is always performed.
 
 ##### Subflow Action
 
