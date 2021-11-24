@@ -3812,7 +3812,7 @@ This is the list of known errors for which the action should be retried for.
 It should be used only when the workflow top-level `autoRetries` property is set to `false`.
 
 The `condition` property is a [workflow expression](#Workflow-Expressions). If defined, it must evaluate to `true`
-for this action to be performed. If it evaluates to `false`the action is skipped. 
+for this action to be performed. If it evaluates to `false` the action is skipped. 
 If the `condition` property is not defined, the action is always performed.
 
 ##### Subflow Action
