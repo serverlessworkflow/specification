@@ -1,5 +1,5 @@
 {
-  "$id": "https://serverlessworkflow.io/schemas/0.7/extensions/kpi.json",
+  "$id": "https://serverlessworkflow.io/schemas/0.8/extensions/kpi.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Serverless Workflow specification - KPIs Extension Schema",
   "type": "object",

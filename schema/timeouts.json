@@ -1,5 +1,5 @@
 {
-  "$id": "https://serverlessworkflow.io/schemas/0.7/timeouts.json",
+  "$id": "https://serverlessworkflow.io/schemas/0.8/timeouts.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Serverless Workflow specification - functions schema",
   "type": "object",

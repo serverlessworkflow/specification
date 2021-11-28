@@ -12,34 +12,27 @@ _Status description:_
 
 ## Releases
 
-- [Roadmap for next planned release](#v8)
+- [v0.8 released Dec 2021](#v08)
 - [v0.7 released Aug 2021](#v07)
 - [v0.6 released March 2021](#v06)
 - [v0.5 released November 2020](#v05)
 - [v0.1 released April 2020](#v01)
 
-## <a name="v08"></a> Next planned release
+## <a name="v08"></a> Release Version 0.8
 
 | Status | Description | Comments |
 | --- | --- |  --- |
-| ✔️| Support custom function `type` definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️| Workflow "name" no longer a required property | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️| Workflow "start" no longer a required property | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️| ForEach state "iterationParam" no longer a required property | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️| Added "useData" for eventDataFilter, and "useResults" for actionDataFilter | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️| Added "resultEventTimeout" for action eventref | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️| Added example for "continueAs" | [examples doc](https://github.com/serverlessworkflow/specification/blob/main/examples/README.md)  |
-| ✔️️| Support for async action invocation | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✔️️| Support for action condition | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
-| ✏️️| Add "completedBy" functionality |   |
-| ✏️️| Define workflow context |   |
-| ✏️️| Start work on TCK  |   |
-| ✏️️| Add integration with open-source runtimes  |   |
-| ✏️️| Add SDKs for more languages (Python, PHP, Rust, etc) |   |
-| ✏️️| Add more samples  |   |
+| ✔️| Support custom function `type` definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md)  |
+| ✔️| Workflow "name" no longer a required property | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md)  |
+| ✔️| Workflow "start" no longer a required property | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md)  |
+| ✔️| ForEach state "iterationParam" no longer a required property | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md)  |
+| ✔️| Added "useData" for eventDataFilter, and "useResults" for actionDataFilter | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md)  |
+| ✔️| Added "resultEventTimeout" for action eventref | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md)  |
+| ✔️| Added example for "continueAs" | [examples doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/examples/README.md)  |
+| ✔️️| Support for async action invocation | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md)  |
+| ✔️️| Support for action condition | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.8.x/specification.md)  |
 
-
-## <a name="v07"></a> v0.7
+## <a name="v07"></a> Release Version 0.7
 
 | Status | Description | Comments |
 | --- | --- |  --- |
@@ -69,7 +62,7 @@ _Status description:_
 | ✔️| Update to error handling and retries. Retries are now per action rather than per state. Added option of automatic retries for actions | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.7.x/specification.md) |
 | ✔️| Added "continueAs" property to end definitions | [spec doc](hhttps://github.com/serverlessworkflow/specification/blob/0.7.x/specification.md) |
 
-## <a name="v06"></a> v0.6
+## <a name="v06"></a> Release Version 0.6
 
 | Status | Description | Comments |
 | --- | --- |  --- |
@@ -93,7 +86,7 @@ _Status description:_
 | ✔️| Updated schedule definition | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
 | ✔️| Update data filters | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.6.x/specification.md) |
 
-## <a name="v05"></a> v0.5
+## <a name="v05"></a> Release Version 0.5
 
 | Status | Description | Comments |
 | --- | --- |  --- |
@@ -126,7 +119,7 @@ _Status description:_
 | ✔️| Enforce use of OpenAPI specification in function definitions for portability | [spec doc](https://github.com/serverlessworkflow/specification/blob/0.5.x/specification.md) |
 | ✔️| Update workflow Error Handling | [spec doc](../specification.md) |
 
-## <a name="v01"></a> v0.1
+## <a name="v01"></a> Release Version 0.1
 
 | Status | Description | Comments |
 | :--: | --- |  --- |
