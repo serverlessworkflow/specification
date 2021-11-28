@@ -1,4 +1,4 @@
-# Serverless Workflow Specification
+# Serverless Workflow Specification - Version 0.8
 
 ## Table of Contents
 
@@ -642,7 +642,7 @@ a workflow with a single event state and show how data filters can be combined.
     "id": "GreetCustomersWorkflow",
     "name": "Greet Customers when they arrive",
     "version": "1.0",
-    "specVersion": "0.7",
+    "specVersion": "0.8",
     "start": "WaitForCustomerToArrive",
     "states":[
          {
@@ -1808,7 +1808,7 @@ we can use this expression in the workflow "version" parameter:
    "id": "MySampleWorkflow",
    "name": "Sample Workflow",
    "version": "${ .inputVersion }",
-   "specVersion": "0.7"
+   "specVersion": "0.8"
 }
 ```
 
@@ -1858,7 +1858,7 @@ definition "id" must be a constant value.
 {
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.7",
+   "specVersion": "0.8",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -1876,7 +1876,7 @@ definition "id" must be a constant value.
 ```yaml
 id: sampleWorkflow
 version: '1.0'
-specVersion: '0.7'
+specVersion: '0.8'
 name: Sample Workflow
 description: Sample Workflow
 start: MyStartingState
@@ -1990,8 +1990,8 @@ the very first state defined in the [workflow states array](#Workflow-States).
 The `specVersion` property is used to set the Serverless Workflow specification release version
 the workflow markup adheres to.
 It has to follow the specification release versions (excluding the leading "v"), meaning that for
-the [release version v0.7](https://github.com/serverlessworkflow/specification/releases/tag/v0.7)
-its value should be set to `"0.7"`.
+the [release version v0.8](https://github.com/serverlessworkflow/specification/releases/tag/v0.8)
+its value should be set to `"0.8"`.
 
 The `expressionLang` property can be used to identify the expression language used for all expressions in
 the workflow definition. The default value of this property is ["jq"](https://stedolan.github.io/jq/).
@@ -2039,7 +2039,7 @@ Here is an example of using external resource for function definitions:
 {
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.7",
+   "specVersion": "0.8",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -2076,7 +2076,7 @@ Here is an example of using external resource for event definitions:
 {
    "id": "sampleWorkflow",
    "version": "1.0",
-   "specVersion": "0.7",
+   "specVersion": "0.8",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
@@ -3010,7 +3010,7 @@ and our workflow is defined as:
   "id": "sendConfirmWorkflow",
   "name": "SendConfirmationForCompletedOrders",
   "version": "1.0",
-  "specVersion": "0.7",
+  "specVersion": "0.8",
   "start": "SendConfirmState",
   "functions": [
   {
@@ -3047,7 +3047,7 @@ and our workflow is defined as:
 id: sendConfirmWorkflow
 name: SendConfirmationForCompletedOrders
 version: '1.0'
-specVersion: '0.7'
+specVersion: '0.8'
 start: SendConfirmState
 functions:
 - name: sendConfirmationFunction
@@ -4941,7 +4941,7 @@ Let's take a look at an example of additional properties:
 {
   "id": "myworkflow",
   "version": "1.0",
-  "specVersion": "0.7",
+  "specVersion": "0.8",
   "name": "My Test Workflow",
   "start": "My First State",
   "loglevel": "Info",
@@ -4959,7 +4959,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 {
   "id": "myworkflow",
   "version": "1.0",
-  "specVersion": "0.7",
+  "specVersion": "0.8",
   "name": "Py Test Workflow",
   "start": "My First State",
   "metadata": {
@@ -6127,7 +6127,7 @@ Here is an example of metadata attached to the core workflow definition:
   "id": "processSalesOrders",
   "name": "Process Sales Orders",
   "version": "1.0",
-  "specVersion": "0.7",
+  "specVersion": "0.8",
   "start": "MyStartingState",
   "metadata": {
     "loglevel": "Info",
