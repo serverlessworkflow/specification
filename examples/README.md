@@ -4597,8 +4597,14 @@ functions:
 
 This example shows how we can loop through a data input array (in parallel), and decide which action to perform
 depending on the value of each element in the input array. 
+We use the [action definition](../specification.md#Action-Definition) `condition` property to perform the action that 
+is best suited for the transaction value.
+Note that in this example we set the "large transaction amount" as a [workflow constant](../specification.md#Workflow-Constants). 
+There are other ways to set 
+this value, for example passing it as [workflow data input](../specification.md#Workflow-Data-Input), 
+or if this data is sensitive, to use [workflow secrets](../specification.md#Workflow-Secrets). 
 
-For the example, we assume the workflow data input is:
+For the example, we assume the following workflow data input:
 
 ```json
 {
