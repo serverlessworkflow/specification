@@ -60,7 +60,7 @@ an associated sample Rate Limiting extension definition on the right.
 id: processapplication
 name: Process Application
 version: '1.0'
-specVersion: '0.7'
+specVersion: '0.8'
 start: ProcessNewApplication
 states:
   - name: ProcessNewApplication
