@@ -31,6 +31,7 @@ Provides Serverless Workflow language examples
 - [Filling a glass of water (Expression functions)](#Filling-a-glass-of-water)
 - [Online Food Ordering](#Online-Food-Ordering)
 - [Continuing as a new Execution](#Continuing-as-a-new-Execution)
+- [Process Transactions (Foreach State with conditions)](#Process-Transactions)
 
 ### Hello World Example
 
@@ -4584,6 +4585,121 @@ events:
 functions:
  - name: NotifyCustomerFunction
    operation: http://myapis.org/customerapis.json#notifyCustomer
+```
+
+</td>
+</tr>
+</table>
+
+### Process Transactions
+
+#### Description
+
+This example shows how we can loop through a data input array (in parallel), and decide which action to perform
+depending on the value of each element in the input array. 
+
+For the example, we assume the workflow data input is:
+
+```json
+{
+  "customer": {
+   "id": "abc123",
+   "name": "John Doe",
+   "transactions": [1000, 400, 60, 7000, 12000, 250]
+  }
+}
+```
+
+We use the [ForeEach workflow state](../specification.md#ForEach-State) to iterate through customer transactions (in parallel), and 
+decide which activity to perform based on the transaction value.
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+ "id": "customerbankingtransactions",
+ "name": "Customer Banking Transactions Workflow",
+ "version": "1.0",
+ "specVersion": "0.7",
+ "autoRetries": true,
+ "constants": {
+  "largetxamount" : 5000
+ },
+ "states": [
+  {
+   "name": "ProcessTransactions",
+   "type": "foreach",
+   "inputCollection": "${ .customer.transactions }",
+   "iterationParam": "${ .tx }",
+   "actions": [
+    {
+     "name": "Process Larger Transaction",
+     "functionRef": "Banking Service - Larger Tx",
+     "condition": "${ .tx >= $CONST.largetxamount }"
+    },
+    {
+     "name": "Process Smaller Transaction",
+     "functionRef": "Banking Service - Smaller Tx",
+     "condition": "${ .tx < $CONST.largetxamount }"
+    }
+   ],
+   "end": true
+  }
+ ],
+ "functions": [
+  {
+   "name": "Banking Service - Larger Tx",
+   "type": "asyncapi",
+   "operation": "banking.yaml#largerTransation"
+  },
+  {
+   "name": "Banking Service - Smaller T",
+   "type": "asyncapi",
+   "operation": "banking.yaml#smallerTransation"
+  }
+ ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: bankingtransactions
+name: Customer Banking Transactions Workflow
+version: '1.0'
+specVersion: '0.7'
+autoRetries: true
+constants:
+ largetxamount: 5000
+states:
+ - name: ProcessTransactions
+   type: foreach
+   inputCollection: "${ .customer.transactions }"
+   iterationParam: "${ .tx }"
+   actions:
+    - name: Process Larger Transaction
+      functionRef: Banking Service - Larger Tx
+      condition: "${ .tx >= $CONST.largetxamount }"
+    - name: Process Smaller Transaction
+      functionRef: Banking Service - Smaller Tx
+      condition: "${ .tx < $CONST.largetxamount }"
+   end: true
+functions:
+ - name: Banking Service - Larger Tx
+   type: asyncapi
+   operation: banking.yaml#largerTransation
+ - name: Banking Service - Smaller T
+   type: asyncapi
+   operation: banking.yaml#smallerTransation
 ```
 
 </td>
