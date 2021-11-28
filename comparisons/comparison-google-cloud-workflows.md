@@ -86,7 +86,7 @@ languages.
 {
     "id": "greetingwithargs",
     "name": "Greeting With Args",
-    "specVersion": "0.7", 
+    "specVersion": "0.8", 
     "start": "Set Output",
     "states": [
         {
@@ -195,7 +195,7 @@ instance is created. See the Serverless Workflow ["Workflow Data"](../specificat
     "id": "concatarray",
     "name": "Concatenating array values",
     "start": "DoConcat",
-    "specVersion": "0.7",
+    "specVersion": "0.8",
     "states": [
         {
             "name": "DoConcat",
@@ -285,7 +285,7 @@ array values, however it would just unnecessarily complicate things.
 {
     "id": "stopcomputeengine",
     "name": "Stop Compute Engine",
-    "specVersion": "0.7",
+    "specVersion": "0.8",
     "start": "DoStop",
     "states": [
         {
@@ -416,7 +416,7 @@ as service invocations, where as Google Workflow uses the "call" keyword.
 {
   "id": "publishtotopicwitherrorhandling",
   "name": "Publish To Topic With Error Handling",
-  "specVersion": "0.7",
+  "specVersion": "0.8",
   "start": "DoPublish",
   "errors": [
     {
@@ -577,7 +577,7 @@ to interested parties via events (CloudEvents specification format), which we ar
     "id": "errorhandlingwithretries",
     "name": "Error Handling with Retries",
     "start": "ReadItem",
-    "specVersion": "0.7",
+    "specVersion": "0.8",
     "states": [
         {
             "name": "ReadItem",
