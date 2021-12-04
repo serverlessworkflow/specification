@@ -18,8 +18,6 @@ at a desired rate in cases where downstream service invocations have an associat
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | extensionid | Unique extension Id (default is 'workflow-kpi-extension') | string | yes |
-| workflowid | Workflow definition unique identifier (workflow id property) | string | yes |
-| workflowVersions | Workflow versions. If not defined, applies to all workflow instances (regardless of their associated workflow version) | array | no |
 | [singleInstance](#Single-Instance-Definition) | Rate limits per single workflow instance | object | no |
 | [allInstances](#All-Instances-Definition) | Rate limits per all workflow instances | object | no |
 
@@ -47,6 +45,9 @@ at a desired rate in cases where downstream service invocations have an associat
 
 The following example shows a workflow definition on the left and
 an associated sample Rate Limiting extension definition on the right.
+We assume that our
+extensions definition yaml is located in a resource accessible via URI:
+`file://myextensions/ratelimiting.yml`.
 
 <table>
 <tr>
@@ -61,6 +62,9 @@ id: processapplication
 name: Process Application
 version: '1.0'
 specVersion: '0.8'
+extensions:
+  - extensionId: workflow-ratelimiting-extension
+    path: file://myextensions/ratelimiting.yml
 start: ProcessNewApplication
 states:
   - name: ProcessNewApplication
@@ -96,7 +100,6 @@ events:
 
 ```yaml
 extensionid: workflow-ratelimiting-extension
-workflowid: processapplication
 singleInstance:
   maxActionsPerSecond: 0.1
   maxConcurrentActions: 200

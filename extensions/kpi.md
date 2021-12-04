@@ -32,9 +32,7 @@ KPIs can be added for the model:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| extensionid | Unique extension Id (default is 'workflow-kpi-extension') | string | yes |
-| workflowid | Workflow definition unique identifier (workflow id property) | string | yes |
-| workflowVersions | Workflow versions. If not defined, applies to all workflow instances (regardless of their associated workflow version) | array | no |
+| extensionId | Unique extension Id (default is 'workflow-kpi-extension') | string | yes |
 | [workflow](#Workflow-KPIs-Definition) | Workflow definition KPIs | object | no |
 | [events](#Event-KPIs-Definition) | Workflow event definitions KPIs | array | no |
 | [functions](#Function-KPIs-Definition) | Workflow function definitions KPIs | array | no |
@@ -45,7 +43,6 @@ KPIs can be added for the model:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | [per](#Thresholds-Definition) | Define the kpi thresholds in terms of time and/or num of workflow instances| object | yes |
-| workflowid | Workflow definition unique identifier (workflow id property) | string | yes |
 | maxInvoked | Max number of workflow invocations | string | no |
 | minInvoked | Min number of workflow invocations | string | no |
 | avgInvoked | Average number of workflow invocations | string | no |
@@ -112,7 +109,9 @@ KPIs can be added for the model:
 ## Example
 
 The following example shows a workflow definition on the left and 
-an associated sample KPIs extension definition on the right.
+an associated sample KPIs extension definition on the right. We assume that our
+extensions definition yaml is located in a resource accessible via URI:
+`file://myextensions/kpi.yml`.
 
 <table>
 <tr>
@@ -128,56 +127,59 @@ name: Monitor Patient Vitals
 version: '1.0'
 specVersion: '0.8'
 start: MonitorVitals
+extensions:
+  - extensionId: workflow-kpi-extension
+    path: file://myextensions/kpi.yml
 events:
-- name: HighBodyTemperature
-  type: org.monitor.highBodyTemp
-  source: monitoringSource
-  correlation:
-  - contextAttributeName: patientId
-- name: HighBloodPressure
-  type: org.monitor.highBloodPressure
-  source: monitoringSource
-  correlation:
-  - contextAttributeName: patientId
-- name: HighRespirationRate
-  type: org.monitor.highRespirationRate
-  source: monitoringSource
-  correlation:
-  - contextAttributeName: patientId
+  - name: HighBodyTemperature
+    type: org.monitor.highBodyTemp
+    source: monitoringSource
+    correlation:
+      - contextAttributeName: patientId
+  - name: HighBloodPressure
+    type: org.monitor.highBloodPressure
+    source: monitoringSource
+    correlation:
+      - contextAttributeName: patientId
+  - name: HighRespirationRate
+    type: org.monitor.highRespirationRate
+    source: monitoringSource
+    correlation:
+      - contextAttributeName: patientId
 functions:
-- name: callPulmonologist
-  operation: http://myapi.org/patientapi.json#callPulmonologist
-- name: sendTylenolOrder
-  operation: http://myapi.org/patientapi.json#sendTylenol
-- name: callNurse
-  operation: http://myapi.org/patientapi.json#callNurse
+  - name: callPulmonologist
+    operation: http://myapi.org/patientapi.json#callPulmonologist
+  - name: sendTylenolOrder
+    operation: http://myapi.org/patientapi.json#sendTylenol
+  - name: callNurse
+    operation: http://myapi.org/patientapi.json#callNurse
 states:
-- name: MonitorVitals
-  type: event
-  exclusive: true
-  onEvents:
-  - eventRefs:
-    - HighBodyTemperature
-    actions:
-    - functionRef:
-        refName: sendTylenolOrder
-        arguments:
-          patientid: "${ .patientId }"
-  - eventRefs:
-    - HighBloodPressure
-    actions:
-    - functionRef:
-        refName: callNurse
-        arguments:
-          patientid: "${ .patientId }"
-  - eventRefs:
-    - HighRespirationRate
-    actions:
-    - functionRef:
-        refName: callPulmonologist
-        arguments:
-          patientid: "${ .patientId }"
-  end: true
+  - name: MonitorVitals
+    type: event
+    exclusive: true
+    onEvents:
+      - eventRefs:
+          - HighBodyTemperature
+        actions:
+          - functionRef:
+              refName: sendTylenolOrder
+              arguments:
+                patientid: "${ .patientId }"
+      - eventRefs:
+          - HighBloodPressure
+        actions:
+          - functionRef:
+              refName: callNurse
+              arguments:
+                patientid: "${ .patientId }"
+      - eventRefs:
+          - HighRespirationRate
+        actions:
+          - functionRef:
+              refName: callPulmonologist
+              arguments:
+                patientid: "${ .patientId }"
+    end: true
 ```
 
 </td>
@@ -185,7 +187,6 @@ states:
 
 ```yaml
 extensionid: workflow-kpi-extension
-workflowid: patientVitalsWorkflow
 currency: USD
 workflow:
   per:
