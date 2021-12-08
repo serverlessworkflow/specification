@@ -128,6 +128,9 @@
     "auth": {
       "$ref": "auth.json#/auth"
     },
+    "extensions": {
+      "$ref": "workflowextensions.json#/extensions"
+    },
     "states": {
       "type": "array",
       "description": "State definitions",

@@ -1841,6 +1841,7 @@ definition "id" must be a constant value.
 | autoRetries | If set to true, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is false | boolean| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
 | [states](#Workflow-States) | Workflow states | array | yes |
+| [extensions](#Workflow-Extensions) | Workflow extensions definitions | array or string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2124,6 +2125,27 @@ its [`workflowExecTimeout`](#Workflow-Timeouts) time is reached.
 This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
 
 You can reference the [specification examples](#Examples) to see the `keepActive` property in action.
+
+The `extensions` property can be used to define extensions for this workflow definition.
+You can learn more about workflow extensions in the [Extensions](#extensions) section.
+Sample `extensions` property definition could look like this for example:
+
+```json
+{
+  "extensions": [
+    {
+      "extensionId": "workflow-ratelimiting-extension",
+      "path": "file://myextensions/ratelimiting.yml"
+    },
+    {
+      "extensionId": "workflow-kpi-extension",
+      "path": "file://myextensions/kpi.yml"
+    }
+  ]
+}
+```
+
+Here we define two workflow extensions, namely the [rate limiting](extensions/ratelimiting.md) and [kpi](extensions/kpi.md) extensions for our workflow definition.
 
 #### Workflow States
 
@@ -6161,6 +6183,10 @@ They enhance it with extra information that can be consumed by runtime systems o
 evaluated with the end goal being overall workflow improvements in terms of time, cost, efficiency, etc.
 
 Serverless Workflow specification provides extensions which can be found [here](extensions/README.md).
+
+You can define extensions in your workflow definition using its top-level `extensions` property.
+For more information about this property, see the `extensions` property in the 
+[Workflow Definition Structure section](#Workflow-Definition-Structure).
 
 Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification.
 We also encourage users to contribute their extensions to the specification. That way they can be shared
