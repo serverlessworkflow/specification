@@ -407,7 +407,7 @@ The first way would be to use both "input", and "output":
 {
   "stateDataFilter": {
     "input": "${ {vegetables: .vegetables} }",
-    "output": "${ {vegetables: .vegetables[] | select(.veggieLike == true)} }"
+    "output": "${ {vegetables: [.vegetables[] | select(.veggieLike == true)]} }"
   }
 }
 ```
@@ -424,7 +424,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 ```json
 {
   "stateDataFilter": {
-    "input": "${ {vegetables: .vegetables[] | select(.veggieLike == true)} }"
+    "input": "${ {vegetables: [.vegetables[] | select(.veggieLike == true)]} }"
   }
 }
 ```
