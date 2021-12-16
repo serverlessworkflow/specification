@@ -1471,16 +1471,6 @@
           "type": "object",
           "description": "JSON object which can be set as states data input and can be manipulated via filters"
         },
-        "timeouts": {
-          "type": "object",
-          "description": "State specific timeouts",
-          "properties": {
-            "stateExecTimeout": {
-              "$ref": "timeouts.json#/definitions/stateExecTimeout"
-            }
-          },
-          "required": []
-        },
         "stateDataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"

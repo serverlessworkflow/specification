@@ -407,7 +407,7 @@ The first way would be to use both "input", and "output":
 {
   "stateDataFilter": {
     "input": "${ {vegetables: .vegetables} }",
-    "output": "${ {vegetables: .vegetables[] | select(.veggieLike == true)} }"
+    "output": "${ {vegetables: [.vegetables[] | select(.veggieLike == true)]} }"
   }
 }
 ```
@@ -424,7 +424,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 ```json
 {
   "stateDataFilter": {
-    "input": "${ {vegetables: .vegetables[] | select(.veggieLike == true)} }"
+    "input": "${ {vegetables: [.vegetables[] | select(.veggieLike == true)]} }"
   }
 }
 ```
@@ -2666,8 +2666,6 @@ reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filters) | State data filter | object | no |
 | [transition](#Transitions) | Next transition of the workflow after injection has completed | object | yes (if end is set to false) |
-| [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
-| [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
