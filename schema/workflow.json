@@ -687,62 +687,19 @@
           "$ref": "#/definitions/end",
           "description": "State end definition"
         },
-        "stateDataFilter": {
-          "description": "State data filter",
-          "$ref": "#/definitions/statedatafilter"
-        },
         "duration": {
           "type": "string",
           "description": "Duration (ISO 8601 duration format) to sleep"
         },
-        "timeouts": {
-          "type": "object",
-          "description": "State specific timeouts",
-          "properties": {
-            "stateExecTimeout": {
-              "$ref": "timeouts.json#/definitions/stateExecTimeout"
-            }
-          },
-          "required": []
-        },
-        "onErrors": {
-          "type": "array",
-          "description": "States error handling definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
-        },
         "transition": {
           "description": "Next transition of the workflow after the workflow sleep",
           "$ref": "#/definitions/transition"
-        },
-        "compensatedBy": {
-          "type": "string",
-          "minLength": 1,
-          "description": "Unique Name of a workflow state which is responsible for compensation of this state"
-        },
-        "usedForCompensation": {
-          "type": "boolean",
-          "default": false,
-          "description": "If true, this state is used to compensate another state. Default is false"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
         }
       },
       "additionalProperties": false,
-      "if": {
-        "properties": {
-          "usedForCompensation": {
-            "const": true
-          }
-        },
-        "required": [
-          "usedForCompensation"
-        ]
-      },
       "then": {
         "required": [
           "name",

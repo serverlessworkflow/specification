@@ -2491,12 +2491,7 @@ The `timeouts` property can be used to define state specific timeout settings. S
 | name | State name | string | yes |
 | type | State type | string | yes |
 | duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | integer | yes |
-| [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
-| [stateDataFilter](#State-data-filters) | State data filter | object | no |
-| [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after the sleep | object | yes (if end is not defined) |
-| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [end](#End-Definition) |If this state an end state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2538,10 +2533,6 @@ transition: GetJobStatus
 Sleep state 
 suspends workflow execution for a given time duration. The delay is defined in its `duration` property using the ISO 8601 
 duration format.
-
-The `timeouts` property allows you to define state-specific timeouts.
-It can be used to define the `stateExecTimeout`. For more information on workflow timeouts
-see the [Workflow Timeouts](#Workflow-Timeouts) section.
 
 ##### Parallel State
 
