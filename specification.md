@@ -2175,9 +2175,9 @@ Serverless Workflow defines the following Workflow States:
 | [onEvents](#OnEvents-Definition) | Define the events to be consumed and optional actions to be performed | array | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition| object | no |
-| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes |
+| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes if "end" is not defined |
 | [onErrors](#Error-Definition) | States error handling definitions | array | no |
-| [end](#End-Definition) | Is this state an end state | object | no |
+| [end](#End-Definition) | Is this state an end state | object | yes, if "transition" is not defined |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -2310,6 +2310,8 @@ The `timeouts` property can be used to define state specific timeout settings. E
 `stateExecTimeout`, `actionExecTimeout`, and `eventTimeout` properties.
 For more information about Event state specific event timeout settings reference [this section](#Event-Timeout-Definition).
 For more information about workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts) section.
+
+Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 
 ##### Operation State
 
@@ -2534,6 +2536,7 @@ Sleep state
 suspends workflow execution for a given time duration. The delay is defined in its `duration` property using the ISO 8601 
 duration format.
 
+Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 ##### Parallel State
 
 | Parameter | Description | Type | Required |
@@ -2547,11 +2550,11 @@ duration format.
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes (if end is not defined) |
+| [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes if "end" is not defined |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | If this state and end state | object | no |
+| [end](#End-Definition) | If this state and end state | object | yes if "transition" is not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2647,6 +2650,8 @@ The `timeouts` property can be used to set state specific timeout settings. Para
 `stateExecTimeout` and `branchExecTimeout` timeout settings. For more information on workflow timeouts
 reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 
+Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
+
 ##### Inject State
 
 | Parameter | Description | Type | Required |
@@ -2656,11 +2661,11 @@ reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 | type | State type | string | yes |
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filters) | State data filter | object | no |
-| [transition](#Transitions) | Next transition of the workflow after injection has completed | object | yes (if end is set to false) |
+| [transition](#Transitions) | Next transition of the workflow after injection has completed | object | yes if "end" is set to false |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | If this state and end state | object | no |
+| [end](#End-Definition) | If this state and end state | object | yes if "transition" is not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2876,6 +2881,8 @@ The `timeouts` property can be used to define state specific timeout settings. I
 `stateExecTimeout` property. For more information on workflow timeouts reference the
 [Workflow Timeouts](#Workflow-Timeouts) section.
 
+Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
+
 ##### ForEach State
 
 | Parameter | Description | Type | Required |
@@ -2892,11 +2899,11 @@ The `timeouts` property can be used to define state specific timeout settings. I
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes (if end is not defined) |
+| [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes if "end" is not defined |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | Is this state an end state | object | no |
+| [end](#End-Definition) | Is this state an end state | object | yes if "transition" is not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3118,6 +3125,8 @@ The `timeouts` property can be used to set state specific timeout settings. ForE
 `stateExecTimeout` and `actionExecTimeout` settings. For more information on workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts)
 section.
 
+Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
+
 ##### Callback State
 
 | Parameter | Description | Type | Required |
@@ -3131,11 +3140,11 @@ section.
 | [eventDataFilter](#Event-data-filters) | Callback event data filter definition | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes |
+| [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes if "end" is not defined |
 | [end](#End-Definition) | Is this state an end state | object | no |
 | [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
-| [metadata](#Workflow-Metadata) | Metadata information| object | no |
+| [metadata](#Workflow-Metadata) | Metadata information| object | yes if "transition" is not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3215,6 +3224,8 @@ The `timeouts` property defines state specific timeout settings. Callback states
 `stateExecTimeout`, `actionExecTimeout`, and `eventTimeout` properties.
 For more information on workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts)
 section.
+
+Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 
 #### Related State Definitions
 
@@ -3792,7 +3803,7 @@ Service invocation can be done in two different ways:
 * Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
 * Reference a sub-workflow invocation via the `subFlowRef` property.
 
-Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, meaning that only of of them can be
+Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, meaning that only one of them can be
 specified in a single action definition.
 
 The `name` property specifies the action name.
@@ -4079,8 +4090,7 @@ If it is set to `continue`, if the parent workflow completes, the subflow execut
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| errorRef | Reference to a unique workflow error definition | string | yes if errorRefs is not used |
-| errorRefs | Reference one or more unique workflow error definition | array | yes if errorRef is not used |
+| errorRef or errorRefs | Reference one unique workflow error definition, or multiple unique workflow error definitions | string (errorRef) or array (errorRefs) | yes |
 | [transition](#Transitions) or [end](#End-Definition) | Transition to next state to handle the error, or end workflow execution if this error is encountered | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -4125,10 +4135,17 @@ Can be used when `errorRef` is not used. Usable when you want to define multiple
 or end definition should be applied.For more info on workflow error handling
 referece [this section](#Defining-Errors).
 
+Note that the `errorRef` and `errorRefs` properties are mutually exclusive, meaning that you can only specify one or the other,
+but not both at the same time.
+
 The `transition` property defines the transition to the next workflow state in cases when the defined
 error happens during runtime execution.
 
 If `transition` is not defined you can also define the `end` property which will end workflow execution at that point.
+Note that the `transition` and `end` properties are mutually exclusive, meaning that you can only specify one or the other,
+but not both at the same time.
+
+Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 
 For more information, see the [Workflow Error Handling](#Workflow-Error-Handling) sections.
 
@@ -4377,7 +4394,8 @@ The `condition` property of the condition defines an expression (e.g., `${ .appl
 parts of the state data input. The condition must evaluate to `true` or `false`.
 
 If the condition is evaluated to `true`, you can specify either the `transition` or `end` definitions
-to decide what to do, transition to another workflow state, or end workflow execution.
+to decide what to do, transition to another workflow state, or end workflow execution. Note that `transition` and `end`
+definitions are mutually exclusive, meaning that you can specify either one or the other, but not both.
 
 ##### Switch State Event Conditions
 
@@ -4431,6 +4449,9 @@ If the referenced event is received, you can specify either the `transition` or 
 to decide what to do, transition to another workflow state, or end workflow execution.
 
 The `eventDataFilter` property can be used to filter event data when it is received.
+
+Note that `transition` and `end`
+definitions are mutually exclusive, meaning that you can specify either one or the other, but not both.
 
 ##### Parallel State Branch
 
