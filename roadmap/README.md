@@ -24,6 +24,7 @@ _Status description:_
 | Status | Description | Comments |
 | --- | --- |  --- |
 | ✔️| Fix support for workflow extensions | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️| Fix state execution timeout | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Update rest function definition |   |
 | ✏️️| Add "completedBy" functionality |   |
