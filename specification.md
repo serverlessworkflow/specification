@@ -6097,7 +6097,7 @@ for example:
 If secrets are defined in a Workflow definition, runtimes must assure to provide their values
 during Workflow execution.
 
-Secrets can be used only in [Workflow expressions](#Workflow-Expressions) by referencing them via the  the `$SECRETS` variable.
+Secrets can be used only in [Workflow expressions](#Workflow-Expressions) by referencing them via the `$SECRETS` variable.
 Runtimes must make `$SECRETS` available to expressions as a predefined variable.
 
 Here is an example on how to use secrets and pass them as arguments to a function invocation:
