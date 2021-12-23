@@ -3141,10 +3141,10 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes if "end" is not defined |
-| [end](#End-Definition) | Is this state an end state | object | no |
+| [end](#End-Definition) | Is this state an end state | object | yes if "transition" is not defined |
 | [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | String | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
-| [metadata](#Workflow-Metadata) | Metadata information| object | yes if "transition" is not defined |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4144,8 +4144,6 @@ error happens during runtime execution.
 If `transition` is not defined you can also define the `end` property which will end workflow execution at that point.
 Note that the `transition` and `end` properties are mutually exclusive, meaning that you can only specify one or the other,
 but not both at the same time.
-
-Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 
 For more information, see the [Workflow Error Handling](#Workflow-Error-Handling) sections.
 
