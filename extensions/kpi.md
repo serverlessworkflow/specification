@@ -33,6 +33,7 @@ KPIs can be added for the model:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | extensionId | Unique extension Id (default is 'workflow-kpi-extension') | string | yes |
+| namespace | Extension namespace | string | no (default value 'io.serverlessworkflow.extensions') |
 | [workflow](#Workflow-KPIs-Definition) | Workflow definition KPIs | object | no |
 | [events](#Event-KPIs-Definition) | Workflow event definitions KPIs | array | no |
 | [functions](#Function-KPIs-Definition) | Workflow function definitions KPIs | array | no |

@@ -29,6 +29,17 @@
     "extension": {
       "type": "object",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Domain-specific extension name",
+          "minLength": 1
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Extension namespace",
+          "default": "io.serverlessworkflow.extensions",
+          "minLength": 1
+        },
         "extensionId": {
           "type": "string",
           "description": "Unique extension id",
@@ -42,8 +53,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "extensionId",
-        "resource"
+        "extensionId"
       ]
     }
   }

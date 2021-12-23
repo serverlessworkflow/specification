@@ -13,6 +13,11 @@
           "default": "workflow-kpi-extension",
           "description": "Extension unique identifier"
         },
+        "namespace": {
+          "type": "string",
+          "default": "io.serverlessworkflow.extensions",
+          "description": "Extension namespace"
+        },
         "workflowid": {
           "type": "string",
           "minLength": 1,

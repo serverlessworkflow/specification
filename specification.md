@@ -6171,7 +6171,7 @@ Some other examples of information that could be recorded in metadata are:
 The workflow extension mechanism allows you to enhance your model definitions with additional information useful for
 things like analytics, rate limiting, logging, simulation, debugging, tracing, etc.
 
-Model extensions do no influence control flow logic (workflow execution semantics).
+Extensions do no influence control flow logic (workflow execution semantics).
 They enhance it with extra information that can be consumed by runtime systems or tooling and
 evaluated with the end goal being overall workflow improvements in terms of time, cost, efficiency, etc.
 
@@ -6181,9 +6181,32 @@ You can define extensions in your workflow definition using its top-level `exten
 For more information about this property, see the `extensions` property in the 
 [Workflow Definition Structure section](#Workflow-Definition-Structure).
 
-Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification.
-We also encourage users to contribute their extensions to the specification. That way they can be shared
-with the rest of the community.
+Besides extensions provided by the specification, users can define their custom extensions, as well as overwrite 
+the specification-provided ones.
+Note that custom extensions must define with a `namespace` value different from the Serverless Workflow
+extensions namespace ("io.serverlessworkflow.extensions"). 
+
+Defining a namespace allows runtimes to determine if they can support a defined extension or not. It also allows
+custom extension to provide their own implementation of an extension that is already provided by the specification. 
+
+For example, if you wanted to overwrite the specification-provided kpi extension, you could have:
+```json
+{
+  "extensions": [
+    {
+      "name": "My KPI extension",
+      "extensionId": "workflow-kpi-extension",
+      "namespace": "my.extensions.namespace",
+      "path": "file://myextensions/mykpi.yml"
+    }
+  ]
+}
+```
+
+Extension lookup can be performed by either specifying a URI to the extensions definition (JSON/YAML) by
+specifying it as the value of the `path` parameter.
+If the path parameter is not specified, the lookup should be done by `namespace` and `extensionId` properties.
+In this case, runtimes must provide means to map `namespace` and `extensionId` to an extension resource.
 
 If you have an idea for a new workflow extension, or would like to enhance an existing one,
 please open an `New Extension Request` issue in this repository.

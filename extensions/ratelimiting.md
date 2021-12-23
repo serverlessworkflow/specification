@@ -18,6 +18,7 @@ at a desired rate in cases where downstream service invocations have an associat
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | extensionid | Unique extension Id (default is 'workflow-kpi-extension') | string | yes |
+| namespace | Extension namespace | string | no (default value 'io.serverlessworkflow.extensions') |
 | [singleInstance](#Single-Instance-Definition) | Rate limits per single workflow instance | object | no |
 | [allInstances](#All-Instances-Definition) | Rate limits per all workflow instances | object | no |
 
