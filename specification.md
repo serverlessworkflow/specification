@@ -6020,8 +6020,8 @@ for example:
 }
 ```
 
-Constants can only be accessed inside Workflow expressions via the $CONST namespace.
-Runtimes must make constants available to expressions under that namespace.
+Constants can only be accessed inside Workflow expressions via the `$CONST` variable.
+Runtimes must make `$CONST` available to expressions as a predefined variable.
 
 Here is an example of using constants in Workflow expressions:
 
@@ -6097,8 +6097,8 @@ for example:
 If secrets are defined in a Workflow definition, runtimes must assure to provide their values
 during Workflow execution.
 
-Secrets can be used only in [Workflow expressions](#Workflow-Expressions) under the `SECRETS` namespace.
-This is reserved namespace that should only be allowed for values defined by the `secrets` property.
+Secrets can be used only in [Workflow expressions](#Workflow-Expressions) by referencing them via the  the `$SECRETS` variable.
+Runtimes must make `$SECRETS` available to expressions as a predefined variable.
 
 Here is an example on how to use secrets and pass them as arguments to a function invocation:
 
