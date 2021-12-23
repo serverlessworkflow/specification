@@ -5554,7 +5554,7 @@ Workflow states timeouts cannot define the `workflowExecTimeout` property.
 
 All workflow states can define the `stateExecTimeout` property. This property can have two types, namely string 
 and object.
-If defined as string type, it defines the total state execution timeout including any [retries](#Retry-Definition) 
+If defined as string type, it defines the total state execution timeout, including any [retries](#Retry-Definition) 
 as defined in the states retry policy.
 If defined as object type it has the following properties:
 
