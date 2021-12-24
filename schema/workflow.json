@@ -700,33 +700,24 @@
         }
       },
       "additionalProperties": false,
-      "then": {
-        "required": [
-          "name",
-          "type",
-          "duration"
-        ]
-      },
-      "else": {
-        "oneOf": [
-          {
-            "required": [
-              "name",
-              "type",
-              "duration",
-              "end"
-            ]
-          },
-          {
-            "required": [
-              "name",
-              "type",
-              "duration",
-              "transition"
-            ]
-          }
-        ]
-      }
+      "oneOf": [
+        {
+          "required": [
+            "name",
+            "type",
+            "duration",
+            "end"
+          ]
+        },
+        {
+          "required": [
+            "name",
+            "type",
+            "duration",
+            "transition"
+          ]
+        }
+      ]
     },
     "eventstate": {
       "type": "object",
