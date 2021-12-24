@@ -73,40 +73,18 @@
       ]
     },
     "stateExecTimeout": {
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "Total state execution timeout (including retries) (ISO 8601 duration format)",
-          "minLength": 1
-        },
-        {
-          "type": "object",
-          "description": "Workflow default timeouts",
-          "properties": {
-            "single": {
-              "type": "string",
-              "description": "Single state execution timeout, not including retries (ISO 8601 duration format)",
-              "minLength": 1
-            },
-            "total": {
-              "type": "string",
-              "description": "Total state execution timeout, including retries (ISO 8601 duration format)",
-              "minLength": 1
-            }
-          },
-          "additionalProperties": false,
-          "required": ["total"]
-        }
-      ]
+      "type": "string",
+      "description": "Workflow state execution timeout duration (ISO 8601 duration format)",
+      "minLength": 1
     },
     "actionExecTimeout": {
       "type": "string",
-      "description": "Single actions definition execution timeout duration (ISO 8601 duration format)",
+      "description": "Action execution timeout duration (ISO 8601 duration format)",
       "minLength": 1
     },
     "branchExecTimeout": {
       "type": "string",
-      "description": "Single branch execution timeout duration (ISO 8601 duration format)",
+      "description": "Branch execution timeout duration (ISO 8601 duration format)",
       "minLength": 1
     },
     "eventTimeout": {
