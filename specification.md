@@ -2490,7 +2490,7 @@ The `timeouts` property can be used to define state specific timeout settings. S
 | id | Unique state id | string | no |
 | name | State name | string | yes |
 | type | State type | string | yes |
-| duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | integer | yes |
+| duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | string | yes |
 | [transition](#Transitions) | Next transition of the workflow after the sleep | object | yes (if end is not defined) |
 | [end](#End-Definition) |If this state an end state | object | no |
 
