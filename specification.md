@@ -5553,7 +5553,7 @@ timeout settings are available for each state type.
 Workflow states timeouts cannot define the `workflowExecTimeout` property.
 
 Workflow states can set their `stateExecTimeout` property inside the `timeouts` definition. 
-Value of this property is a time duration (ISO 8601 duration format). 
+The value of this property is a time duration (ISO 8601 duration format). 
 It must be a duration that's greater than zero and defines the total state execution timeout. 
 When this timeout is reached, state execution
 should be stopped and can be handled as a timeout error in the states `onErrors` definition.
