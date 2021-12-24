@@ -4227,6 +4227,9 @@ To explain this better, let's say we have the following retry definition:
 which means that we will retry up to 4 times after waiting with increasing delay between attempts;
 in this example 10, 20, 40, and 80 seconds between retries.
 
+If both `increment` and `multiplier` properties are defined, `increment` should be applied first and then 
+the `multiplier` when determining the next retry time.
+
 The `maxAttempts` property determines the maximum number of retry attempts allowed and is a positive integer value.
 
 The `jitter` property is important to prevent certain scenarios where clients
@@ -4238,10 +4241,10 @@ reducing total time to complete requests and overall congestion. How this value
 is used in the exponential backoff algorithm is left up to implementations.
 
 `jitter` may be specified as a percentage relative to the total delay.
-For example, if `interval` is 2 seconds, `multiplier` is 2 seconds, and we're at
-the third attempt, there will be a delay of 6 seconds. If we set `jitter` to
-0.3, then a random amount of time between 0 and 1.8 (`totalDelay * jitter == 6 * 0.3`)
-will be added or subtracted from the delay.
+Once the next retry attempt delay is calculated, we can apply `jitter` as a percentage value relative to this
+calculated delay. For example, if your calculated delay for the next retry is six seconds, and we specify 
+a `jitter` value of 0.3, a random amount of time between 0 and 1.8 (0.3 times 6) is to be added or subtracted
+from the calculated delay. 
 
 Alternatively, `jitter` may be defined as an absolute value specified as an ISO
 8601 duration. This way, the maximum amount of random time added is fixed and
@@ -4270,8 +4273,6 @@ in this example we might observe the following series of delays:
 * 43s (min(`maxDelay`, (11s * `multiplier`) +/- rand(`jitter`)) => min(100, (11 * 4) - 1))
 * 100s (min(`maxDelay`, (43s * `multiplier`) +/- rand(`jitter`)) => min(100, (43 * 4) + 0))
 * 100s (min(`maxDelay`, (100s * `multiplier`) +/- rand(`jitter`)) => min(100, (100 * 4) - 1))
-
-For more information, refer to the [Workflow Error Handling](#Workflow-Error-Handling) sections.
 
 ##### Transition Definition
 
