@@ -579,8 +579,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "triggerEventRef",
-        "resultEventRef"
+        "triggerEventRef"
       ]
     },
     "subflowref": {

@@ -3946,7 +3946,7 @@ Allows defining invocation of a function via event.
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | [triggerEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
-| [resultEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | yes |
+| [resultEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | no |
 | resultEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
 | data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `triggerEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
@@ -3999,7 +3999,7 @@ to the trigger/produced event.
 
 The `resultEventTimeout` property defines the maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
 If the event defined by the `resultEventRef` property is not received in that set time, action invocation should raise an error
-that can be handled in the states `onErrors` definition.
+that can be handled in the states `onErrors` definition. In case the `resultEventRef` is not defined, the `resultEventTimeout` property is ignored.
 
 The `invoke` property defines how the function is invoked (sync or async). Default value of this property is
 `sync`, meaning that workflow execution should wait until the function completes (the result event is received).
