@@ -27,6 +27,7 @@ _Status description:_
 | ✔️| Fix state execution timeout | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| Update rules of retries increment and multiplier properties | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| Add clarification on mutually exclusive properties | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
+| ✔️| Make the `resultEventRef` attribute in `EventRef` definition not required [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Update rest function definition |   |
 | ✏️️| Add "completedBy" functionality |   |
