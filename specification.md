@@ -3803,7 +3803,7 @@ The `id` property specifies the unique action id.
 In the event-based scenario a service, or a set of services we want to invoke
 are not exposed via a specific resource URI for example, but can only be invoked via an event.
 The [eventRef](#EventRef-Definition) property defines the
-referenced `produced` event via its `triggerEventRef` property and a `consumed` event via its `resultEventRef` property.
+referenced `produced` event via its `produceEventRef` property and a `consumed` event via its `consumeEventRef` property.
 
 The `sleep` property can be used to define time periods that workflow execution should sleep
 before and/or after function execution. It can have two properties:
@@ -3936,10 +3936,10 @@ Allows defining invocation of a function via event.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [triggerEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
-| [resultEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | no |
+| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
+| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | no |
 | resultEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `triggerEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `triggerEventRef`. | string or object | no |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 | invoke | Specifies if the function should be invoked sync or async. Default is sync | string | no |
 
@@ -3957,9 +3957,9 @@ Allows defining invocation of a function via event.
 ```json
 {
    "eventRef": {
-      "triggerEventRef": "MakeVetAppointment",
+      "produceEventRef": "MakeVetAppointment",
       "data": "${ .patientInfo }",
-      "resultEventRef":  "VetAppointmentInfo"
+      "consumeEventRef":  "VetAppointmentInfo"
    }
 }
 ```
@@ -3969,9 +3969,9 @@ Allows defining invocation of a function via event.
 
 ```yaml
 eventRef:
-  triggerEventRef: MakeVetAppointment
+  produceEventRef: MakeVetAppointment
   data: "${ .patientInfo }"
-  resultEventRef: VetAppointmentInfo
+  consumeEventRef: VetAppointmentInfo
 ```
 
 </td>
@@ -3980,10 +3980,10 @@ eventRef:
 
 </details>
 
-References a `produced` and `consumed` [event definitions](#Event-Definition) via the "triggerEventRef" and `resultEventRef` properties, respectively.
+References a `produced` and `consumed` [event definitions](#Event-Definition) via the `produceEventRef` and `consumeEventRef` properties, respectively.
 
 The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
-to be used as payload of the event referenced by `triggerEventRef`. If it is of object type, you can define a custom object to be the event payload.
+to be used as payload of the event referenced by `produceEventRef`. If it is of object type, you can define a custom object to be the event payload.
 
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
 to the trigger/produced event.
