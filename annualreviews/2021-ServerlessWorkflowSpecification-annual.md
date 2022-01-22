@@ -45,6 +45,7 @@ space:
 This year was very exciting for the project. Some of the most notable accomplishments include:
 * Released specification version [0.6](https://github.com/serverlessworkflow/specification/releases/tag/v0.6)
 * Released specification version [0.7](https://github.com/serverlessworkflow/specification/releases/tag/v0.7)
+* Released specification version [0.8](https://github.com/serverlessworkflow/specification/releases/tag/v0.8)
 * Added [Synapse](https://github.com/serverlessworkflow/synapse), a Kubernetes-native runtime into our ecosystem
 * Added [sdk-net](https://github.com/serverlessworkflow/sdk-net), a .NET SDK into our ecosystem
 * Added [sdk-typescript](https://github.com/serverlessworkflow/sdk-typescript), a TypeScript SDK into our ecosystem
@@ -54,7 +55,7 @@ From the community perspective we also had a good year:
 * Over 100 new followers on our [twitter channel](https://twitter.com/CNCFWorkflow).
 * Over 200 new stars on our [specification github repo](https://github.com/serverlessworkflow/specification).
 * Over 300 people attending our project office hours at 2021 KubeCon EU.
-* Presented at KubeCon EU 2021, KubeCon NA 2020, and KubeCon EU 2020
+* Presented at KubeCon NA 2021, KubeCon EU 2021, KubeCon NA 2020, and KubeCon EU 2020
 * Mentioned as a key component of open-source microservices architectures at [InfoQ](https://www.infoq.com/articles/microservices-inside-out/)
 * Over 40 unique visitors per day on our [website](https://serverlessworkflow.io/)
 * Participated at the KubeCon EU 2021 BugBash
@@ -108,7 +109,7 @@ at this time the most feature-rich and most powerful workflow DSL that exists.
 Specification roadmap: https://github.com/serverlessworkflow/specification/tree/main/roadmap
 
 Our main goals for the project include:
- - Release specification version 1.0 by end of 2021
+ - Release specification version 1.0 by April of 2022
  - Add more SDKs in different languages
  - Create a specification TCK
  - Add integrations with different workflow DSLs
@@ -126,7 +127,7 @@ Our main goals for the project include:
 
 We believe we have made significant progress toward this goal and that the project is ready for incubation.
 We would like however to release Serverless Workflow specification v1.0 before starting this process
-(scheduled for end-of-year 2021).
+(scheduled for April 2022).
 
 ## Project Links
 * [Website](https://serverlessworkflow.io/)
