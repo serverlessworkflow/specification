@@ -4562,7 +4562,7 @@ If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| stateName | Name of the starting workflow state | object | yes |
+| stateName | Name of the starting workflow state | object | no |
 | [schedule](#Schedule-Definition) | Define the recurring time intervals or cron expressions at which workflow instances should be automatically started. | object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -4604,6 +4604,9 @@ The start definition can be either `string` or `object` type.
 If `string` type, it defines the name of the workflow starting state.
 
 If `object` type, it provides the ability to set the workflow starting state name, as well as the `schedule` property.
+
+The `stateName` property can be set to define the starting workflow state. If not specified, the first state
+in the [workflow states definition](#Workflow-States) should be used as the starting workflow state.
 
 The `schedule` property allows to define scheduled workflow instance creation.
 Scheduled starts have two different choices. You can define a recurring time interval or cron-based schedule at which a workflow
