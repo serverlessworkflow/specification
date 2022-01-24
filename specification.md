@@ -4064,7 +4064,8 @@ version: '2.0'
 
 </details>
 
-The `workflowId` property defined the unique ID of the sub-workflow to be invoked.
+The `workflowId` property define the unique ID of the sub-workflow to be invoked.
+The workflow id cannot be the same id of the workflow where the action is defined.
 
 The `version` property defined the unique version of the sub-workflow to be invoked.
 If this property is defined, runtimes should match both the `id` and the `version` properties
@@ -4518,8 +4519,7 @@ actions:
 
 Each branch receives the same copy of the Parallel state's data input.
 
-A branch can define either actions or a workflow id of the workflow that needs to be executed.
-The workflow id defined cannot be the same id of the workflow there the branch is defined.
+A branch can define actions that need to be executed. For the [`SubFlowRef`](#SubFlowRef-Definition) action, the workflow id can't be the same id of the workflow where the branch is defined.
 
 The `timeouts` property can be used to set branch specific timeout settings. Parallel state branches can set the
 `actionExecTimeout` and `branchExecTimeout` timeout properties. For more information on workflow timeouts reference the
