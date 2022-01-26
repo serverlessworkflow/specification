@@ -76,6 +76,7 @@ Workflow eco-system.
 - [Java](https://github.com/serverlessworkflow/sdk-java)
 - [.NET](https://github.com/serverlessworkflow/sdk-net)
 - [TypeScript](https://github.com/serverlessworkflow/sdk-typescript)
+- [Python](https://github.com/serverlessworkflow/sdk-python) (Work in progress)
 
 Serverless Workflow encourages development of SDKs dedicated to help developers with 
 consuming, parsing, validating and testing their workflows that use the Serverless Workflow DSL.
