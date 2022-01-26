@@ -80,4 +80,7 @@ us know in chat or team meeting.
 
 * **Chargebee**
   * Manickavasagam Sundaram 
+
+* **OpenEnterprise**
+  * Maciek Swiderski
       
