@@ -422,10 +422,6 @@
     "action": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique action identifier"
-        },
         "name": {
           "type": "string",
           "description": "Unique action definition name"
@@ -668,11 +664,6 @@
       "type": "object",
       "description": "Causes the workflow execution to sleep for a specified duration",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique State id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"
@@ -722,11 +713,6 @@
       "type": "object",
       "description": "This state is used to wait for events from event sources, then consumes them and invoke one or more actions to run in sequence or parallel",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique State id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"
@@ -820,11 +806,6 @@
       "type": "object",
       "description": "Defines actions be performed. Does not wait for incoming events",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique State id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"
@@ -942,11 +923,6 @@
       "type": "object",
       "description": "Consists of a number of states that are executed in parallel",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique State id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"
@@ -1084,11 +1060,6 @@
       "type": "object",
       "description": "Permits transitions to other states based on events",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique State id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"
@@ -1163,11 +1134,6 @@
       "type": "object",
       "description": "Permits transitions to other states based on data conditions",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique State id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"
@@ -1396,11 +1362,6 @@
       "type": "object",
       "description": "Inject static data into state data. Does not perform any actions",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique state id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"
@@ -1483,11 +1444,6 @@
       "type": "object",
       "description": "Execute a set of defined actions or workflows for each element of a data array",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique State id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"
@@ -1630,11 +1586,6 @@
       "type": "object",
       "description": "This state performs an action, then waits for the callback event that denotes completion of the action",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique state id",
-          "minLength": 1
-        },
         "name": {
           "type": "string",
           "description": "State name"

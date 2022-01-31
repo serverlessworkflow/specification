@@ -2168,8 +2168,7 @@ Serverless Workflow defines the following Workflow States:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id | Unique state id | string | no |
-| name | State name | string | yes |
+| name | Unique State name | string | yes |
 | type | State type | string | yes |
 | exclusive | If "true", consuming one of the defined events causes its associated actions to be performed. If "false", all of the defined events must be consumed in order for actions to be performed. Default is "true"  | boolean | no |
 | [onEvents](#OnEvents-Definition) | Define the events to be consumed and optional actions to be performed | array | yes |
@@ -2317,8 +2316,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id |  Unique state id | string | no |
-| name | State name | string | yes |
+| name | Unique State name | string | yes |
 | type | State type | string | yes |
 | actionMode | Should actions be performed sequentially or in parallel | string | no |
 | [actions](#Action-Definition) | Actions to be performed | array | yes |
@@ -2393,8 +2391,7 @@ the [Workflow Timeouts](#Workflow-Timeouts) section.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id | Unique state id | string | no |
-| name | State name | string | yes |
+| name | Unique State name | string | yes |
 | type | State type | string | yes |
 | [dataConditions](#Switch-state-Data-Conditions) or [eventConditions](#Switch-State-Event-Conditions) | Defined if the Switch state evaluates conditions and transitions based on state data, or arrival of events. | array | yes (one) |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
@@ -2489,8 +2486,7 @@ The `timeouts` property can be used to define state specific timeout settings. S
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id | Unique state id | string | no |
-| name | State name | string | yes |
+| name | Unique State name | string | yes |
 | type | State type | string | yes |
 | duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | string | yes |
 | [transition](#Transitions) | Next transition of the workflow after the sleep | object | yes (if end is not defined) |
@@ -2541,8 +2537,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id | Unique state id | string | no |
-| name | State name | string | yes |
+| name | Unique State name | string | yes |
 | type | State type | string | yes |
 | [branches](#Parallel-State-Branch) | List of branches for this parallel state| array | yes |
 | completionType | Option types on how to complete branch execution. Default is "allOf" | enum | no |
@@ -2656,8 +2651,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id | Unique state id | string | no |
-| name | State name | string | yes |
+| name | Unique State name | string | yes |
 | type | State type | string | yes |
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filters) | State data filter | object | no |
@@ -2887,8 +2881,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id | Unique state id | string | no |
-| name | State name | string | yes |
+| name | Unique State name | string | yes |
 | type | State type | string | yes |
 | inputCollection | Workflow expression selecting an array element of the states data | string | yes |
 | outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
@@ -3131,8 +3124,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id | Unique state id | string | no |
-| name | State name | string | yes |
+| name | Unique State name | string | yes |
 | type | State type | string | yes |
 | [action](#Action-Definition) | Defines the action to be executed | object | yes |
 | eventRef | References an unique callback event name in the defined workflow [events](#Event-Definition) | string | yes |
@@ -3744,8 +3736,7 @@ This is visualized in the diagram below:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| id | Unique action identifier | string | no |
-| name | Action name | string | no |
+| name | Unique Action name | string | no |
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
@@ -4939,17 +4930,7 @@ Serverless workflow states can have one or more incoming and outgoing transition
 Each state can define a `transition` definition that is used to determine which
 state to transition to next.
 
-Implementers can choose to use the states `name` property
-for determining the transition; however, we realize that in most cases this is not an
-optimal solution that can lead to ambiguity. This is why each state also include an "id"
-property. Implementers can choose their own id generation strategy to populate the `id` property
-for each of the states and use it as the unique state identifier that is to be used as the "nextState" value.
-
-So the options for next state transitions are:
-
-- Use the state name property
-- Use the state id property
-- Use a combination of name and id properties
+Implementers **must** use the unique State `name` property for determining the transition.
 
 Events can be produced during state transitions. The `produceEvents` property of the `transition` definitions allows you
 to reference one or more defined `produced` events in the workflow [events definitions](#Event-Definition).
