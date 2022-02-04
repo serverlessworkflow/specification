@@ -29,6 +29,7 @@ _Status description:_
 | ✔️| Add clarification on mutually exclusive properties | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md)  |
 | ✔️| Make the `resultEventRef` attribute in `EventRef` definition not required [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
 | ✔️| Make the `stateName` attribute in `start` definition not required [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
+| ✔️| Remove `id` attribute from `actions` and `states`. Now, the names from both attributes must be unique within the workflow definition  | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#transitions)
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Update rest function definition |   |
 | ✏️️| Add "completedBy" functionality |   |
