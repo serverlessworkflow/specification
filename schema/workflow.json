@@ -1266,7 +1266,7 @@
           "$ref": "#/definitions/transitioneventcondition"
         },
         {
-          "$ref": "#/definitions/enddeventcondition"
+          "$ref": "#/definitions/endeventcondition"
         }
       ]
     },
@@ -1300,7 +1300,7 @@
         "transition"
       ]
     },
-    "enddeventcondition": {
+    "endeventcondition": {
       "type": "object",
       "description": "Switch state data event condition",
       "properties": {
