@@ -537,11 +537,11 @@
       "type": "object",
       "description": "Event References",
       "properties": {
-        "triggerEventRef": {
+        "produceEventRef": {
           "type": "string",
           "description": "Reference to the unique name of a 'produced' event definition"
         },
-        "resultEventRef": {
+        "consumeEventRef": {
           "type": "string",
           "description": "Reference to the unique name of a 'consumed' event definition"
         },
@@ -554,7 +554,7 @@
             "string",
             "object"
           ],
-          "description": "If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by 'triggerEventRef'. If object type, a custom object to become the data (payload) of the event referenced by 'triggerEventRef'."
+          "description": "If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by 'produceEventRef'. If object type, a custom object to become the data (payload) of the event referenced by 'produceEventRef'."
         },
         "contextAttributes": {
           "type": "object",
@@ -562,20 +562,11 @@
           "additionalProperties": {
             "type": "string"
           }
-        },
-        "invoke": {
-          "type": "string",
-          "enum": [
-            "sync",
-            "async"
-          ],
-          "description": "Specifies if the function should be invoked sync or async. Default is sync.",
-          "default": "sync"
         }
       },
       "additionalProperties": false,
       "required": [
-        "triggerEventRef"
+        "produceEventRef"
       ]
     },
     "subflowref": {

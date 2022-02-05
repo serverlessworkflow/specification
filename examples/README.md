@@ -2618,9 +2618,9 @@ For this example we assume that the workflow instance is started given the follo
                 {
                     "name": "MakeAppointmentAction",
                     "eventRef": {
-                       "triggerEventRef": "MakeVetAppointment",
+                       "produceEventRef": "MakeVetAppointment",
                        "data": "${ .patientInfo }",
-                       "resultEventRef":  "VetAppointmentInfo"
+                       "consumeEventRef":  "VetAppointmentInfo"
                     },
                     "actionDataFilter": {
                         "results": "${ .appointmentInfo }"
@@ -2661,9 +2661,9 @@ states:
    actions:
     - name: MakeAppointmentAction
       eventRef:
-       triggerEventRef: MakeVetAppointment
+       produceEventRef: MakeVetAppointment
        data: "${ .patientInfo }"
-       resultEventRef: VetAppointmentInfo
+       consumeEventRef: VetAppointmentInfo
       actionDataFilter:
        results: "${ .appointmentInfo }"
    timeouts:
