@@ -3531,8 +3531,8 @@ the resource containing the function invocation information.
 | properties | Auth scheme properties. Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition) | object | yes |
 
 The `name` property defines the unique auth definition name.
-The `dataOnly` property defines the auth scheme to be used. Cane be "bearer", "basic" or "oath2".
-The `dataOnly` property defines the auth scheme information.
+The `scheme` property defines the auth scheme to be used. Can be "bearer", "basic" or "oauth2".
+The `properties` property defines the auth scheme properties information.
 Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition)
 
 ###### Basic Properties Definition
