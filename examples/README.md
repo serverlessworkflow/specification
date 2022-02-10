@@ -175,7 +175,7 @@ Which is added to the states data and becomes the workflow data output.
               }
            },
            "actionDataFilter": {
-              "results": "${ .greeting }"
+              "results": "${ {greeting: .greeting} }"
            }
         }
      ],
@@ -207,7 +207,7 @@ states:
       arguments:
         name: "${ .person.name }"
     actionDataFilter:
-      results: "${ .greeting }"
+      results: "${ {greeting: .greeting} }"
   end: true
 ```
 
