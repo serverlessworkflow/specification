@@ -3683,7 +3683,7 @@ actions:
 
 </details>
 
-OnEvent definition allow you to define which [actions](#Action-Definition) are to be performed
+`OnEvents` definition allow you to define which [actions](#Action-Definition) are to be performed
 for the one or more [events definitions](#Event-Definition) defined in the `eventRefs` array.
 Note that the values of `eventRefs` array must be unique.
 
@@ -3720,7 +3720,7 @@ Let's look at the following JSON definition of 'onEvents' to show this:
 }
 ```
 
-Depending on the value of the Event states `exclusive` property, this definition can mean two different things:
+Depending on the value of the Event state `exclusive` property, this definition can mean two different things:
 
 1. If `exclusive` is set to "true", the consumption of **either** the `HighBodyTemperature` or `HighBloodPressure` events will trigger action execution.
 
@@ -3731,6 +3731,54 @@ This is visualized in the diagram below:
 <p align="center">
 <img src="media/spec/event-state-onevents-example.png" height="300px" alt="Event onEvents example"/>
 </p>
+
+Note that the `onEvents` attribute is an array. In this case, what happens if we have a more complex scenario such as the one illustrated below?
+
+```json
+{
+	"onEvents": [{
+		"eventRefs": ["HighBodyTemperature", "HighBloodPressure"],
+		"actions": [{
+				"functionRef": {
+					"refName": "SendTylenolOrder",
+					"arguments": {
+						"patient": "${ .patientId }"
+					}
+				}
+			},
+			{
+				"functionRef": {
+					"refName": "CallNurse",
+					"arguments": {
+						"patient": "${ .patientId }"
+					}
+				}
+			}
+		]
+	}, {
+    "eventRefs": ["HeartBPDown", "CodeBlue"],
+    "actions": [{
+      "functionRef": {
+        "refName": "CallSurgeon",
+        "arguments": {
+          "patient": "${ .patientId }"
+        }
+      }
+    }
+		]
+  }]
+}
+```
+
+Depending on the value of the Event state `exclusive` property, this definition can mean two different things:
+
+1. If `exclusive` is set to "true", the consumption of **either** the `HighBodyTemperature` or `HighBloodPressure` events will trigger action execution of the **first** `OnEvent` entry. The consumption of **either** the `HeartBPDown` or `CodeBlue` events will trigger action execution of the **second** `OnEvent` entry.
+
+2. If `exclusive` is set to "false", the consumption of **both** the `HighBodyTemperature` and `HighBloodPressure` events will trigger action execution of the **first** `OnEvent` entry. The consumption of **both** the `HeartBPDown` and `CodeBlue` events will trigger action execution of the **second** `OnEvent` entry.
+
+The `Event` state will only transition to the next state (or ending the workflow instance) only if **all the actions** were executed.
+
+To summarize, in such a scenario, if `exclusive` is set to "true", only one event **in each entry** must be consumed for the workflow to transition to the next state. If `exclusive` is set to "false", all the events in every entry must be consumed for the workflow to transition to the next state.
 
 ##### Action Definition
 
