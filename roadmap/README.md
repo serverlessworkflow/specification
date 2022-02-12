@@ -31,6 +31,8 @@ _Status description:_
 | ✔️| Make the `stateName` attribute in `start` definition not required [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
 | ✔️| Remove `id` attribute from `actions` and `states`. Now, the names from both attributes must be unique within the workflow definition  | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#transitions)
 | ✔️| Update eventRef props to`produceEventRef` and `consumeEventRef` [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
+| ✔️| Update eventRef props to`resultEventTimeout` and `consumeEventTimeout` [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
+| ✔️| Apply fixes to auth spec schema [workflow schema](https://github.com/serverlessworkflow/specification/tree/main/schema)  |
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Update rest function definition |   |
 | ✏️️| Add "completedBy" functionality |   |
