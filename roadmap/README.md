@@ -30,7 +30,9 @@ _Status description:_
 | ✔️| Make the `resultEventRef` attribute in `EventRef` definition not required [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
 | ✔️| Make the `stateName` attribute in `start` definition not required [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
 | ✔️| Remove `id` attribute from `actions` and `states`. Now, the names from both attributes must be unique within the workflow definition  | [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#transitions)
-| ✔️| Update eventRef props to `produceEventRef` and `consumeEventRef` [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
+| ✔️| Update eventRef props to`produceEventRef` and `consumeEventRef` [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
+| ✔️| Update eventRef props to`resultEventTimeout` and `consumeEventTimeout` [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
+| ✔️| Apply fixes to auth spec schema [workflow schema](https://github.com/serverlessworkflow/specification/tree/main/schema)  |
 | ✔️| Fixed the top level `key` property, which is now used to determine workflow instance unique identifiers, and is not required anymore. The `id` top level property is now always required [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#workflow-definition-structure)  |
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Update rest function definition |   |
