@@ -33,6 +33,7 @@ _Status description:_
 | ✔️| Update eventRef props to`produceEventRef` and `consumeEventRef` [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
 | ✔️| Update eventRef props to`resultEventTimeout` and `consumeEventTimeout` [spec doc](https://github.com/serverlessworkflow/specification/blob/main/specification.md#EventRef-Definition)  |
 | ✔️| Apply fixes to auth spec schema [workflow schema](https://github.com/serverlessworkflow/specification/tree/main/schema)  |
+| ✔️| Update the `dataInputSchema` top-level property by supporting the assignment of a JSON schema object [workflow schema](https://github.com/serverlessworkflow/specification/tree/main/specification.md#workflow-definition-structure)  |
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Update rest function definition |   |
 | ✏️️| Add "completedBy" functionality |   |
