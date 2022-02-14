@@ -174,21 +174,10 @@
       "minItems": 1
     }
   },
-  "oneOf": [
-    {
-      "required": [
-        "id",
-        "specVersion",
-        "states"
-      ]
-    },
-    {
-      "required": [
-        "key",
-        "specVersion",
-        "states"
-      ]
-    }
+  "required": [
+    "id",
+    "specVersion",
+    "states"
   ],
   "definitions": {
     "sleep": {
