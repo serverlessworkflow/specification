@@ -1821,7 +1821,7 @@ definition "id" must be a constant value.
 | Parameter | Description | Type | Required |
 | --- | --- |  --- | --- |
 | id | Workflow unique identifier | string | yes |
-| key | Expression used to determine domain-specific workflow instance identifiers | string | no |
+| key | Expression used to determine domain-specific workflow instance identifiers. If the expression evaluation fails, the workflow should ignore it and proceed as if no expression had been specified. As a unique identifier of an instance, the key property should be immutable after it has been created. | string | no |
 | name | Workflow name | string | no |
 | description | Workflow description | string | no |
 | version | Workflow version | string | no |
