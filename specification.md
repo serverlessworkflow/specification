@@ -1928,7 +1928,26 @@ If it is an object type it has the following definition:
 }
 ```
 
-It's `schema` property is an URI which points to the JSON schema used to validate the workflow data input.
+It's `schema` property can be an URI, which points to the JSON schema used to validate the workflow data input, or it can be the JSON schema object.
+If it's a JSON schema object, it has the following definition:
+
+```json
+"dataInputSchema": {
+   "schema": {
+     "title": "MyJSONSchema",
+     "properties":{
+       "firstName":{
+         "type": "string"
+       },
+       "lastName":{
+         "type": "string"
+       }
+     }
+   },
+   "failOnValidationErrors": false
+}
+
+```
 It' `failOnValidationErrors` property  determines if workflow execution should continue in case of validation
 errors. The default value of `failOnValidationErrors` is `true`.
 If `dataInputSchema` has the string type, it has the following definition:
