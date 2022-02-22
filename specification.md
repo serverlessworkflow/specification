@@ -1077,7 +1077,7 @@ This approach, however, often runs into issues such as lack of portability, limi
 forcing non-workflow-specific information, such as service authentication, to be added inside the workflow language.
 
 To avoid these issues, the Serverless Workflow specification mandates that details about
-RESTful services and their operations be described using the [OpenAPI Specification](https://www.openapis.org/) specification.
+RESTful services and their operations be described using the [OpenAPI Specification](https://www.openapis.org/).
 OpenAPI is a language-agnostic standard that describes discovery of RESTful services.
 This allows Serverless Workflow language to describe RESTful services in a portable
 way, as well as workflow runtimes to utilize OpenAPI tooling and APIs to invoke service operations.
