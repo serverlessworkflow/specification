@@ -96,6 +96,7 @@
   * [Workflow Constants](#workflow-constants)
   * [Workflow Secrets](#workflow-secrets)
   * [Workflow Metadata](#workflow-metadata)
+  * [Workflow Context](#workflow-context)
 - [Extensions](#extensions)
 - [Use Cases](#use-cases)
 - [Examples](#examples)
