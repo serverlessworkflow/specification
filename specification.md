@@ -6170,6 +6170,44 @@ Some other examples of information that could be recorded in metadata are:
 - Logging, monitoring, analytics, or audit repository information.
 - Labels used for organizing/indexing purposes, such as "release" "stable", "track", "daily", etc.
 
+### Workflow Context
+
+Similar to [Constants](https://github.com/serverlessworkflow/specification/blob/main/specification.md#workflow-constants) and [Secrets](https://github.com/serverlessworkflow/specification/blob/main/specification.md#workflow-secrets), workflows expressions can have access to the context information of a running instance via the keyword `WORKFLOW`. 
+
+Implementations may use this keyword to give access to any relevant information of the running instance within an expression. For example:
+
+```json
+
+{
+  "id": "processSalesOrders",
+  "name": "Process Sales Orders",
+  "version": "1.0",
+  "specVersion": "0.8",
+  "start": "MyStartingState",
+  "functions": [{
+    "name": "myFunction",
+    "operation": "myopenapi.json#myFunction"
+  }],
+  "states":[
+  {
+     "name":"MyStartingState",
+     "type":"operation",
+     "actions": [{
+       "functionRef": "myFunction",
+       "args": {
+          "order": "${ .orderId }",
+          "callerId": "${ $WORKFLOW.instanceId  }"
+       }
+     }],
+     "end": true
+  }]   
+}
+```
+
+In this use case, a third-party service may require information from the caller for traceability purposes.
+
+The specification doesn't define any specific variable within the `WORKFLOW` bucket, but it's considered a reserved keyword.
+
 ## Extensions
 
 The workflow extension mechanism allows you to enhance your model definitions with additional information useful for
