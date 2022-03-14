@@ -220,7 +220,7 @@ states:
 #### Description
 
 This example shows a single [Event State](../specification.md#event-state) with one action that calls the "greeting" function.
-The event state consumes cloud events of type "greetingEventType". When an even with this type
+The event state consumes cloud events of type "greetingEventType". When an event with this type
 is consumed, the Event state performs a single action that calls the defined "greeting" function.
 
 For the sake of the example we assume that the cloud event we will consume has the format:
