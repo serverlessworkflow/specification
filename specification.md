@@ -1986,12 +1986,7 @@ If we have the following function definition:
 ```
 
 The `authRef` property is used to reference an authentication definition in
-<<<<<<< HEAD
 the `auth` property and should be applied when invoking the `helloWorld` function. An [AuthRef](#AuthRef-Definition) object can alternatively be used to configure the authentication definition to use when accessing the function's resource and/or when invoking the function.
-=======
-the workflow `auth` property. It can also be used to access the `https://secure.resources.com/myapi.json`
-OpenApi definition file.
->>>>>>> af0f27d (Clarification on usage of authDef on function definitions)
 
 The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
 a resource containing an array of [functions](#Function-Definition) definition.
