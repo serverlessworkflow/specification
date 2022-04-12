@@ -957,63 +957,6 @@ should produce state data:
 }
 ```
 
-To give an example, merging:
-
-```json
-{
-    "customers": [
-      {
-        "name": "John",
-        "address": "1234 street",
-        "zip": "12345"
-      },
-      {
-        "name": "Jane",
-        "address": "4321 street",
-        "zip": "54321"
-      }
-    ]
-}
-```
-
-into state data:
-
-```json
-{
-    "customers": [
-      {
-        "name": "Michael",
-        "address": "6789 street",
-        "zip": "6789"
-      }
-    ]
-}
-```
-
-should produce state data:
-
-```json
-{
-    "customers": [
-      {
-        "name": "Michael",
-        "address": "6789 street",
-        "zip": "6789"
-      },
-      {
-        "name": "John",
-        "address": "1234 street",
-        "zip": "12345"
-      },
-      {
-        "name": "Jane",
-        "address": "4321 street",
-        "zip": "54321"
-      }
-    ]
-}
-```
-
 Merging number types should be done by overwriting the data from events data/action results into the merging element of the state data.
 For example merging action results:
 
