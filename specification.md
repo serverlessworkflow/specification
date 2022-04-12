@@ -169,7 +169,7 @@ The specification has multiple components:
 
 * Definitions of the workflow language. This is defined via the [Workflow JSON Schema](schema/workflow.json). You can use both
   [JSON](https://www.json.org/json-en.html) and [YAML](https://yaml.org/) formats to model your workflows.
-* Software Development Kits (SDKs) for [Go](https://github.com/serverlessworkflow/sdk-go), [Java](https://github.com/serverlessworkflow/sdk-java), [.NET](https://github.com/serverlessworkflow/sdk-net) and [Typescript](https://github.com/serverlessworkflow/sdk-typescript), and we plan to add them for more languages in the future.
+* Software Development Kits (SDKs) for [Go](https://github.com/serverlessworkflow/sdk-go), [Java](https://github.com/serverlessworkflow/sdk-java), [.NET](https://github.com/serverlessworkflow/sdk-net), [Typescript](https://github.com/serverlessworkflow/sdk-typescript) and [Python](https://github.com/serverlessworkflow/sdk-python), and we plan to add them for more languages in the future.
 * Set of [Workflow Extensions](extensions/README.md) which
   allow users to define additional, non-execution-related workflow information. This information can be used to improve
   workflow performance.
