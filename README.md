@@ -58,6 +58,7 @@ Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.i
 | [Java SDK](https://github.com/serverlessworkflow/sdk-java) | [4.0.2.Final](https://github.com/serverlessworkflow/sdk-java/releases) | [4.0.x](https://github.com/serverlessworkflow/sdk-java/tree/4.0.x) | [main](https://github.com/serverlessworkflow/sdk-java) |
 | [.NET SDK](https://github.com/serverlessworkflow/sdk-net) | [v0.7.4.4](https://github.com/serverlessworkflow/sdk-net/releases) |  | [main](https://github.com/serverlessworkflow/sdk-net) |
 | [TypeScript SDK](https://github.com/serverlessworkflow/sdk-typescript) | [v3.0.0](https://github.com/serverlessworkflow/sdk-typescript/releases) | [3.0.x](https://github.com/serverlessworkflow/sdk-typescript/tree/3.0.x) | [main](https://github.com/serverlessworkflow/sdk-typescript) |
+| [Python SDK](https://github.com/serverlessworkflow/sdk-python) | [v1.0.0](https://github.com/serverlessworkflow/sdk-python/releases) | [1.0.x](https://github.com/serverlessworkflow/sdk-python/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-python) |
 | [VSCode Extension](https://github.com/serverlessworkflow/vscode-extension) | [1.6.0](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension) | | [main](https://github.com/serverlessworkflow/vscode-extension) |
 
 ## Runtimes
@@ -76,7 +77,7 @@ Workflow eco-system.
 - [Java](https://github.com/serverlessworkflow/sdk-java)
 - [.NET](https://github.com/serverlessworkflow/sdk-net)
 - [TypeScript](https://github.com/serverlessworkflow/sdk-typescript)
-- [Python](https://github.com/serverlessworkflow/sdk-python) (Work in progress)
+- [Python](https://github.com/serverlessworkflow/sdk-python)
 
 Serverless Workflow encourages development of SDKs dedicated to help developers with 
 consuming, parsing, validating and testing their workflows that use the Serverless Workflow DSL.
