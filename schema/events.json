@@ -22,9 +22,6 @@
       }
     ]
   },
-  "required": [
-    "events"
-  ],
   "definitions": {
     "eventdef": {
       "type": "object",

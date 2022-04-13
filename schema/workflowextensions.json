@@ -22,9 +22,6 @@
       }
     ]
   },
-  "required": [
-    "extensions"
-  ],
   "definitions": {
     "extension": {
       "type": "object",

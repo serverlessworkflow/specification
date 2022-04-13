@@ -22,9 +22,6 @@
       }
     ]
   },
-  "required": [
-    "errors"
-  ],
   "definitions": {
     "errordef": {
       "type": "object",

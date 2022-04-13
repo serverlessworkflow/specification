@@ -22,9 +22,6 @@
       }
     ]
   },
-  "required": [
-    "retries"
-  ],
   "definitions": {
     "retrydef": {
       "type": "object",

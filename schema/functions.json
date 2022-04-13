@@ -22,9 +22,6 @@
       }
     ]
   },
-  "required": [
-    "functions"
-  ],
   "definitions": {
     "function": {
       "type": "object",
