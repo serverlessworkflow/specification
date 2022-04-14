@@ -3329,10 +3329,10 @@ This is to assure consistency and portability of the events format used.
 The `name` property defines a single name of the event that is unique inside the workflow definition. This event name can be
 then referenced within [function](#Function-Definition) and [state](#Workflow-States) definitions.
 
-The `source` property matches this event definition with the [source](https://github.com/cloudevents/spec/blob/master/spec.md#source-1)
+The `source` property matches this event definition with the [source](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#source-1)
 property of the CloudEvent required attributes.
 
-The `type` property matches this event definition with the [type](https://github.com/cloudevents/spec/blob/master/spec.md#type) property of the CloudEvent required attributes.
+The `type` property matches this event definition with the [type](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#type) property of the CloudEvent required attributes.
 
 The `kind` property defines this event as either `consumed` or `produced`. In terms of the workflow, this means it is either an event
 that triggers workflow instance creation, or continuation of workflow instance execution (consumed), or an event
@@ -3345,7 +3345,7 @@ Otherwise, (i.e., when the `kind` property is set to `consumed`), the `source` p
 Event correlation plays a big role in large event-driven applications. Correlating one or more events with a particular workflow instance
 can be done by defining the event correlation rules within the `correlation` property.
 This property is an array of [correlation](#Correlation-Definition) definitions.
-The CloudEvents specification allows users to add [Extension Context Attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+The CloudEvents specification allows users to add [Extension Context Attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
 and the correlation definitions can use these attributes to define clear matching event correlation rules.
 Extension context attributes are not part of the event payload, so they are serialized the same way as other standard required attributes.
 This means that the event payload does not have to be inspected by implementations in order to read and evaluate the defined correlation rules.
@@ -3590,8 +3590,8 @@ correlation:
 
 Used to define event correlation rules. Only usable for `consumed` event definitions.
 
-The `contextAttributeName` property defines the name of the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes).
-The `contextAttributeValue` property defines the value of the defined the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes).
+The `contextAttributeName` property defines the name of the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
+The `contextAttributeValue` property defines the value of the defined the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
 
 ##### OnEvents Definition
 
@@ -3948,7 +3948,7 @@ References a `produced` and `consumed` [event definitions](#Event-Definition) vi
 The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
 to be used as payload of the event referenced by `produceEventRef`. If it is of object type, you can define a custom object to be the event payload.
 
-The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
 to the trigger/produced event.
 
 The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
@@ -4878,7 +4878,7 @@ one of the defined `produced` events in the [events](#Event-Definition) definiti
 The `data` property can have two types, object or string. If of string type, it is an expression that can select parts of state data
 to be used as the event payload. If of object type, you can define a custom object to be the event payload.
 
-The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/master/spec.md#extension-context-attributes)
+The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
 to the generated event.
 
 Being able to produce events when workflow execution completes or during state transition
