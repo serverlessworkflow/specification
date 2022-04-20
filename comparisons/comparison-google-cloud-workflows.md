@@ -628,7 +628,7 @@ to interested parties via events (CloudEvents specification format), which we ar
 
 #### Notes
 
-Serverless Workflow defines [reusable retry definitions](../specification.md#Defining-Retries) which can be referenced by
+Serverless Workflow defines [reusable retry definitions](../specification.md#retry-definition) which can be referenced by
 state actions. By default with Serverless workflow all actions are retried. You can however reference a defined 
 retry policy to perform specific retries on actions. If the error persists after defined retry attempts logic, 
 the workflow state can handle the error with its onErrors property.
