@@ -3703,7 +3703,7 @@ This is visualized in the diagram below:
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
 | [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
-| [retryRef](#Defining-Retries) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
+| [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
 | nonRetryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
 | retryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
@@ -3777,7 +3777,7 @@ Function invocation timeouts should be handled via the states [timeouts](#Workfl
 
 The `retryRef` property references one of the defined workflow retries by it's unique name. If not set, the action 
 should be retried according to the default retry policy of the runtime implementation. For more information about workflow
-retries reference [this section](#defining-retries).
+retries reference [this section](#retry-definition).
 
 The `nonRetryableErrors` property is a list that references one or more unique names of workflow error definitions. 
 This is the list of known errors for which the action should not be retried for. 
