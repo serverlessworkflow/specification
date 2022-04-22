@@ -228,7 +228,7 @@ It uses the "+" symbol to we assume is how the underlying programming language
 used in their runtime impl can concatenate strings.
 The second step, "exit-loop" is then used alongside the "return" keyword to specify the 
 workflow results.
-With Serverless Workflow we can inject the array data via the "inject" state again, or 
+With Serverless Workflow we can inject the array data via the ["inject" state](../specification.md#inject-state) again, or 
 it can simply be passed as workflow data input. There is no need for looping here as
 we can just utilize the [jq "join" function](https://stedolan.github.io/jq/manual/#join(str)) as shown in the states data filter.
 We could use the [ForEach state](../specification.md#ForEach-State) for iteration of 
