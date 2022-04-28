@@ -53,7 +53,7 @@ Check out our project DevStats [here](https://serverlessworkflow.devstats.cncf.i
 | **Core Specification** | |
 | [Serverless Workflow](https://github.com/serverlessworkflow/specification) | [v0.8](https://github.com/serverlessworkflow/specification/releases) | [0.8.x](https://github.com/serverlessworkflow/specification/tree/0.8.x) | [main](https://github.com/serverlessworkflow/specification) |
 | **Additional Components** | |
-| [Synapse](https://github.com/serverlessworkflow/synapse) | [0.1.0-alpha1](https://github.com/serverlessworkflow/synapse/releases) |  | [main](https://github.com/serverlessworkflow/synapse) |
+| [Synapse](https://github.com/serverlessworkflow/synapse) | [0.1](https://github.com/serverlessworkflow/synapse/releases) |  | [main](https://github.com/serverlessworkflow/synapse) |
 | [GO SDK](https://github.com/serverlessworkflow/sdk-go) | [v2.0.0](https://github.com/serverlessworkflow/sdk-go/releases) | [1.0.x](https://github.com/serverlessworkflow/sdk-go/tree/1.0.x) | [main](https://github.com/serverlessworkflow/sdk-go) |
 | [Java SDK](https://github.com/serverlessworkflow/sdk-java) | [4.0.2.Final](https://github.com/serverlessworkflow/sdk-java/releases) | [4.0.x](https://github.com/serverlessworkflow/sdk-java/tree/4.0.x) | [main](https://github.com/serverlessworkflow/sdk-java) |
 | [.NET SDK](https://github.com/serverlessworkflow/sdk-net) | [v0.7.4.4](https://github.com/serverlessworkflow/sdk-net/releases) |  | [main](https://github.com/serverlessworkflow/sdk-net) |
