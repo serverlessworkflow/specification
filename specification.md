@@ -4651,7 +4651,7 @@ Defining a cron-based scheduled starts for the runtime implementations would mea
 the needed events at the defined times to trigger workflow instance creation.
 
 Defining a start definition is not required. If it's not defined, the starting workflow
-state has to be the very first state defined in the [workflow stated array](#Workflow-States).
+state has to be the very first state defined in the [workflow states array](#Workflow-States).
 
 ##### Schedule Definition
 
