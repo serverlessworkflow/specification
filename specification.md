@@ -2390,7 +2390,9 @@ the [Workflow Timeouts](#Workflow-Timeouts) section.
           "transition": "HandleRejectedVisa"
         }
      ],
-     "eventTimeout": "PT1H",
+     "timeouts": {
+       "eventTimeout": "PT1H"
+     },
      "defaultCondition": {
         "transition": "HandleNoVisaDecision"
      }
@@ -2408,7 +2410,8 @@ eventConditions:
   transition: HandleApprovedVisa
 - eventRef: visaRejectedEvent
   transition: HandleRejectedVisa
-eventTimeout: PT1H
+timeouts:
+  eventTimeout: PT1H
 defaultCondition:
   transition: HandleNoVisaDecision
 ```
