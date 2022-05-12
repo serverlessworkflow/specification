@@ -4649,12 +4649,12 @@ decide which activity to perform based on the transaction value.
     {
      "name": "Process Larger Transaction",
      "functionRef": "Banking Service - Larger Tx",
-     "condition": "${ .tx >= $CONST.largetxamount }"
+     "condition": "${ .tx >= $CONSTANTS.largetxamount }"
     },
     {
      "name": "Process Smaller Transaction",
      "functionRef": "Banking Service - Smaller Tx",
-     "condition": "${ .tx < $CONST.largetxamount }"
+     "condition": "${ .tx < $CONSTANTS.largetxamount }"
     }
    ],
    "end": true
@@ -4694,10 +4694,10 @@ states:
    actions:
     - name: Process Larger Transaction
       functionRef: Banking Service - Larger Tx
-      condition: "${ .tx >= $CONST.largetxamount }"
+      condition: "${ .tx >= $CONSTANTS.largetxamount }"
     - name: Process Smaller Transaction
       functionRef: Banking Service - Smaller Tx
-      condition: "${ .tx < $CONST.largetxamount }"
+      condition: "${ .tx < $CONSTANTS.largetxamount }"
    end: true
 functions:
  - name: Banking Service - Larger Tx

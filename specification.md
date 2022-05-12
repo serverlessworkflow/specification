@@ -5963,8 +5963,8 @@ for example:
 }
 ```
 
-Constants can only be accessed inside Workflow expressions via the `$CONST` variable.
-Runtimes must make `$CONST` available to expressions as a predefined variable.
+Constants can only be accessed inside Workflow expressions via the `$CONSTANTS` variable.
+Runtimes must make `$CONSTANTS` available to expressions as a predefined variable.
 
 Here is an example of using constants in Workflow expressions:
 
@@ -5984,12 +5984,12 @@ Here is an example of using constants in Workflow expressions:
      "dataConditions": [
         {
           "name": "Applicant is adult",
-          "condition": "${ .applicant | .age >= $CONST.AGE.MIN_ADULT }",
+          "condition": "${ .applicant | .age >= $CONSTANTS.AGE.MIN_ADULT }",
           "transition": "ApproveApplication"
         },
         {
           "name": "Applicant is minor",
-          "condition": "${ .applicant | .age < $CONST.AGE.MIN_ADULT }",
+          "condition": "${ .applicant | .age < $CONSTANTS.AGE.MIN_ADULT }",
           "transition": "RejectApplication"
         }
      ],
@@ -6008,12 +6008,12 @@ for example:
 "functions": [
   {
     "name": "isAdult",
-    "operation": ".applicant | .age >= $CONST.AGE.MIN_ADULT",
+    "operation": ".applicant | .age >= $CONSTANTS.AGE.MIN_ADULT",
     "type": "expression"
   },
   {
     "name": "isMinor",
-    "operation": ".applicant | .age < $CONST.AGE.MIN_ADULT",
+    "operation": ".applicant | .age < $CONSTANTS.AGE.MIN_ADULT",
     "type": "expression"
   }
 ]
