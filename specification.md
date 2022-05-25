@@ -674,7 +674,7 @@ a workflow with a single event state and show how data filters can be combined.
             }],
             "stateDataFilter": {
                 "input": "${ .greetings } ",
-                "output": "${ .finalCustomerGreeting }"
+                "output": "${ { finalCustomerGreeting } }"
             },
             "end": true
         }
@@ -1785,7 +1785,7 @@ definition "id" must be a constant value.
 | autoRetries | If set to true, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is false | boolean| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
 | [states](#Workflow-States) | Workflow states | array | yes |
-| [extensions](#Workflow-Extensions) | Workflow extensions definitions | array or string | no |
+| [extensions](#Extensions) | Workflow extensions definitions | array or string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3342,7 +3342,7 @@ that triggers workflow instance creation, or continuation of workflow instance e
 that the workflow instance creates during its execution (produced).
 The default value (if not specified) of the `kind` property is `consumed`.
 Note that for `produced` event definitions, implementations must provide the value of the CloudEvent source attribute.
-In this case (i.e., when the `kind` property is set to `produced`), the `source` property of the event definition is not required.
+In this case (i.e., when the `kind` property is set to `produced`), the `source` property of the event is not required in the workflow definition.
 Otherwise, (i.e., when the `kind` property is set to `consumed`), the `source` property must be defined in the event definition.
 
 Event correlation plays a big role in large event-driven applications. Correlating one or more events with a particular workflow instance
@@ -3539,7 +3539,7 @@ See [here](https://oauth.net/2/) for more information about OAuth2 Authenticatio
 | password | String or a workflow expression. Contains the user password. Used only if grantType is 'resourceOwner' | string | no |
 | audiences | Array containing strings or workflow expressions. Contains the OAuth2 audiences | array | no |
 | subjectToken | String or a workflow expression. Contains the subject token | string | no |
-| requestedSubject | String or a workflow expression. Contains the client identifier | string | no |
+| requestedSubject | String or a workflow expression. Contains the requested subject | string | no |
 | requestedIssuer | String or a workflow expression. Contains the requested issuer | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -3594,7 +3594,7 @@ correlation:
 Used to define event correlation rules. Only usable for `consumed` event definitions.
 
 The `contextAttributeName` property defines the name of the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
-The `contextAttributeValue` property defines the value of the defined the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
+The `contextAttributeValue` property defines the value of the defined CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
 
 ##### OnEvents Definition
 
@@ -3704,7 +3704,7 @@ This is visualized in the diagram below:
 | --- | --- | --- | --- |
 | name | Unique Action name | string | no |
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
-| [eventRef](#EventRef-Definition) | References a `trigger` and `result` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
+| [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
 | nonRetryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
@@ -4111,7 +4111,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | --- | --- | --- | --- |
 | name | Unique retry strategy name | string | yes |
 | delay | Time delay between retry attempts (ISO 8601 duration format) | string | no |
-| maxAttempts | Maximum number of retry attempts. Value of 0 means no retries are performed | string or number | no |
+| maxAttempts | Maximum number of retry attempts. Value of 1 means no retries are performed | string or number | no |
 | maxDelay | Maximum amount of delay between retry attempts (ISO 8601 duration format) | string | no |
 | increment | Static duration which will be added to the delay between successive retries (ISO 8601 duration format) | string | no |
 | multiplier | Float value by which the delay is multiplied before each attempt. For example: "1.2" meaning that each successive delay is 20% longer than the previous delay.  For example, if delay is 'PT10S', then the delay between the first and second attempts will be 10 seconds, and the delay before the third attempt will be 12 seconds. | float or string | no |
@@ -4521,7 +4521,7 @@ If the start definition is of type `object`, it has the following structure:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | stateName | Name of the starting workflow state | object | no |
-| [schedule](#Schedule-Definition) | Define the recurring time intervals or cron expressions at which workflow instances should be automatically started. | object | yes |
+| [schedule](#Schedule-Definition) | Define the recurring time intervals or cron expressions at which workflow instances should be automatically started. | string or object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4537,7 +4537,7 @@ If the start definition is of type `object`, it has the following structure:
 ```json
 {
   "stateName": "MyStartingstate",
-  "schedule": "2020-03-20T09:00:00Z/2020-03-20T15:00:00Z"
+  "schedule": "2020-03-20T09:00:00Z/PT2H"
 }
 ```
 
@@ -4546,7 +4546,7 @@ If the start definition is of type `object`, it has the following structure:
 
 ```yaml
 stateName: MyStartingstate
-schedule: 2020-03-20T09:00:00Z/2020-03-20T15:00:00Z
+schedule: 2020-03-20T09:00:00Z/PT2H
 ```
 
 </td>
@@ -4666,7 +4666,7 @@ For more information see the [cron definition](#Cron-Definition) section.
 
 The `timezone` property is used to define a time zone name to evaluate the cron or interval expression against. If not specified, it should default
 to UTC time zone. See [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of timezone names.  For ISO 8601 date time
-values in `interval` or `cron.validUntil`, runtimes should treat `timezone` as the 'local time' (UTC if `interval` is not defined by the user).
+values in `interval` or `cron.validUntil`, runtimes should treat `timezone` as the 'local time' (UTC if `timezone` is not defined by the user).
 
 Note that when the workflow starting state is an [Event](#Event-State)
 defining cron-based scheduled starts for the runtime implementations would mean that there needs to be an event service that issues
@@ -5208,7 +5208,7 @@ With this retries option, action executions should be retried automatically for 
 errors. This means that you do not have to define a retry strategy for actions for them to have retried, it's included by default.
 Users can still define a custom retry strategy for each action via the `retryRef` property.
 
-If a retry strategy is not defained, a default retry strategy should be used.
+If a retry strategy is not defined, a default retry strategy should be used.
 Runtime implementations can define their own default retry strategy. Serverless Workflow recommends the following settings:
 
 * `maxAttempts` to be `unlimited`, meaning that the action should be retried indefinitely until successful.
@@ -5612,7 +5612,7 @@ States referenced by `compensatedBy` (as well as any other states that they tran
 * They cannot define an [end definition](#End-definition). If they do, it should be ignored
 * They must define the `usedForCompensation` property and set it to `true`
 * They can transition only to states which also have their `usedForCompensation` property and set to `true`
-* They cannot themselves set their `compensatedBy` property to true (compensation is not recursive)
+* They cannot themselves set their `compensatedBy` property to any state (compensation is not recursive)
 
 Runtime implementations should raise compile time / parsing exceptions if any of the rules mentioned above are
 not obeyed in the workflow definition.
@@ -5839,7 +5839,7 @@ When workflow execution encounters our "End" state, compensation has to be perfo
 
 1. State "E" is not compensated as it does not define a `compensatedBy` state
 2. State "D" is compensated by executing compensation "D1"
-3. State "B" is compensated by executing "B1" and then "B2"
+3. State "B" is compensated by executing "B1" and then "B1-2"
 4. State C is not compensated as it was never active during workflow execution
 5. State A is not comped as it does not define a `compensatedBy` state
 
