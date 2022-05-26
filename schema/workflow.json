@@ -439,7 +439,7 @@
           "$ref": "#/definitions/functionref"
         },
         "eventRef": {
-          "description": "References a 'trigger' and 'result' reusable event definitions",
+          "description": "References a `produce` and `consume` reusable event definitions",
           "$ref": "#/definitions/eventref"
         },
         "subFlowRef": {
