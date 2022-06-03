@@ -3900,14 +3900,14 @@ onErrors definition. Note that errors raised during functions that are invoked a
 
 Allows defining invocation of a function via event. 
 
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
-| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | no |
-| consumeEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
-| contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
-| invoke | Specifies if the function should be invoked sync or async. Default is sync | string | no |
+| Parameter                            | Description                                                                                                                                                                                                                                                       | Type             | Required |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------|
+| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition                                                                                                                                                                                                     | string           | yes      |
+| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition                                                                                                                                                                                                     | string           | no       |
+| consumeEventTimeout                  | Maximum amount of time (ISO 8601 format) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition)                                                                                                    | string           | no       |
+| data                                 | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no       |
+| contextAttributes                    | Add additional event extension context attributes to the trigger/produced event                                                                                                                                                                                   | object           | no       |
+| invoke                               | Specifies if the function should be invoked `sync` or `async`. Default is `sync`                                                                                                                                                                                  | enum             | no       |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
