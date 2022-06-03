@@ -2277,20 +2277,20 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ##### Operation State
 
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| name | Unique State name | string | yes |
-| type | State type | string | yes |
-| actionMode | Should actions be performed sequentially or in parallel | string | no |
-| [actions](#Action-Definition) | Actions to be performed | array | yes |
-| [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
-| [stateDataFilter](#State-data-filters) | State data filter | object | no |
-| [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes (if end is not defined) |
-| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
-| [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | Is this state an end state | object | no |
+| Parameter                                     | Description                                                                         | Type    | Required                    |
+|-----------------------------------------------|-------------------------------------------------------------------------------------|---------|-----------------------------|
+| name                                          | Unique State name                                                                   | string  | yes                         |
+| type                                          | State type                                                                          | string  | yes                         |
+| actionMode                                    | Should actions be performed sequentially or in parallel                             | enum    | no                          |
+| [actions](#Action-Definition)                 | Actions to be performed                                                             | array   | yes                         |
+| [timeouts](#Workflow-Timeouts)                | State specific timeout settings                                                     | object  | no                          |
+| [stateDataFilter](#State-data-filters)        | State data filter                                                                   | object  | no                          |
+| [onErrors](#Error-Definition)                 | States error handling and retries definitions                                       | array   | no                          |
+| [transition](#Transitions)                    | Next transition of the workflow after all the actions have been performed           | object  | yes (if end is not defined) |
+| [compensatedBy](#Workflow-Compensation)       | Unique name of a workflow state which is responsible for compensation of this state | String  | no                          |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false"         | boolean | no                          |
+| [metadata](#Workflow-Metadata)                | Metadata information                                                                | object  | no                          |
+| [end](#End-Definition)                        | Is this state an end state                                                          | object  | no                          |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2845,24 +2845,24 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ##### ForEach State
 
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| name | Unique State name | string | yes |
-| type | State type | string | yes |
-| inputCollection | Workflow expression selecting an array element of the states data | string | yes |
-| outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
-| iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | no |
-| batchSize | Specifies how many iterations may run in parallel at the same time. Used if `mode` property is set to `parallel` (default). If not specified, its value should be the size of the `inputCollection` | string or number | no |
-| mode | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel` | string  | no |
-| [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes |
-| [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
-| [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
-| [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes if "end" is not defined |
-| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
-| [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | Is this state an end state | object | yes if "transition" is not defined |
+| Parameter                                     | Description                                                                                                                                                                                         | Type             | Required                           |
+|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|------------------------------------|
+| name                                          | Unique State name                                                                                                                                                                                   | string           | yes                                |
+| type                                          | State type                                                                                                                                                                                          | string           | yes                                |
+| inputCollection                               | Workflow expression selecting an array element of the states data                                                                                                                                   | string           | yes                                |
+| outputCollection                              | Workflow expression specifying an array element of the states data to add the results of each iteration                                                                                             | string           | no                                 |
+| iterationParam                                | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array                   | string           | no                                 |
+| batchSize                                     | Specifies how many iterations may run in parallel at the same time. Used if `mode` property is set to `parallel` (default). If not specified, its value should be the size of the `inputCollection` | string or number | no                                 |
+| mode                                          | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel`                                                                                                   | enum             | no                                 |
+| [actions](#Action-Definition)                 | Actions to be executed for each of the elements of inputCollection                                                                                                                                  | array            | yes                                |
+| [timeouts](#Workflow-Timeouts)                | State specific timeout settings                                                                                                                                                                     | object           | no                                 |
+| [stateDataFilter](#State-data-filters)        | State data filter definition                                                                                                                                                                        | object           | no                                 |
+| [onErrors](#Error-Definition)                 | States error handling and retries definitions                                                                                                                                                       | array            | no                                 |
+| [transition](#Transitions)                    | Next transition of the workflow after state has completed                                                                                                                                           | object           | yes if "end" is not defined        |
+| [compensatedBy](#Workflow-Compensation)       | Unique name of a workflow state which is responsible for compensation of this state                                                                                                                 | String           | no                                 |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false"                                                                                                                         | boolean          | no                                 |
+| [metadata](#Workflow-Metadata)                | Metadata information                                                                                                                                                                                | object           | no                                 |
+| [end](#End-Definition)                        | Is this state an end state                                                                                                                                                                          | object           | yes if "transition" is not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3598,12 +3598,12 @@ The `contextAttributeValue` property defines the value of the defined CloudEvent
 
 ##### OnEvents Definition
 
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
-| actionMode | Specifies how actions are to be performed (in sequence or in parallel). Default is "sequential" | string | no |
-| [actions](#Action-Definition) | Actions to be performed | array | no |
-| [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
+| Parameter                              | Description                                                                                     | Type   | Required |
+|----------------------------------------|-------------------------------------------------------------------------------------------------|--------|----------|
+| eventRefs                              | References one or more unique event names in the defined workflow [events](#Event-Definition)   | array  | yes      |
+| actionMode                             | Specifies how actions are to be performed (in sequence or in parallel). Default is `sequential` | enum   | no       |
+| [actions](#Action-Definition)          | Actions to be performed                                                                         | array  | no       |
+| [eventDataFilter](#Event-data-filters) | Event data filter definition                                                                    | object | no       |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
