@@ -3698,18 +3698,18 @@ This is visualized in the diagram below:
 
 ##### Action Definition
 
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| name | Unique Action name | string | no |
-| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
-| [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
-| [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
-| [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
-| nonRetryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
-| retryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
-| [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
-| sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
-| [condition](#Workflow-Expressions) | Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded | boolean | no |
+| Parameter                                | Description                                                                                                                                                 | Type             | Required                                            |
+|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|-----------------------------------------------------|
+| name                                     | Unique Action name                                                                                                                                          | string           | no                                                  |
+| [functionRef](#FunctionRef-Definition)   | References a reusable function definition                                                                                                                   | object           | yes if `eventRef` & `subFlowRef` are not defined    |
+| [eventRef](#EventRef-Definition)         | References a `produce` and `consume` reusable event definitions                                                                                             | object           | yes if `functionRef` & `subFlowRef` are not defined |
+| [subFlowRef](#SubFlowRef-Definition)     | References a workflow to be invoked                                                                                                                         | object or string | yes if `eventRef` & `functionRef` are not defined   |
+| [retryRef](#retry-definition)            | References a defined workflow retry definition. If not defined uses the default runtime retry definition                                                    | string           | no                                                  |
+| nonRetryableErrors                       | List of references to defined [workflow errors](#Defining-Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array            | no                                                  |
+| retryableErrors                          | List of references to defined [workflow errors](#Defining-Errors) for which the action should be retried. Used only when `autoRetries` is set to `false`    | array            | no                                                  |
+| [actionDataFilter](#Action-data-filters) | Action data filter definition                                                                                                                               | object           | no                                                  |
+| sleep                                    | Defines time periods workflow execution should sleep before / after function execution                                                                      | object           | no                                                  |
+| [condition](#Workflow-Expressions)       | Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded                                              | boolean          | no                                                  |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
