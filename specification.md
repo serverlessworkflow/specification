@@ -3980,12 +3980,12 @@ property and not its `version` property.
 
 If you need to define the `version` properties, you can use its `object` type:
 
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| workflowId | Sub-workflow unique id | string | yes |
-| version | Sub-workflow version | string | no |
-| invoke | Specifies if the subflow should be invoked sync or async. Default is sync | string | no |
-| onParentComplete | If invoke is 'async', specifies how subflow execution should behave when parent workflow completes. Default is 'terminate' | string | no |
+| Parameter        | Description                                                                                                                                    | Type   | Required |
+|------------------|------------------------------------------------------------------------------------------------------------------------------------------------|--------|----------|
+| workflowId       | Sub-workflow unique id                                                                                                                         | string | yes      |
+| version          | Sub-workflow version                                                                                                                           | string | no       |
+| invoke           | Specifies if the subflow should be invoked `sync` or `async`. Default is `sync`                                                                | enum   | no       |
+| onParentComplete | If `invoke` is `async`, specifies if subflow execution should `terminate` or `continue` when parent workflow completes. Default is `terminate` | enum   | no       |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
