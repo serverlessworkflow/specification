@@ -5191,10 +5191,10 @@ for those errors according to the referenced retry strategy.
 In our example, "MyFirstFunction" invocation should be retried according to the "FirstRetryStrategy" policy only on known errors
 "SomeErrorOne" and "SomeErrorTwo".
 
-If for a known error (defined in `retryableErrors`) the retry limit is reached and the error still persist, it can be handlerd in the states
+If for a known error (defined in `retryableErrors`) the retry limit is reached and the error still persist, it can be handled in the states
 `onErrors` definition. 
 
-If an unknown (unchecked) error happens during action execution, this cannot be handled either in the states `onErrors` definition, in which case
+If an unknown (unchecked) error happens during action execution, and this error is also not handled in the states `onErrors` definition, the
 workflow execution should fail.
 
 #### Automatic retries on known and unknown errors
