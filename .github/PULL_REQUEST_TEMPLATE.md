@@ -10,7 +10,7 @@ We kindly ask you to consider opening a discussion or an issue using the Github 
 
 **Many thanks for submitting your Pull Request :heart:!**
 
-**Please specify parts this PR updates:**
+**Please specify parts of this PR update:**
 
 - [ ] Specification
 - [ ] Schema

@@ -8,7 +8,8 @@ labels: kind/feature
 <!--
 We are more than thrilled to accept a new extension! 
 
-But before that, have you considered starting a discussion with other contributors using the "Discussions" tab?
+But before that, have you considered starting a discussion with other
+contributors using the "Discussions" tab?
 -->
 
 **Describe the extension you would like to be added**:
