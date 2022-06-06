@@ -21,7 +21,7 @@ is the most interesting or fun.
 ## Reviewers
 
 A reviewer is a core role within the project.
-They share in reviewing issues and pull requests. Their pull request approvals 
+They share in reviewing issues and pull requests. Their pull request approvals
 are needed to merge a large code change into the project.
 
 ## Adding maintainers
@@ -57,9 +57,10 @@ becomes a maintainer once the pull request is merged.
 
 ## Subprojects
 
-Serverless Workflow subprojects all culminate in officially supported and maintained releases
-of the specification. 
-All subprojects must adhere to [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md)
+Serverless Workflow subprojects all culminate in officially supported and
+maintained releases of the specification.
+All subprojects must adhere to
+[CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md)
 as well as this governance document.
 
 ### Adding core subprojects
@@ -127,7 +128,8 @@ of the pull request and which areas of the project it affects.
 ## I'm a maintainer. Should I make pull requests too?
 
 Yes. Nobody should ever push to master directly. All changes should be
-made through a pull request.
+made through a pull request. Please see the [Contributing](contributing.md)
+document for more information about opening pull requests.
 
 ## Conflict Resolution
 

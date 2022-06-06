@@ -11,21 +11,42 @@ well as the guidelines we follow for how our documents are formatted.
 
 ## Reporting an Issue
 
+If you have a question consider opening a
+[discussion](https://github.com/serverlessworkflow/specification/discussions).
+
 To report an issue, or to suggest an idea for a change that you haven't had time
-to write-up yet, open an [issue](https://github.com/serverlessworkflow/specification/issues). It
-is best to check our existing
-[issues](https://github.com/serverlessworkflow/specification/issues) first to see if a similar
-one has already been opened and discussed.
+to write-up yet, open an
+[issue](https://github.com/serverlessworkflow/specification/issues). It is best
+to check our existing
+[issues](https://github.com/serverlessworkflow/specification/issues) first to
+see if a similar one has already been opened and discussed.
 
 ## Suggesting a Change
 
-To suggest a change to this repository, submit a
-[pull request](https://github.com/serverlessworkflow/specification/pulls) (PR) with the complete
-set of changes you'd like to see. See the
+Enhancements or bugs in a specification are not always easy to describe at first
+glance, requiring some discussions with other contributors before reaching a
+conclusion.
+
+Before opening a pull request, we kindly ask you to consider opening a
+[discussion](https://github.com/serverlessworkflow/specification/discussions)
+or an [issue](https://github.com/serverlessworkflow/specification/issues). The
+community will be more than happy to discuss your proposals there.
+
+Having the discussion or issue settled, please submit a
+[pull request](https://github.com/serverlessworkflow/specification/pulls) (PR)
+with the complete set of changes discussed with the community. See the
 [Spec Formatting Conventions](#spec-formatting-conventions) section for the
 guidelines we follow for how documents are formatted.
 
-Each PR must be signed per the following section.
+Each PR must be signed per the following section and have a link to the issue or
+discussion.
+
+### Fixing Typos, Spelling and Formatting issues
+
+Due to the amount of text a specification can have, typos, spelling and
+formatting issues are quite common. In these cases, please submit a
+[pull request](https://github.com/serverlessworkflow/specification/pulls)
+directly only with the fixes that you see fit.
 
 ### Assigning and Owning work
 

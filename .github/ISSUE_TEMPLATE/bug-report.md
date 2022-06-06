@@ -5,13 +5,18 @@ labels: kind/bug
 
 ---
 
-**What happened**:
+<!-- 
+Sometimes can be hard to describe a "bug" in a specification. So, before opening a Bug Report, please consider opening a discussion using the "Discussions" tab. The community will be more than happy to clarify a concern you might have.
 
-**What you expected to happen**:
+If you see a typo, spelling error, or formatting issue in our docs, please open a PR.
+-->
 
-**How to reproduce it**:
+**What seems off**:
+
+**What you expected to be**:
 
 **Anything else we need to know?**:
 
 **Environment**:
+
 - Specification version used:
