@@ -4,7 +4,7 @@
 [<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://serverlessworkflow.io/) 
 [<img src="https://img.shields.io/twitter/follow/CNCFWorkflow?style=social">](https://twitter.com/CNCFWorkflow)
 
-##  About
+## About
 
 CNCF Serverless Workflow defines a vendor-neutral, open-source, and fully community-driven
 ecosystem for defining and running DSL-based workflows that target the Serverless technology domain.</h3>
@@ -16,7 +16,7 @@ This project is composed of:
 * [Workflow runtimes](#runtimes) supporting the specification
 * Developer [tooling support](#tooling) for writing DSL-based workflows
 
-CNCF Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a 
+CNCF Serverless Workflow is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a
 Cloud Native Sandbox level project on July 14, 2020.
 
 ## Table of Contents
@@ -27,10 +27,10 @@ Cloud Native Sandbox level project on July 14, 2020.
 - [SDKs](#SDKs)
 - [Tooling](#Tooling)
 - [Community](#Community)
-    - [Communication](#Communication)
-    - [Code of Conduct](#Code-of-Conduct)
-    - [Meetings](#Meetings)
-    - [Meeting Minutes](#Meeting-Minutes)
+  - [Communication](#Communication)
+  - [Code of Conduct](#Code-of-Conduct)
+  - [Meetings](#Meetings)
+  - [Meeting Minutes](#Meeting-Minutes)
 - [Repository Structure](#Repository-Structure)
 - [Support](#Support)
 
