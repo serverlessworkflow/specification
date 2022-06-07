@@ -3825,12 +3825,12 @@ Note that if used with `string` type, the invocation of the function is synchron
 If you need to define parameters in your `functionRef` definition, you can define
 it with its `object` type which has the following properties:
 
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| refName | Name of the referenced [function](#Function-Definition) | string | yes |
-| arguments | Arguments (inputs) to be passed to the referenced function | object | yes if function type is `graphql`, otherwise no |
+| Parameter    | Description                                                                                                                                  | Type   | Required                                        |
+|--------------|----------------------------------------------------------------------------------------------------------------------------------------------|--------|-------------------------------------------------|
+| refName      | Name of the referenced [function](#Function-Definition)                                                                                      | string | yes                                             |
+| arguments    | Arguments (inputs) to be passed to the referenced function                                                                                   | object | yes if function type is `graphql`, otherwise no |
 | selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes if function type is `graphql`, otherwise no |
-| invoke | Specifies if the function should be invoked sync or async. Default is sync | string | no |
+| invoke       | Specifies if the function should be invoked `sync` or `async`. Default is `sync`                                                             | enum   | no                                              |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
