@@ -3244,7 +3244,7 @@ Depending on the function `type`, the `operation` property can be:
 * If `type` is `graphql`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
   For example `file://myuserservice.proto#UserService#ListUsers`. 
 * If `type` is `odata`, a combination of the GraphQL schema definition URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
-  For example `https://https://services.odata.org/V3/OData/OData.svc#Products`.
+  For example `https://services.odata.org/V3/OData/OData.svc#Products`.
 * If `type` is `expression`, defines the expression syntax. Take a look at the [workflow expressions section](#Workflow-Expressions) for more information on this.
 
 Defining custom function types is possible, for more information on that refer to the [Defining custom function types](#defining-custom-function-types) section.
