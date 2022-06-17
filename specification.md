@@ -984,8 +984,6 @@ would produce state data:
 
 Merging string types should be done by overwriting the data from events data/action results into the merging element of the state data.
 
-Merging number types should be done by overwriting the data from events data/action results into the merging element of the state data.
-
 ### Workflow Functions
 
 Workflow [functions](#Function-Definition) are reusable definitions for service invocations and/or expression evaluation.
