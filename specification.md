@@ -2279,7 +2279,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | --- | --- | --- | --- |
 | name | Unique State name | string | yes |
 | type | State type | string | yes |
-| actionMode | Should actions be performed sequentially or in parallel | string | no |
+| actionMode | Should actions be performed sequentially or in parallel | enum | no |
 | [actions](#Action-Definition) | Actions to be performed | array | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
@@ -2851,7 +2851,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
 | iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | no |
 | batchSize | Specifies how many iterations may run in parallel at the same time. Used if `mode` property is set to `parallel` (default). If not specified, its value should be the size of the `inputCollection` | string or number | no |
-| mode | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel` | string  | no |
+| mode | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel` | enum  | no |
 | [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
@@ -3599,7 +3599,7 @@ The `contextAttributeValue` property defines the value of the defined CloudEvent
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
-| actionMode | Specifies how actions are to be performed (in sequence or in parallel). Default is "sequential" | string | no |
+| actionMode | Specifies how actions are to be performed (in sequence or in parallel). Default is `sequential` | enum | no |
 | [actions](#Action-Definition) | Actions to be performed | array | no |
 | [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 
@@ -3705,8 +3705,8 @@ This is visualized in the diagram below:
 | [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
-| nonRetryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
-| retryableErrors | List of references to defined [workflow errors](#Defining Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
+| nonRetryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
+| retryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 | sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
 | [condition](#Workflow-Expressions) | Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded | boolean | no |
@@ -3830,7 +3830,7 @@ it with its `object` type which has the following properties:
 | refName | Name of the referenced [function](#Function-Definition) | string | yes |
 | arguments | Arguments (inputs) to be passed to the referenced function | object | yes if function type is `graphql`, otherwise no |
 | selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes if function type is `graphql`, otherwise no |
-| invoke | Specifies if the function should be invoked sync or async. Default is sync | string | no |
+| invoke | Specifies if the function should be invoked `sync` or `async`. Default is `sync` | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3905,7 +3905,7 @@ Allows defining invocation of a function via event.
 | consumeEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
 | data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
-| invoke | Specifies if the function should be invoked sync or async. Default is sync | string | no |
+| invoke | Specifies if the function should be invoked sync or async. Default is sync | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3984,8 +3984,8 @@ If you need to define the `version` properties, you can use its `object` type:
 | --- | --- | --- | --- |
 | workflowId | Sub-workflow unique id | string | yes |
 | version | Sub-workflow version | string | no |
-| invoke | Specifies if the subflow should be invoked sync or async. Default is sync | string | no |
-| onParentComplete | If invoke is 'async', specifies how subflow execution should behave when parent workflow completes. Default is 'terminate' | string | no |
+| invoke | Specifies if the subflow should be invoked `sync` or `async`. Default is `sync` | enum | no |
+| onParentComplete | If `invoke` is `async`, specifies if subflow execution should `terminate` or `continue` when parent workflow completes. Default is `terminate` | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
