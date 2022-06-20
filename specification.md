@@ -2275,20 +2275,20 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ##### Operation State
 
-| Parameter                                     | Description                                                                         | Type    | Required                    |
-|-----------------------------------------------|-------------------------------------------------------------------------------------|---------|-----------------------------|
-| name                                          | Unique State name                                                                   | string  | yes                         |
-| type                                          | State type                                                                          | string  | yes                         |
-| actionMode                                    | Should actions be performed sequentially or in parallel                             | enum    | no                          |
-| [actions](#Action-Definition)                 | Actions to be performed                                                             | array   | yes                         |
-| [timeouts](#Workflow-Timeouts)                | State specific timeout settings                                                     | object  | no                          |
-| [stateDataFilter](#State-data-filters)        | State data filter                                                                   | object  | no                          |
-| [onErrors](#Error-Definition)                 | States error handling and retries definitions                                       | array   | no                          |
-| [transition](#Transitions)                    | Next transition of the workflow after all the actions have been performed           | object  | yes (if end is not defined) |
-| [compensatedBy](#Workflow-Compensation)       | Unique name of a workflow state which is responsible for compensation of this state | String  | no                          |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false"         | boolean | no                          |
-| [metadata](#Workflow-Metadata)                | Metadata information                                                                | object  | no                          |
-| [end](#End-Definition)                        | Is this state an end state                                                          | object  | no                          |
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Unique State name | string | yes |
+| type | State type | string | yes |
+| actionMode | Should actions be performed sequentially or in parallel | enum | no |
+| [actions](#Action-Definition) | Actions to be performed | array | yes |
+| [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter | object | no |
+| [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
+| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes (if end is not defined) |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
+| [end](#End-Definition) | Is this state an end state | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2843,24 +2843,24 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ##### ForEach State
 
-| Parameter                                     | Description                                                                                                                                                                                         | Type             | Required                           |
-|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|------------------------------------|
-| name                                          | Unique State name                                                                                                                                                                                   | string           | yes                                |
-| type                                          | State type                                                                                                                                                                                          | string           | yes                                |
-| inputCollection                               | Workflow expression selecting an array element of the states data                                                                                                                                   | string           | yes                                |
-| outputCollection                              | Workflow expression specifying an array element of the states data to add the results of each iteration                                                                                             | string           | no                                 |
-| iterationParam                                | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array                   | string           | no                                 |
-| batchSize                                     | Specifies how many iterations may run in parallel at the same time. Used if `mode` property is set to `parallel` (default). If not specified, its value should be the size of the `inputCollection` | string or number | no                                 |
-| mode                                          | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel`                                                                                                   | enum             | no                                 |
-| [actions](#Action-Definition)                 | Actions to be executed for each of the elements of inputCollection                                                                                                                                  | array            | yes                                |
-| [timeouts](#Workflow-Timeouts)                | State specific timeout settings                                                                                                                                                                     | object           | no                                 |
-| [stateDataFilter](#State-data-filters)        | State data filter definition                                                                                                                                                                        | object           | no                                 |
-| [onErrors](#Error-Definition)                 | States error handling and retries definitions                                                                                                                                                       | array            | no                                 |
-| [transition](#Transitions)                    | Next transition of the workflow after state has completed                                                                                                                                           | object           | yes if "end" is not defined        |
-| [compensatedBy](#Workflow-Compensation)       | Unique name of a workflow state which is responsible for compensation of this state                                                                                                                 | String           | no                                 |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false"                                                                                                                         | boolean          | no                                 |
-| [metadata](#Workflow-Metadata)                | Metadata information                                                                                                                                                                                | object           | no                                 |
-| [end](#End-Definition)                        | Is this state an end state                                                                                                                                                                          | object           | yes if "transition" is not defined |
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Unique State name | string | yes |
+| type | State type | string | yes |
+| inputCollection | Workflow expression selecting an array element of the states data | string | yes |
+| outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
+| iterationParam | Name of the iteration parameter that can be referenced in actions/workflow. For each parallel iteration, this param should contain an unique element of the inputCollection array | string | no |
+| batchSize | Specifies how many iterations may run in parallel at the same time. Used if `mode` property is set to `parallel` (default). If not specified, its value should be the size of the `inputCollection` | string or number | no |
+| mode | Specifies how iterations are to be performed (sequentially or in parallel). Default is `parallel` | enum  | no |
+| [actions](#Action-Definition) | Actions to be executed for each of the elements of inputCollection | array | yes |
+| [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
+| [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
+| [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
+| [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes if "end" is not defined |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | String | no |
+| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
+| [metadata](#Workflow-Metadata) | Metadata information| object | no |
+| [end](#End-Definition) | Is this state an end state | object | yes if "transition" is not defined |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3596,12 +3596,12 @@ The `contextAttributeValue` property defines the value of the defined CloudEvent
 
 ##### OnEvents Definition
 
-| Parameter                              | Description                                                                                     | Type   | Required |
-|----------------------------------------|-------------------------------------------------------------------------------------------------|--------|----------|
-| eventRefs                              | References one or more unique event names in the defined workflow [events](#Event-Definition)   | array  | yes      |
-| actionMode                             | Specifies how actions are to be performed (in sequence or in parallel). Default is `sequential` | enum   | no       |
-| [actions](#Action-Definition)          | Actions to be performed                                                                         | array  | no       |
-| [eventDataFilter](#Event-data-filters) | Event data filter definition                                                                    | object | no       |
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| eventRefs | References one or more unique event names in the defined workflow [events](#Event-Definition) | array | yes |
+| actionMode | Specifies how actions are to be performed (in sequence or in parallel). Default is `sequential` | enum | no |
+| [actions](#Action-Definition) | Actions to be performed | array | no |
+| [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3698,18 +3698,18 @@ This is visualized in the diagram below:
 
 ##### Action Definition
 
-| Parameter                                | Description                                                                                                                                                 | Type             | Required                                            |
-|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|-----------------------------------------------------|
-| name                                     | Unique Action name                                                                                                                                          | string           | no                                                  |
-| [functionRef](#FunctionRef-Definition)   | References a reusable function definition                                                                                                                   | object           | yes if `eventRef` & `subFlowRef` are not defined    |
-| [eventRef](#EventRef-Definition)         | References a `produce` and `consume` reusable event definitions                                                                                             | object           | yes if `functionRef` & `subFlowRef` are not defined |
-| [subFlowRef](#SubFlowRef-Definition)     | References a workflow to be invoked                                                                                                                         | object or string | yes if `eventRef` & `functionRef` are not defined   |
-| [retryRef](#retry-definition)            | References a defined workflow retry definition. If not defined uses the default runtime retry definition                                                    | string           | no                                                  |
-| nonRetryableErrors                       | List of references to defined [workflow errors](#Defining-Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array            | no                                                  |
-| retryableErrors                          | List of references to defined [workflow errors](#Defining-Errors) for which the action should be retried. Used only when `autoRetries` is set to `false`    | array            | no                                                  |
-| [actionDataFilter](#Action-data-filters) | Action data filter definition                                                                                                                               | object           | no                                                  |
-| sleep                                    | Defines time periods workflow execution should sleep before / after function execution                                                                      | object           | no                                                  |
-| [condition](#Workflow-Expressions)       | Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded                                              | boolean          | no                                                  |
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Unique Action name | string | no |
+| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
+| [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
+| [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
+| [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
+| nonRetryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
+| retryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
+| [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
+| sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
+| [condition](#Workflow-Expressions) | Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded | boolean | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3825,12 +3825,12 @@ Note that if used with `string` type, the invocation of the function is synchron
 If you need to define parameters in your `functionRef` definition, you can define
 it with its `object` type which has the following properties:
 
-| Parameter    | Description                                                                                                                                  | Type   | Required                                        |
-|--------------|----------------------------------------------------------------------------------------------------------------------------------------------|--------|-------------------------------------------------|
-| refName      | Name of the referenced [function](#Function-Definition)                                                                                      | string | yes                                             |
-| arguments    | Arguments (inputs) to be passed to the referenced function                                                                                   | object | yes if function type is `graphql`, otherwise no |
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| refName | Name of the referenced [function](#Function-Definition) | string | yes |
+| arguments | Arguments (inputs) to be passed to the referenced function | object | yes if function type is `graphql`, otherwise no |
 | selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes if function type is `graphql`, otherwise no |
-| invoke       | Specifies if the function should be invoked `sync` or `async`. Default is `sync`                                                             | enum   | no                                              |
+| invoke | Specifies if the function should be invoked `sync` or `async`. Default is `sync` | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3898,14 +3898,14 @@ onErrors definition. Note that errors raised during functions that are invoked a
 
 Allows defining invocation of a function via event. 
 
-| Parameter                            | Description                                                                                                                                                                                                                                                       | Type             | Required |
-|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------|
-| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition                                                                                                                                                                                                     | string           | yes      |
-| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition                                                                                                                                                                                                     | string           | no       |
-| consumeEventTimeout                  | Maximum amount of time (ISO 8601 format) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition)                                                                                                    | string           | no       |
-| data                                 | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no       |
-| contextAttributes                    | Add additional event extension context attributes to the trigger/produced event                                                                                                                                                                                   | object           | no       |
-| invoke                               | Specifies if the function should be invoked `sync` or `async`. Default is `sync`                                                                                                                                                                                  | enum             | no       |
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
+| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | no |
+| consumeEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
+| contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
+| invoke | Specifies if the function should be invoked sync or async. Default is sync | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3980,12 +3980,12 @@ property and not its `version` property.
 
 If you need to define the `version` properties, you can use its `object` type:
 
-| Parameter        | Description                                                                                                                                    | Type   | Required |
-|------------------|------------------------------------------------------------------------------------------------------------------------------------------------|--------|----------|
-| workflowId       | Sub-workflow unique id                                                                                                                         | string | yes      |
-| version          | Sub-workflow version                                                                                                                           | string | no       |
-| invoke           | Specifies if the subflow should be invoked `sync` or `async`. Default is `sync`                                                                | enum   | no       |
-| onParentComplete | If `invoke` is `async`, specifies if subflow execution should `terminate` or `continue` when parent workflow completes. Default is `terminate` | enum   | no       |
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| workflowId | Sub-workflow unique id | string | yes |
+| version | Sub-workflow version | string | no |
+| invoke | Specifies if the subflow should be invoked `sync` or `async`. Default is `sync` | enum | no |
+| onParentComplete | If `invoke` is `async`, specifies if subflow execution should `terminate` or `continue` when parent workflow completes. Default is `terminate` | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
