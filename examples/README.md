@@ -815,7 +815,9 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
           "transition": "HandleRejectedVisa"
         }
      ],
-     "eventTimeout": "PT1H",
+     "timeouts": {
+       "eventTimeout": "PT1H"
+     },
      "defaultCondition": {
         "transition": "HandleNoVisaDecision"
      }
@@ -879,7 +881,8 @@ states:
     transition: HandleApprovedVisa
   - eventRef: visaRejectedEvent
     transition: HandleRejectedVisa
-  eventTimeout: PT1H
+  timeouts:
+    eventTimeout: PT1H
   defaultCondition:
     transition: HandleNoVisaDecision
 - name: HandleApprovedVisa
