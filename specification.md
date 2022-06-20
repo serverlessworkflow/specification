@@ -1986,8 +1986,7 @@ If we have the following function definition:
 ```
 
 The `authRef` property is used to reference an authentication definition in
-the `auth` property and should be applied to access the `https://secure.resources.com/myapi.json`
-OpenApi definition file.
+the `auth` property and should be applied when invoking the `helloWorld` function. An [AuthRef](#AuthRef-Definition) object can alternatively be used to configure the authentication definition to use when accessing the function's resource and/or when invoking the function.
 
 The `functions` property can be either an in-line [function](#Function-Definition) definition array, or an URI reference to
 a resource containing an array of [functions](#Function-Definition) definition.
@@ -3248,7 +3247,7 @@ Depending on the function `type`, the `operation` property can be:
 Defining custom function types is possible, for more information on that refer to the [Defining custom function types](#defining-custom-function-types) section.
 
 The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
-It is used to provide authentication info to access the resource defined in the `operation` property.
+It is used to provide authentication info to access the resource defined in the `operation` property and/or to invoke the function.
 
 The [`metadata`](#Workflow-Metadata) property allows users to define custom information to function definitions.
 This allows you for example to define functions that describe of a command executions on a Docker image:
@@ -3265,6 +3264,50 @@ Note that using metadata for cases such as above heavily reduces the portability
 
 Function definitions themselves do not define data input parameters. Parameters can be
 defined via the `parameters` property in [function definitions](#FunctionRef-Definition) inside [actions](#Action-Definition).
+
+###### AuthRef Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| resource | References an auth definition to be used to access the resource defined in the operation parameter | string | yes |
+| invocation | References an auth definition to be used to invoke the operation | string | no |
+
+The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
+It can be a string, in which case the referenced [auth definition](#Auth-Definition) is used solely for the function's invocation, or an object, in which case it is possible to specify an [auth definition](#Auth-Definition) to use for the function's resource retrieval (as defined by the `operation` property) and another for its invocation.
+
+Example of a function definition configured to use an [auth definition](#Auth-Definition) called "My Basic Auth" upon invocation:
+
+```yaml
+functions:
+- name: SecuredFunctionInvocation
+  operation: https://test.com/swagger.json#HelloWorld
+  authRef: My Basic Auth
+```
+
+Example of a function definition configured to use an [auth definition](#Auth-Definition) called "My Basic Auth" to retrieve the resource defined by the `operation` property, and an [auth definition](#Auth-Definition) called "My OIDC Auth" upon invocation:
+
+```yaml
+functions:
+- name: SecuredFunctionInvocation
+  operation: https://test.com/swagger.json#HelloWorld
+  authRef:
+    resource: My Basic Auth
+    invocation: My OIDC Auth
+```
+
+Note that if multiple functions share the same `operation` value, and if one of them defines an [auth definition](#Auth-Definition) for resource access, then it should always be used to access said resource.
+In other words, when retrieving the resource of the function "MySecuredFunction2" defined in the following example, the "My Api Key Auth" [auth definition](#Auth-Definition) should be used, because the "MySecuredFunction1" has defined it for resource access. 
+This is done to avoid unnecessary repetitions of [auth definition](#Auth-Definition) configuration when using the same resource for multiple defined functions.
+
+```yaml
+functions:
+  - name: MySecuredFunction1
+    operation: https://secure.resources.com/myapi.json#helloWorld
+    authRef:
+      resource: My ApiKey Auth 
+  - name: MySecuredFunction2
+    operation: https://secure.resources.com/myapi.json#holaMundo
+```
 
 ##### Event Definition
 
@@ -3483,10 +3526,8 @@ If `false`, both Event payload and context attributes should be accessible.
 
 ##### Auth Definition
 
-Auth definitions can be used to define authentication information that should be applied
-to resources defined in the operation property of [function definitions](#Function-Definition).
-It is not used as authentication information for the function invocation, but just to access
-the resource containing the function invocation information.
+Auth definitions can be used to define authentication information that should be applied to [function definitions](#Function-Definition).
+It can be used for both the retrieval of the function's resource (as defined by the `operation` property) and for the function's invocation.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
