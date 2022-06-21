@@ -3272,8 +3272,11 @@ defined via the `parameters` property in [function definitions](#FunctionRef-Def
 | resource | References an auth definition to be used to access the resource defined in the operation parameter | string | yes |
 | invocation | References an auth definition to be used to invoke the operation | string | no |
 
-The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition).
-It can be a string, in which case the referenced [auth definition](#Auth-Definition) is used solely for the function's invocation, or an object, in which case it is possible to specify an [auth definition](#Auth-Definition) to use for the function's resource retrieval (as defined by the `operation` property) and another for its invocation.
+The `authRef` property references a name of a defined workflow [auth definition](#Auth-Definition). It can be a string or an object.
+
+If it's a string, the referenced [auth definition](#Auth-Definition) is used solely for the function's invocation.
+
+If it's an object, it is possible to specify an [auth definition](#Auth-Definition) to use for the function's resource retrieval (as defined by the `operation` property) and another for its invocation.
 
 Example of a function definition configured to use an [auth definition](#Auth-Definition) called "My Basic Auth" upon invocation:
 
@@ -3295,7 +3298,7 @@ functions:
     invocation: My OIDC Auth
 ```
 
-Note that if multiple functions share the same `operation` value, and if one of them defines an [auth definition](#Auth-Definition) for resource access, then it should always be used to access said resource.
+Note that if multiple functions share the same `operation` path (*which is the first component of the operation value, located before the first '#' character*), and if one of them defines an [auth definition](#Auth-Definition) for resource access, then it should always be used to access said resource.
 In other words, when retrieving the resource of the function "MySecuredFunction2" defined in the following example, the "My Api Key Auth" [auth definition](#Auth-Definition) should be used, because the "MySecuredFunction1" has defined it for resource access. 
 This is done to avoid unnecessary repetitions of [auth definition](#Auth-Definition) configuration when using the same resource for multiple defined functions.
 
