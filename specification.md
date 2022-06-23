@@ -3312,6 +3312,8 @@ functions:
     operation: https://secure.resources.com/myapi.json#holaMundo
 ```
 
+It's worth noting that if an [auth definition](#Auth-Definition) has been defined for an OpenAPI function which's resource declare an authentication mechanism, the later should be used instead, thus ignoring entirely the [auth definition](#Auth-Definition).
+
 ##### Event Definition
 
 | Parameter | Description | Type | Required |
