@@ -660,12 +660,12 @@ a workflow with a single event state and show how data filters can be combined.
                         "functionRef": {
                             "refName": "greetingFunction",
                             "arguments": {
-                                "greeting": "${ .spanish } ",
+                                "greeting": "${ .hello.spanish } ",
                                 "customerName": "${ .customerInfo.name } "
                             }
                         },
                         "actionDataFilter": {
-                            "fromStateData": "${ .hello }",
+                            "fromStateData": "${ { hello, customerInfo } }",
                             "results": "${ .greetingMessageResult }",
                             "toStateData": "${ .finalCustomerGreeting }"
                         }
@@ -767,7 +767,7 @@ At this point our state data contains:
 
 ```json
 {
-  "hello": {
+    "hello": {
       "english": "Hello",
       "spanish": "Hola",
       "german": "Hallo",
@@ -790,7 +790,7 @@ At this point our state data contains:
 **(3) Event state performs its actions**:
 Before the first action is executed, its actionDataFilter is invoked. Its "fromStateData" expression filters
 the current state data to select from its data that should be available to action arguments. In this example
-it selects the "hello" property from the current state data.
+it selects the "hello" and "customerInfo" properties from the current state data.
 At this point the action is executed.
 We assume that for this example "greetingFunction" returns:
 
@@ -899,7 +899,7 @@ After merging the state data should be:
 }
 ```
 
-Merging array types should be done by concatenating them into a larger array including unique elements of both arrays.
+Merging array types should be done by concatenating them into a larger array including unique elements of both arrays.  
 To give an example, merging:
 
 ```json
