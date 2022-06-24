@@ -54,9 +54,32 @@
           "default": "rest"
         },
         "authRef": {
-          "type": "string",
-          "description": "References an auth definition name to be used to access to resource defined in the operation parameter",
-          "minLength": 1
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "References the auth definition to be used to invoke the operation",
+              "minLength": 1
+            },
+            {
+              "type": "object",
+              "description": "Configures both the auth definition used to retrieve the operation's resource and the auth definition used to invoke said operation",
+              "properties":{
+                "resource":{
+                  "type": "string",
+                  "description": "References an auth definition to be used to access the resource defined in the operation parameter",
+                  "minLength": 1
+                },
+                "invocation":{
+                  "type": "string",
+                  "description": "References an auth definition to be used to invoke the operation"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "resource"
+              ]
+            }
+          ]
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
