@@ -29,8 +29,7 @@ Cloud Native Sandbox level project on July 14, 2020.
 - [Community](#Community)
   - [Communication](#Communication)
   - [Code of Conduct](#Code-of-Conduct)
-  - [Meetings](#Meetings)
-  - [Meeting Minutes](#Meeting-Minutes)
+  - [Weekly Meetings](#Weekly-Meetings)
 - [Repository Structure](#Repository-Structure)
 - [Support](#Support)
 
@@ -121,39 +120,16 @@ religion, or nationality.
 
 See our full project Code of Conduct information [here](code-of-conduct.md).
 
-### Meetings
+### Weekly Meetings
 
-* [CNCF public events calendar](https://www.cncf.io/calendar/)
+The Serverless Workflow team meets weekly, every Monday at 11AM ET (USA Eastern Time).
 
-The Serverless Workflow team meets weekly, every Wednesday at 11AM ET (USA Eastern Time).
-
-Join from PC, Mac, Linux, iOS or Android via [zoom](https://zoom.us/my/cncfserverlesswg?pwd=YjNqYzhOdjRRd01YWFkzS1lHbDZqUT09)
-
-Or iPhone one-tap :
-
-    US: +16465588656,,3361029682#  or +16699006833,,3361029682#
-
-Or Telephone:
-
-    Dial:
-        US: +1 646 558 8656 (US Toll) or +1 669 900 6833 (US Toll)
-        or +1 855 880 1246 (Toll Free) or +1 877 369 0926 (Toll Free)
-
-Meeting ID: 336 102 9682
-
-International numbers available:
-https://zoom.us/zoomconference?m=QpOqQYfTzY_Gbj9_8jPtsplp1pnVUKDr
-
-NOTE: Please use \*6 to mute/un-mute your phone during the call.
+To register for meetings please visit our [website](https://serverlessworkflow.io/) and click on the
+"Register for Weekly Project Meetings" button.
+You can register for individual meetings or for the entire series.
 
 World Time Zone Converter:
 http://www.thetimezoneconverter.com/?t=9:00%20am&tz=San%20Francisco&
-
-### Meeting Minutes
-
-You can find meeting minutes [here](meetingminutes).
-Note that unfortunately we have lost our Google doc which contained meeting info for our prior meetings.
-We will move all meeting info to our github repo so that this never happens again.
 
 ## Repository Structure
 
