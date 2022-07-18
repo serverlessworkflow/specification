@@ -128,6 +128,8 @@ To register for meetings please visit our [website](https://serverlessworkflow.i
 "Register for Weekly Project Meetings" button.
 You can register for individual meetings or for the entire series.
 
+The meeting minutes can be accessed in [this document](https://docs.google.com/document/d/1SY9_n7vcRabmP8xELBP8lmwz14AscPzJq6AL86dbcCY).
+
 World Time Zone Converter:
 http://www.thetimezoneconverter.com/?t=9:00%20am&tz=San%20Francisco&
 
