@@ -2134,9 +2134,9 @@ Serverless Workflow defines the following Workflow States:
 | [onEvents](#OnEvents-Definition) | Define the events to be consumed and optional actions to be performed | array | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition| object | no |
-| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes if "end" is not defined |
+| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | string or object | yes (if `end` is not defined) |
 | [onErrors](#Error-Definition) | States error handling definitions | array | no |
-| [end](#End-Definition) | Is this state an end state | object | yes, if "transition" is not defined |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -2283,11 +2283,11 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes (if end is not defined) |
+| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | Is this state an end state | object | no |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2452,8 +2452,8 @@ The `timeouts` property can be used to define state specific timeout settings. S
 | name | Unique State name | string | yes |
 | type | State type | string | yes |
 | duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | string | yes |
-| [transition](#Transitions) | Next transition of the workflow after the sleep | object | yes (if end is not defined) |
-| [end](#End-Definition) |If this state an end state | object | no |
+| [transition](#Transitions) | Next transition of the workflow after the sleep | string or object | yes (if `end` is not defined) |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2508,11 +2508,11 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes if "end" is not defined |
+| [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | If this state and end state | object | yes if "transition" is not defined |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2618,11 +2618,11 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | type | State type | string | yes |
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filters) | State data filter | object | no |
-| [transition](#Transitions) | Next transition of the workflow after injection has completed | object | yes if "end" is set to false |
+| [transition](#Transitions) | Next transition of the workflow after injection has completed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | If this state and end state | object | yes if "transition" is not defined |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -2855,11 +2855,11 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes if "end" is not defined |
+| [transition](#Transitions) | Next transition of the workflow after state has completed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
-| [end](#End-Definition) | Is this state an end state | object | yes if "transition" is not defined |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3095,8 +3095,8 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [eventDataFilter](#Event-data-filters) | Callback event data filter definition | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes if "end" is not defined |
-| [end](#End-Definition) | Is this state an end state | object | yes if "transition" is not defined |
+| [transition](#Transitions) | Next transition of the workflow after callback event has been received | string or object | yes (if `end` is not defined) |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -4093,7 +4093,8 @@ If it is set to `continue`, if the parent workflow completes, the subflow execut
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | errorRef or errorRefs | Reference one unique workflow error definition, or multiple unique workflow error definitions | string (errorRef) or array (errorRefs) | yes |
-| [transition](#Transitions) or [end](#End-Definition) | Transition to next state to handle the error, or end workflow execution if this error is encountered | object | yes |
+| [transition](#Transitions) | Transition to next state to handle the error | string or object | yes (if `end` is not defined) |
+| [end](#End-Definition) | End workflow execution if this error is encountered | boolean or object | yes (if `transition` is not defined) |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4351,7 +4352,8 @@ Transitions allow you to move from one state (control-logic block) to another. F
 | --- | --- | --- | --- |
 | name | Data condition name | string | no |
 | [condition](#Workflow-Expressions) | Workflow expression evaluated against state data. Must evaluate to true or false | string | yes |
-| [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
+| [transition](#Transitions) | Transition to another state if condition is true | string or object | yes (if `end` is not defined) |
+| [end](#End-Definition) | End workflow execution if condition is true | boolean or object | yes (if `transition` is not defined) |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -4403,7 +4405,8 @@ definitions are mutually exclusive, meaning that you can specify either one or t
 | --- | --- | --- | --- |
 | name | Event condition name | string | no |
 | eventRef | References an unique event name in the defined workflow events | string | yes |
-| [transition](#Transitions) or [end](#End-Definition) | Defines what to do if condition is true. Transition to another state, or end workflow | object | yes |
+| [transition](#Transitions) | Transition to another state if condition is true | string or object | yes (if `end` is not defined) |
+| [end](#End-Definition) | End workflow execution if condition is true | boolean or object | yes (if `transition` is not defined) |
 | [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
