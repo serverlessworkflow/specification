@@ -23,9 +23,10 @@
     + [Using multiple data filters](#using-multiple-data-filters)
     + [Data Merging](#data-merging)
   * [Workflow Functions](#workflow-functions)
-    + [Using Functions for RESTful Service Invocations](#using-functions-for-restful-service-invocations)
+    + [Using Functions for OpenAPI RESTFul Service Invocations](#using-functions-for-openapi-restful-service-invocations)
+    + [Using Functions for HTTP Service Invocations](#using-functions-for-http-service-invocations)
     + [Using Functions for Async API Service Invocations](#using-functions-for-async-api-service-invocations)
-    + [Using Functions for RPC Service Invocations](#using-functions-for-rpc-service-invocations)
+    + [Using Functions for gRPC Service Invocations](#using-functions-for-grpc-service-invocations)
     + [Using Functions for GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
       - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
       - [Invoking a GraphQL `Mutation`](#invoking-a-graphql-mutation)
@@ -991,8 +992,9 @@ They can be referenced by their domain-specific names inside workflow [states](#
 
 Reference the following sections to learn more about workflow functions:
 
-* [Using functions for RESTful service invocations](#Using-Functions-for-RESTful-Service-Invocations)
-* [Using Functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
+* [Using functions for OpenAPI RESTful service invocations](#using-functions-for-openapi-restful-service-invocations)
++ [Using functions for HTTP Service Invocations](#using-functions-for-http-service-invocations)
+* [Using functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
 * [Using Functions for OData Service Invocations](#Using-Functions-for-OData-Service-Invocations)
@@ -1002,7 +1004,7 @@ Reference the following sections to learn more about workflow functions:
 We can define if functions are invoked sync or async. Reference
 the [functionRef](#FunctionRef-Definition) to learn more on how to do this.
 
-#### Using Functions for RESTful Service Invocations
+#### Using Functions for OpenAPI RESTful Service Invocations
 
 [Functions](#Function-Definition) can be used to describe services and their operations that need to be invoked during
 workflow execution. They can be referenced by states [action definitions](#Action-Definition) to clearly
@@ -1058,6 +1060,162 @@ For example:
 Note that the referenced function definition type in this case must be `rest` (default type).
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
+#### Using functions for HTTP Service Invocations
+
+The specification supports describing HTTP invocations via a simplified interface in the [functions definition](#Function-Definition).
+
+Here is an example function definition for HTTP requests with method `GET` and request target corresponding with [URI Template](https://www.rfc-editor.org/rfc/rfc6570.html) `/users/{id}`:
+
+```json
+{
+  "functions":[
+    {
+      "name":"queryUserById",
+      "operation":"GET#/users/{id}",
+      "type":"http"
+    }
+  ]
+}
+```
+
+Note that the [Function Definition](#Function-Definition)'s `operation` property must have the following format:
+
+```text
+<HTTP_method>#<request_target>
+```
+
+* The HTTP method used by the HTTP invocation. Can be any [valid HTTP method](https://www.rfc-editor.org/rfc/rfc9110.html#name-method-definitions) such as `GET`, `POST`, `PUT`, etc.
+* The endpoint **location path** or the service full URL. Runtimes implementations are **discouraged** to expect the full URL in this field since this is a matter of infrastructure configuration.
+
+The list below describes the HTTP function parameters in the `operation` attribute:
+
+* Path parameters must be enclosed with braces (`{}`) as defined by [URI Templates](https://www.rfc-editor.org/rfc/rfc6570.html). The parameter name can be later referenced by the workflow states. For example: `/user/{id}`
+* [Query parameters](https://www.rfc-editor.org/rfc/rfc9110.html#section-4.2.2) must be enclosed with braces (`{}`) as defined by [URI Templates](https://www.rfc-editor.org/rfc/rfc6570.html). The parameter name can be later referenced by the workflow states. For example: `/user?status={status}`.
+
+<!-- TODO: refine how we are going to describe http headers parameters -->
+Additional HTTP header fields can be passed via the `metadata` function definition. For example:
+
+```json
+{
+  "functions":[
+    {
+      "name":"queryUserById",
+      "operation":"GET#/users/{id}",
+      "type":"http",
+      "metadata":{
+        "x-custom-header":"the-value"
+      }
+    }
+  ]
+}
+```
+
+> Since the data manipulated in the Serverless Workflow specification is primarly JSON, runtimes are encouraged to support at least `Content-Type: application/json` header field for HTTP requests.
+
+Avoid passing sensitive information in headers such as authentication tokens. See the [auth definition](#auth-definition) for more information.
+
+HTTP request content doesn't need to be described in the function definition. **All the data within the state** should be passed to the HTTP request. See the [action data filter](#action-data-filters) if you need to limit the amount of data passed to a given action.
+
+The function can be referenced during workflow execution when the invocation of the HTTP service is desired. For example:
+
+```json
+{
+  "states":[
+    {
+      "name":"QueryUserInfo",
+      "type":"operation",
+      "actions":[
+        {
+          "functionRef":"queryUserById",
+          "arguments":{
+            "id":"${ .user.id }"
+          }
+        }
+      ],
+      "end":true
+    }
+  ]
+}
+```
+
+Example of the `POST` request sending the state data as part of the body:
+
+```json
+{
+  "functions":[
+    {
+      "name":"createUser",
+      "operation":"POST#/users",
+      "type":"http"
+    }
+  ]
+}
+```
+
+Then you can reference the `createUser` function and filter the input data to invoke it.
+
+Input data example:
+
+```json
+{
+  "order":{
+    "id":"1234N",
+    "products":[
+      {
+        "name":"Product 1"
+      }
+    ]
+  },
+  "user":{
+    "name":"John Doe",
+    "email":"john@doe.com"
+  }
+}
+```
+
+Function invocation example:
+
+```json
+{
+  "states":[
+    {
+      "name":"CreateNewUser",
+      "type":"operation",
+      "actions":[
+        {
+          "functionRef":"createUser",
+          "actionDataFilter":{
+            "fromStateData":"${ .user }",
+            "toStateData":"${ .user.id }"
+          }
+        }
+      ],
+      "end":true
+    }
+  ]
+}
+```
+
+In this case, only the contents of the `user` attribute will be passed to the function. The user ID returned by the HTTP request body will then be added to the state data:
+
+```json
+{
+  "order":{
+    "id":"1234N",
+    "products":[
+      {
+        "name":"Product 1"
+      }
+    ]
+  },
+  "user":{
+    "id":"5678U",
+    "name":"John Doe",
+    "email":"john@doe.com"
+  }
+}
+```
 
 #### Using Functions for Async API Service Invocations
 
@@ -1148,7 +1306,7 @@ Our defined function definition can then we referenced in a workflow [action](#A
 }
 ```
 
-#### Using Functions for RPC Service Invocations
+#### Using Functions for gRPC Service Invocations
 
 Similar to defining invocations of operations on RESTful services, you can also use the workflow
 [functions definitions](#Function-Definition) that follow the remote procedure call (RPC) protocol.
@@ -1157,7 +1315,7 @@ a widely used RPC system.
 gRPC uses [Protocol Buffers](https://developers.google.com/protocol-buffers/docs/overview) to define messages, services,
 and the methods on those services that can be invoked.
 
-Let's look at an example of invoking a service method using RPC. For this example let's say we have the following
+Let's look at an example of invoking a service method using gRPC. For this example let's say we have the following
 gRPC protocol buffer definition in a myuserservice.proto file:
 
 ```text
@@ -1409,7 +1567,7 @@ should follow the Serverless Workflow [OData Json schema](https://github.com/ser
 
 #### Using Functions for Expression Evaluation
 
-In addition to defining RESTful, AsyncAPI, RPC, GraphQL and OData services and their operations, workflow [functions definitions](#Function-Definition)
+In addition to defining RESTful, AsyncAPI, gRPC, GraphQL and OData services and their operations, workflow [functions definitions](#Function-Definition)
 can also be used to define expressions that should be evaluated during workflow execution.
 
 Defining expressions as part of function definitions has the benefit of being able to reference
@@ -3189,10 +3347,23 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | yes |
-| type | Defines the function type. Can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `rest` | enum | no |
+| operation | See the table "Function Operation description by type" below. | string | yes |
+| type | Defines the function type. Can be either `rest`, `http`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `rest` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
+
+Function Operation description by type:
+
+| Type | Operation Description |
+| ---- | --------- |
+| `rest` | <path_to_openapi_definition>#<operation_id> |
+| `http` | <HTTP_method>#<request_target> |
+| `asyncapi` | <path_to_asyncapi_definition>#<operation_id> |
+| `rpc` | <path_to_grpc_proto_file>#<service_name>#<service_method> |
+| `graphql` | <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name> |
+| `odata` | <URI_to_odata_service>#<Entity_Set_Name> |
+| `expression` | defines the workflow expression |
+| `custom` | see [Defining custom function types](#defining-custom-function-types)
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
