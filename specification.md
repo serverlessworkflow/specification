@@ -992,8 +992,8 @@ They can be referenced by their domain-specific names inside workflow [states](#
 
 Reference the following sections to learn more about workflow functions:
 
-* [Using functions for OpenAPI RESTful service invocations](#using-functions-for-openapi-restful-service-invocations)
-+ [Using functions for HTTP Service Invocations](#using-functions-for-http-service-invocations)
+* [Using functions for OpenAPI Service invocations](#using-functions-for-openapi-service-invocations)
++ [Using functions for RESTful Service Invocations](#using-functions-for-rest-service-invocations)
 * [Using functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
@@ -1004,7 +1004,7 @@ Reference the following sections to learn more about workflow functions:
 We can define if functions are invoked sync or async. Reference
 the [functionRef](#FunctionRef-Definition) to learn more on how to do this.
 
-#### Using Functions for OpenAPI RESTful Service Invocations
+#### Using Functions for OpenAPI Service Invocations
 
 [Functions](#Function-Definition) can be used to describe services and their operations that need to be invoked during
 workflow execution. They can be referenced by states [action definitions](#Action-Definition) to clearly
@@ -1057,67 +1057,41 @@ For example:
 }
 ```
 
-Note that the referenced function definition type in this case must be `rest` (default type).
+Note that the referenced function definition type in this case must be `openapi` (default type).
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
 
-#### Using functions for HTTP Service Invocations
+#### Using functions for RESTful Service Invocations
 
-The specification supports describing HTTP invocations via a simplified interface in the [functions definition](#Function-Definition).
+The specification also supports describing REST invocations in the [functions definition](#Function-Definition) using [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object).
 
-Here is an example function definition for HTTP requests with method `GET` and request target corresponding with [URI Template](https://www.rfc-editor.org/rfc/rfc6570.html) `/users/{id}`:
-
-```json
-{
-  "functions":[
-    {
-      "name":"queryUserById",
-      "operation":"GET#/users/{id}",
-      "type":"http"
-    }
-  ]
-}
-```
-
-Note that the [Function Definition](#Function-Definition)'s `operation` property must have the following format:
-
-```text
-<HTTP_method>#<request_target>
-```
-
-* The HTTP method used by the HTTP invocation. Can be any [valid HTTP method](https://www.rfc-editor.org/rfc/rfc9110.html#name-method-definitions) such as `GET`, `POST`, `PUT`, etc.
-* The endpoint **location path** or the service full URL. Runtimes implementations are **discouraged** to expect the full URL in this field since this is a matter of infrastructure configuration.
-
-The list below describes the HTTP function parameters in the `operation` attribute:
-
-* Path parameters must be enclosed with braces (`{}`) as defined by [URI Templates](https://www.rfc-editor.org/rfc/rfc6570.html). The parameter name can be later referenced by the workflow states. For example: `/user/{id}`
-* [Query parameters](https://www.rfc-editor.org/rfc/rfc9110.html#section-4.2.2) must be enclosed with braces (`{}`) as defined by [URI Templates](https://www.rfc-editor.org/rfc/rfc6570.html). The parameter name can be later referenced by the workflow states. For example: `/user?status={status}`.
-
-<!-- TODO: refine how we are going to describe http headers parameters -->
-Additional HTTP header fields can be passed via the `metadata` function definition. For example:
+Here is an example function definition for REST requests with method `GET` and request target corresponding with [URI Template](https://www.rfc-editor.org/rfc/rfc6570.html) `/users/{id}`:
 
 ```json
 {
   "functions":[
     {
       "name":"queryUserById",
-      "operation":"GET#/users/{id}",
-      "type":"http",
-      "metadata":{
-        "x-custom-header":"the-value"
-      }
+      "operation": {
+        "/users": {
+          "get": {
+            "parameters": [{
+              "name": "id",
+              "in": "path",
+              "required": true 
+            }]
+          }
+        }
+      },
+      "type":"rest"
     }
   ]
 }
 ```
 
-> Since the data manipulated in the Serverless Workflow specification is primarly JSON, runtimes are encouraged to support at least `Content-Type: application/json` header field for HTTP requests.
+Note that the [Function Definition](#Function-Definition)'s `operation` property must follow the OpenAPI Paths Object specification definition.
 
-Avoid passing sensitive information in headers such as authentication tokens. See the [auth definition](#auth-definition) for more information.
-
-HTTP request content doesn't need to be described in the function definition. **All the data within the state** should be passed to the HTTP request. See the [action data filter](#action-data-filters) if you need to limit the amount of data passed to a given action.
-
-The function can be referenced during workflow execution when the invocation of the HTTP service is desired. For example:
+The function can be referenced during workflow execution when the invocation of the REST service is desired. For example:
 
 ```json
 {
@@ -1145,17 +1119,43 @@ Example of the `POST` request sending the state data as part of the body:
 {
   "functions":[
     {
-      "name":"createUser",
-      "operation":"POST#/users",
-      "type":"http"
+      "name": "createUser",
+      "operation": {
+        "/users": {
+          "post": {
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"                     
+                      },
+                      "email": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["name", "email"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "type": "rest"
     }
   ]
 }
 ```
 
-Then you can reference the `createUser` function and filter the input data to invoke it.
+Note that the `requestBody` content schema is described inline rather than a reference to an external document.
 
-Input data example:
+You can reference the `createUser` function and filter the input data to invoke it, as shown in the example below:
 
 ```json
 {
@@ -1197,7 +1197,7 @@ Function invocation example:
 }
 ```
 
-In this case, only the contents of the `user` attribute will be passed to the function. The user ID returned by the HTTP request body will then be added to the state data:
+In this case, only the contents of the `user` attribute will be passed to the function. The user ID returned by the REST request body will then be added to the state data:
 
 ```json
 {
@@ -1216,6 +1216,8 @@ In this case, only the contents of the `user` attribute will be passed to the fu
   }
 }
 ```
+
+The specification does not support the [Security Requirement Object](https://spec.openapis.org/oas/v3.1.0#security-requirement-object). To define authentication for the REST operation, use the [Auth Definition](#Auth-Definition). If provided, this field is ignored.
 
 #### Using Functions for Async API Service Invocations
 
@@ -3347,8 +3349,8 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique function name | string | yes |
-| operation | See the table "Function Operation description by type" below. | string | yes |
-| type | Defines the function type. Can be either `rest`, `http`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `rest` | enum | no |
+| operation | See the table "Function Operation description by type" below. | string or object | yes |
+| type | Defines the function type. Can be either `rest`, `openapi`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `openapi` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
@@ -3356,8 +3358,8 @@ Function Operation description by type:
 
 | Type | Operation Description |
 | ---- | --------- |
-| `rest` | <path_to_openapi_definition>#<operation_id> |
-| `http` | <HTTP_method>#<request_target> |
+| `openapi` | <path_to_openapi_definition>#<operation_id> |
+| `rest` | [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object) definition  |
 | `asyncapi` | <path_to_asyncapi_definition>#<operation_id> |
 | `rpc` | <path_to_grpc_proto_file>#<service_name>#<service_method> |
 | `graphql` | <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name> |
@@ -3399,12 +3401,14 @@ operation: https://hellworldservice.api.com/api.json#helloWorld
 
 The `name` property defines an unique name of the function definition.
 
-The `type` property defines the function type. Its value can be either `rest` or `expression`. Default value is `rest`.
+The `type` property defines the function type. Its value can be either `rest`, `openapi` or `expression`. Default value is `openapi`.
 
 Depending on the function `type`, the `operation` property can be:
 
-* If `type` is `rest`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
+* If `type` is `openapi`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
   For example `https://petstore.swagger.io/v2/swagger.json#getPetById`.
+* If `type` is `rest`, an object definition of the [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object).
+  For example, see [Using Functions for RESTful Service Invocations](#using-functions-for-rest-service-invocations).
 * If `type` is `asyncapi`, a combination of the AsyncApi definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
   For example `file://streetlightsapi.yaml#onLightMeasured`.
 * If `type` is `rpc`, a combination of the gRPC proto document URI and the particular service name and service method name that needs to be invoked, separated by a '#'.

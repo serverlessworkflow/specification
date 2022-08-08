@@ -35,16 +35,15 @@
           "minLength": 1
         },
         "operation": {
-          "type": "string",
-          "description": "If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \\\"mutation\\\" or \\\"query\\\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. If type is `http`, <HTTP_method>#<request_target>",
-          "minLength": 1
+          "type": "object",
+          "$ref": "#/definitions/operation"
         },
         "type": {
           "type": "string",
-          "description": "Defines the function type. Is either `rest`, `http`,`asyncapi, `rpc`, `graphql`, `odata`, `expression`, or `custom`. Default is `rest`",
+          "description": "Defines the function type. Is either `rest`, `openapi`,`asyncapi, `rpc`, `graphql`, `odata`, `expression`, or `custom`. Default is `openapi`.",
           "enum": [
             "rest",
-            "http",
+            "openapi",
             "asyncapi",
             "rpc",
             "graphql",
@@ -52,7 +51,7 @@
             "expression",
             "custom"
           ],
-          "default": "rest"
+          "default": "openapi"
         },
         "authRef": {
           "oneOf": [
@@ -64,13 +63,13 @@
             {
               "type": "object",
               "description": "Configures both the auth definition used to retrieve the operation's resource and the auth definition used to invoke said operation",
-              "properties":{
-                "resource":{
+              "properties": {
+                "resource": {
                   "type": "string",
                   "description": "References an auth definition to be used to access the resource defined in the operation parameter",
                   "minLength": 1
                 },
-                "invocation":{
+                "invocation": {
                   "type": "string",
                   "description": "References an auth definition to be used to invoke the operation"
                 }
@@ -90,6 +89,25 @@
       "required": [
         "name",
         "operation"
+      ]
+    },
+    "operation": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "If type is `openapi`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \\\"mutation\\\" or \\\"query\\\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression.",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "description": "OpenAPI Path Object definition",
+          "$comment": "https://spec.openapis.org/oas/v3.1.0#paths-object",
+          "patternProperties": {
+            "^/": {
+              "type": "object"
+            }
+          }
+        }
       ]
     }
   }
