@@ -4564,7 +4564,7 @@ If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| stateName | Name of the starting workflow state | object | no |
+| stateName | Name of the starting workflow state | string | no |
 | [schedule](#Schedule-Definition) | Define the recurring time intervals or cron expressions at which workflow instances should be automatically started. | string or object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
