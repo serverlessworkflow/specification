@@ -3747,7 +3747,7 @@ This is visualized in the diagram below:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique Action name | string | no |
-| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object | yes if `eventRef` & `subFlowRef` are not defined |
+| [functionRef](#FunctionRef-Definition) | References a reusable function definition | object or string | yes if `eventRef` & `subFlowRef` are not defined |
 | [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
 | [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
