@@ -2136,7 +2136,7 @@ Serverless Workflow defines the following Workflow States:
 | [stateDataFilter](#State-data-filters) | State data filter definition| object | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes if "end" is not defined |
 | [onErrors](#Error-Definition) | States error handling definitions | array | no |
-| [end](#End-Definition) | Is this state an end state | object | yes, if "transition" is not defined |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -2283,7 +2283,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | object | yes (if end is not defined) |
+| [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2508,7 +2508,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | object | yes if "end" is not defined |
+| [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2618,7 +2618,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | type | State type | string | yes |
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filters) | State data filter | object | no |
-| [transition](#Transitions) | Next transition of the workflow after injection has completed | object | yes if "end" is set to false |
+| [transition](#Transitions) | Next transition of the workflow after injection has completed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -2855,7 +2855,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after state has completed | object | yes if "end" is not defined |
+| [transition](#Transitions) | Next transition of the workflow after state has completed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
@@ -3095,8 +3095,8 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [eventDataFilter](#Event-data-filters) | Callback event data filter definition | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition | object | no |
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
-| [transition](#Transitions) | Next transition of the workflow after callback event has been received | object | yes if "end" is not defined |
-| [end](#End-Definition) | Is this state an end state | object | yes if "transition" is not defined |
+| [transition](#Transitions) | Next transition of the workflow after callback event has been received | string or object | yes (if `end` is not defined) |
+| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
