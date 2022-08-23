@@ -3936,6 +3936,22 @@ For the sake of the example we assume the functions and event definitions are de
    "transition": "Sleep two weeks"
   },
   {
+   "name": "Cancel Request",
+   "type": "operation",
+   "actions": [
+    {
+     "functionRef": {
+      "refName": "Cancel hold request for lender",
+      "arguments": {
+       "bookid": "${ .book.id }",
+       "lender": "${ .lender }"
+      }
+     }
+    }
+   ],
+   "transition": "Sleep two weeks"
+  },
+  {
    "name": "Sleep two weeks",
    "type": "sleep",
    "duration": "PT2W",
@@ -4035,6 +4051,15 @@ states:
         bookid: "${ .book.id }"
         lender: "${ .lender }"
    transition: Sleep two weeks
+ - name: Cancel Request
+   type: operation
+   actions:
+    - functionRef:
+       refName: Cancel hold request for lender
+       arguments:
+        bookid: "${ .book.id }"
+        lender: "${ .lender }"
+   end: true
  - name: Sleep two weeks
    type: sleep
    duration: PT2W
