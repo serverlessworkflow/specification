@@ -1777,7 +1777,7 @@ definition "id" must be a constant value.
 | [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | string or object | no |
 | [errors](#Defining-Errors) | Defines checked errors that can be explicitly handled during workflow execution | string or array | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
-| [auth](#Auth-Definition) | Workflow authentication definitions | array or string | no |
+| [auth](#Auth-Definition) | Workflow authentication definitions | array or object | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
 | autoRetries | If set to true, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is false | boolean| no |
