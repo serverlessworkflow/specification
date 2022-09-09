@@ -3555,12 +3555,14 @@ The `scheme` property defines the auth scheme to be used. Can be "bearer", "basi
 The `properties` property defines the auth scheme properties information.
 Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition)
 
+Implementations might impose restrictions on the expressions that might be used to resolve auth properties. 
+
 ###### Basic Properties Definition
 
 See [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#basic_authentication_scheme) for more information about Basic Authentication scheme.
 
 The Basic properties definition can have two types, either `string` or `object`. 
-If `string` type, it defines a workflow expression referencing a [workflow secret](#workflow-secrets) that contains all needed Basic auth information.
+If `string` type, it defines a workflow expression that contains all needed Basic auth information.
 If `object` type, it has the following properties:
 
 | Parameter | Description | Type | Required |
