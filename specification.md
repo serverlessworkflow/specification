@@ -3555,7 +3555,7 @@ The `scheme` property defines the auth scheme to be used. Can be "bearer", "basi
 The `properties` property defines the auth scheme properties information.
 Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition)
 
-Implementations might impose restrictions on the expressions that might be used to resolve auth properties. 
+Implementations might impose restrictions on the expressions supported to resolve auth properties, depending on the context used. 
 
 ###### Basic Properties Definition
 
