@@ -34,9 +34,9 @@
           "description": "Domain-specific error name",
           "minLength": 1
         },
-        "code": {
+        "expression": {
           "type": "string",
-          "description": "Error code. Can be used in addition to the name to help runtimes resolve to technical errors/exceptions. Should not be defined if error is set to '*'",
+          "description": "Workflow expression that filters workflow error data",
           "minLength": 1
         },
         "description": {

@@ -35,6 +35,9 @@ _Status description:_
 | ✔️| Apply fixes to auth spec schema [workflow schema](https://github.com/serverlessworkflow/specification/tree/main/schema)  |
 | ✔️| Update the `dataInputSchema` top-level property by supporting the assignment of a JSON schema object [workflow schema](https://github.com/serverlessworkflow/specification/tree/main/specification.md#workflow-definition-structure)  |
 | ✔️| Add the new `WORKFLOW` reserved keyword to workflow expressions  |
+| ✔️| Update worflow error handling  |
+| ✔️| Make action name a required parameter  |
+| ✔️| Add name property to data filters  |
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Update rest function definition |   |
 | ✏️️| Add "completedBy" functionality |   |

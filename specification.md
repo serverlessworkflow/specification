@@ -5,7 +5,7 @@
 - [Abstract](#abstract)
 - [Status of this document](#status-of-this-document)
 - [Overview](#overview)
-  * [Why we need a specification?](#why-we-need-a-specification)
+  * [Why we need a specification?](#why-we-need-a-specification-)
   * [Focus on standards](#focus-on-standards)
 - [Project Components](#project-components)
 - [Specification Details](#specification-details)
@@ -27,8 +27,8 @@
     + [Using Functions for Async API Service Invocations](#using-functions-for-async-api-service-invocations)
     + [Using Functions for RPC Service Invocations](#using-functions-for-rpc-service-invocations)
     + [Using Functions for GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
-      - [Invoking a GraphQL `Query`](#invoking-a-graphql-query)
-      - [Invoking a GraphQL `Mutation`](#invoking-a-graphql-mutation)
+      - [Invoking a GraphQL Query](#invoking-a-graphql-query)
+      - [Invoking a GraphQL Mutation](#invoking-a-graphql-mutation)
     + [Using Functions for OData Service Invocations](#using-functions-for-odata-service-invocations)
       - [Creating an OData Function Definition](#creating-an-odata-function-definition)
       - [Invoking an OData Function Definition](#invoking-an-odata-function-definition)
@@ -47,11 +47,12 @@
       - [Callback State](#callback-state)
     + [Related State Definitions](#related-state-definitions)
       - [Function Definition](#function-definition)
+        * [AuthRef Definition](#authref-definition)
       - [Event Definition](#event-definition)
       - [Auth Definition](#auth-definition)
-        - [Basic Properties Definition](#basic-properties-definition)
-        - [Bearer Properties Definition](#bearer-properties-definition)
-        - [OAuth2 Properties Definition](#oauth2-properties-definition)
+        * [Basic Properties Definition](#basic-properties-definition)
+        * [Bearer Properties Definition](#bearer-properties-definition)
+        * [OAuth2 Properties Definition](#oauth2-properties-definition)
       - [Correlation Definition](#correlation-definition)
       - [OnEvents Definition](#onevents-definition)
       - [Action Definition](#action-definition)
@@ -74,7 +75,22 @@
       - [Transitions](#transitions)
       - [Additional Properties](#additional-properties)
   * [Workflow Error Handling](#workflow-error-handling)
-    + [Defining Errors](#defining-errors)
+    + [Error Data Structure](#error-data-structure)
+    + [WorkflowError](#workflowerror)
+    + [WorkflowError Cause](#workflowerror-cause)
+    + [WorkflowError Source](#workflowerror-source)
+    + [Source WorkflowInfo](#source-workflowinfo)
+    + [Source StateInfo](#source-stateinfo)
+    + [WorkflowError Error](#workflowerror-error)
+    + [Error TimeoutInfo](#error-timeoutinfo)
+    + [Error ActionInfo](#error-actioninfo)
+    + [Error BranchInfo](#error-branchinfo)
+    + [Error EventInfo](#error-eventinfo)
+    + [Error FilterInfo](#error-filterinfo)
+  * [Workflow Error Example](#workflow-error-example)
+  * [Workflow Error Propagation](#workflow-error-propagation)
+    + [Action Errors And Retries](#action-errors-and-retries)
+    + [Defining Errors in Workflow](#defining-errors-in-workflow)
   * [Action retries](#action-retries)
     + [Retry actions on known errors](#retry-actions-on-known-errors)
     + [Automatic retries on known and unknown errors](#automatic-retries-on-known-and-unknown-errors)
@@ -303,6 +319,7 @@ The workflow data output is the data output of the last executed workflow state.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
+| name | Filter name | string | no |
 | input | Workflow expression to filter the states data input | string | no |
 | output | Workflow expression that filters the states data output | string | no |
 
@@ -434,6 +451,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
+| name | Filter name | string | no |
 | fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
 | useResults | If set to false, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is true.  | boolean | no |
 | results | Workflow expression that filters the actions data results | string | no |
@@ -570,6 +588,7 @@ If `useResults` is not specified (or it's value set to `true`), action results, 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
+| name | Filter name | string | no |
 | useData | If set to false, event payload is not added/merged to state data. In this case 'data' and 'toStateData' should be ignored. Default is true. | boolean | no |
 | data | Workflow expression that filters the event data (payload) | string | no |
 | toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
@@ -3746,7 +3765,7 @@ This is visualized in the diagram below:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique Action name | string | no |
+| name | Unique Action name | string | yes |
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object or string | yes if `eventRef` & `subFlowRef` are not defined |
 | [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes if `functionRef` & `subFlowRef` are not defined |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes if `eventRef` & `functionRef` are not defined |
@@ -3756,6 +3775,7 @@ This is visualized in the diagram below:
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 | sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
 | [condition](#Workflow-Expressions) | Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded | string | no |
+| [onErrors](#Error-Definition) | Action error handling definitions | array | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3807,7 +3827,7 @@ Service invocation can be done in two different ways:
 Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, meaning that only one of them can be
 specified in a single action definition.
 
-The `name` property specifies the action name.
+The `name` property specifies the action name. It is required and is a business level name.
 The `id` property specifies the unique action id.
 
 In the event-based scenario a service, or a set of services we want to invoke
@@ -3837,6 +3857,8 @@ It should be used only when the workflow top-level `autoRetries` property is set
 The `condition` property is a [workflow expression](#Workflow-Expressions). If defined, it must evaluate to `true`
 for this action to be performed. If it evaluates to `false` the action is skipped. 
 If the `condition` property is not defined, the action is always performed.
+
+The `onErrors` property is a [onErrors](#Error-Definition) array used to define action speific error handling.
 
 ##### Subflow Action
 
@@ -5002,38 +5024,209 @@ Note the same can be also specified using workflow metadata, which is the prefer
 
 ### Workflow Error Handling
 
-Serverless Workflow language allows you to define `explicit` error handling, meaning you can define what should happen
-in case of errors inside your workflow model rather than some generic error handling entity.
-This allows error handling to become part of your orchestration activities and as such part of your business problem
-solutions.
+Error handling is a very important part of your application and business logic. 
+Typically we are used to error handling when writing our workflows using a programming language.
+In this case we use the programming language constructs to check and handle different types of errors
+that could arise during our workflow / application execution.
+When it comes to error handling within a DSL workflow definition one of the most important things is 
+portability. Portability is essential in order for us to be able to define workflow errors and how to handle them
+independently on any underlying programming language (runtimes) that are executing our workflow definitions.
 
-The idea behind the way Serverless Workflow defines error handling is that workflows should only fail due to unknown bugs 
-during execution. In general, you should always write your workflows so that they do not fail on any known failures.
+Serverless Workflow DSL provides a completely portable error definition which can be used across different 
+runtimes. Errors are defined as JSON, just like workflow data and backed by JSON Schema. 
+This allows errors to be portable "over the wire" and be fully implementation agnostic.
 
-Each workflow state can define error handling, which is related only to errors that may arise during its
-execution. Error handling defined in one state cannot be used to handle errors that happened during execution of another state
-during workflow execution.
+Runtime implementations must adhere to the Serverless Workflow Error structure defined below. 
+This means that runtimes should convert the underlying errors/exceptions to this defined JSON structure.
 
-Unknown errors that may arise during workflow state execution that are not explicitly handled within the workflow definition
-should be reported by runtime implementations and halt workflow execution.
+#### Error Data Structure
+All errors must be defined inside a Json array, `[...]` and are only to be accessible inside [error definition](#error-definition) blocks.
+This means that all workflow expression outside of error definitions should not have access to errors data.
+In addition, error definition expressions should only operate on error data and not workflow data.
 
-Within workflow definitions, errors defined are `domain specific`, meaning they are defined within
-the actual business domain, rather than their technical (programming-language-specific) description.
+Each element in the errors array must be of type `WorkflowError`. We will describe this structure in detals now.
 
-For example, we can define errors such as "Order not found", or "Item not in inventory", rather than having to
-use terms such as "java.lang.IllegalAccessError", or "response.status == 404", which
-might make little to no sense to our specific problem domain, as well as may not be portable across various runtime implementations.
+#### WorkflowError
 
-In addition to the domain specific error name, users have the option to also add an optional error code
-to help runtime implementations with mapping defined errors to concrete underlying technical ones.
+WorkflowError is the top-level type for any error in Serverless Workflow. 
 
-Runtime implementations must be able to map the error domain specific name (and the optional error code)
-to concrete technical errors that arise during workflow execution.
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| type | The error type, enumeration that can have values `action`, `timeout`, `datafilter`, `state`, default is `state` | enum | yes |
+| description | Error description | string | no |
+| [cause](#workflowerror-cause) | Error cause, includes information about the error | object | yes |
+| [source](#workflowerror-source) | Error source, includes information about the `source` or the error (where the error happened) | object | yes |
+| [error](#workflowerror-error) | Error information, includes the error info | object | yes |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
 
-#### Defining Errors
+#### WorkflowError Cause
+
+WorkflowError Cause defines the information about the error.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| type | Actual error type, for example `my.error.MyError` | string | yes |
+| message | Actual error message | string | yes |
+| retryable | Defines if the error is retryable or nonretryable, default is `true`  | boolean | no |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+Not all programming language errors are serializable. The cause type and message 
+information should contain the information that runtime impls can use to reconstruct the actual error
+if needed in their used programming language. For portability purposes you an chose to avoid 
+filtering errors in error definitions based on the error cause information, however it is OK to do so and 
+often very important.
+
+#### WorkflowError Source
+
+WorkflowError Source contains specific information as to where the error happened. 
+It allows fine-grained expressions to be used in error definitions as to what error should be handled.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| [workflowInfo](#source-workflowinfo) | Includes the source workflow info | object | yes |
+| [stateInfo](#source-stateinfo) | Includes the source state info | object | yes |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+#### Source WorkflowInfo 
+
+Contains workflow information on where the error happened.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| id | Workflow id | string | yes |
+| key | Workflow key | string | no |
+| version | Workflow version | string | no |
+| name | Workflow name | string | no |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+#### Source StateInfo
+
+Contains state information on where the error happened.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| id | State id | string | no |
+| name | State name | string | yes |
+| type | State type, must be one of the defined state types | enum | yes |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+#### WorkflowError Error
+
+Contains detailed information about the actual error.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| description | Error description | string | no |
+| [timeoutInfo](#error-timeoutinfo) | Should be included if timeout error | object | no |
+| [actionInfo](#error-actioninfo) | Should be included in action error | object | no |
+| [branchInfo](#error-branchinfo) | Should be included in error happened inside parallel state branch | object | no |
+| [eventInfo](#error-eventinfo) | Should be included if error happened in event state | object | no |
+| [filterInfo](#error-filterinfo) | Should be included if error happened in data filter | object | no |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+#### Error TimeoutInfo
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| description | Error description | string | no |
+| type | Timeout type, enum can have values `state`, `action`, `branch`, `event`. Default is blank. | enum | yes |
+| value | Timeout value (ISO 8601 duration format)  | string | no |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+#### Error ActionInfo
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Action name | string | yes |
+| functionRef | Action functionref | string | no |
+| eventRef | Action event ref | string | no |
+| subflowRef | Action subflow ref | string | no |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+#### Error BranchInfo
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Branch name | string | yes |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+#### Error EventInfo
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Event name | string | yes |
+| source | Event source | string | yes |
+| type | Event type | string | yes |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+#### Error FilterInfo
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | Filter name | string | yes |
+| expression | Filter expression that caused the error | string | no |
+| [metadata](#Workflow-Metadata) | Metadata information | object | no |
+
+### Workflow Error Example
+
+Following is an example workflow error data that can be filtered by [error definition](#error-definition).
+
+```json
+[
+  {
+    "type": "action",
+    "description": "Action Error",
+    "cause": {
+      "type": "my.errors.MyError",
+      "message": "My error message...."
+    },
+    "source": {
+      "workflowInfo": {
+        "id": "myWorkflow",
+        "version": "1.0",
+        "name": "my workflow"
+      },
+      "stateInfo": {
+        "name": "My Parallel State",
+        "type": "parallel"
+      }
+    },
+    "error": {
+      "actionInfo": {
+        "name": "My Action",
+        "functionRef": "My Function Ref"
+      },
+      "branchInfo": {
+        "name": "My Second Branch"
+      }
+    }
+
+  }
+]
+```
+
+Error definition expressions can filter this data using workflow expressions. 
+
+### Workflow Error Propagation
+
+Error definitions ([onErrors](#Error-Definition)) can be defined in [Workflow States](#workflow-states), and [Action Definition](#action-definition).
+Errors can happen in data filters, actions, and states.
+Workflow error propagation follows these rules:
+
+* Errors that happen in action data filters are to be propagated to actions and can be handled by action error handling.
+* Errors that happen in actions that are not explicitly handled are to be propagated to the workflow state level wher the action was invoked.
+* Errors that happen in event data filters are to be propagated and handled on the state level.
+* Errors that happen in state data filters are to be propagated and handled on the state level.
+* Errors that happen on workflow state level and are not explicitly handled should fail workflow execution.
+
+#### Action Errors And Retries
+
+Actions can have retry definitions. Action errors (and errors propagated from action filters) are to be "delivered" or available to be 
+handled, by action error definitions **after** all action retries have been exhausted.
+
+#### Defining Errors in Workflow
 
 Known workflow errors, that we know we need to handle during workflow execution should be defined in
-the workflow top-level 'errors' property. This property can be either a string type, meaning it can reference 
+the workflow top-level `errors` property. This property can be either a string type, meaning it can reference 
 a reusable JSON or Yaml definition file including the error definitions, or it can have an array type where you can
 define these checked errors in-line in your workflow definition.
 
@@ -5080,9 +5273,9 @@ errors: file://documents/reusable/errors.json
 {
 "errors": [
   {
-    "name": "Service not found error",
-    "code": "404",
-    "description": "Server has not found anything matching the provided service endpoint information"
+    "name": "Any Action Error",
+    "expression": ".[] | [select(.type==\"action\")] | length > 0",
+    "description": "Any expression error"
   }
 ]
 }
@@ -5093,15 +5286,16 @@ errors: file://documents/reusable/errors.json
 
 ```yaml
 errors:
-  - name: Service not found error
-    code: '404'
-    description: Server has not found anything matching the provided service endpoint
-      information
+  - name: Any Action Error
+    expression: .[] | [select(.type=="action")] | length > 0
+    description: Any expression error
 ```
 
 </td>
 </tr>
 </table>
+
+The error expression would match if workflow error data contains any elements with their type property set to "action".
 
 These defined errors can then be referenced by their unique name in both states `onErrors` definitions as well as in 
 actions `nonRetryableErrors` and `retryableErrors` properties.

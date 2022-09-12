@@ -480,22 +480,34 @@
           "description": "Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded",
           "type": "string",
           "minLength": 1
+        },
+        "onErrors": {
+          "type": "array",
+          "description": "Action error handling definitions",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/error"
+          },
+          "additionalItems": false
         }
       },
       "additionalProperties": false,
       "oneOf": [
         {
           "required": [
+            "name",
             "functionRef"
           ]
         },
         {
           "required": [
+            "name",
             "eventRef"
           ]
         },
         {
           "required": [
+            "name",
             "subFlowRef"
           ]
         }
@@ -1840,6 +1852,11 @@
     },
     "statedatafilter": {
       "type": "object",
+      "name": {
+        "type": "string",
+        "description": "Filter name",
+        "minLength": 1
+      },
       "properties": {
         "input": {
           "type": "string",
@@ -1856,6 +1873,11 @@
     "eventdatafilter": {
       "type": "object",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Filter name",
+          "minLength": 1
+        },
         "useData": {
           "type": "boolean",
           "description": "If set to false, event payload is not added/merged to state data. In this case 'data' and 'toStateData' should be ignored. Default is true.",
@@ -1876,6 +1898,11 @@
     "actiondatafilter": {
       "type": "object",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "Filter name",
+          "minLength": 1
+        },
         "fromStateData": {
           "type": "string",
           "description": "Workflow expression that selects state data that the state action can use"

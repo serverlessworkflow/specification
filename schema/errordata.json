@@ -1,0 +1,296 @@
+{
+  "$id": "https://serverlessworkflow.io/schemas/0.8/workflow.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Serverless Workflow specification - workflow schema",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "action",
+        "timeout",
+        "datafilter",
+        "state"
+      ],
+      "description": "Error type",
+      "default": "state"
+    },
+    "description": {
+      "type": "string",
+      "description": "Error description"
+    },
+    "cause": {
+      "description": "Error Cause",
+      "$ref": "#/definitions/cause"
+    },
+    "source": {
+      "description": "Error Source",
+      "$ref": "#/definitions/source"
+    },
+    "error": {
+      "description": "Error Info",
+      "$ref": "#/definitions/error"
+    },
+    "metadata": {
+      "$ref": "common.json#/definitions/metadata",
+      "description": "Metadata information"
+    }
+  },
+  "required": [
+    "type",
+    "cause",
+    "source",
+    "error"
+  ],
+  "definitions": {
+    "cause": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Cause type"
+        },
+        "message": {
+          "type": "string",
+          "description": "Cause message"
+        },
+        "retryable": {
+          "type": "boolean",
+          "description": "Cause retryable",
+          "default": true
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata",
+          "description": "Metadata information"
+        }
+      },
+      "required": [
+        "type",
+        "message"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "workflowInfo": {
+          "description": "Source Workflow Info",
+          "$ref": "#/definitions/workflowinfo"
+        },
+        "stateInfo": {
+          "description": "Source State Info",
+          "$ref": "#/definitions/stateinfo"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata",
+          "description": "Metadata information"
+        }
+      },
+      "required": [
+        "workflowInfo",
+        "stateInfo"
+      ]
+    },
+    "workflowinfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Workflow id"
+        },
+        "key": {
+          "type": "string",
+          "description": "Workflow key"
+        },
+        "version": {
+          "type": "string",
+          "description": "Workflow version"
+        },
+        "name": {
+          "type": "string",
+          "description": "Workflow name"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata",
+          "description": "Metadata information"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "stateinfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "State id"
+        },
+        "name": {
+          "type": "string",
+          "description": "State name"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "sleep",
+            "event",
+            "operation",
+            "parallel",
+            "switch",
+            "inject",
+            "foreach",
+            "callback"
+          ],
+          "description": "State type"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata",
+          "description": "Metadata information"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Error description"
+        },
+        "timeoutInfo": {
+          "description": "Error Timeout Info",
+          "$ref": "#/definitions/timeoutinfo"
+        },
+        "actionInfo": {
+          "description": "Error Action Info",
+          "$ref": "#/definitions/actioninfo"
+        },
+        "branchInfo": {
+          "description": "Error Branch Info",
+          "$ref": "#/definitions/branchinfo"
+        },
+        "eventInfo": {
+          "description": "Error Event Info",
+          "$ref": "#/definitions/eventinfo"
+        },
+        "filterInfo": {
+          "description": "Error Data Filter Info",
+          "$ref": "#/definitions/filterinfo"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata",
+          "description": "Metadata information"
+        }
+      },
+      "required": [
+      ]
+    },
+    "timeoutinfo": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Timeout Error description"
+        },
+        "value": {
+          "type": "string",
+          "description": "Timeout value"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "state",
+            "action",
+            "branch",
+            "event"
+          ],
+          "description": "Timeout type"
+        },
+        "metadata": {
+          "$ref": "common.json#/definitions/metadata",
+          "description": "Metadata information"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "actioninfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Action name"
+        },
+        "functionRef": {
+          "type": "string",
+          "description": "Function ref"
+        },
+        "eventRef": {
+          "type": "string",
+          "description": "Event ref"
+        },
+        "subflowRef": {
+          "type": "string",
+          "description": "Sublfow ref"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "branchinfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Branch name"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "eventinfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Event name"
+        },
+        "source": {
+          "type": "string",
+          "description": "Event name"
+        },
+        "type": {
+          "type": "string",
+          "description": "Event name"
+        }
+      },
+      "required": [
+        "name",
+        "source",
+        "type"
+      ]
+    },
+    "filterinfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Filter name"
+        },
+        "expression": {
+          "type": "string",
+          "description": "Filter name"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    }
+  }
+}
