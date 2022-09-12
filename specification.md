@@ -5204,6 +5204,8 @@ Following is an example workflow error data that can be filtered by [error defin
 ]
 ```
 
+Error data can be validated against the specification [errordata](schema/errordata.json) Json schema.
+
 Error definition expressions can filter this data using workflow expressions. 
 
 ### Workflow Error Propagation
