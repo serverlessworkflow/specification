@@ -3271,8 +3271,8 @@ defined via the `parameters` property in [function definitions](#FunctionRef-Def
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique event name | string | yes |
-| source | CloudEvent source | string | yes if kind is set to "consumed", otherwise no |
-| type | CloudEvent type | string | yes |
+| source | CloudEvent source | string | no if `type` is set, otherwise yes. If not set when `kind` is `produced`, runtimes are expected to use a default value, such as https://serverlessworkflow.io in order to comply with the [CloudEvent spec constraints](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1) |
+| type | CloudEvent type | string | no if `source` is set, otherwise yes  |
 | kind | Defines the event is either `consumed` or `produced` by the workflow. Default is `consumed` | enum | no |
 | [correlation](#Correlation-Definition) | Define event correlation rules for this event. Only used for consumed events | array | no |
 | dataOnly | If `true` (default value), only the Event payload is accessible to consuming Workflow states. If `false`, both event payload and context attributes should be accessible | boolean | no |
