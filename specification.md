@@ -2884,7 +2884,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
             "functionRef": {
                 "refName": "provisionOrderFunction",
                 "arguments": {
-                    "order": "${ .singleorder }"
+                    "order": "${ $singleorder }"
                 }
             }
         }
@@ -2905,7 +2905,7 @@ actions:
 - functionRef:
     refName: provisionOrderFunction
     arguments:
-      order: "${ .singleorder }"
+      order: "${ $singleorder }"
 ```
 
 </td>
@@ -2938,6 +2938,7 @@ of each iteration should be added to. If this array does not exist, it should be
 
 The `iterationParam` property defines the name of the iteration parameter passed to each iteration of the ForEach state.
 It should contain the unique element of the `inputCollection` array and made available to actions of the ForEach state.
+`iterationParam` can be accessed as an expression variable. In JQ, expression variables are prefixed by $. 
 If `iterationParam` is not explicitly defined, runtimes should create one and populate it with the value of the unique 
 iteration parameter for each iteration of the ForEach state.
 
@@ -3004,8 +3005,8 @@ and our workflow is defined as:
        "functionRef": {
          "refName": "sendConfirmationFunction",
          "arguments": {
-           "orderNumber": "${ .completedorder.orderNumber }",
-           "email": "${ .completedorder.email }"
+           "orderNumber": "${ $completedorder.orderNumber }",
+           "email": "${ $completedorder.email }"
          }
        }
       }],
@@ -3036,8 +3037,8 @@ states:
   - functionRef:
       refName: sendConfirmationFunction
       arguments:
-        orderNumber: "${ .completedorder.orderNumber }"
-        email: "${ .completedorder.email }"
+        orderNumber: "${ $completedorder.orderNumber }"
+        email: "${ $completedorder.email }"
   end: true
 ```
 
