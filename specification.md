@@ -2938,7 +2938,7 @@ of each iteration should be added to. If this array does not exist, it should be
 
 The `iterationParam` property defines the name of the iteration parameter passed to each iteration of the ForEach state.
 It should contain the unique element of the `inputCollection` array and made available to actions of the ForEach state.
-`iterationParam` can be accessed as an expression variable. In JQ, expression variables are prefixed by $. 
+`iterationParam` can be accessed as an expression variable. [In JQ, expression variables are prefixed by $](https://stedolan.github.io/jq/manual/#Variable/SymbolicBindingOperator:...as$identifier|...). 
 If `iterationParam` is not explicitly defined, runtimes should create one and populate it with the value of the unique 
 iteration parameter for each iteration of the ForEach state.
 
