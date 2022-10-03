@@ -76,7 +76,7 @@ spec:
 ```yaml
 id: hello-world-parameters
 name: Hello World with parameters
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: whalesay
 functions:
@@ -155,7 +155,7 @@ spec:
 ```yaml
 id: hello-hello-hello
 name: Multi Step Hello
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: hello1
 functions:
@@ -257,7 +257,7 @@ spec:
 ```yaml
 id: dag-diamond-
 name: DAG Diamond Example
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: A
 functions:
@@ -376,7 +376,7 @@ spec:
 ```yaml
 id: scripts-bash-
 name: Scripts and Results Example
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: generate
 functions:
@@ -472,7 +472,7 @@ spec:
 ```yaml
 id: loops-
 name: Loop over data example
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: injectdata
 functions:
@@ -567,7 +567,7 @@ spec:
 ```yaml
 id: coinflip-
 name: Conditionals Example
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: flip-coin
 functions:
@@ -660,7 +660,7 @@ spec:
 ```yaml
 id: retry-backoff-
 name: Retry Example
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: retry-backoff
 functions:
@@ -746,7 +746,7 @@ spec:
 ```yaml
 id: coinflip-recursive-
 name: Recursion Example
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: flip-coin-state
 functions:
@@ -856,7 +856,7 @@ spec:
 ```yaml
 id: exit-handlers-
 name: Exit/Error Handling Example
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 autoRetries: true
 start: intentional-fail-state

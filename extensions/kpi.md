@@ -124,7 +124,7 @@ extensions definition yaml is located in a resource accessible via URI:
 ```yaml
 id: patientVitalsWorkflow
 name: Monitor Patient Vitals
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: MonitorVitals
 extensions:

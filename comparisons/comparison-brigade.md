@@ -64,7 +64,7 @@ function exec(e, p) {
 ```yaml
 id: greeting
 name: Greeting Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: GreetingState
 events:
@@ -144,7 +144,7 @@ async function exec(e, p) {
 ```yaml
 id: greetingwitherrorcheck
 name: Greeting Workflow With Error Check
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 autoRetries: true
 start: GreetingState
@@ -239,7 +239,7 @@ events.on("push", () => {
 ```yaml
 id: multieventworkflow
 name: Multiple Events Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: GreetingState
 events:
@@ -324,7 +324,7 @@ events.on("exec", () => {
 ```yaml
 id: groupActionsWorkflow
 name: Group Actions Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: FirstGreetGroup
 events:
@@ -403,7 +403,7 @@ events.on("exec", (e, p) => {
 ```yaml
 id: eventDataWorkflow
 name: Event Data Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: LogEventData
 events:
@@ -480,7 +480,7 @@ events.on("exec", (e, p) => {
 ```yaml
 id: actionResultsWorkflow
 name: Action Results Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: ExecActionsAndStoreResults
 events:
@@ -571,7 +571,7 @@ events.on("next", (e) => {
 ```yaml
 id: eventDataWorkflow
 name: Event Data Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: ExecEventState
 events:

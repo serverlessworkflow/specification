@@ -60,7 +60,7 @@ extensions definition yaml is located in a resource accessible via URI:
 ```yaml
 id: processapplication
 name: Process Application
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 extensions:
   - extensionId: workflow-ratelimiting-extension

@@ -44,6 +44,7 @@ _Status description:_
 | ✏️️| Add integration with open-source runtimes  |   |
 | ✏️️| Add SDKs for more languages (Python, PHP, Rust, etc) |   |
 | ✏️️| Add more samples  |   |
+| ✏️️| Enforce SemVer `version`  |   |
 
 ## <a name="v08"></a> Released version v0.8
 

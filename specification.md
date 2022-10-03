@@ -642,7 +642,7 @@ a workflow with a single event state and show how data filters can be combined.
 {
     "id": "GreetCustomersWorkflow",
     "name": "Greet Customers when they arrive",
-    "version": "1.0",
+    "version": "1.0.0",
     "specVersion": "0.8",
     "start": "WaitForCustomerToArrive",
     "states":[
@@ -1766,7 +1766,7 @@ definition "id" must be a constant value.
 | key | Domain-specific workflow identifier | string | yes if `id` not defined |
 | name | Workflow name | string | no |
 | description | Workflow description | string | no |
-| version | Workflow version | string | no |
+| version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | [constants](#Workflow-Constants) | Workflow constants | string or object | no |
@@ -1800,7 +1800,7 @@ definition "id" must be a constant value.
 ```json
 {
    "id": "sampleWorkflow",
-   "version": "1.0",
+   "version": "1.0.0",
    "specVersion": "0.8",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
@@ -1818,7 +1818,7 @@ definition "id" must be a constant value.
 
 ```yaml
 id: sampleWorkflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 name: Sample Workflow
 description: Sample Workflow
@@ -1854,7 +1854,7 @@ The `name` property is the workflow logical name.
 
 The `description` property can be used to give further information about the workflow.
 
-The `version` property can be used to provide a specific workflow version.
+The `version` property can be used to provide a specific workflow version. It must use the [semantic versioning](https://semver.org/) format.
 
 The `annotations` property defines a list of helpful terms describing the workflows intended purpose, subject areas, or other important qualities,
 for example "machine learning", "monitoring", "networking", etc
@@ -1999,7 +1999,7 @@ Here is an example of using external resource for function definitions:
 ```json
 {
    "id": "sampleWorkflow",
-   "version": "1.0",
+   "version": "1.0.0",
    "specVersion": "0.8",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
@@ -2036,7 +2036,7 @@ Here is an example of using external resource for event definitions:
 ```json
 {
    "id": "sampleWorkflow",
-   "version": "1.0",
+   "version": "1.0.0",
    "specVersion": "0.8",
    "name": "Sample Workflow",
    "description": "Sample Workflow",
@@ -2984,7 +2984,7 @@ and our workflow is defined as:
 {
   "id": "sendConfirmWorkflow",
   "name": "SendConfirmationForCompletedOrders",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "start": "SendConfirmState",
   "functions": [
@@ -3021,7 +3021,7 @@ and our workflow is defined as:
 ```yaml
 id: sendConfirmWorkflow
 name: SendConfirmationForCompletedOrders
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: SendConfirmState
 functions:
@@ -4048,7 +4048,7 @@ If you need to define the `version` properties, you can use its `object` type:
 ```json
 {
     "workflowId": "handleApprovedVisaWorkflowID",
-    "version": "2.0"
+    "version": "2.0.0"
 }
 ```
 
@@ -4057,7 +4057,7 @@ If you need to define the `version` properties, you can use its `object` type:
 
 ```yaml
 workflowId: handleApprovedVisaWorkflowID
-version: '2.0'
+version: '2.0.0'
 ```
 
 </td>
@@ -4970,7 +4970,7 @@ Let's take a look at an example of additional properties:
 ```json
 {
   "id": "myworkflow",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "name": "My Test Workflow",
   "start": "My First State",
@@ -4988,7 +4988,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 ```json
 {
   "id": "myworkflow",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "name": "Py Test Workflow",
   "start": "My First State",
@@ -5987,13 +5987,7 @@ There are two places in the [workflow definition](#Workflow-Definition-Structure
 1. Top level workflow definition `version` property.
 2. Actions [subflowRef](#SubFlowRef-Definition) `version` property.
 
-The Serverless Workflow specification does not mandate a specific versioning strategy
-for the top level and actions subflowRef definitions `version` properties. It does not mandate the use
-of a versioning strategy at all. We do recommend however that you do use a versioning strategy
-for your workflow definitions especially in production environments.
-
-To enhance portability when using versioning of your workflow and sub-workflow definitions,
-we recommend using an existing versioning standard such as [SemVer](https://semver.org/) for example.
+The `version` property must respect the [semantic versioning](https://semver.org/) guidelines.
 
 ### Workflow Constants
 
@@ -6140,7 +6134,7 @@ Here is an example of metadata attached to the core workflow definition:
 {
   "id": "processSalesOrders",
   "name": "Process Sales Orders",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "start": "MyStartingState",
   "metadata": {
@@ -6176,7 +6170,7 @@ Implementations may use this keyword to give access to any relevant information 
 {
   "id": "processSalesOrders",
   "name": "Process Sales Orders",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "start": "MyStartingState",
   "functions": [{
