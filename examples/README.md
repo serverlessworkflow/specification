@@ -4707,7 +4707,7 @@ decide which activity to perform based on the transaction value.
 <td valign="top">
 
 ```yaml
-id: bankingtransactions
+id: customerbankingtransactions
 name: Customer Banking Transactions Workflow
 version: '1.0.0'
 specVersion: '0.8'
