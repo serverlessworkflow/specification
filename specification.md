@@ -3551,7 +3551,7 @@ Can be one of ["Basic properties definition"](#basic-properties-definition), ["B
 See [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#basic_authentication_scheme) for more information about Basic Authentication scheme.
 
 The Basic properties definition can have two types, either `string` or `object`. 
-If `string` type, it defines a workflow expression referencing a [workflow secret](#workflow-secrets) that contains all needed Basic auth information.
+If `string` type, it defines a [workflow expression](#workflow-expressions) that contains all needed Basic auth information.
 If `object` type, it has the following properties:
 
 | Parameter | Description | Type | Required |
