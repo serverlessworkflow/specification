@@ -3799,7 +3799,7 @@ functionRef:
 </details>
 
 Actions specify invocations of services or other workflows during workflow execution.
-Service invocation can be done in two different ways:
+Service invocation can be done in three different ways:
 
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
 * Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
