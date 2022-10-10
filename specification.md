@@ -1092,7 +1092,7 @@ Here is an example function definition for REST requests with method `GET` and r
 }
 ```
 
-Note that the [Function Definition](#Function-Definition)'s `operation` property must follow the OpenAPI Paths Object specification definition.
+Note that the [Function Definition](#Function-Definition)'s `operation` property must follow the [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object) specification definition.
 
 The function can be referenced during workflow execution when the invocation of the REST service is desired. For example:
 
@@ -1123,6 +1123,7 @@ Example of the `POST` request sending the state data as part of the body:
   "functions":[
     {
       "name": "createUser",
+      "type": "rest",
       "operation": {
         "/users": {
           "post": {
@@ -1149,16 +1150,15 @@ Example of the `POST` request sending the state data as part of the body:
             }
           }
         }
-      },
-      "type": "rest"
+      }
     }
   ]
 }
 ```
 
-Note that the `requestBody` content schema is described inline rather than a reference to an external document.
+Note that the `requestBody` [`content` attribute](https://spec.openapis.org/oas/v3.1.0#fixed-fields-10) is described inline rather than a reference to an external document.
 
-You can reference the `createUser` function and filter the input data to invoke it, as shown in the example below:
+You can reference the `createUser` function and filter the input data to invoke it. Given the workflow input data:
 
 ```json
 {
@@ -1220,7 +1220,7 @@ In this case, only the contents of the `user` attribute will be passed to the fu
 }
 ```
 
-The specification does not support the [Security Requirement Object](https://spec.openapis.org/oas/v3.1.0#security-requirement-object). To define authentication for the REST operation, use the [Auth Definition](#Auth-Definition). If provided, this field is ignored.
+The specification does not support the [Security Requirement Object](https://spec.openapis.org/oas/v3.1.0#security-requirement-object) since its redundat to function [Auth Definition](#Auth-Definition). If provided, this field is ignored.
 
 #### Using Functions for Async API Service Invocations
 
@@ -3416,7 +3416,7 @@ operation: https://hellworldservice.api.com/api.json#helloWorld
 
 The `name` property defines an unique name of the function definition.
 
-The `type` property defines the function type. Its value can be either `rest`, `openapi` or `expression`. Default value is `openapi`.
+The `type` enum property defines the function type. Its value can be either `rest`, `openapi` or `expression`. Default value is `openapi`.
 
 Depending on the function `type`, the `operation` property can be:
 
