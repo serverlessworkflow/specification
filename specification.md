@@ -1769,6 +1769,7 @@ definition "id" must be a constant value.
 | version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
+| dataOutputSchema | Used to validate the workflow data output against a defined JSON Schema| string or object | no |
 | [constants](#Workflow-Constants) | Workflow constants | string or object | no |
 | [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
 | [start](#Start-Definition) | Workflow start definition | string or object | no |
@@ -1859,9 +1860,18 @@ The `version` property can be used to provide a specific workflow version. It mu
 The `annotations` property defines a list of helpful terms describing the workflows intended purpose, subject areas, or other important qualities,
 for example "machine learning", "monitoring", "networking", etc
 
-The `dataInputSchema` property can be used to validate the workflow data input against a defined JSON Schema.
-This check should be done before any states are executed. `dataInputSchema` can have two different types.
-If it is an object type it has the following definition:
+The `dataInputSchema` and `dataOutputSchema` properties can be used to validate model against a defined JSON Schema.
+
+The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). Validation should be performed before any states are executed. In case of
+a starting [Event state](#Event-state), it is not used to validate its event payloads. 
+
+The `dataOutputSchema` property validates the [Workflow data output](#workflow-data-output). Validation should be performed when the process is finished. 
+
+Both properties can be expressed as object or string type. 
+
+If using object type, their `schema` property might be an URI, which points to the JSON schema used to validate the workflow data input, or it might be the JSON schema object. Their `failOnValidationErrors` property  determines if workflow execution should continue in case of validation errors. The default value of `failOnValidationErrors` is `true`.
+
+Example for Json schema reference
 
 ```json
 "dataInputSchema": {
@@ -1870,11 +1880,10 @@ If it is an object type it has the following definition:
 }
 ```
 
-It's `schema` property can be an URI, which points to the JSON schema used to validate the workflow data input, or it can be the JSON schema object.
-If it's a JSON schema object, it has the following definition:
+Example for Json schema included in the workflow file
 
 ```json
-"dataInputSchema": {
+"dataOutputSchema": {
    "schema": {
      "title": "MyJSONSchema",
      "properties":{
@@ -1886,22 +1895,18 @@ If it's a JSON schema object, it has the following definition:
        }
      }
    },
-   "failOnValidationErrors": false
+   "failOnValidationErrors": true
 }
 
 ```
-It' `failOnValidationErrors` property  determines if workflow execution should continue in case of validation
-errors. The default value of `failOnValidationErrors` is `true`.
-If `dataInputSchema` has the string type, it has the following definition:
+
+If using string type, then the string value is the external schema URI and `failOnValidationErrors` default value of `true` is assumed.
+
+Example using string type
 
 ```json
 "dataInputSchema": "URL_to_json_schema"
 ```
-
-In this case the `failOnValidationErrors` default value of `true` is assumed.
-
-The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). In case of
-a starting [Event state](#Event-state), it is not used to validate its event payloads.
 
 The `secrets` property allows you to use sensitive information such as passwords, OAuth tokens, ssh keys, etc. inside your
 Workflow expressions.
