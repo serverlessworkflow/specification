@@ -1863,13 +1863,16 @@ for example "machine learning", "monitoring", "networking", etc
 The `dataInputSchema` and `dataOutputSchema` properties can be used to validate model against a defined JSON Schema.
 
 The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). Validation should be performed before any states are executed. In case of
-a starting [Event state](#Event-state), it is not used to validate its event payloads. 
+a starting [Event state](#Event-state), it is not used to validate its event payloads. The `failOnValidationErrors` property  determines if workflow execution should continue in case of validation errors. 
 
-The `dataOutputSchema` property validates the [Workflow data output](#workflow-data-output). Validation should be performed when the process is finished. 
+The `dataOutputSchema` property validates the [Workflow data output](#workflow-data-output). Validation should be performed after workflow execution has finished successfully. Successfully means the workflow has completed an end state without errors. 
+The `failOnValidationErrors` property determines what should be done when the workflow output does not match the provided schema. 
+If `failOnValidationErrors` is true, an error should be thrown. If executed within a subprocess, that error might be handled by the parent workflow. 
+If `failOnValidationErrors` is false, it is up to the implementor to warn the user about that fact using any mean, except throwing an error. For example, printing a log. 
 
 Both properties can be expressed as object or string type. 
 
-If using object type, their `schema` property might be an URI, which points to the JSON schema used to validate the workflow data input, or it might be the JSON schema object. Their `failOnValidationErrors` property  determines if workflow execution should continue in case of validation errors. The default value of `failOnValidationErrors` is `true`.
+If using object type, their `schema` property might be an URI, which points to the JSON schema used to validate the workflow data input, or it might be the JSON schema object. `failOnValidationErrors` is optional, default value is `true`.
 
 Example for Json schema reference
 
