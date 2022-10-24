@@ -1,0 +1,100 @@
+{
+    "$id": "https://serverlessworkflow.io/schemas/0.8/resources.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "Serverless Workflow specification - resources schema",
+    "type": "object",
+    "resources":{
+        "type": "array",
+        "description": "Defines the external resources referenced by the workflow",
+        "items": {
+          "type": "object",
+          "$ref": "#/definitions/resourceRef"
+        },
+        "additionalItems": false,
+        "minItems": 1
+      },
+    "required":[
+        "resources"
+    ],
+    "definitions":{
+        "resourceRef":{
+            "type": "object",
+            "description": "References an external resource",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the external resource. It must be lowercased and must only contain alphanumeric characters, with the exception of `-` and `_`. The name is used as prefix to reference any definition contained in the referenced resource.",
+                "pattern": "^[a-z0-9-_]+$"
+              },
+              "uri": {
+                "type": "string",
+                "format": "uri",
+                "description": "The uri at which to find the referenced external resource definition"
+              },
+              "authRef": {
+                "type": "string",
+                "description": "References the (inline) auth definition used to retrieve the referenced external resource"
+              }
+            },
+            "required": [
+                "name",
+                "uri"
+            ]
+        },
+        "resourceDef":{
+            "type": "object",
+            "description": "Defines an external resource",
+            "properties": {
+              "constants": {
+                "type": "object"
+              },
+              "secrets": {
+                "type": "array",
+                "items": {
+                    "$ref": "secrets.json#/secrets"
+                }
+              },
+              "retries": {
+                "type": "array",
+                "items": {
+                  "$ref": "retries.json#/retries"
+                }
+              },
+              "auth": {
+                "type": "array",
+                "items": {
+                  "$ref": "auth.json#/auth"
+                }
+              },
+              "timeouts": {
+                "type": "array",
+                "items": {
+                  "$ref": "timeouts.json#/timeouts"
+                }
+              },
+              "events": {
+                "type": "array",
+                "items": {
+                  "$ref": "events.json#/events"
+                }
+              },
+              "functions": {
+                "type": "array",
+                "items": {
+                  "$ref": "functions.json#/functions"
+                }
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "$ref": "errors.json#/errors"
+                }
+              },
+              "metadata":{
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+    }
+}

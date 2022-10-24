@@ -4,36 +4,27 @@
   "description": "Serverless Workflow specification - functions schema",
   "type": "object",
   "timeouts": {
-    "oneOf": [
-      {
-        "type": "string",
-        "format": "uri",
-        "description": "URI to a resource containing timeouts definitions (json or yaml)"
+    "type": "object",
+    "description": "Workflow default timeouts",
+    "properties": {
+      "workflowExecTimeout": {
+        "$ref": "#/definitions/workflowExecTimeout"
       },
-      {
-        "type": "object",
-        "description": "Workflow default timeouts",
-        "properties": {
-          "workflowExecTimeout": {
-            "$ref": "#/definitions/workflowExecTimeout"
-          },
-          "stateExecTimeout": {
-            "$ref": "#/definitions/stateExecTimeout"
-          },
-          "actionExecTimeout": {
-            "$ref": "#/definitions/actionExecTimeout"
-          },
-          "branchExecTimeout": {
-            "$ref": "#/definitions/branchExecTimeout"
-          },
-          "eventTimeout": {
-            "$ref": "#/definitions/eventTimeout"
-          }
-        },
-        "additionalProperties": false,
-        "required": []
+      "stateExecTimeout": {
+        "$ref": "#/definitions/stateExecTimeout"
+      },
+      "actionExecTimeout": {
+        "$ref": "#/definitions/actionExecTimeout"
+      },
+      "branchExecTimeout": {
+        "$ref": "#/definitions/branchExecTimeout"
+      },
+      "eventTimeout": {
+        "$ref": "#/definitions/eventTimeout"
       }
-    ]
+    },
+    "additionalProperties": false,
+    "required": []
   },
   "required": [
     "timeouts"

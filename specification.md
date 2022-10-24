@@ -1769,19 +1769,20 @@ definition "id" must be a constant value.
 | version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
-| [constants](#Workflow-Constants) | Workflow constants | string or object | no |
-| [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
+| [resources](#Workflow-Resources) | External resources imported by the workflow | array | no |
+| [constants](#Workflow-Constants) | Workflow constants | object | no |
+| [secrets](#Workflow-Secrets) | Workflow secrets | array | no |
 | [start](#Start-Definition) | Workflow start definition | string or object | no |
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
-| [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | string or object | no |
-| [errors](#Defining-Errors) | Defines checked errors that can be explicitly handled during workflow execution | string or array | no |
+| [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | object | no |
+| [errors](#Defining-Errors) | Defines checked errors that can be explicitly handled during workflow execution | array | no |
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
-| [auth](#Auth-Definition) | Workflow authentication definitions | array or string | no |
-| [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
-| [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
+| [auth](#Auth-Definition) | Workflow authentication definitions | array | no |
+| [events](#Event-Definition) | Workflow event definitions.  | array | no |
+| [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array | no |
 | autoRetries | If set to true, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is false | boolean| no |
-| [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
+| [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array | no |
 | [states](#Workflow-States) | Workflow states | array | yes |
 | [extensions](#Extensions) | Workflow extensions definitions | array or string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
@@ -5988,6 +5989,60 @@ There are two places in the [workflow definition](#Workflow-Definition-Structure
 2. Actions [subflowRef](#SubFlowRef-Definition) `version` property.
 
 The `version` property must respect the [semantic versioning](https://semver.org/) guidelines.
+
+### Workflow Resources
+
+Third parties have the ability to declare a set of resources that can be imported in a workflow and which are used to declare a set of reusable functionalities. It can be seen as a document describing the interactions supported by a given service with Serverless Workflows. 
+
+External resources are defined by the workflow's top-level [resources property](#Workflow-Definition-Structure).
+
+Because a workflow can reference multiple resources that can potentially define components with conflicting names (ex: resource 'A' and resource 'B' both define a function called 'F'), resources are name spaced, which means that references to the components they define must be prefixed with their name (i.e. 'A.F' references the function 'F' defined in the resource 'A').
+
+*Example of an external definition located at the mock address https://test.com/myresource.json:*
+
+```yaml
+functions:
+  - name: getPetById
+    type: openapi
+    operation: https://petstore.swagger.io/v2/swagger.json#getPetById
+```
+
+*Example of a workflow using the above external definition:*
+
+```yaml
+id: get-pet-availability
+name: Get Pet Availability
+version: 1.0.0
+specVersion: 0.8
+resources:
+  - name: petstore
+    uri: https://test.com/myresource.json
+functions:
+  - name: email-send
+    type: openapi
+    operation: smtp.json#send
+states:
+  - name: Get Pet from PetStore
+    type: operation
+    actions:
+      - name: Get Pet
+        functionRef:
+          refName: petstore.getPetById #note that the reference is prefixed with 'petstore', which is the name of the external resource that defines the 'getPetById' function
+          arguments:
+            petId: ${ .input.petId }
+        actionDataFilter:
+          toStateData: ${ .pet }
+      - name: Send Status By Email
+        functionRef:
+          refName: email-send #note that the function name is prefixless because the function has been defined inline, and is therefore considered as part of the 'default' name space
+          arguments:
+            from: info@petstore.io
+            to: ${ .input.client.email }
+            subject: Pet Inquiry Result
+            isBodyHtml: true
+            body: The status of the pet you enquired (${ .input.petId }) about is '${ .pet.status }'
+    end: true
+```
 
 ### Workflow Constants
 

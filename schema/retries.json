@@ -4,23 +4,14 @@
   "description": "Serverless Workflow specification - retries schema",
   "type": "object",
   "retries": {
-    "oneOf": [
-      {
-        "type": "string",
-        "format": "uri",
-        "description": "URI to a resource containing retry definitions (json or yaml)"
-      },
-      {
-        "type": "array",
-        "description": "Workflow Retry definitions. Define retry strategies that can be referenced in states onError definitions",
-        "items": {
-          "type": "object",
-          "$ref": "#/definitions/retrydef"
-        },
-        "additionalItems": false,
-        "minItems": 1
-      }
-    ]
+    "type": "array",
+    "description": "Workflow Retry definitions. Define retry strategies that can be referenced in states onError definitions",
+    "items": {
+      "type": "object",
+      "$ref": "#/definitions/retrydef"
+    },
+    "additionalItems": false,
+    "minItems": 1
   },
   "required": [
     "retries"
