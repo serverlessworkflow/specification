@@ -1780,9 +1780,9 @@ definition "id" must be a constant value.
 | keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
 | [auth](#Auth-Definition) | Workflow authentication definitions | array | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array | no |
-| [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array | no |
+| [functions](#Function-Definition) | Workflow inline function definitions. | array | no |
 | autoRetries | If set to true, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is false | boolean| no |
-| [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array | no |
+| [retries](#Retry-Definition) | Workflow inline retries definitions. | array | no |
 | [states](#Workflow-States) | Workflow states | array | yes |
 | [extensions](#Extensions) | Workflow extensions definitions | array or string | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
