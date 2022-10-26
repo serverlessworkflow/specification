@@ -38,7 +38,7 @@
       },
       "additionalItems": false
     },
-    "dataInputSchema": {
+    "inputDataSchema": {
       "oneOf": [
         {
           "type": "string",
@@ -76,7 +76,7 @@
         }
       ]
     },
-    "dataOutputSchema": {
+    "outputDataSchema": {
       "oneOf": [
         {
           "type": "string",

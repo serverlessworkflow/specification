@@ -1768,8 +1768,8 @@ definition "id" must be a constant value.
 | description | Workflow description | string | no |
 | version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
-| dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
-| dataOutputSchema | Used to validate the workflow data output against a defined JSON Schema| string or object | no |
+| inputDataSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
+| outputDataSchema | Used to validate the workflow data output against a defined JSON Schema| string or object | no |
 | [constants](#Workflow-Constants) | Workflow constants | string or object | no |
 | [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
 | [start](#Start-Definition) | Workflow start definition | string or object | no |
@@ -1860,12 +1860,12 @@ The `version` property can be used to provide a specific workflow version. It mu
 The `annotations` property defines a list of helpful terms describing the workflows intended purpose, subject areas, or other important qualities,
 for example "machine learning", "monitoring", "networking", etc
 
-The `dataInputSchema` and `dataOutputSchema` properties can be used to validate model against a defined JSON Schema.
+The `inputDataSchema` and `outputDataSchema` properties can be used to validate input and output data against a defined JSON Schema.
 
-The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). Validation should be performed before any states are executed. In case of
-a starting [Event state](#Event-state), it is not used to validate its event payloads. The `failOnValidationErrors` property  determines if workflow execution should continue in case of validation errors. 
+The `inputDataSchema` property validates the [workflow data input](#Workflow-Data-Input). Validation should be performed before any states are executed. In case of
+a start [Event state](#Event-state) the input schema is ignored, if present. The `failOnValidationErrors` property  determines if workflow execution should continue in case of validation errors. 
 
-The `dataOutputSchema` property validates the [Workflow data output](#workflow-data-output). Validation should be performed after workflow execution has finished successfully. Successfully means the workflow has completed an end state without errors. 
+The `outputDataSchema` property validates the [Workflow data output](#workflow-data-output). Validation should be performed after workflow execution has finished successfully. Successfully means that the workflow has completed an end state without errors. 
 The `failOnValidationErrors` property determines what should be done when the workflow output does not match the provided schema. 
 If `failOnValidationErrors` is true, an error should be thrown. If executed within a subprocess, that error might be handled by the parent workflow. 
 If `failOnValidationErrors` is false, it is up to the implementor to warn the user about that fact using any mean, except throwing an error. For example, printing a log. 
@@ -1877,7 +1877,7 @@ If using object type, their `schema` property might be an URI, which points to t
 Example for Json schema reference
 
 ```json
-"dataInputSchema": {
+"inputDataSchema": {
    "schema": "URL_to_json_schema",
    "failOnValidationErrors": false
 }
@@ -1886,7 +1886,7 @@ Example for Json schema reference
 Example for Json schema included in the workflow file
 
 ```json
-"dataOutputSchema": {
+"outputDataSchema": {
    "schema": {
      "title": "MyJSONSchema",
      "properties":{
@@ -1908,7 +1908,7 @@ If using string type, then the string value is the external schema URI and `fail
 Example using string type
 
 ```json
-"dataInputSchema": "URL_to_json_schema"
+"inputDataSchema": "URL_to_json_schema"
 ```
 
 The `secrets` property allows you to use sensitive information such as passwords, OAuth tokens, ssh keys, etc. inside your
