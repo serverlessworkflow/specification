@@ -2278,7 +2278,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | --- | --- | --- | --- |
 | name | Unique State name | string | yes |
 | type | State type | string | yes |
-| actionMode | Should actions be performed sequentially or in parallel | enum | no |
+| actionMode | Should actions be performed sequentially or in parallel. Default is `sequential`  | enum | no |
 | [actions](#Action-Definition) | Actions to be performed | array | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter | object | no |
