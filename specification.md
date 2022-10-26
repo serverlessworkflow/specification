@@ -2834,10 +2834,6 @@ ${ {people: [.people[] | select(.age >= 40)]} }
 
 This allows you to test if your workflow behaves properly for cases when there are people whose age is greater or equal 40.
 
-The `timeouts` property can be used to define state specific timeout settings. Inject states can define the
-`stateExecTimeout` property. For more information on workflow timeouts reference the
-[Workflow Timeouts](#Workflow-Timeouts) section.
-
 Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 
 ##### ForEach State
