@@ -222,12 +222,6 @@
           "required": [
             "after"
           ]
-        },
-        {
-          "required": [
-            "before",
-            "after"
-          ]
         }
       ]
     },
