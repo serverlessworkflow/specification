@@ -1498,7 +1498,7 @@ Let's say we have the following workflow definition:
             "actions": [
                 {
                     "functionRef": "Increment Count Function",
-                    "actionFilter": {
+                    "actionDataFilter": {
                         "toStateData": "${ .count }"
                     }
                 }
@@ -1671,7 +1671,7 @@ an inline expression that sets an input parameter inside an action for example:
     {
         "functionRef": {
             "refName": "confirmApplicant",
-            "parameters": {
+            "arguments": {
                 "applicantName": "${ .applicant.name }"
             }
         }
