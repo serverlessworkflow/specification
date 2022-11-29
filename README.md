@@ -86,6 +86,11 @@ consuming, parsing, validating and testing their workflows that use the Serverle
 In order to enhance developer experience with the specification, we also provide a [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension).
 The sources of the extension are found [here](https://github.com/serverlessworkflow/vscode-extension).
 
+## Requirements
+
+To generate the SVG diagram from the YAML file, you need to have the following tools installed:
+- https://www.graphviz.org/download/source/
+
 ## Community
 
 We have a growing community working together to build a community-driven and vendor-neutral
