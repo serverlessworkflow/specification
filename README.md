@@ -88,7 +88,7 @@ The sources of the extension are found [here](https://github.com/serverlessworkf
 
 ## Requirements
 
-To generate the SVG diagram from the YAML file, you need to have the following tools installed:
+To generate the SVG diagram from the YAML or JSON file, you need to have the following tools installed:
 - https://www.graphviz.org/download/source/
 
 ## Community
