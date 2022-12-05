@@ -435,7 +435,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
-| useResults | If set to false, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is true.  | boolean | no |
+| useResults | If set to `false`, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is `true`.  | boolean | no |
 | results | Workflow expression that filters the actions data results | string | no |
 | toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
 
@@ -570,7 +570,7 @@ If `useResults` is not specified (or it's value set to `true`), action results, 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| useData | If set to false, event payload is not added/merged to state data. In this case 'data' and 'toStateData' should be ignored. Default is true. | boolean | no |
+| useData | If set to `false`, event payload is not added/merged to state data. In this case 'data' and 'toStateData' should be ignored. Default is `true`. | boolean | no |
 | data | Workflow expression that filters the event data (payload) | string | no |
 | toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
 
@@ -1716,7 +1716,7 @@ This would set the data output of the particular state to:
 }
 ```
 
-[Switch state](#Switch-State) [conditions](#Switch-State-Data-Conditions) require for expressions to be resolved to a boolean value (true / false).
+[Switch state](#Switch-State) [conditions](#Switch-State-Data-Conditions) require for expressions to be resolved to a boolean value (`true`/`false`).
 
 We can now get back to our previously defined "IsAdultApplicant" expression function and reference it:
 
@@ -1776,11 +1776,11 @@ definition "id" must be a constant value.
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | string or object | no |
 | [errors](#Defining-Errors) | Defines checked errors that can be explicitly handled during workflow execution | string or array | no |
-| keepActive | If "true", workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
+| keepActive | If `true`, workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
 | [auth](#Auth-Definition) | Workflow authentication definitions | array or string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
-| autoRetries | If set to true, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is false | boolean| no |
+| autoRetries | If set to `true`, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is `false` | boolean| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
 | [states](#Workflow-States) | Workflow states | array | yes |
 | [extensions](#Extensions) | Workflow extensions definitions | array or string | no |
@@ -2079,7 +2079,7 @@ By default, as described in the [Core Concepts](#Core-Concepts) section, a workf
 active execution paths, one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
 its [`workflowExecTimeout`](#Workflow-Timeouts) time is reached.
 
-Setting the `keepActive` property to "true" allows you to change this default behavior in that a workflow instance
+Setting the `keepActive` property to `true` allows you to change this default behavior in that a workflow instance
 created from this workflow definition can only be terminated if one of its active paths ends in a "terminate" [end definition](#End-Definition), or when
 its [`workflowExecTimeout`](#Workflow-Timeouts) time is reached.
 This allows you to explicitly model workflows where an instance should be kept alive, to collect (event) data for example.
@@ -2130,7 +2130,7 @@ Serverless Workflow defines the following Workflow States:
 | --- | --- | --- | --- |
 | name | Unique State name | string | yes |
 | type | State type | string | yes |
-| exclusive | If "true", consuming one of the defined events causes its associated actions to be performed. If "false", all of the defined events must be consumed in order for actions to be performed. Default is "true"  | boolean | no |
+| exclusive | If `true`, consuming one of the defined events causes its associated actions to be performed. If `false`, all of the defined events must be consumed in order for actions to be performed. Default is `true`  | boolean | no |
 | [onEvents](#OnEvents-Definition) | Define the events to be consumed and optional actions to be performed | array | yes |
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | [stateDataFilter](#State-data-filters) | State data filter definition| object | no |
@@ -2285,7 +2285,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all the actions have been performed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
+| [usedForCompensation](#Workflow-Compensation) | If `true`, this state is used to compensate another state. Default is `false` | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
@@ -2360,7 +2360,7 @@ the [Workflow Timeouts](#Workflow-Timeouts) section.
 | [timeouts](#Workflow-Timeouts) | State specific timeout settings | object | no |
 | defaultCondition | Default transition of the workflow if there is no matching data conditions or event timeout is reached. Can be a transition or end definition | object | yes |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
+| [usedForCompensation](#Workflow-Compensation) | If `true`, this state is used to compensate another state. Default is `false` | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -2511,7 +2511,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after all branches have completed execution | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
+| [usedForCompensation](#Workflow-Compensation) | If `true`, this state is used to compensate another state. Default is `false` | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
@@ -2621,7 +2621,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [stateDataFilter](#state-data-filters) | State data filter | object | no |
 | [transition](#Transitions) | Next transition of the workflow after injection has completed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
+| [usedForCompensation](#Workflow-Compensation) | If `true`, this state is used to compensate another state. Default is `false` | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
@@ -2858,7 +2858,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after state has completed | string or object | yes (if `end` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
+| [usedForCompensation](#Workflow-Compensation) | If `true`, this state is used to compensate another state. Default is `false` | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
@@ -3100,7 +3100,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | string or object | yes (if `end` is not defined) |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 | [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | string | no |
-| [usedForCompensation](#Workflow-Compensation) | If true, this state is used to compensate another state. Default is "false" | boolean | no |
+| [usedForCompensation](#Workflow-Compensation) | If `true`, this state is used to compensate another state. Default is `false` | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -3734,9 +3734,9 @@ Let's look at the following JSON definition of 'onEvents' to show this:
 
 Depending on the value of the Event states `exclusive` property, this definition can mean two different things:
 
-1. If `exclusive` is set to "true", the consumption of **either** the `HighBodyTemperature` or `HighBloodPressure` events will trigger action execution.
+1. If `exclusive` is set to `true`, the consumption of **either** the `HighBodyTemperature` or `HighBloodPressure` events will trigger action execution.
 
-2. If `exclusive` is set to "false", the consumption of **both** the `HighBodyTemperature` and `HighBloodPressure` events will trigger action execution.
+2. If `exclusive` is set to `false`, the consumption of **both** the `HighBodyTemperature` and `HighBloodPressure` events will trigger action execution.
 
 This is visualized in the diagram below:
 
@@ -3757,7 +3757,7 @@ This is visualized in the diagram below:
 | retryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 | sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
-| [condition](#Workflow-Expressions) | Expression, if defined, must evaluate to true for this action to be performed. If false, action is disregarded | string | no |
+| [condition](#Workflow-Expressions) | Expression, if defined, must evaluate to `true` for this action to be performed. If `false`, action is disregarded | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4342,7 +4342,7 @@ nextState: EvalResultState
 </details>
 
 The `nextState` property defines the name of the state to transition to next.
-The `compensate` property allows you to trigger [compensation](#Workflow-Compensation) before the transition (if set to true).
+The `compensate` property allows you to trigger [compensation](#Workflow-Compensation) before the transition (if set to `true`).
 The `produceEvents` property allows you to define a list of events to produce before the transition happens.
 
 Transitions allow you to move from one state (control-logic block) to another. For more information see the
@@ -4353,9 +4353,9 @@ Transitions allow you to move from one state (control-logic block) to another. F
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Data condition name | string | no |
-| [condition](#Workflow-Expressions) | Workflow expression evaluated against state data. Must evaluate to true or false | string | yes |
-| [transition](#Transitions) | Transition to another state if condition is true | string or object | yes (if `end` is not defined) |
-| [end](#End-Definition) | End workflow execution if condition is true | boolean or object | yes (if `transition` is not defined) |
+| [condition](#Workflow-Expressions) | Workflow expression evaluated against state data. Must evaluate to `true` or `false` | string | yes |
+| [transition](#Transitions) | Transition to another state if condition is `true` | string or object | yes (if `end` is not defined) |
+| [end](#End-Definition) | End workflow execution if condition is `true` | boolean or object | yes (if `transition` is not defined) |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -4393,7 +4393,7 @@ transition: StartApplication
 </details>
 
 Switch state data conditions specify a data-based condition statement, which causes a transition to another
-workflow state if evaluated to true.
+workflow state if evaluated to `true`.
 The `condition` property of the condition defines an expression (e.g., `${ .applicant | .age > 18 }`), which selects
 parts of the state data input. The condition must evaluate to `true` or `false`.
 
@@ -4407,8 +4407,8 @@ definitions are mutually exclusive, meaning that you can specify either one or t
 | --- | --- | --- | --- |
 | name | Event condition name | string | no |
 | eventRef | References an unique event name in the defined workflow events | string | yes |
-| [transition](#Transitions) | Transition to another state if condition is true | string or object | yes (if `end` is not defined) |
-| [end](#End-Definition) | End workflow execution if condition is true | boolean or object | yes (if `transition` is not defined) |
+| [transition](#Transitions) | Transition to another state if condition is `true` | string or object | yes (if `end` is not defined) |
+| [end](#End-Definition) | End workflow execution if condition is `true` | boolean or object | yes (if `transition` is not defined) |
 | [eventDataFilter](#Event-data-filters) | Event data filter definition | object | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -4808,7 +4808,7 @@ If the end definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| terminate | If true, terminates workflow instance execution | boolean | no |
+| terminate | If `true`.  terminates workflow instance execution | boolean | no |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Defines events that should be produced. | array | no |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before workflow execution completes. Default is `false` | boolean | no |
 | [continueAs](#continuing-as-a-new-execution) | Defines that current workflow execution should stop, and execution should continue as a new workflow instance of the provided id | string or object | no |
@@ -4875,7 +4875,7 @@ execution is completed.
 The [continueAs](#Continuing-as-a-new-Execution) property defines that the current workflow instance should stop its execution,
 and worklow execution should continue as a new instance of a new workflow.
 When defined, it should be assumed that `terminate` is `true`. If `continueAs` is defined, and `terminate` is explicitly
-set to false, runtimes should report this to users. Producing events, and compensation should still be performed (if defined)
+set to `false`, runtimes should report this to users. Producing events, and compensation should still be performed (if defined)
 before the workflow execution is stopped, and continued as a new workflow instance with the defined workflow id.
 
 ##### ProducedEvent Definition
@@ -5121,8 +5121,8 @@ Serverless workflow supports two distinct ways of defining retries:
 2. Automatic retrying on both known (checked) and not-known (unchecked) errors.
 
 Which retry option the workflow should use by default is defined via the workflow top-level `autoRetries` property.
-By default, the value of the `autoRetries` is set to false, meaning that retry option 1) is used by default.
-You can enable automatic retrying (option 2) by setting `autoRetries` to true.
+By default, the value of the `autoRetries` is set to `false`, meaning that retry option 1) is used by default.
+You can enable automatic retrying (option 2) by setting `autoRetries` to `true`.
 
 Regardless of the chosen retries option, note that workflows in general should be designed to not fail. 
 Workflows should be able to recover from intermittent failures. 
@@ -5588,9 +5588,9 @@ You can specify for example "PT15M" to represent 15 minutes or "P2DT3H4M" to rep
 The `eventTimeout` property needs to be described in detail  for Event states as it depends on whether or not the Event state is a workflow starting state or not.
 
 If the Event state is a workflow starting state, incoming events may trigger workflow instances. In this case,
-if the `exclusive` property is set to true, the `eventTimeout` property should be ignored.
+if the `exclusive` property is set to `true`, the `eventTimeout` property should be ignored.
 
-If the `exclusive` property is set to false, in this case, the defined `eventTimeout` represents the time
+If the `exclusive` property is set to `false`, in this case, the defined `eventTimeout` represents the time
 between arrival of specified events. To give an example, consider the following:
 
 ```json
@@ -5880,7 +5880,7 @@ Let's take a look at the following workflow image:
 <img src="media/spec/compensation-exec.png" height="400px" alt="Compensation Execution Example"/>
 </p>
 
-In this example lets say our workflow execution is at the "End" state which defines the `compensate` property to true
+In this example lets say our workflow execution is at the "End" state which defines the `compensate` property to `true`
 as shown in the previous section. States with a red border, namely "A", "B", "D" and "E" are states which have so far
 been executed successfully. State "C" has not been executed during workflow execution in our example.
 
