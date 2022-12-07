@@ -5470,11 +5470,11 @@ If `object` type, it is used to define the timeout definitions in-line and has t
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| workflowExecTimeout | Workflow execution timeout (ISO 8601 duration format) | string or object | no |
-| stateExecTimeout | Workflow state execution timeout (ISO 8601 duration format) | string or object | no |
+| [workflowExecTimeout](#workflowexectimeout-definition) | Workflow execution timeout (ISO 8601 duration format) | string or object | no |
+| [stateExecTimeout](#states-timeout-definition) | Workflow state execution timeout (ISO 8601 duration format) | string | no |
 | actionExecTimeout | Actions execution timeout (ISO 8601 duration format) | string | no |
-| branchExecTimeout | Branch execution timeout (ISO 8601 duration format) | string | no |
-| eventTimeout | Default timeout for consuming defined events (ISO 8601 duration format) | string | no |
+| [branchExecTimeout](#branch-timeout-definition) | Branch execution timeout (ISO 8601 duration format) | string | no |
+| [eventTimeout](#event-timeout-definition) | Default timeout for consuming defined events (ISO 8601 duration format) | string | no |
 
 The `eventTimeout` property defines the maximum amount of time to wait to consume defined events. If not specified it should default to
 "unlimited".
