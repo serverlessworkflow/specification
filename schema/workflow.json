@@ -39,80 +39,10 @@
       "additionalItems": false
     },
     "inputDataSchema": {
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "URI of the JSON Schema used to validate the workflow data input",
-          "minLength": 1
-        },
-        {
-          "type": "object",
-          "description": "Workflow data input schema definition",
-          "properties": {
-            "schema": {
-              "oneof": [
-                {
-                  "type": "string",
-                  "description": "URI of the JSON Schema used to validate the workflow data input",
-                  "minLength": 1
-                },
-                {
-                  "type": "object",
-                  "description": "The JSON Schema object used to validate the workflow data input",
-                  "$schema": "http://json-schema.org/draft-07/schema#"
-                }
-              ]
-            },
-            "failOnValidationErrors": {
-              "type": "boolean",
-              "default": true,
-              "description": "Determines if workflow execution should continue if there are validation errors"
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "schema"
-          ]
-        }
-      ]
+      "$ref": "#/definitions/validationSchema"
     },
     "outputDataSchema": {
-      "oneOf": [
-        {
-          "type": "string",
-          "description": "URI of the JSON Schema used to validate the workflow data output",
-          "minLength": 1
-        },
-        {
-          "type": "object",
-          "description": "Workflow data output schema definition",
-          "properties": {
-            "schema": {
-              "oneof":[
-                {
-                  "type": "string",
-                  "description": "URI of the JSON Schema used to validate the workflow data output",
-                  "minLength": 1
-                },
-                {
-                  "type": "object",
-                  "description": "The JSON Schema object used to validate the workflow data output",
-                  "$schema": "http://json-schema.org/draft-07/schema#"
-                }
-              ]
-            },
-            "failOnValidationErrors": {
-              "type": "boolean",
-              "default": true,
-              "description": "Determines if an exception should be thrown when the output model does not match the provided schema"
-            }
-          },
-          "additionalProperties": false,
-          "required": [
-            "schema"
-          ]
-        }
-      ]
+      "$ref": "#/definitions/validationSchema"
     },
     "secrets": {
       "$ref": "secrets.json#/secrets"
@@ -1937,6 +1867,44 @@
       },
       "additionalProperties": false,
       "required": []
+    },
+    "validationSchema" :  {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "URI of the JSON Schema used to validate the workflow",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "description": "Workflow data input schema definition",
+          "properties": {
+            "schema": {
+              "oneof":[
+                {
+                  "type": "string",
+                  "description": "URI of the JSON Schema used to validate the workflow",
+                  "minLength": 1
+                },
+                {
+                  "type": "object",
+                  "description": "The JSON Schema object used to validate the workflow",
+                  "$schema": "http://json-schema.org/draft-07/schema#"
+                }
+              ]
+            },
+            "failOnValidationErrors": {
+              "type": "boolean",
+              "default": true,
+              "description": "Determines if error should be thrown if there are validation errors"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "schema"
+          ]
+        }
+      ]
     }
   }
 }

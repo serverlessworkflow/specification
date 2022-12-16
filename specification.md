@@ -1878,7 +1878,7 @@ Example for Json schema reference
 
 ```json
 "inputDataSchema": {
-   "schema": "URL_to_json_schema",
+   "schema": "URI_to_json_schema",
    "failOnValidationErrors": false
 }
 ```
@@ -1908,7 +1908,7 @@ If using string type, then the string value is the external schema URI and `fail
 Example using string type
 
 ```json
-"inputDataSchema": "URL_to_json_schema"
+"inputDataSchema": "URI_to_json_schema"
 ```
 
 The `secrets` property allows you to use sensitive information such as passwords, OAuth tokens, ssh keys, etc. inside your
