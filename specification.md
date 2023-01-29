@@ -352,7 +352,7 @@ It filters the state's data output to be passed as data input to the transitioni
 If the current state is the workflow end state, the filtered state's data output becomes the workflow data output.
 If `output` is not defined or does not select any parts of the state's data output, its data output is not filtered.
 
-Results of the `input` expression should become the state data.
+Results of the `input` expression should become the state data input.
 Results of the `output` expression should become the state data output.
 
 For more information on this you can reference the [data merging](#Data-Merging) section.
