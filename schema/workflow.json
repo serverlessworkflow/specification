@@ -9,11 +9,6 @@
       "description": "Workflow unique identifier",
       "minLength": 1
     },
-    "key": {
-      "type": "string",
-      "description": "Domain-specific workflow identifier",
-      "minLength": 1
-    },
     "name": {
       "type": "string",
       "description": "Workflow name",
@@ -187,13 +182,6 @@
     {
       "required": [
         "id",
-        "specVersion",
-        "states"
-      ]
-    },
-    {
-      "required": [
-        "key",
         "specVersion",
         "states"
       ]
