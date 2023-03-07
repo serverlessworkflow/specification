@@ -5541,7 +5541,7 @@ The `runBefore` property defines a name of a workflow state to be executed befor
 States referenced by `runBefore` (as well as any other states that they transition to) must obey following rules:
 
 * They should not have any incoming transitions (should not be part of the main workflow control-flow logic)
-* They cannot be states marked for compensation (have their `usedForCompensation` property and set to `true`)
+* They cannot be states marked for compensation (have their `usedForCompensation` property set to `true`)
 * If it is a single state, it must define an [end definition](#End-Definition), if it transitions to other states,
   at last one must define it.
 * They can transition only to states are also not part of the main control flow logic (and are not marked
@@ -5656,7 +5656,7 @@ States referenced by `compensatedBy` (as well as any other states that they tran
 * They cannot be an [event state](#Event-State)
 * They cannot define an [end definition](#End-definition). If they do, it should be ignored
 * They must define the `usedForCompensation` property and set it to `true`
-* They can transition only to states which also have their `usedForCompensation` property and set to `true`
+* They can transition only to states which also have their `usedForCompensation` property set to `true`
 * They cannot themselves set their `compensatedBy` property to any state (compensation is not recursive)
 
 Runtime implementations should raise compile time / parsing exceptions if any of the rules mentioned above are
