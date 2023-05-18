@@ -3806,7 +3806,6 @@ Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, me
 specified in a single action definition.
 
 The `name` property specifies the action name.
-The `id` property specifies the unique action id.
 
 In the event-based scenario a service, or a set of services we want to invoke
 are not exposed via a specific resource URI for example, but can only be invoked via an event.
