@@ -144,6 +144,9 @@ At least 66% approval from the project's maintainers is necessary to merge chang
 in the specification. [Lazy consensus](http://communitymgt.wikia.com/wiki/Lazy_consensus)
 is considered by maintainers that do not directly express their opinions in the pull request.
 
+Discussions and voting can be posponed in case one of the maintainers expressed that
+they won't be available for personal reasons, e.g. parental leave, vacations, sick leave, etc.
+
 We generally prefer that technical issues and maintainer membership are amicably
 worked out between the persons involved. If a dispute cannot be resolved independently,
 get a third-party maintainer (e.g., a mutual contact with some background on the issue
