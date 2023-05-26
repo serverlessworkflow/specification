@@ -97,6 +97,7 @@
   * [Workflow Secrets](#workflow-secrets)
   * [Workflow Metadata](#workflow-metadata)
   * [Workflow Context](#workflow-context)
+  * [Naming Convention](#naming-convention)
 - [Extensions](#extensions)
 - [Use Cases](#use-cases)
 - [Examples](#examples)
@@ -6196,6 +6197,12 @@ Implementations may use this keyword to give access to any relevant information 
 In this use case, a third-party service may require information from the caller for traceability purposes.
 
 The specification doesn't define any specific variable within the `WORKFLOW` bucket, but it's considered a reserved keyword.
+
+### Naming Convention
+
+Identifiable components of a workflow definition, such as states, actions, branches, events and functions define a required non-null `name` property which follows the DNS label names as defined by [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123).
+
+In other words, `names` must be lowercased, start and end with an alphanumeric character, and contain only alphanumeric characters or '-' (dash) character.
 
 ## Extensions
 
