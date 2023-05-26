@@ -26,7 +26,8 @@
     "version": {
       "type": "string",
       "description": "Workflow version",
-      "minLength": 1
+      "minLength": 1,
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
     },
     "annotations": {
       "type": "array",
@@ -49,7 +50,7 @@
           "description": "Workflow data input schema definition",
           "properties": {
             "schema": {
-              "oneof":[
+              "oneof": [
                 {
                   "type": "string",
                   "description": "URI of the JSON Schema used to validate the workflow data input",
@@ -211,7 +212,7 @@
           "description": "Amount of time (ISO 8601 duration format) to sleep after function/subflow invocation. Does not apply if 'eventRef' is defined."
         }
       },
-      "oneOf": [
+      "anyOf": [
         {
           "required": [
             "before"
@@ -274,7 +275,8 @@
             "version": {
               "type": "string",
               "description": "Version of the workflow to continue execution as",
-              "minLength": 1
+              "minLength": 1,
+              "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
             },
             "data": {
               "type": [
@@ -606,7 +608,8 @@
             "version": {
               "type": "string",
               "description": "Version of the sub-workflow to be invoked",
-              "minLength": 1
+              "minLength": 1,
+              "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
             },
             "onParentComplete": {
               "type": "string",
@@ -1227,7 +1230,7 @@
       "type": "object",
       "description": "DefaultCondition definition. Can be either a transition or end definition",
       "properties": {
-        "name":{
+        "name": {
           "type": "string",
           "description": "The optional name of the default condition, used solely for display purposes",
           "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"

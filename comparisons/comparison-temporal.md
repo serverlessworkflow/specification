@@ -82,7 +82,7 @@ public static class GreetingWorkflowImpl implements GreetingWorkflow {
 {
   "id": "greetingworkflow",
   "name": "Greeting Workflow",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "autoRetries": true,
   "states": [
@@ -164,7 +164,7 @@ WorkflowOptions workflowOptions =
 {
   "id": "greetingworkflow",
   "name": "Greeting Workflow",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "autoRetries": true,
   "timeouts": {
@@ -268,7 +268,7 @@ WorkflowOptions workflowOptions =
 {
   "id": "HelloSaga",
   "name": "Hello SAGA compensation Workflow",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "states": [
     {
@@ -392,7 +392,7 @@ static class GreetingActivitiesImpl implements GreetingActivities {
 {
   "id": "HelloActivityRetry",
   "name": "Hello Activity with Retries Workflow",
-  "version": "1.0",
+  "version": "1.0.0",
   "specVersion": "0.8",
   "autoRetries": true,
   "start": "GreetingState",

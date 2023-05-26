@@ -51,7 +51,7 @@ For this reason, the event, function, retry, and data mapping defined in the ass
 ```yaml
 id: processfile
 name: Process File Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: Process File
 states:
@@ -87,7 +87,7 @@ functions:
 ```yaml
 id: processapplication
 name: Process Application
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: ProcessNewApplication
 states:
@@ -141,7 +141,7 @@ events:
 ```yaml
 id: simplecompensation
 name: Simple Compensation
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: Step 1
 states:
@@ -203,7 +203,7 @@ functions:
 ---
 id: errorwithretries
 name: Error Handling With Retries Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: Make Coffee
 states:
@@ -267,7 +267,7 @@ functions:
 ```yaml
 id: executiontimeout
 name: Execution Timeout Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: Purchase Parts
 timeouts:
@@ -321,7 +321,7 @@ functions:
 ```yaml
 id: foreachWorkflow
 name: ForEach State Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: ForEachItem
 states:
@@ -360,7 +360,7 @@ a starting "operation" state transitioning to an "event" state which waits for t
 ```yaml
 id: subflowloop
 name: SubFlow Loop Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: SubflowRepeat
 states:
@@ -410,7 +410,7 @@ control-flow logic to check email and make a decision to reply to it or wait an 
 ```yaml
 id: approvereport
 name: Approve Report Workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: Approve Report
 states:
@@ -473,7 +473,7 @@ functions:
 ```yaml
 id: eventdecision
 name: Event Decision workflow
-version: '1.0'
+version: '1.0.0'
 specVersion: '0.8'
 start: A
 states:

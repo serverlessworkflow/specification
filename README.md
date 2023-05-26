@@ -29,8 +29,7 @@ Cloud Native Sandbox level project on July 14, 2020.
 - [Community](#Community)
   - [Communication](#Communication)
   - [Code of Conduct](#Code-of-Conduct)
-  - [Meetings](#Meetings)
-  - [Meeting Minutes](#Meeting-Minutes)
+  - [Weekly Meetings](#Weekly-Meetings)
 - [Repository Structure](#Repository-Structure)
 - [Support](#Support)
 
@@ -87,6 +86,11 @@ consuming, parsing, validating and testing their workflows that use the Serverle
 In order to enhance developer experience with the specification, we also provide a [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=serverlessworkflow.serverless-workflow-vscode-extension).
 The sources of the extension are found [here](https://github.com/serverlessworkflow/vscode-extension).
 
+## Requirements
+
+To generate the SVG diagram from the YAML or JSON file, you need to have the following tools installed:
+- https://www.graphviz.org/download/source/
+
 ## Community
 
 We have a growing community working together to build a community-driven and vendor-neutral
@@ -121,39 +125,18 @@ religion, or nationality.
 
 See our full project Code of Conduct information [here](code-of-conduct.md).
 
-### Meetings
+### Weekly Meetings
 
-* [CNCF public events calendar](https://www.cncf.io/calendar/)
+The Serverless Workflow team meets weekly, every Monday at 11AM ET (USA Eastern Time).
 
-The Serverless Workflow team meets weekly, every Wednesday at 11AM ET (USA Eastern Time).
+To register for meetings please visit our [website](https://serverlessworkflow.io/) and click on the
+"Register for Weekly Project Meetings" button.
+You can register for individual meetings or for the entire series.
 
-Join from PC, Mac, Linux, iOS or Android via [zoom](https://zoom.us/my/cncfserverlesswg?pwd=YjNqYzhOdjRRd01YWFkzS1lHbDZqUT09)
-
-Or iPhone one-tap :
-
-    US: +16465588656,,3361029682#  or +16699006833,,3361029682#
-
-Or Telephone:
-
-    Dial:
-        US: +1 646 558 8656 (US Toll) or +1 669 900 6833 (US Toll)
-        or +1 855 880 1246 (Toll Free) or +1 877 369 0926 (Toll Free)
-
-Meeting ID: 336 102 9682
-
-International numbers available:
-https://zoom.us/zoomconference?m=QpOqQYfTzY_Gbj9_8jPtsplp1pnVUKDr
-
-NOTE: Please use \*6 to mute/un-mute your phone during the call.
+The meeting minutes can be accessed in [this document](https://docs.google.com/document/d/1SY9_n7vcRabmP8xELBP8lmwz14AscPzJq6AL86dbcCY).
 
 World Time Zone Converter:
 http://www.thetimezoneconverter.com/?t=9:00%20am&tz=San%20Francisco&
-
-### Meeting Minutes
-
-You can find meeting minutes [here](meetingminutes).
-Note that unfortunately we have lost our Google doc which contained meeting info for our prior meetings.
-We will move all meeting info to our github repo so that this never happens again.
 
 ## Repository Structure
 
