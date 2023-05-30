@@ -33,7 +33,7 @@
           "type": "string",
           "description": "Unique function name",
           "minLength": 1,
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "operation": {
           "type": "string",
@@ -60,7 +60,7 @@
               "type": "string",
               "description": "References the auth definition to be used to invoke the operation",
               "minLength": 1,
-              "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+              "pattern": "^[a-z0-9](-?[a-z0-9])*$"
             },
             {
               "type": "object",
@@ -70,7 +70,7 @@
                   "type": "string",
                   "description": "References an auth definition to be used to access the resource defined in the operation parameter",
                   "minLength": 1,
-                  "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+                  "pattern": "^[a-z0-9](-?[a-z0-9])*$"
                 },
                 "invocation":{
                   "type": "string",

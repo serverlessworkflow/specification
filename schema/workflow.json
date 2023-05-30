@@ -302,7 +302,7 @@
           "type": "string",
           "description": "Name of state to transition to",
           "minLength": 1,
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         {
           "type": "object",
@@ -312,7 +312,7 @@
               "type": "string",
               "description": "Name of state to transition to",
               "minLength": 1,
-              "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+              "pattern": "^[a-z0-9](-?[a-z0-9])*$"
             },
             "produceEvents": {
               "type": "array",
@@ -399,7 +399,7 @@
           "minItems": 1,
           "items": {
             "type": "string",
-            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+            "pattern": "^[a-z0-9](-?[a-z0-9])*$"
           },
           "uniqueItems": true,
           "additionalItems": false
@@ -438,7 +438,7 @@
         "name": {
           "type": "string",
           "description": "Unique action definition name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "functionRef": {
           "description": "References a function to be invoked",
@@ -516,7 +516,7 @@
           "type": "string",
           "description": "Name of the referenced function",
           "minLength": 1,
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         {
           "type": "object",
@@ -525,7 +525,7 @@
             "refName": {
               "type": "string",
               "description": "Name of the referenced function",
-              "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+              "pattern": "^[a-z0-9](-?[a-z0-9])*$"
             },
             "arguments": {
               "type": "object",
@@ -559,12 +559,12 @@
         "produceEventRef": {
           "type": "string",
           "description": "Reference to the unique name of a 'produced' event definition",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "consumeEventRef": {
           "type": "string",
           "description": "Reference to the unique name of a 'consumed' event definition",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "consumeEventTimeout": {
           "type": "string",
@@ -643,7 +643,7 @@
         "name": {
           "type": "string",
           "description": "Branch name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "timeouts": {
           "type": "object",
@@ -681,7 +681,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -731,7 +731,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -793,7 +793,7 @@
           "type": "string",
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "metadata": {
           "$ref": "common.json#/definitions/metadata"
@@ -826,7 +826,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -888,7 +888,7 @@
           "type": "string",
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "usedForCompensation": {
           "type": "boolean",
@@ -945,7 +945,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -1017,7 +1017,7 @@
           "type": "string",
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "usedForCompensation": {
           "type": "boolean",
@@ -1084,7 +1084,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -1134,7 +1134,7 @@
           "type": "string",
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "usedForCompensation": {
           "type": "boolean",
@@ -1160,7 +1160,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -1207,7 +1207,7 @@
           "type": "string",
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "usedForCompensation": {
           "type": "boolean",
@@ -1233,7 +1233,7 @@
         "name": {
           "type": "string",
           "description": "The optional name of the default condition, used solely for display purposes",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "transition": {
           "$ref": "#/definitions/transition"
@@ -1273,12 +1273,12 @@
         "name": {
           "type": "string",
           "description": "Event condition name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "eventRef": {
           "type": "string",
           "description": "References an unique event name in the defined workflow events",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "transition": {
           "description": "Next transition of the workflow if there is valid matches",
@@ -1306,12 +1306,12 @@
         "name": {
           "type": "string",
           "description": "Event condition name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "eventRef": {
           "type": "string",
           "description": "References an unique event name in the defined workflow events",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "end": {
           "$ref": "#/definitions/end",
@@ -1349,7 +1349,7 @@
         "name": {
           "type": "string",
           "description": "Data condition name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "condition": {
           "type": "string",
@@ -1377,7 +1377,7 @@
         "name": {
           "type": "string",
           "description": "Data condition name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "condition": {
           "type": "string",
@@ -1405,7 +1405,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -1432,7 +1432,7 @@
           "type": "string",
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "usedForCompensation": {
           "type": "boolean",
@@ -1489,7 +1489,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -1564,7 +1564,7 @@
           "type": "string",
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "usedForCompensation": {
           "type": "boolean",
@@ -1633,7 +1633,7 @@
         "name": {
           "type": "string",
           "description": "State name",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "type": {
           "type": "string",
@@ -1647,7 +1647,7 @@
         "eventRef": {
           "type": "string",
           "description": "References an unique callback event name in the defined workflow events",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "timeouts": {
           "type": "object",
@@ -1694,7 +1694,7 @@
           "type": "string",
           "minLength": 1,
           "description": "Unique Name of a workflow state which is responsible for compensation of this state",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "usedForCompensation": {
           "type": "boolean",
@@ -1753,7 +1753,7 @@
           "type": "string",
           "description": "Name of the starting workflow state",
           "minLength": 1,
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         {
           "type": "object",
@@ -1763,7 +1763,7 @@
               "type": "string",
               "description": "Name of the starting workflow state",
               "minLength": 1,
-              "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+              "pattern": "^[a-z0-9](-?[a-z0-9])*$"
             },
             "schedule": {
               "description": "Define the time/repeating intervals or cron at which workflow instances should be automatically started.",
@@ -1863,7 +1863,7 @@
         "eventRef": {
           "type": "string",
           "description": "References a name of a defined event",
-          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])$"
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "data": {
           "type": [
