@@ -6200,9 +6200,11 @@ The specification doesn't define any specific variable within the `WORKFLOW` buc
 
 ### Naming Convention
 
-Identifiable components of a workflow definition, such as states, actions, branches, events and functions define a required non-null `name` property which is based on DNS label names as defined by [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123) with further restrictions.
+Identifiable components of a workflow definition, such as states, actions, branches, events and functions define a required non-null `name` property which is based on DNS label names as defined by [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-13) with further restrictions.
 
-Specifically, `name`s must be lowercase, start and end with an alphanumeric character, and consist entirely of alphanumeric characters with optional isolated medial dashes '-' (i.e., dashes must not be adjacent to each other).
+Specifically, `names` must be lowercase, start and end with an alphanumeric character, and consist entirely of alphanumeric characters with optional isolated medial dashes '-' (i.e., dashes must not be adjacent to each other).
+
+The regular expression used in [schemas](/schema/workflow.json) is: `^[a-z0-9](-?[a-z0-9])*$`.
 
 ## Extensions
 
