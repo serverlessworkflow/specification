@@ -38,6 +38,7 @@ depend on and trust to make decisions in the best interest of the project.
 Periodically, the existing maintainers curate a list of contributors that have
 shown regular activity on the project over the prior months. From this list,
 maintainer candidates are selected and proposed on the project mailing list.
+Only one maintainer per organization is allowed to avoid taking over votes in case of conflicts.
 
 After a candidate has been announced on the project mailing list, the
 existing maintainers are given fourteen business days to discuss the candidate,
@@ -116,6 +117,12 @@ As a result, all decisions can be expressed as changes to the repository. An
 implementation change is a change to the source code. An API change is a change
 to the API specification, and so on.
 
+Decisions are built on consensus between maintainers. Proposals and ideas can be submitted
+for agreement via a GitHub [issue](issues) or [discussion](discussions).
+Upon agreement, a pull request should be opened. We encourage not opening pull
+requests without a discussion first either in a new [issue](issues) or using
+the [discussion](discussions) tool.
+
 All decisions affecting Serverless Workflow, big and small, follow the same 3 steps:
 
 * Step 1: Open a pull request. Anyone can do this.
@@ -133,8 +140,18 @@ document for more information about opening pull requests.
 
 ## Conflict Resolution
 
-If you have a technical dispute that you feel has reached an impasse with a
-subset of the community, any contributor may open an issue, specifically
-calling for a resolution vote of the current core maintainers to resolve the dispute.
-The same voting quorums required (2/3) for adding and removing maintainers
-will apply to conflict resolution.
+At least 66% approval from the project's maintainers is necessary to merge changes
+in the specification. [Lazy consensus](http://communitymgt.wikia.com/wiki/Lazy_consensus)
+is considered by maintainers that do not directly express their opinions in the pull request.
+
+Discussions and voting can be posponed in case one of the maintainers expressed that
+they won't be available for personal reasons, e.g. parental leave, vacations, sick leave, etc.
+
+We generally prefer that technical issues and maintainer membership are amicably
+worked out between the persons involved. If a dispute cannot be resolved independently,
+get a third-party maintainer (e.g., a mutual contact with some background on the issue
+but not involved in the conflict) to intercede. If a dispute cannot be resolved,
+the core maintainers have the final say in deciding an issue. The core maintainers
+may reach this decision by consensus or by a simple majority vote if necessary.
+The maintainers should endeavor to make this decision within a reasonable amount
+of time, not to extend it longer than two weeks.

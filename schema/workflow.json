@@ -50,7 +50,7 @@
           "description": "Workflow data input schema definition",
           "properties": {
             "schema": {
-              "oneof":[
+              "oneof": [
                 {
                   "type": "string",
                   "description": "URI of the JSON Schema used to validate the workflow data input",
@@ -206,7 +206,7 @@
           "description": "Amount of time (ISO 8601 duration format) to sleep after function/subflow invocation. Does not apply if 'eventRef' is defined."
         }
       },
-      "oneOf": [
+      "anyOf": [
         {
           "required": [
             "before"
@@ -1201,7 +1201,7 @@
       "type": "object",
       "description": "DefaultCondition definition. Can be either a transition or end definition",
       "properties": {
-        "name":{
+        "name": {
           "type": "string",
           "description": "The optional name of the default condition, used solely for display purposes"
         },

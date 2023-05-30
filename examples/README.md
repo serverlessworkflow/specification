@@ -68,7 +68,7 @@ data output, which is:
 ```json
 {
 "id": "helloworld",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "name": "Hello World Workflow",
 "description": "Inject Hello World",
@@ -152,7 +152,7 @@ Which is added to the states data and becomes the workflow data output.
 ```json
 {
 "id": "greeting",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "name": "Greeting Workflow",
 "description": "Greet Someone",
@@ -297,7 +297,7 @@ filters what is selected to be the state data output which then becomes the work
 ```json
 {
 "id": "eventbasedgreeting",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "name": "Event Based Greeting Workflow",
 "description": "Event Based Greeting",
@@ -425,7 +425,7 @@ result of the workflow execution.
 ```json
 {
 "id": "solvemathproblems",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "name": "Solve Math Problems Workflow",
 "description": "Solve math problems",
@@ -522,7 +522,7 @@ to finish execution before it can transition (end workflow execution in this cas
 ```json
 {
 "id": "parallelexec",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "name": "Parallel Execution Workflow",
 "description": "Executes two branches in parallel",
@@ -612,7 +612,7 @@ does not wait for its results.
 ```json
 {
  "id": "sendcustomeremail",
- "version": "1.0.0"
+ "version": "1.0.0",
  "specVersion": "0.8",
  "name": "Send customer email workflow",
  "description": "Send email to a customer",
@@ -703,7 +703,7 @@ property to `continue`.
 ```json
 {
  "id": "onboardcustomer",
- "version": "1.0.0"
+ "version": "1.0.0",
  "specVersion": "0.8",
  "name": "Onboard Customer",
  "description": "Onboard a Customer",
@@ -785,7 +785,7 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
 ```json
 {
 "id": "eventbasedswitchstate",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "name": "Event Based Switch Transitions",
 "description": "Event Based Switch Transitions",
@@ -947,7 +947,7 @@ If the applicants age is over 18 we start the application (subflow action). Othe
 ```json
 {
    "id": "applicantrequest",
-   "version": "1.0.0"
+   "version": "1.0.0",
    "specVersion": "0.8",
    "name": "Applicant Request Decision Workflow",
    "description": "Determine if applicant request is valid",
@@ -1091,7 +1091,7 @@ The data output of the workflow contains the information of the exception caught
 ```json
 {
 "id": "provisionorders",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "name": "Provision Orders",
 "description": "Provision Orders and handle errors thrown",
@@ -1287,7 +1287,7 @@ In the case job submission raises a runtime error, we transition to an Operation
 ```json
 {
   "id": "jobmonitoring",
-  "version": "1.0.0"
+  "version": "1.0.0",
   "specVersion": "0.8",
   "name": "Job Monitoring",
   "description": "Monitor finished execution of a submitted job",
@@ -1578,7 +1578,7 @@ CloudEvent upon completion of the workflow could look like:
 ```json
 {
 "id": "sendcloudeventonprovision",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "name": "Send CloudEvent on provision completion",
 "start": "ProvisionOrdersState",
@@ -1712,7 +1712,7 @@ have the matching patient id.
 {
 "id": "patientVitalsWorkflow",
 "name": "Monitor Patient Vitals",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "start": "MonitorVitals",
 "events": [
@@ -1907,7 +1907,7 @@ when all three of these events happened (in no particular order).
 {
 "id": "finalizeCollegeApplication",
 "name": "Finalize College Application",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "start": "FinalizeApplication",
 "events": [
@@ -2118,7 +2118,7 @@ And for denied credit check, for example:
 ```json
 {
     "id": "customercreditcheck",
-    "version": "1.0.0"
+    "version": "1.0.0",
     "specVersion": "0.8",
     "name": "Customer Credit Check Workflow",
     "description": "Perform Customer Credit Check",
@@ -2323,7 +2323,7 @@ Bidding is done via an online application and bids are received as events are as
 ```json
 {
     "id": "handleCarAuctionBid",
-    "version": "1.0.0"
+    "version": "1.0.0",
     "specVersion": "0.8",
     "name": "Car Auction Bidding Workflow",
     "description": "Store a single bid whole the car auction is active",
@@ -2453,7 +2453,7 @@ The results of the inbox service called is expected to be for example:
 {
 "id": "checkInbox",
 "name": "Check Inbox Workflow",
-"version": "1.0.0"
+"version": "1.0.0",
 "specVersion": "0.8",
 "description": "Periodically Check Inbox",
 "start": {
@@ -2597,7 +2597,7 @@ For this example we assume that the workflow instance is started given the follo
     "id": "VetAppointmentWorkflow",
     "name": "Vet Appointment Workflow",
     "description": "Vet service call via events",
-    "version": "1.0.0"
+    "version": "1.0.0",
     "specVersion": "0.8",
     "start": "MakeVetAppointmentState",
     "events": [
@@ -2748,7 +2748,7 @@ In our workflow definition then we can reference these files rather than definin
 ```json
 {
   "id": "paymentconfirmation",
-  "version": "1.0.0"
+  "version": "1.0.0",
   "specVersion": "0.8",
   "name": "Payment Confirmation Workflow",
   "description": "Performs Payment Confirmation",
@@ -2952,7 +2952,7 @@ If the retries are not successful, we want to just gracefully end workflow execu
 {
   "id": "patientonboarding",
   "name": "Patient Onboarding Workflow",
-  "version": "1.0.0"
+  "version": "1.0.0",
   "specVersion": "0.8",
   "start": "Onboard",
   "states": [
@@ -3124,7 +3124,7 @@ This example shows the use of the workflow [execTimeout definition](../specifica
 {
   "id": "order",
   "name": "Purchase Order Workflow",
-  "version": "1.0.0"
+  "version": "1.0.0",
   "specVersion": "0.8",
   "start": "StartNewOrder",
   "timeouts": {
@@ -3408,7 +3408,7 @@ the data for an hour, send report, and so on.
 {
   "id": "roomreadings",
   "name": "Room Temp and Humidity Workflow",
-  "version": "1.0.0"
+  "version": "1.0.0",
   "specVersion": "0.8",
   "start": "ConsumeReading",
   "timeouts": {
@@ -3582,7 +3582,7 @@ We fist define our top-level workflow for this example:
 {
  "id": "checkcarvitals",
  "name": "Check Car Vitals Workflow",
- "version": "1.0.0"
+ "version": "1.0.0",
  "specVersion": "0.8",
  "start": "WhenCarIsOn",
  "states": [
@@ -3697,7 +3697,7 @@ And then our reusable sub-workflow which performs the checking of our car vitals
 {
  "id": "vitalscheck",
  "name": "Car Vitals Check",
- "version": "1.0.0"
+ "version": "1.0.0",
  "specVersion": "0.8",
  "start": "CheckVitals",
  "states": [
@@ -3837,7 +3837,7 @@ For the sake of the example we assume the functions and event definitions are de
 {
  "id": "booklending",
  "name": "Book Lending Workflow",
- "version": "1.0.0"
+ "version": "1.0.0",
  "specVersion": "0.8",
  "start": "Book Lending Request",
  "states": [
@@ -4129,7 +4129,7 @@ Its results are then merged back into the state data according to the "toStateDa
 {
  "id": "fillglassofwater",
  "name": "Fill glass of water workflow",
- "version": "1.0.0"
+ "version": "1.0.0",
  "specVersion": "0.8",
  "start": "Check if full",
  "functions": [
@@ -4542,7 +4542,7 @@ We assume that our workflow input has the runtime-imposed quota:
      "end":{
       "continueAs": {
        "workflowId": "notifycustomerworkflow",
-       "version": "1.0.0"
+       "version": "1.0.0",
        "data": "${ del(.customerCount) }"
       }
      }
@@ -4662,7 +4662,7 @@ decide which activity to perform based on the transaction value.
 {
  "id": "customerbankingtransactions",
  "name": "Customer Banking Transactions Workflow",
- "version": "1.0.0"
+ "version": "1.0.0",
  "specVersion": "0.8",
  "autoRetries": true,
  "constants": {
