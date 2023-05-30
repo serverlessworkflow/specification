@@ -36,6 +36,7 @@ _Status description:_
 | ✔️| Update the `dataInputSchema` top-level property by supporting the assignment of a JSON schema object [workflow schema](https://github.com/serverlessworkflow/specification/tree/main/specification.md#workflow-definition-structure)  |
 | ✔️| Add the new `WORKFLOW` reserved keyword to workflow expressions  |
 | ✔️| Update `ForEach` state iteration parameter example. This parameter is an expression variable, not a JSON property  |
+| ✔️| Add support for importing and referencing externally defined workflow `resources` |
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Update rest function definition |   |
 | ✏️️| Add "completedBy" functionality |   |
