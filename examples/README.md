@@ -32,6 +32,7 @@ Provides Serverless Workflow language examples
 - [Online Food Ordering](#Online-Food-Ordering)
 - [Continuing as a new Execution](#Continuing-as-a-new-Execution)
 - [Process Transactions (Foreach State with conditions)](#Process-Transactions)
+- [Import external resources](#import-external-resources)
 
 ### Hello World Example
 
@@ -4734,6 +4735,144 @@ functions:
  - name: Banking Service - Smaller T
    type: asyncapi
    operation: banking.yaml#smallerTransation
+```
+
+</td>
+</tr>
+</table>
+
+### Import External Resources
+
+#### Description
+
+For the example, let's assume we have developped a number of workflows to orchestrate an hypothetical, event-driven management solution around the Swagger Pet Store API.
+
+At start, we were copy/pasting the many Pet Store function definitions from workflow to workflow as we needed them. Even though that was very tedious, we just coped with it, until that day where the names of a couple of functions changed in the `swagger.json`, breaking most of our workflows.
+
+We then sat down, and agreed for our sanity to respect the DRY principle, and only declare those functions once, in an hypothetical `https://fake.examples/sw/petstore.yaml` file, that could look like the following:
+
+```yaml
+functions:
+  - name: add-pet
+    type: openapi
+    operation: https://petstore.swagger.io/v2/swagger.json#addPet
+  - name: get-pet-by-id
+    type: openapi
+    operation: https://petstore.swagger.io/v2/swagger.json#getPetById
+  - name: update-pet
+    type: openapi
+    operation: https://petstore.swagger.io/v2/swagger.json#updatePet
+  - name: delete-pet
+    type: openapi
+    operation: https://petstore.swagger.io/v2/swagger.json#deletePet
+```
+
+Starting from there, we could now reuse those definitions in any workflows by just importing them:
+
+#### Workflow Definition
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "id": "get-pet-availability",
+  "name": "Get Pet Availability",
+  "version": "1.0.0",
+  "specVersion": 0.8,
+  "resources": [
+    {
+      "name": "petstore",
+      "uri": "https://test.com/myresource.json"
+    }
+  ],
+  "functions": [
+    {
+      "name": "email-send",
+      "type": "openapi",
+      "operation": "smtp.json#send"
+    }
+  ],
+  "states": [
+    {
+      "name": "get-pet",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "get-pet-by-id",
+          "functionRef": {
+            "refName": "petstore.get-pet-by-id",
+            "arguments": {
+              "petId": "${ .input.petId }"
+            }
+          },
+          "actionDataFilter": {
+            "toStateData": "${ .pet }"
+          }
+        },
+        {
+          "name": "send-pet-status-by-email",
+          "functionRef": {
+            "refName": "email-send",
+            "arguments": {
+              "from": "info@petstore.io",
+              "to": "${ .input.client.email }",
+              "subject": "Pet Inquiry Result",
+              "isBodyHtml": true,
+              "body": "The status of the pet you enquired (${ .input.petId }) about is '${ .pet.status }'"
+            }
+          }
+        }
+      ],
+      "end": true
+    }
+  ]
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+id: get-pet-availability
+name: Get Pet Availability
+version: 1.0.0
+specVersion: 0.8
+resources:
+  - name: petstore
+    uri: 'https://test.com/myresource.json'
+functions:
+  - name: email-send
+    type: openapi
+    operation: 'smtp.json#send'
+states:
+  - name: get-pet
+    type: operation
+    actions:
+      - name: get-pet-by-id
+        functionRef:
+          refName: petstore.get-pet-by-id
+          arguments:
+            petId: '${ .input.petId }'
+        actionDataFilter:
+          toStateData: '${ .pet }'
+      - name: send-pet-status-by-email
+        functionRef:
+          refName: email-send
+          arguments:
+            from: info@petstore.io
+            to: '${ .input.client.email }'
+            subject: Pet Inquiry Result
+            isBodyHtml: true
+            body: >-
+              The status of the pet you enquired (${ .input.petId }) about is
+              '${ .pet.status }'
+    end: true
 ```
 
 </td>
