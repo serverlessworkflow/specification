@@ -1865,10 +1865,10 @@ The `inputDataSchema` and `outputDataSchema` properties can be used to validate 
 The `inputDataSchema` property validates the [workflow data input](#Workflow-Data-Input). Validation should be performed before any states are executed. In case of
 a start [Event state](#Event-state) the input schema is ignored, if present. The `failOnValidationErrors` property  determines if workflow execution should continue in case of validation errors. 
 
-The `outputDataSchema` property validates the [Workflow data output](#workflow-data-output). Validation should be performed after workflow execution has finished successfully. Successfully means that the workflow has completed an end state without errors. 
+The `outputDataSchema` property validates the [Workflow data output](#workflow-data-output). Validation is performed on the output of the workflow execution. 
 The `failOnValidationErrors` property determines what should be done when the workflow output does not match the provided schema. 
-If `failOnValidationErrors` is true, an error should be thrown. If executed within a subprocess, that error might be handled by the parent workflow. 
-If `failOnValidationErrors` is false, it is up to the implementor to warn the user about that fact using any mean, except throwing an error. For example, printing a log. 
+If `failOnValidationErrors` is true, an error should be thrown. If executed within a subprocess, that error can be be handled by the parent workflow. 
+If `failOnValidationErrors` is false, the error should not be propagated. It is up to the implementor to warn the user about that fact. For example, printing a log. 
 
 Both properties can be expressed as object or string type. 
 
@@ -1878,7 +1878,7 @@ Example for Json schema reference
 
 ```json
 "inputDataSchema": {
-   "schema": "URI_to_json_schema",
+   "schema": "URI to json schema",
    "failOnValidationErrors": false
 }
 ```
