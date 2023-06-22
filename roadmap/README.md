@@ -45,6 +45,7 @@ _Status description:_
 | ✏️️| Add SDKs for more languages (Python, PHP, Rust, etc) |   |
 | ✏️️| Add more samples  |   |
 | ✏️️| Enforce SemVer `version`  |   |
+| ✏️️| Add `dataOutputSchema`  |   |
 
 ## <a name="v08"></a> Released version v0.8
 
