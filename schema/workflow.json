@@ -38,10 +38,10 @@
       },
       "additionalItems": false
     },
-    "inputDataSchema": {
+    "dataInputSchema": {
       "$ref": "#/definitions/validationSchema"
     },
-    "outputDataSchema": {
+    "dataOutputSchema": {
       "$ref": "#/definitions/validationSchema"
     },
     "secrets": {
