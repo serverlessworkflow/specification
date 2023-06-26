@@ -1,4 +1,4 @@
-# Serverless Workflow Specification 2021 Annual Review
+# Serverless Workflow Specification 2022 Annual Review
 
 - [Background](#background)
 - [Alignment with Cloud Native](#alignment-with-cloud-native)
