@@ -3103,7 +3103,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | string or object | yes (if `end` is not defined) |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
-| [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | string | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If `true`, this state is used to compensate another state. Default is `false` | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
