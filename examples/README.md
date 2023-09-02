@@ -174,7 +174,7 @@ Which is added to the states data and becomes the workflow data output.
                 "name": "${ .person.name }"
               }
            },
-           "actionDataFilter": {
+           "dataFilter": {
               "results": "${ {greeting: .greeting} }"
            }
         }
@@ -206,7 +206,7 @@ states:
       refName: greetingFunction
       arguments:
         name: "${ .person.name }"
-    actionDataFilter:
+    dataFilter:
       results: "${ {greeting: .greeting} }"
   end: true
 ```
@@ -252,7 +252,7 @@ Note that in the workflow definition you can see two filters defined. The event 
 
 ```json
 {
-  "eventDataFilter": {
+  "dataFilter": {
     "data": "${ .data.greet } "
   }
 }
@@ -265,7 +265,7 @@ The second, a state data filter, which is defined on the event state itself:
 
 ```json
 {
-  "stateDataFilter": {
+  "dataFilter": {
      "output": "${ .payload.greeting }"
   }
 }
@@ -320,7 +320,7 @@ filters what is selected to be the state data output which then becomes the work
      "type":"event",
      "onEvents": [{
          "eventRefs": ["GreetingEvent"],
-         "eventDataFilter": {
+         "dataFilter": {
             "data": "${ .greet }",
             "toStateData": "${ .greet }"
          },
@@ -335,7 +335,7 @@ filters what is selected to be the state data output which then becomes the work
             }
          ]
      }],
-     "stateDataFilter": {
+     "dataFilter": {
         "output": "${ .payload.greeting }"
      },
      "end": true
@@ -367,7 +367,7 @@ states:
   onEvents:
   - eventRefs:
     - GreetingEvent
-    eventDataFilter:
+    dataFilter:
       data: "${ .greet }"
       toStateData: "${ .greet }"
     actions:
@@ -375,7 +375,7 @@ states:
         refName: greetingFunction
         arguments:
           name: "${ .greet.name }"
-  stateDataFilter:
+  dataFilter:
     output: "${ .payload.greeting }"
   end: true
 ```
@@ -452,7 +452,7 @@ result of the workflow execution.
       }
    }
  ],
- "stateDataFilter": {
+ "dataFilter": {
     "output": "${ .results }"
  },
  "end": true
@@ -485,7 +485,7 @@ states:
       refName: solveMathExpressionFunction
       arguments:
         expression: "${ .singleexpression }"
-  stateDataFilter:
+  dataFilter:
     output: "${ .results }"
   end: true
 ```
@@ -1127,7 +1127,7 @@ The data output of the workflow contains the information of the exception caught
           }
        }
     ],
-    "stateDataFilter": {
+    "dataFilter": {
        "output": "${ .exceptions }"
     },
     "transition": "ApplyOrder",
@@ -1216,7 +1216,7 @@ states:
        refName: provisionOrderFunction
        arguments:
         order: "${ .order }"
-   stateDataFilter:
+   dataFilter:
     output: "${ .exceptions }"
    transition: ApplyOrder
    onErrors:
@@ -1322,12 +1322,12 @@ In the case job submission raises a runtime error, we transition to an Operation
               "name": "${ .job.name }"
             }
           },
-          "actionDataFilter": {
+          "dataFilter": {
             "results": "${ .jobuid }"
           }
       }
       ],
-      "stateDataFilter": {
+      "dataFilter": {
           "output": "${ .jobuid }"
       },
       "transition": "WaitForCompletion"
@@ -1350,12 +1350,12 @@ In the case job submission raises a runtime error, we transition to an Operation
               "name": "${ .jobuid }"
             }
           },
-          "actionDataFilter": {
+          "dataFilter": {
             "results": "${ .jobstatus }"
           }
       }
       ],
-      "stateDataFilter": {
+      "dataFilter": {
           "output": "${ .jobstatus }"
       },
       "transition": "DetermineCompletion"
@@ -1441,9 +1441,9 @@ states:
        refName: submitJob
        arguments:
         name: "${ .job.name }"
-      actionDataFilter:
+      dataFilter:
        results: "${ .jobuid }"
-   stateDataFilter:
+   dataFilter:
     output: "${ .jobuid }"
    transition: WaitForCompletion
  - name: WaitForCompletion
@@ -1458,9 +1458,9 @@ states:
        refName: checkJobStatus
        arguments:
         name: "${ .jobuid }"
-      actionDataFilter:
+      dataFilter:
        results: "${ .jobstatus }"
-   stateDataFilter:
+   dataFilter:
     output: "${ .jobstatus }"
    transition: DetermineCompletion
  - name: DetermineCompletion
@@ -2625,7 +2625,7 @@ For this example we assume that the workflow instance is started given the follo
                        "data": "${ .patientInfo }",
                        "consumeEventRef":  "VetAppointmentInfo"
                     },
-                    "actionDataFilter": {
+                    "dataFilter": {
                         "results": "${ .appointmentInfo }"
                     }
                 }
@@ -2667,7 +2667,7 @@ states:
        produceEventRef: MakeVetAppointment
        data: "${ .patientInfo }"
        consumeEventRef: VetAppointmentInfo
-      actionDataFilter:
+      dataFilter:
        results: "${ .appointmentInfo }"
    timeouts:
     actionExecTimeout: PT15M
@@ -3431,7 +3431,7 @@ the data for an hour, send report, and so on.
               }
             }
           ],
-          "eventDataFilter": {
+          "dataFilter": {
             "toStateData": "${ .readings }"
           }
         }
@@ -3515,7 +3515,7 @@ states:
     actions:
     - functionRef:
         refName: LogReading
-    eventDataFilter:
+    dataFilter:
       toStateData: "${ .readings }"
   end: true
 - name: GenerateReport
@@ -4164,7 +4164,7 @@ Its results are then merged back into the state data according to the "toStateDa
    "actions": [
     {
      "functionRef": "Increment Current Count Function",
-     "actionDataFilter": {
+     "dataFilter": {
       "toStateData": ".counts.current"
      }
     }
@@ -4204,7 +4204,7 @@ states:
    type: operation
    actions:
     - functionRef: Increment Current Count Function
-      actionDataFilter:
+      dataFilter:
        toStateData: ".counts.current"
    transition: Check if full
 ```
@@ -4344,7 +4344,7 @@ states:
   onEvents:
   - eventRefs:
     - ETA Deadline Event
-    eventDataFilter:
+    dataFilter:
       data: "${ .results.status }"
       toStateData: "${ .status }"
   transition: Deliver Order
@@ -4360,10 +4360,10 @@ states:
       refName: Charge For Order Function
       arguments:
         order: "${ .order.id }"
-    actionDataFilter:
+    dataFilter:
       results: "${ .outcome.status }"
       toStateData: "${ .status }"
-  stateDataFilter:
+  dataFilter:
     output: '${ . | {"orderid": .id, "orderstatus": .status} | .orderstatus += ["Order
       Completed"] }'
   end: true
@@ -4390,7 +4390,7 @@ states:
         refName: Submit Order Function
         arguments:
           order: "${ .order }"
-      actionDataFilter:
+      dataFilter:
         results: "${ .results.status }"
         toStateData: "${ .status }"
     - functionRef:
@@ -4399,7 +4399,7 @@ states:
           customer: "${ .customerId }"
           restaurantid: "${ .order.restaurantId }"
           delivery: " ${ .delivery }"
-      actionDataFilter:
+      dataFilter:
         results: "${ .results.status }"
         toStateData: "${ .status }"
   end: true
@@ -4424,7 +4424,7 @@ states:
   onEvents:
   - eventRefs:
     - Order Picked Up Event
-    eventDataFilter:
+    dataFilter:
       data: "${ .data.status }"
       toStateData: "${ .status }"
     actions:
@@ -4435,7 +4435,7 @@ states:
   onEvents:
   - eventRefs:
     - Order Delievered Event
-    eventDataFilter:
+    dataFilter:
       data: "${ .data.status }"
       toStateData: "${ .status }"
   end: true
@@ -4511,7 +4511,7 @@ We assume that our workflow input has the runtime-imposed quota:
      "eventRefs":[
       "CustomerEvent"
      ],
-     "eventDataFilter":{
+     "dataFilter":{
       "data":"${ .customerId }",
       "toStateData":"${ .eventCustomerId }"
      },
@@ -4527,7 +4527,7 @@ We assume that our workflow input has the runtime-imposed quota:
      ]
     }
    ],
-   "stateDataFilter":{
+   "dataFilter":{
     "output":"${ .count = .count + 1 }"
    },
    "transition":"CheckEventQuota"
@@ -4583,7 +4583,7 @@ states:
    onEvents:
     - eventRefs:
        - CustomerEvent
-      eventDataFilter:
+      dataFilter:
        data: "${ .customerId }"
        toStateData: "${ .eventCustomerId }"
       actions:
@@ -4591,7 +4591,7 @@ states:
           refName: NotifyCustomerFunction
           arguments:
            customerId: "${ .eventCustomerId }"
-   stateDataFilter:
+   dataFilter:
     output: "${ .count = .count + 1 }"
    transition: CheckEventQuota
  - name: CheckEventQuota

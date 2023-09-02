@@ -387,7 +387,7 @@
           },
           "additionalItems": false
         },
-        "eventDataFilter": {
+        "dataFilter": {
           "description": "Event data filter",
           "$ref": "#/definitions/eventdatafilter"
         }
@@ -442,7 +442,7 @@
           },
           "additionalItems": false
         },
-        "actionDataFilter": {
+        "dataFilter": {
           "description": "Action data filter",
           "$ref": "#/definitions/actiondatafilter"
         },
@@ -722,7 +722,7 @@
           },
           "required": []
         },
-        "stateDataFilter": {
+        "dataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -789,7 +789,7 @@
           "$ref": "#/definitions/end",
           "description": "State end definition"
         },
-        "stateDataFilter": {
+        "dataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -906,7 +906,7 @@
           "$ref": "#/definitions/end",
           "description": "State end definition"
         },
-        "stateDataFilter": {
+        "dataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1039,7 +1039,7 @@
           "const": "switch",
           "description": "State type"
         },
-        "stateDataFilter": {
+        "dataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1113,7 +1113,7 @@
           "const": "switch",
           "description": "State type"
         },
-        "stateDataFilter": {
+        "dataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1226,7 +1226,7 @@
           "description": "Next transition of the workflow if there is valid matches",
           "$ref": "#/definitions/transition"
         },
-        "eventDataFilter": {
+        "dataFilter": {
           "description": "Event data filter definition",
           "$ref": "#/definitions/eventdatafilter"
         },
@@ -1256,7 +1256,7 @@
           "$ref": "#/definitions/end",
           "description": "Explicit transition to end"
         },
-        "eventDataFilter": {
+        "dataFilter": {
           "description": "Event data filter definition",
           "$ref": "#/definitions/eventdatafilter"
         },
@@ -1353,7 +1353,7 @@
           "type": "object",
           "description": "JSON object which can be set as states data input and can be manipulated via filters"
         },
-        "stateDataFilter": {
+        "dataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
@@ -1474,7 +1474,7 @@
           },
           "required": []
         },
-        "stateDataFilter": {
+        "dataFilter": {
           "description": "State data filter",
           "$ref": "#/definitions/statedatafilter"
         },
