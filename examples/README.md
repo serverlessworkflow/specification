@@ -168,6 +168,7 @@ Which is added to the states data and becomes the workflow data output.
      "type":"operation",
      "actions":[
         {
+           "name": "greetingAction",
            "functionRef": {
               "refName": "greetingFunction",
               "arguments": {
@@ -202,7 +203,8 @@ states:
 - name: Greet
   type: operation
   actions:
-  - functionRef:
+  - name: greetingAction
+    functionRef:
       refName: greetingFunction
       arguments:
         name: "${ .person.name }"
