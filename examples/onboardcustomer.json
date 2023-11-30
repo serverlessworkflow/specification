@@ -1,0 +1,26 @@
+{
+    "id": "onboardcustomer",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "onboard-customer",
+    "description": "Onboard a Customer",
+    "start": "onboard",
+    "states": [
+        {
+            "name": "onboard",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "onboard-action",
+                    "subFlowRef": {
+                        "invoke": "async",
+                        "onParentComplete": "continue",
+                        "workflowId": "customeronboardingworkflow",
+                        "version": "1.0.0"
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}

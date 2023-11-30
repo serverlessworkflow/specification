@@ -1,0 +1,167 @@
+{
+    "id": "order",
+    "name": "order",
+    "description": "Purchase Order Workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "start-new-order",
+    "timeouts": {
+        "workflowExecTimeout": {
+            "duration": "PT30D",
+            "runBefore": "CancelOrder"
+        }
+    },
+    "states": [
+        {
+            "name": "start-new-order",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "order-created-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "log-new-order-created",
+                            "functionRef": {
+                                "refName": "log-new-order-created"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "transition": {
+                "nextState": "wait-for-order-confirmation"
+            }
+        },
+        {
+            "name": "wait-for-order-confirmation",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "order-confirmed-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "log-order-confirmed",
+                            "functionRef": {
+                                "refName": "log-order-confirmed"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "transition": {
+                "nextState": "wait-order-shipped"
+            }
+        },
+        {
+            "name": "wait-order-shipped",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "shipment-sent-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "log-order-shipped",
+                            "functionRef": {
+                                "refName": "log-order-shipped"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "end": {
+                "terminate": true,
+                "produceEvents": [
+                    {
+                        "eventRef": "order-finished-event"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "cancel-order",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "cancel-order",
+                    "functionRef": {
+                        "refName": "cancel-order"
+                    }
+                }
+            ],
+            "end": {
+                "terminate": true,
+                "produceEvents": [
+                    {
+                        "eventRef": "order-cancelled-event"
+                    }
+                ]
+            }
+        }
+    ],
+    "events": [
+        {
+            "name": "order-created-event",
+            "type": "my.company.orders",
+            "source": "/orders/new",
+            "correlation": [
+                {
+                    "contextAttributeName": "orderid"
+                }
+            ]
+        },
+        {
+            "name": "order-confirmed-event",
+            "type": "my.company.orders",
+            "source": "/orders/confirmed",
+            "correlation": [
+                {
+                    "contextAttributeName": "orderid"
+                }
+            ]
+        },
+        {
+            "name": "shipment-sent-event",
+            "type": "my.company.orders",
+            "source": "/orders/shipped",
+            "correlation": [
+                {
+                    "contextAttributeName": "orderid"
+                }
+            ]
+        },
+        {
+            "name": "order-finished-event",
+            "type": "my.company.orders",
+            "kind": "produced"
+        },
+        {
+            "name": "order-cancelled-event",
+            "type": "my.company.orders",
+            "kind": "produced"
+        }
+    ],
+    "functions": [
+        {
+            "name": "log-new-order-created",
+            "operation": "http.myorg.io/ordersservices.json#logcreated"
+        },
+        {
+            "name": "log-order-confirmed",
+            "operation": "http.myorg.io/ordersservices.json#logconfirmed"
+        },
+        {
+            "name": "log-order-shipped",
+            "operation": "http.myorg.io/ordersservices.json#logshipped"
+        },
+        {
+            "name": "cancel-order",
+            "operation": "http.myorg.io/ordersservices.json#calcelorder"
+        }
+    ]
+}

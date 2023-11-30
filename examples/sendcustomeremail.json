@@ -1,0 +1,33 @@
+{
+    "id": "sendcustomeremail",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "send-customer-email-workflow",
+    "description": "Send email to a customer",
+    "start": "send-email",
+    "functions": [
+        {
+            "name": "email-function",
+            "operation": "file://myapis/emailapis.json#sendEmail"
+        }
+    ],
+    "states": [
+        {
+            "name": "send-email",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "send-email-action",
+                    "functionRef": {
+                        "invoke": "async",
+                        "refName": "email-function",
+                        "arguments": {
+                            "customer": "${ .customer }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}

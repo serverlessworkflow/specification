@@ -36,7 +36,6 @@
           "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "operation": {
-          "type": "object",
           "$ref": "#/definitions/operation"
         },
         "type": {

@@ -1,0 +1,161 @@
+{
+    "id": "booklending",
+    "name": "booklending",
+    "description": "Book Lending Workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "book-lending-request",
+    "states": [
+        {
+            "name": "book-lending-request",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "book-lending-request-event"
+                    ]
+                }
+            ],
+            "transition": "get-book-status"
+        },
+        {
+            "name": "get-book-status",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "get-book-status",
+                    "functionRef": {
+                        "refName": "get-status-for-book",
+                        "arguments": {
+                            "bookid": "${ .book.id }"
+                        }
+                    }
+                }
+            ],
+            "transition": "book-status-decision"
+        },
+        {
+            "name": "book-status-decision",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "name": "book-is-on-loan",
+                    "condition": "${ .book.status == \"onloan\" }",
+                    "transition": "report-status-to-lender"
+                },
+                {
+                    "name": "check-is-available",
+                    "condition": "${ .book.status == \"available\" }",
+                    "transition": "check-out-book"
+                }
+            ],
+            "defaultCondition": {
+                "end": true
+            }
+        },
+        {
+            "name": "report-status-to-lender",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "report-status-to-lender",
+                    "functionRef": {
+                        "refName": "send-status-to-lender",
+                        "arguments": {
+                            "bookid": "${ .book.id }",
+                            "message": "Book ${ .book.title } is already on loan"
+                        }
+                    }
+                }
+            ],
+            "transition": "wait-for-lender-response"
+        },
+        {
+            "name": "wait-for-lender-response",
+            "type": "switch",
+            "eventConditions": [
+                {
+                    "name": "hold-book",
+                    "eventRef": "hold-book-event",
+                    "transition": "request-hold"
+                },
+                {
+                    "name": "decline-book-hold",
+                    "eventRef": "decline-hold-event",
+                    "transition": "cancel-request"
+                }
+            ],
+            "defaultCondition": {
+                "end": true
+            }
+        },
+        {
+            "name": "request-hold",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "request-hold",
+                    "functionRef": {
+                        "refName": "request-hold-for-lender",
+                        "arguments": {
+                            "bookid": "${ .book.id }",
+                            "lender": "${ .lender }"
+                        }
+                    }
+                }
+            ],
+            "transition": "sleep-two-weeks"
+        },
+        {
+            "name": "cancel-request",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "cancel-request",
+                    "functionRef": {
+                        "refName": "cancel-hold-request-for-lender",
+                        "arguments": {
+                            "bookid": "${ .book.id }",
+                            "lender": "${ .lender }"
+                        }
+                    }
+                }
+            ],
+            "transition": "sleep-two-weeks"
+        },
+        {
+            "name": "sleep-two-weeks",
+            "type": "sleep",
+            "duration": "PT2W",
+            "transition": "get-book-status"
+        },
+        {
+            "name": "check-out-book",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "check-out-book",
+                    "functionRef": {
+                        "refName": "check-out-book-with-id",
+                        "arguments": {
+                            "bookid": "${ .book.id }"
+                        }
+                    }
+                },
+                {
+                    "name": "notify-lender-for-checkout",
+                    "functionRef": {
+                        "refName": "notify-lender-for-checkout",
+                        "arguments": {
+                            "bookid": "${ .book.id }",
+                            "lender": "${ .lender }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        }
+    ],
+    "functions": "file://books/lending/functions.json",
+    "events": "file://books/lending/events.json"
+}

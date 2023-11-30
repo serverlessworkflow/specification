@@ -1,0 +1,100 @@
+{
+    "id": "paymentconfirmation",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "paymentconfirmation",
+    "description": "Performs Payment Confirmation",
+    "functions": "file://functiondefs.json",
+    "events": "file://eventdefs.yml",
+    "states": [
+        {
+            "name": "payment-received",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "payment-received-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "checkfunds",
+                            "functionRef": {
+                                "refName": "check-funds-availability",
+                                "arguments": {
+                                    "account": "${ .accountId }",
+                                    "paymentamount": "${ .payment.amount }"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "transition": "confirm-based-on-funds"
+        },
+        {
+            "name": "confirm-based-on-funds",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "condition": "${ .funds | .available == \"true\" }",
+                    "transition": "send-payment-success",
+                    "name": "success"
+                },
+                {
+                    "condition": "${ .funds | .available == \"false\" }",
+                    "transition": "send-insufficient-results",
+                    "name": "failed"
+                }
+            ],
+            "defaultCondition": {
+                "transition": "send-payment-success"
+            }
+        },
+        {
+            "name": "send-payment-success",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "send-payment-success",
+                    "functionRef": {
+                        "refName": "send-success-email",
+                        "arguments": {
+                            "applicant": "${ .customer }"
+                        }
+                    }
+                }
+            ],
+            "end": {
+                "produceEvents": [
+                    {
+                        "eventRef": "confirmation-completed-event",
+                        "data": "${ .payment }"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "send-insufficient-results",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "send-insufficient-results",
+                    "functionRef": {
+                        "refName": "send-insufficient-funds-email",
+                        "arguments": {
+                            "applicant": "${ .customer }"
+                        }
+                    }
+                }
+            ],
+            "end": {
+                "produceEvents": [
+                    {
+                        "eventRef": "confirmation-completed-event",
+                        "data": "${ .payment }"
+                    }
+                ]
+            }
+        }
+    ]
+}
