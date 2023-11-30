@@ -106,7 +106,7 @@ reference the [Ownership of Copyrights in CNCF Project Contributions](https://gi
 ### Communication
 
 - Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) -  #serverless-workflow
-- [Weekly project meetings](#Meetings)
+- [Weekly project meetings](#weekly-meetings)
 - Project Maintainers Email: [cncf-serverlessws-maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
 - Serverless WG Email: [cncf-wg-serverless](mailto:cncf-wg-serverless@lists.cncf.io)
 - Serverless WG Subscription: [https://lists.cncf.io/g/cncf-wg-serverless](https://lists.cncf.io/g/cncf-wg-serverless)
