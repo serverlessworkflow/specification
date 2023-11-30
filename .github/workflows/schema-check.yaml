@@ -11,6 +11,9 @@ on:
 
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: .ci/validation
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -23,5 +26,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: cd .ci/validation && npm install && cd -
-    - run: cd .ci/validation && npm test
+    - run: npm install
+    - run: npm test

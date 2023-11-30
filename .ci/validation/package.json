@@ -1,17 +1,16 @@
 {
   "name": "validation",
-  "version": "1.0.0",
+  "version": "0.9.0-snapshot",
   "description": "",
   "main": "src/index.js",
   "scripts": {
     "start": "ts-node ./src/index.ts",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["cncf", "serverless", "workflow", "specification"],
+  "author": "CNCF Serverless Workflow Specification",
   "license": "ISC",
   "devDependencies": {
-    "@babel/preset-typescript": "^7.23.3",
     "@types/jest": "^29.5.10",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
