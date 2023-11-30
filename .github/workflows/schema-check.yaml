@@ -6,8 +6,14 @@ name: Verify Specification Examples
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'schema/**'
+      - 'examples/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'schema/**'
+      - 'examples/**'
 
 jobs:
   build:
