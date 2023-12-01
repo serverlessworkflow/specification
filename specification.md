@@ -3943,6 +3943,7 @@ This is visualized in the diagram below:
 | [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes (if `functionRef` & `subFlowRef` are not defined) |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes (if `eventRef` & `functionRef` are not defined) |
 | [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
+| [retryRefs](#RetryRef-Definition) | List of action retry ref definition | array of object | no |
 | nonRetryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
 | retryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
@@ -4016,6 +4017,8 @@ Function invocation timeouts should be handled via the states [timeouts](#Workfl
 The `retryRef` property references one of the defined workflow retries by it's unique name. If not set, the action 
 should be retried according to the default retry policy of the runtime implementation. For more information about workflow
 retries reference [this section](#retry-definition).
+
+The `retryRefs` property is an list of retry ref definition. For more information about retry ref [this section](#RetryRef-Definition). 
 
 The `nonRetryableErrors` property is a list that references one or more unique names of workflow error definitions. 
 This is the list of known errors for which the action should not be retried for. 
@@ -4278,6 +4281,122 @@ completes execution before the subflow completes its own execution.
 The default value of this property is `terminate`, meaning that if the parent workflow (the workflow that invoked the subflow)
 completes, execution of the subflow should be terminated.
 If it is set to `continue`, if the parent workflow completes, the subflow execution is allowed to continue its own execution.
+
+##### RetryRef Definition
+
+`RetryRef` definition the retry strategy when the error match it's property.
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| errors | Sub-workflow unique id | array of string | yes |
+| [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+    "errors": ["InsufficientResource", "FlowLimit"],
+    "retryRef": "ServiceNotAvailable"
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+errors:
+  - InsufficientResource
+  - FlowLimit
+retryRef: ServiceNotAvailable
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+The `errors` property define an list of string, which match Error Names.
+
+The `retryRef` property references one of the defined workflow retries by it's unique name. If not set, the action 
+should be retried according to the default retry policy of the runtime implementation. For more information about workflow
+retries reference [this section](#retry-definition).
+
+*Complex retry scenarios*
+
+An list of RetryRef apply across all visits in the context of action execution. consider the following workflow definition:
+
+```json
+{
+    "functions": [
+        {
+            "name": "createObject",
+            "operation": "http://myapis.org/applicationapi.json#createObject"
+        }
+    ],
+    "retries": [
+        {
+            "name": "ServiceNotAvailable",
+            "delay": "PT10S",
+            "maxAttempts": "2"
+        },
+        {
+            "name": "DelayRetry",
+            "delay": "PT1S",
+            "maxAttempts": "10"
+        }
+    ],
+    "states": [
+        {
+            "name": "CreateObject",
+            "type": "operation",
+            "actions": [
+                {
+                    "functionRef": {
+                        "refName": "createObject",
+                        "parameters": {
+                            "applicant": "${ .applicant }"
+                        }
+                    }
+                }
+            ],
+            "retryRefs": [
+                {
+                    "errors": ["FlowLimit", "ServiceBusy"],
+                    "retryRef": "DelayRetry"
+                },
+                {
+                    "errors": ["InsufficientResource"],
+                    "retryRef": "ServiceNotAvailable"
+                }
+            ]
+            "end": {
+                "terminate": true
+            }
+        }
+    ]
+}
+```
+
+Suppose that this operation fails five successive times, throwing Error Names "InsufficientResource", "FlowLimit", "InsufficientResource", "ServiceBusy", "InsufficientResource".
+
++ The first "InsufficientResource" match second retryRef and cause waits of 10 seconds
++ The second "FlowLimit" match first retryRef and cause waits of 1 seconds
++ The third "InsufficientResource" match second retryRef and cause waits of 10 seconds
++ The fourth "ServiceBusy" match first retryRef and cause waits of 1 seconds
++ The fifth "InsufficientResource" match second retryRef, but its "maxAttempts" ceiling of two retries has already been reached, so it fails
+
+Note that once the execution transitions to another state in any way, all retry parameters reset.
+
 
 ##### Error Definition
 
