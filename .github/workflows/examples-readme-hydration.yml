@@ -1,0 +1,42 @@
+name: Examples README hydration
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches: [ 'main']
+    paths:
+      - 'examples/**/*'
+      - '!examples/README.md'
+
+jobs:
+  build:
+    if: github.repository == 'JBBianchi/specification' &&  github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+
+      - run: |
+          set -e
+          
+          # Create a new git branch
+          git checkout -b automation-examples-readme-${{ github.event.pull_request.number }}
+
+          # Install & run JS scripts
+          npm ci
+          npm start
+
+          # Commit & push changes
+          git commit -a -m 'Rebuilt examples README.md'
+          git push origin automation-examples-readme-${{ github.event.pull_request.number }}
+
+          # Create a PR on GH
+          gh pr create -B main -H automation-examples-readme-${{ github.event.pull_request.number }} --title '[From CI] Rebuilt examples README' --body 'Automatic hydration of examples README.md'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
