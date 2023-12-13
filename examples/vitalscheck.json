@@ -1,0 +1,58 @@
+{
+    "id": "vitalscheck",
+    "name": "vitalscheck",
+    "description": "Car Vitals Check",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "check-vitals",
+    "states": [
+        {
+            "name": "check-vitals",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "check-tire-pressure",
+                    "functionRef": "check-tire-pressure"
+                },
+                {
+                    "name": "check-oil-pressure",
+                    "functionRef": "check-oil-pressure"
+                },
+                {
+                    "name": "check-coolant-level",
+                    "functionRef": "check-coolant-level"
+                },
+                {
+                    "name": "check-battery",
+                    "functionRef": "check-battery"
+                }
+            ],
+            "end": {
+                "produceEvents": [
+                    {
+                        "eventRef": "display-checks-on-dashboard",
+                        "data": "${ .evaluations }"
+                    }
+                ]
+            }
+        }
+    ],
+    "functions": [
+        {
+            "name": "check-tire-pressure",
+            "operation": "mycarservices.json#checktirepressure"
+        },
+        {
+            "name": "check-oil-pressure",
+            "operation": "mycarservices.json#checkoilpressure"
+        },
+        {
+            "name": "check-coolant-level",
+            "operation": "mycarservices.json#checkcoolantlevel"
+        },
+        {
+            "name": "check-battery",
+            "operation": "mycarservices.json#checkbattery"
+        }
+    ]
+}

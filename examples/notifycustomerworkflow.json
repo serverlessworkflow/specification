@@ -1,0 +1,73 @@
+{
+    "id": "notifycustomerworkflow",
+    "name": "notifycustomerworkflow",
+    "description": "Notify Customer",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "wait-for-customer-event",
+    "states": [
+        {
+            "name": "wait-for-customer-event",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "customer-event"
+                    ],
+                    "eventDataFilter": {
+                        "data": "${ .customerId }",
+                        "toStateData": "${ .eventCustomerId }"
+                    },
+                    "actions": [
+                        {
+                            "name": "notify-customer-function",
+                            "functionRef": {
+                                "refName": "notify-customer-function",
+                                "arguments": {
+                                    "customerId": "${ .eventCustomerId }"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "stateDataFilter": {
+                "output": "${ .count = .count + 1 }"
+            },
+            "transition": "check-event-quota"
+        },
+        {
+            "name": "check-event-quota",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "name": "ready",
+                    "condition": "${ try(.customerCount) != null and .customerCount > .quota.maxConsumedEvents }",
+                    "end": {
+                        "continueAs": {
+                            "workflowId": "notifycustomerworkflow",
+                            "version": "1.0.0",
+                            "data": "${ del(.customerCount) }"
+                        }
+                    }
+                }
+            ],
+            "defaultCondition": {
+                "transition": "wait-for-customer-event"
+            }
+        }
+    ],
+    "events": [
+        {
+            "name": "customer-event",
+            "type": "org.events.customerEvent",
+            "source": "customerSource"
+        }
+    ],
+    "functions": [
+        {
+            "name": "notify-customer-function",
+            "operation": "http://myapis.org/customerapis.json#notifyCustomer"
+        }
+    ]
+}

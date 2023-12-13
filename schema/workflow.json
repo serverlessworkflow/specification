@@ -151,6 +151,7 @@
       "minItems": 1
     }
   },
+  "additionalProperties": false,
   "oneOf": [
     {
       "required": [
@@ -1924,7 +1925,7 @@
           "description": "Workflow data input schema definition",
           "properties": {
             "schema": {
-              "oneof":[
+              "oneOf":[
                 {
                   "type": "string",
                   "description": "URI of the JSON Schema used to validate the workflow",

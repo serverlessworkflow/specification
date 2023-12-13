@@ -1,0 +1,48 @@
+{
+    "id": "sendcloudeventonprovision",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "sendcloudeventonprovision",
+    "start": "provision-orders-state",
+    "events": [
+        {
+            "name": "provisioning-complete-event",
+            "type": "provisionCompleteType",
+            "kind": "produced"
+        }
+    ],
+    "functions": [
+        {
+            "name": "provision-order-function",
+            "operation": "http://myapis.org/provisioning.json#doProvision"
+        }
+    ],
+    "states": [
+        {
+            "name": "provision-orders-state",
+            "type": "foreach",
+            "inputCollection": "${ .orders }",
+            "iterationParam": "singleorder",
+            "outputCollection": "${ .provisionedOrders }",
+            "actions": [
+                {
+                    "name": "provision-order-function",
+                    "functionRef": {
+                        "refName": "provision-order-function",
+                        "arguments": {
+                            "order": "${ .singleorder }"
+                        }
+                    }
+                }
+            ],
+            "end": {
+                "produceEvents": [
+                    {
+                        "eventRef": "provisioning-complete-event",
+                        "data": "${ .provisionedOrders }"
+                    }
+                ]
+            }
+        }
+    ]
+}

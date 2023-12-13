@@ -1,0 +1,50 @@
+{
+    "id": "handle-car-auction-bid",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "handle-car-auction-bid",
+    "description": "Store a single bid whole the car auction is active",
+    "start": {
+        "stateName": "store-car-auction-bid",
+        "schedule": "R/PT2H"
+    },
+    "functions": [
+        {
+            "name": "store-bid-function",
+            "operation": "http://myapis.org/carauctionapi.json#storeBid"
+        }
+    ],
+    "events": [
+        {
+            "name": "car-bid-event",
+            "type": "carBidMadeType",
+            "source": "carBidEventSource"
+        }
+    ],
+    "states": [
+        {
+            "name": "store-car-auction-bid",
+            "type": "event",
+            "exclusive": true,
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "car-bid-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "car-bid-event",
+                            "functionRef": {
+                                "refName": "store-bid-function",
+                                "arguments": {
+                                    "bid": "${ .bid }"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "end": true
+        }
+    ]
+}

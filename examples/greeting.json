@@ -1,0 +1,36 @@
+{
+    "id": "greeting",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "greeting-workflow",
+    "description": "Greet Someone",
+    "start": "greet",
+    "functions": [
+        {
+            "name": "greeting-function",
+            "type": "openapi",
+            "operation": "file://myapis/greetingapis.json#greeting"
+        }
+    ],
+    "states": [
+        {
+            "name": "greet",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "greet-action",
+                    "functionRef": {
+                        "refName": "greeting-function",
+                        "arguments": {
+                            "name": "${ .person.name }"
+                        }
+                    },
+                    "actionDataFilter": {
+                        "results": "${ {greeting: .greeting} }"
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}

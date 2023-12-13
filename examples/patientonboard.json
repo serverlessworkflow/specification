@@ -1,0 +1,87 @@
+{
+    "id": "patientonboarding",
+    "name": "patientonboarding",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "onboard",
+    "states": [
+        {
+            "name": "onboard",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "new-patient-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "store-patient",
+                            "functionRef": "store-patient",
+                            "retryRef": "services-not-available-retry-strategy",
+                            "retryableErrors": [
+                                "service-not-available"
+                            ]
+                        },
+                        {
+                            "name": "assign-doctor",
+                            "functionRef": "assign-doctor",
+                            "retryRef": "services-not-available-retry-strategy",
+                            "retryableErrors": [
+                                "service-not-available"
+                            ]
+                        },
+                        {
+                            "name": "schedule-appt",
+                            "functionRef": "schedule-appt",
+                            "retryRef": "services-not-available-retry-strategy",
+                            "retryableErrors": [
+                                "service-not-available"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "onErrors": [
+                {
+                    "errorRef": "service-not-available",
+                    "end": true
+                }
+            ],
+            "end": true
+        }
+    ],
+    "events": [
+        {
+            "name": "store-patient",
+            "type": "new.patients.event",
+            "source": "newpatient/+"
+        }
+    ],
+    "functions": [
+        {
+            "name": "store-new-patient-info",
+            "operation": "api/services.json#addPatient"
+        },
+        {
+            "name": "assign-doctor",
+            "operation": "api/services.json#assignDoctor"
+        },
+        {
+            "name": "schedule-appt",
+            "operation": "api/services.json#scheduleAppointment"
+        }
+    ],
+    "errors": [
+        {
+            "name": "service-not-available",
+            "code": "503"
+        }
+    ],
+    "retries": [
+        {
+            "name": "services-not-available-retry-strategy",
+            "delay": "PT3S",
+            "maxAttempts": 10
+        }
+    ]
+}

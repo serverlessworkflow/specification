@@ -1,0 +1,91 @@
+{
+    "id": "roomreadings",
+    "name": "roomreadings",
+    "description": "Room Temp and Humidity Workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "consume-reading",
+    "timeouts": {
+        "workflowExecTimeout": {
+            "duration": "PT1H",
+            "runBefore": "generate-report"
+        }
+    },
+    "keepActive": true,
+    "states": [
+        {
+            "name": "consume-reading",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "temperature-event",
+                        "humidity-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "log-reading",
+                            "functionRef": {
+                                "refName": "log-reading"
+                            }
+                        }
+                    ],
+                    "eventDataFilter": {
+                        "toStateData": "${ .readings }"
+                    }
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "generate-report",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "generate-report",
+                    "functionRef": {
+                        "refName": "produce-report",
+                        "arguments": {
+                            "data": "${ .readings }"
+                        }
+                    }
+                }
+            ],
+            "end": {
+                "terminate": true
+            }
+        }
+    ],
+    "events": [
+        {
+            "name": "temperature-event",
+            "type": "my.home.sensors",
+            "source": "/home/rooms/+",
+            "correlation": [
+                {
+                    "contextAttributeName": "roomId"
+                }
+            ]
+        },
+        {
+            "name": "humidity-event",
+            "type": "my.home.sensors",
+            "source": "/home/rooms/+",
+            "correlation": [
+                {
+                    "contextAttributeName": "roomId"
+                }
+            ]
+        }
+    ],
+    "functions": [
+        {
+            "name": "log-reading",
+            "operation": "http.myorg.io/ordersservices.json#logreading"
+        },
+        {
+            "name": "produce-report",
+            "operation": "http.myorg.io/ordersservices.json#produceReport"
+        }
+    ]
+}
