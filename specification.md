@@ -5084,9 +5084,9 @@ before the workflow execution is stopped, and continued as a new workflow instan
 {
     "eventRef": "provisioning-complete-event",
     "data": "${ .provisionedOrders }",
-    "contextAttributes": [{
+    "contextAttributes": {
          "buyerId": "${ .buyerId }"
-     }]
+     }
  }
 ```
 
@@ -5097,7 +5097,7 @@ before the workflow execution is stopped, and continued as a new workflow instan
 eventRef: provisioning-complete-event
 data: "${ .provisionedOrders }"
 contextAttributes:
-- buyerId: "${ .buyerId }"
+  buyerId: "${ .buyerId }"
 ```
 
 </td>
