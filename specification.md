@@ -6404,7 +6404,7 @@ You can define extensions in your workflow definition using its top-level `exten
 For more information about this property, see the `extensions` property in the 
 [Workflow Definition Structure section](#Workflow-Definition-Structure).
 
-Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification.
+Even though users can define their own extensions, it is encouraged to use the ones provided by the specification.
 We also encourage users to contribute their extensions to the specification. That way they can be shared
 with the rest of the community.
 
