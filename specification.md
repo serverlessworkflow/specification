@@ -213,7 +213,7 @@ unchanged throughout its execution.
 
 Workflow instances can be started providing some data input. This is described in detail in the 
 [workflow data input](#Workflow-Data-Input) section.
-Workflow instances can also wait for examples to start their execution, which is the case
+Workflow instances can also wait for events to start their execution, which is the case
 where a workflow definition contains a [EventState](#Event-State) starting workflow state.
 
 The workflow definition also explicitly defines when a workflow instance should be completed. 
@@ -1640,7 +1640,7 @@ Let's say we have the following workflow definition:
     "name": "simpleadd",
     "functions": [
         {
-            "name": "Iicrement-count-function",
+            "name": "increment-count-function",
             "type": "expression",
             "operation": ".count += 1 | .count"
         }
@@ -5084,9 +5084,9 @@ before the workflow execution is stopped, and continued as a new workflow instan
 {
     "eventRef": "provisioning-complete-event",
     "data": "${ .provisionedOrders }",
-    "contextAttributes": [{
+    "contextAttributes": {
          "buyerId": "${ .buyerId }"
-     }]
+     }
  }
 ```
 
@@ -5097,7 +5097,7 @@ before the workflow execution is stopped, and continued as a new workflow instan
 eventRef: provisioning-complete-event
 data: "${ .provisionedOrders }"
 contextAttributes:
-- buyerId: "${ .buyerId }"
+  buyerId: "${ .buyerId }"
 ```
 
 </td>
@@ -6404,7 +6404,7 @@ You can define extensions in your workflow definition using its top-level `exten
 For more information about this property, see the `extensions` property in the 
 [Workflow Definition Structure section](#Workflow-Definition-Structure).
 
-Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification.
+Even though users can define their own extensions, it is encouraged to use the ones provided by the specification.
 We also encourage users to contribute their extensions to the specification. That way they can be shared
 with the rest of the community.
 
