@@ -213,7 +213,7 @@ unchanged throughout its execution.
 
 Workflow instances can be started providing some data input. This is described in detail in the 
 [workflow data input](#Workflow-Data-Input) section.
-Workflow instances can also wait for examples to start their execution, which is the case
+Workflow instances can also wait for events to start their execution, which is the case
 where a workflow definition contains a [EventState](#Event-State) starting workflow state.
 
 The workflow definition also explicitly defines when a workflow instance should be completed. 
@@ -1640,7 +1640,7 @@ Let's say we have the following workflow definition:
     "name": "simpleadd",
     "functions": [
         {
-            "name": "Iicrement-count-function",
+            "name": "increment-count-function",
             "type": "expression",
             "operation": ".count += 1 | .count"
         }
