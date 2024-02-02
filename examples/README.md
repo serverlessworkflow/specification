@@ -1,3 +1,7 @@
+<!--
+   !!! THIS IS A GENERATED FILE !!!
+   Please do not update this file but the TEMPLATE instead!
+-->
 # Examples
 
 Provides Serverless Workflow language examples
@@ -66,41 +70,40 @@ data output, which is:
 
 ```json
 {
-"id": "helloworld",
-"version": "1.0.0",
-"specVersion": "0.8",
-"name": "Hello World Workflow",
-"description": "Inject Hello World",
-"start": "Hello State",
-"states":[
-  {
-     "name":"Hello State",
-     "type":"inject",
-     "data": {
-        "result": "Hello World!"
-     },
-     "end": true
-  }
-]
-}
-```
+   "id": "helloworld",
+   "version": "1.0.0",
+   "specVersion": "0.8",
+   "name": "Hello World Workflow",
+   "description": "Inject Hello World",
+   "start": "hello-state",
+   "states": [
+      {
+         "name": "hello-state",
+         "type": "inject",
+         "data": {
+            "result": "Hello World!"
+         },
+         "end": true
+      }
+   ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: helloworld
-version: '1.0.0'
-specVersion: '0.8'
+version: 1.0.0
+specVersion: "0.8"
 name: Hello World Workflow
 description: Inject Hello World
-start: Hello State
+start: hello-state
 states:
-- name: Hello State
-  type: inject
-  data:
-    result: Hello World!
-  end: true
+  - name: hello-state
+    type: inject
+    data:
+      result: Hello World!
+    end: true
 ```
 
 </td>
@@ -150,65 +153,68 @@ Which is added to the states data and becomes the workflow data output.
 
 ```json
 {
-"id": "greeting",
-"version": "1.0.0",
-"specVersion": "0.8",
-"name": "Greeting Workflow",
-"description": "Greet Someone",
-"start": "Greet",
-"functions": [
-  {
-     "name": "greetingFunction",
-     "operation": "file://myapis/greetingapis.json#greeting"
-  }
-],
-"states":[
-  {
-     "name":"Greet",
-     "type":"operation",
-     "actions":[
+    "id": "greeting",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "greeting-workflow",
+    "description": "Greet Someone",
+    "start": "greet",
+    "functions": [
         {
-           "functionRef": {
-              "refName": "greetingFunction",
-              "arguments": {
-                "name": "${ .person.name }"
-              }
-           },
-           "actionDataFilter": {
-              "results": "${ {greeting: .greeting} }"
-           }
+            "name": "greeting-function",
+            "type": "openapi",
+            "operation": "file://myapis/greetingapis.json#greeting"
         }
-     ],
-     "end": true
-  }
-]
-}
-```
+    ],
+    "states": [
+        {
+            "name": "greet",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "greet-action",
+                    "functionRef": {
+                        "refName": "greeting-function",
+                        "arguments": {
+                            "name": "${ .person.name }"
+                        }
+                    },
+                    "actionDataFilter": {
+                        "results": "${ {greeting: .greeting} }"
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: greeting
-version: '1.0.0'
-specVersion: '0.8'
-name: Greeting Workflow
+version: 1.0.0
+specVersion: "0.8"
+name: greeting-workflow
 description: Greet Someone
-start: Greet
+start: greet
 functions:
-- name: greetingFunction
-  operation: file://myapis/greetingapis.json#greeting
+  - name: greeting-function
+    type: openapi
+    operation: file://myapis/greetingapis.json#greeting
 states:
-- name: Greet
-  type: operation
-  actions:
-  - functionRef:
-      refName: greetingFunction
-      arguments:
-        name: "${ .person.name }"
-    actionDataFilter:
-      results: "${ {greeting: .greeting} }"
-  end: true
+  - name: greet
+    type: operation
+    actions:
+      - name: greet-action
+        functionRef:
+          refName: greeting-function
+          arguments:
+            name: ${ .person.name }
+        actionDataFilter:
+          results: "${ {greeting: .greeting} }"
+    end: true
 ```
 
 </td>
@@ -295,89 +301,94 @@ filters what is selected to be the state data output which then becomes the work
 
 ```json
 {
-"id": "eventbasedgreeting",
-"version": "1.0.0",
-"specVersion": "0.8",
-"name": "Event Based Greeting Workflow",
-"description": "Event Based Greeting",
-"start": "Greet",
-"events": [
- {
-  "name": "GreetingEvent",
-  "type": "greetingEventType",
-  "source": "greetingEventSource"
- }
-],
-"functions": [
-  {
-     "name": "greetingFunction",
-     "operation": "file://myapis/greetingapis.json#greeting"
-  }
-],
-"states":[
-  {
-     "name":"Greet",
-     "type":"event",
-     "onEvents": [{
-         "eventRefs": ["GreetingEvent"],
-         "eventDataFilter": {
-            "data": "${ .greet }",
-            "toStateData": "${ .greet }"
-         },
-         "actions":[
-            {
-               "functionRef": {
-                  "refName": "greetingFunction",
-                  "arguments": {
-                    "name": "${ .greet.name }"
-                  }
-               }
-            }
-         ]
-     }],
-     "stateDataFilter": {
-        "output": "${ .payload.greeting }"
-     },
-     "end": true
-  }
-]
-}
-```
+    "id": "eventbasedgreeting",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "Event Based Greeting Workflow",
+    "description": "Event Based Greeting",
+    "start": "greet",
+    "events": [
+        {
+            "name": "greeting-event",
+            "type": "greetingEventType",
+            "source": "greetingEventSource"
+        }
+    ],
+    "functions": [
+        {
+            "name": "greeting-function",
+            "operation": "file://myapis/greetingapis.json#greeting"
+        }
+    ],
+    "states": [
+        {
+            "name": "greet",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "greeting-event"
+                    ],
+                    "eventDataFilter": {
+                        "data": "${ .greet }",
+                        "toStateData": "${ .greet }"
+                    },
+                    "actions": [
+                        {
+                            "name": "greet-action",
+                            "functionRef": {
+                                "refName": "greeting-function",
+                                "arguments": {
+                                    "name": "${ .greet.name }"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "stateDataFilter": {
+                "output": "${ .payload.greeting }"
+            },
+            "end": true
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: eventbasedgreeting
-version: '1.0.0'
-specVersion: '0.8'
+version: 1.0.0
+specVersion: "0.8"
 name: Event Based Greeting Workflow
 description: Event Based Greeting
-start: Greet
+start: greet
 events:
-- name: GreetingEvent
-  type: greetingEventType
-  source: greetingEventSource
+  - name: greeting-event
+    type: greetingEventType
+    source: greetingEventSource
 functions:
-- name: greetingFunction
-  operation: file://myapis/greetingapis.json#greeting
+  - name: greeting-function
+    operation: file://myapis/greetingapis.json#greeting
 states:
-- name: Greet
-  type: event
-  onEvents:
-  - eventRefs:
-    - GreetingEvent
-    eventDataFilter:
-      data: "${ .greet }"
-      toStateData: "${ .greet }"
-    actions:
-    - functionRef:
-        refName: greetingFunction
-        arguments:
-          name: "${ .greet.name }"
-  stateDataFilter:
-    output: "${ .payload.greeting }"
-  end: true
+  - name: greet
+    type: event
+    onEvents:
+      - eventRefs:
+          - greeting-event
+        eventDataFilter:
+          data: ${ .greet }
+          toStateData: ${ .greet }
+        actions:
+          - name: greet-action
+            functionRef:
+              refName: greeting-function
+              arguments:
+                name: ${ .greet.name }
+    stateDataFilter:
+      output: ${ .payload.greeting }
+    end: true
 ```
 
 </td>
@@ -423,71 +434,72 @@ result of the workflow execution.
 
 ```json
 {
-"id": "solvemathproblems",
-"version": "1.0.0",
-"specVersion": "0.8",
-"name": "Solve Math Problems Workflow",
-"description": "Solve math problems",
-"start": "Solve",
-"functions": [
-{
-  "name": "solveMathExpressionFunction",
-  "operation": "http://myapis.org/mapthapis.json#solveExpression"
-}
-],
-"states":[
-{
- "name":"Solve",
- "type":"foreach",
- "inputCollection": "${ .expressions }",
- "iterationParam": "singleexpression",
- "outputCollection": "${ .results }",
- "actions":[
-   {
-      "functionRef": {
-         "refName": "solveMathExpressionFunction",
-         "arguments": {
-           "expression": "${ .singleexpression }"
-         }
-      }
-   }
- ],
- "stateDataFilter": {
-    "output": "${ .results }"
- },
- "end": true
-}
-]
-}
-```
+    "id": "solvemathproblems",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "solve-math-problems-workflow",
+    "description": "Solve math problems",
+    "start": "solve",
+    "functions": [
+        {
+            "name": "solve-math-exp-func",
+            "operation": "http://myapis.org/mapthapis.json#solveExpression"
+        }
+    ],
+    "states": [
+        {
+            "name": "solve",
+            "type": "foreach",
+            "inputCollection": "${ .expressions }",
+            "iterationParam": "singleexpression",
+            "outputCollection": "${ .results }",
+            "actions": [
+                {
+                    "name": "solve-action",
+                    "functionRef": {
+                        "refName": "solve-math-exp-func",
+                        "arguments": {
+                            "expression": "${ .singleexpression }"
+                        }
+                    }
+                }
+            ],
+            "stateDataFilter": {
+                "output": "${ .results }"
+            },
+            "end": true
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: solvemathproblems
-version: '1.0.0'
-specVersion: '0.8'
-name: Solve Math Problems Workflow
+version: 1.0.0
+specVersion: "0.8"
+name: solve-math-problems-workflow
 description: Solve math problems
-start: Solve
+start: solve
 functions:
-- name: solveMathExpressionFunction
-  operation: http://myapis.org/mapthapis.json#solveExpression
+  - name: solve-math-exp-func
+    operation: http://myapis.org/mapthapis.json#solveExpression
 states:
-- name: Solve
-  type: foreach
-  inputCollection: "${ .expressions }"
-  iterationParam: singleexpression
-  outputCollection: "${ .results }"
-  actions:
-  - functionRef:
-      refName: solveMathExpressionFunction
-      arguments:
-        expression: "${ .singleexpression }"
-  stateDataFilter:
-    output: "${ .results }"
-  end: true
+  - name: solve
+    type: foreach
+    inputCollection: ${ .expressions }
+    iterationParam: singleexpression
+    outputCollection: ${ .results }
+    actions:
+      - name: solve-action
+        functionRef:
+          refName: solve-math-exp-func
+          arguments:
+            expression: ${ .singleexpression }
+    stateDataFilter:
+      output: ${ .results }
+    end: true
 ```
 
 </td>
@@ -520,59 +532,66 @@ to finish execution before it can transition (end workflow execution in this cas
 
 ```json
 {
-"id": "parallelexec",
-"version": "1.0.0",
-"specVersion": "0.8",
-"name": "Parallel Execution Workflow",
-"description": "Executes two branches in parallel",
-"start": "ParallelExec",
-"states":[
-  {
-     "name": "ParallelExec",
-     "type": "parallel",
-     "completionType": "allOf",
-     "branches": [
+    "id": "parallelexec",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "parallel-execution",
+    "description": "Executes two branches in parallel",
+    "start": "parallelexec",
+    "states": [
         {
-          "name": "ShortDelayBranch",
-          "actions": [{
-            "subFlowRef": "shortdelayworkflowid"
-          }]
-        },
-        {
-          "name": "LongDelayBranch",
-          "actions": [{
-            "subFlowRef": "longdelayworkflowid"
-          }]
+            "name": "parallelexec",
+            "type": "parallel",
+            "completionType": "allOf",
+            "branches": [
+                {
+                    "name": "short-delay-branch",
+                    "actions": [
+                        {
+                            "name": "short-delay-action",
+                            "subFlowRef": "shortdelayworkflowid"
+                        }
+                    ]
+                },
+                {
+                    "name": "long-delay-branch",
+                    "actions": [
+                        {
+                            "name": "short-delay-action",
+                            "subFlowRef": "longdelayworkflowid"
+                        }
+                    ]
+                }
+            ],
+            "end": true
         }
-     ],
-     "end": true
-  }
-]
-}
-```
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: parallelexec
-version: '1.0.0'
-specVersion: '0.8'
-name: Parallel Execution Workflow
+version: 1.0.0
+specVersion: "0.8"
+name: parallel-execution
 description: Executes two branches in parallel
-start: ParallelExec
+start: parallelexec
 states:
-- name: ParallelExec
-  type: parallel
-  completionType: allOf
-  branches:
-  - name: ShortDelayBranch
-    actions:
-    - subFlowRef: shortdelayworkflowid
-  - name: LongDelayBranch
-    actions:
-    - subFlowRef: longdelayworkflowid
-  end: true
+  - name: parallelexec
+    type: parallel
+    completionType: allOf
+    branches:
+      - name: short-delay-branch
+        actions:
+          - name: short-delay-action
+            subFlowRef: shortdelayworkflowid
+      - name: long-delay-branch
+        actions:
+          - name: short-delay-action
+            subFlowRef: longdelayworkflowid
+    end: true
 ```
 
 </td>
@@ -610,62 +629,63 @@ does not wait for its results.
 
 ```json
 {
- "id": "sendcustomeremail",
- "version": "1.0.0",
- "specVersion": "0.8",
- "name": "Send customer email workflow",
- "description": "Send email to a customer",
- "start": "Send Email",
- "functions": [
-  {
-   "name": "emailFunction",
-   "operation": "file://myapis/emailapis.json#sendEmail"
-  }
- ],
- "states":[
-  {
-   "name":"Send Email",
-   "type":"operation",
-   "actions":[
-    {
-     "functionRef": {
-      "invoke": "async",
-      "refName": "emailFunction",
-      "arguments": {
-       "customer": "${ .customer }"
-      }
-     }
-    }
-   ],
-   "end": true
-  }
- ]
-}
-```
+    "id": "sendcustomeremail",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "send-customer-email-workflow",
+    "description": "Send email to a customer",
+    "start": "send-email",
+    "functions": [
+        {
+            "name": "email-function",
+            "operation": "file://myapis/emailapis.json#sendEmail"
+        }
+    ],
+    "states": [
+        {
+            "name": "send-email",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "send-email-action",
+                    "functionRef": {
+                        "invoke": "async",
+                        "refName": "email-function",
+                        "arguments": {
+                            "customer": "${ .customer }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: sendcustomeremail
-version: '1.0.0'
-specVersion: '0.8'
-name: Send customer email workflow
+version: 1.0.0
+specVersion: "0.8"
+name: send-customer-email-workflow
 description: Send email to a customer
-start: Send Email
+start: send-email
 functions:
- - name: emailFunction
-   operation: file://myapis/emailapis.json#sendEmail
+  - name: email-function
+    operation: file://myapis/emailapis.json#sendEmail
 states:
- - name: Send Email
-   type: operation
-   actions:
-    - functionRef:
-       invoke: async
-       refName: emailFunction
-       arguments:
-        customer: "${ .customer }"
-   end: true
+  - name: send-email
+    type: operation
+    actions:
+      - name: send-email-action
+        functionRef:
+          invoke: async
+          refName: email-function
+          arguments:
+            customer: ${ .customer }
+    end: true
 ```
 
 </td>
@@ -701,52 +721,53 @@ property to `continue`.
 
 ```json
 {
- "id": "onboardcustomer",
- "version": "1.0.0",
- "specVersion": "0.8",
- "name": "Onboard Customer",
- "description": "Onboard a Customer",
- "start": "Onboard",
- "states":[
-  {
-   "name":"Onboard", 
-   "type":"operation",
-   "actions":[
-    {
-     "subFlowRef": {
-      "invoke": "async",
-      "onParentComplete": "continue",
-      "workflowId": "customeronboardingworkflow",
-      "version": "1.0"
-     }
-    }
-   ],
-   "end": true
-  }
- ]
-}
-```
+    "id": "onboardcustomer",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "onboard-customer",
+    "description": "Onboard a Customer",
+    "start": "onboard",
+    "states": [
+        {
+            "name": "onboard",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "onboard-action",
+                    "subFlowRef": {
+                        "invoke": "async",
+                        "onParentComplete": "continue",
+                        "workflowId": "customeronboardingworkflow",
+                        "version": "1.0.0"
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: onboardcustomer
-version: '1.0.0'
-specVersion: '0.8'
-name: Onboard Customer
+version: 1.0.0
+specVersion: "0.8"
+name: onboard-customer
 description: Onboard a Customer
-start: Onboard
+start: onboard
 states:
- - name: Onboard
-   type: operation
-   actions:
-    - subFlowRef:
-       invoke: async
-       onParentComplete: continue
-       workflowId: customeronboardingworkflow
-       version: '1.0.0'
-   end: true
+  - name: onboard
+    type: operation
+    actions:
+      - name: onboard-action
+        subFlowRef:
+          invoke: async
+          onParentComplete: continue
+          workflowId: customeronboardingworkflow
+          version: 1.0.0
+    end: true
 ```
 
 </td>
@@ -783,123 +804,132 @@ period, the workflow transitions to the "HandleNoVisaDecision" state.
 
 ```json
 {
-"id": "eventbasedswitchstate",
-"version": "1.0.0",
-"specVersion": "0.8",
-"name": "Event Based Switch Transitions",
-"description": "Event Based Switch Transitions",
-"start": "CheckVisaStatus",
-"events": [
-{
-    "name": "visaApprovedEvent",
-    "type": "VisaApproved",
-    "source": "visaCheckSource"
-},
-{
-    "name": "visaRejectedEvent",
-    "type": "VisaRejected",
-    "source": "visaCheckSource"
-}
-],
-"states":[
-  {
-     "name":"CheckVisaStatus",
-     "type":"switch",
-     "eventConditions": [
+    "id": "eventbasedswitchstate",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "event-based-switch-transitions",
+    "description": "Event Based Switch Transitions",
+    "start": "checkvisastatus",
+    "events": [
         {
-          "eventRef": "visaApprovedEvent",
-          "transition": "HandleApprovedVisa"
+            "name": "visa-approved-event",
+            "type": "VisaApproved",
+            "source": "visaCheckSource"
         },
         {
-          "eventRef": "visaRejectedEvent",
-          "transition": "HandleRejectedVisa"
+            "name": "visa-rejected-event",
+            "type": "VisaRejected",
+            "source": "visaCheckSource"
         }
-     ],
-     "timeouts": {
-       "eventTimeout": "PT1H"
-     },
-     "defaultCondition": {
-        "transition": "HandleNoVisaDecision"
-     }
-  },
-  {
-    "name": "HandleApprovedVisa",
-    "type": "operation",
-    "actions": [
-      {
-        "subFlowRef": "handleApprovedVisaWorkflowID"
-      }
     ],
-    "end": true
-  },
-  {
-      "name": "HandleRejectedVisa",
-      "type": "operation",
-      "actions": [
+    "states": [
         {
-          "subFlowRef": "handleRejectedVisaWorkflowID"
-        }
-      ],
-      "end": true
-  },
-  {
-      "name": "HandleNoVisaDecision",
-      "type": "operation",
-      "actions": [
+            "name": "checkvisastatus",
+            "type": "switch",
+            "eventConditions": [
+                {
+                    "eventRef": "visa-approved-event",
+                    "transition": "handle-approved-visa",
+                    "name": "approved-condition"
+                },
+                {
+                    "eventRef": "visa-rejected-event",
+                    "transition": "handle-rejected-visa",
+                    "name": "rejected-condition"
+                }
+            ],
+            "timeouts": {
+                "eventTimeout": "PT1H"
+            },
+            "defaultCondition": {
+                "transition": "handle-no-visa-decision"
+            }
+        },
         {
-          "subFlowRef": "handleNoVisaDecisionWorkflowId"
+            "name": "handle-approved-visa",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "handle-approved-action",
+                    "subFlowRef": "handleApprovedVisaWorkflowID"
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "handle-rejected-visa",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "handle-rejected-action",
+                    "subFlowRef": "handleRejectedVisaWorkflowID"
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "handle-no-visa-decision",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "handle-novisa-action",
+                    "subFlowRef": "handleNoVisaDecisionWorkflowId"
+                }
+            ],
+            "end": true
         }
-      ],
-      "end": true
-  }
-]
-}
-```
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: eventbasedswitchstate
-version: '1.0.0'
-specVersion: '0.8'
-name: Event Based Switch Transitions
+version: 1.0.0
+specVersion: "0.8"
+name: event-based-switch-transitions
 description: Event Based Switch Transitions
-start: CheckVisaStatus
+start: checkvisastatus
 events:
-- name: visaApprovedEvent
-  type: VisaApproved
-  source: visaCheckSource
-- name: visaRejectedEvent
-  type: VisaRejected
-  source: visaCheckSource
+  - name: visa-approved-event
+    type: VisaApproved
+    source: visaCheckSource
+  - name: visa-rejected-event
+    type: VisaRejected
+    source: visaCheckSource
 states:
-- name: CheckVisaStatus
-  type: switch
-  eventConditions:
-  - eventRef: visaApprovedEvent
-    transition: HandleApprovedVisa
-  - eventRef: visaRejectedEvent
-    transition: HandleRejectedVisa
-  timeouts:
-    eventTimeout: PT1H
-  defaultCondition:
-    transition: HandleNoVisaDecision
-- name: HandleApprovedVisa
-  type: operation
-  actions:
-    - subFlowRef: handleApprovedVisaWorkflowID
-  end: true
-- name: HandleRejectedVisa
-  type: operation
+  - name: checkvisastatus
+    type: switch
+    eventConditions:
+      - eventRef: visa-approved-event
+        transition: handle-approved-visa
+        name: approved-condition
+      - eventRef: visa-rejected-event
+        transition: handle-rejected-visa
+        name: rejected-condition
+    timeouts:
+      eventTimeout: PT1H
+    defaultCondition:
+      transition: handle-no-visa-decision
+  - name: handle-approved-visa
+    type: operation
     actions:
-      - subFlowRef: handleRejectedVisaWorkflowID
-  end: true
-- name: HandleNoVisaDecision
-  type: operation
+      - name: handle-approved-action
+        subFlowRef: handleApprovedVisaWorkflowID
+    end: true
+  - name: handle-rejected-visa
+    type: operation
     actions:
-      - subFlowRef: handleNoVisaDecisionWorkflowId
-  end: true
+      - name: handle-rejected-action
+        subFlowRef: handleRejectedVisaWorkflowID
+    end: true
+  - name: handle-no-visa-decision
+    type: operation
+    actions:
+      - name: handle-novisa-action
+        subFlowRef: handleNoVisaDecisionWorkflowId
+    end: true
 ```
 
 </td>
@@ -945,103 +975,110 @@ If the applicants age is over 18 we start the application (subflow action). Othe
 
 ```json
 {
-   "id": "applicantrequest",
-   "version": "1.0.0",
-   "specVersion": "0.8",
-   "name": "Applicant Request Decision Workflow",
-   "description": "Determine if applicant request is valid",
-   "start": "CheckApplication",
-   "functions": [
-     {
-        "name": "sendRejectionEmailFunction",
-        "operation": "http://myapis.org/applicationapi.json#emailRejection"
-     }
-   ],
-   "states":[
-      {
-         "name":"CheckApplication",
-         "type":"switch",
-         "dataConditions": [
-            {
-              "condition": "${ .applicants | .age >= 18 }",
-              "transition": "StartApplication"
-            },
-            {
-              "condition": "${ .applicants | .age < 18 }",
-              "transition": "RejectApplication"
+    "id": "applicantrequest",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "applicant-request-decision-workflow",
+    "description": "Determine if applicant request is valid",
+    "start": "check-application",
+    "functions": [
+        {
+            "name": "send-rejection-email-function",
+            "operation": "http://myapis.org/applicationapi.json#emailRejection"
+        }
+    ],
+    "states": [
+        {
+            "name": "check-application",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "condition": "${ .applicants | .age >= 18 }",
+                    "transition": "start-application",
+                    "name": "adult-condition"
+                },
+                {
+                    "condition": "${ .applicants | .age < 18 }",
+                    "transition": "reject-application",
+                    "name": "minor-condition"
+                }
+            ],
+            "defaultCondition": {
+                "transition": "reject-application"
             }
-         ],
-         "defaultCondition": {
-            "transition": "RejectApplication"
-         }
-      },
-      {
-        "name": "StartApplication",
-        "type": "operation",
-        "actions": [
-          {
-            "subFlowRef": "startApplicationWorkflowId"
-          }
-        ],
-        "end": true
-      },
-      {
-        "name":"RejectApplication",
-        "type":"operation",
-        "actionMode":"sequential",
-        "actions":[
-           {
-              "functionRef": {
-                 "refName": "sendRejectionEmailFunction",
-                 "arguments": {
-                   "applicant": "${ .applicant }"
-                 }
-              }
-           }
-        ],
-        "end": true
-    }
-   ]
-}
-```
+        },
+        {
+            "name": "start-application",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "start-app-action",
+                    "subFlowRef": "startApplicationWorkflowId"
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "reject-application",
+            "type": "operation",
+            "actionMode": "sequential",
+            "actions": [
+                {
+                    "name": "send-reject-action",
+                    "functionRef": {
+                        "refName": "send-rejection-email-function",
+                        "arguments": {
+                            "applicant": "${ .applicant }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: applicantrequest
-version: '1.0.0'
-specVersion: '0.8'
-name: Applicant Request Decision Workflow
+version: 1.0.0
+specVersion: "0.8"
+name: applicant-request-decision-workflow
 description: Determine if applicant request is valid
-start: CheckApplication
+start: check-application
 functions:
-- name: sendRejectionEmailFunction
-  operation: http://myapis.org/applicationapi.json#emailRejection
+  - name: send-rejection-email-function
+    operation: http://myapis.org/applicationapi.json#emailRejection
 states:
-- name: CheckApplication
-  type: switch
-  dataConditions:
-  - condition: "${ .applicants | .age >= 18 }"
-    transition: StartApplication
-  - condition: "${ .applicants | .age < 18 }"
-    transition: RejectApplication
-  defaultCondition:
-    transition: RejectApplication
-- name: StartApplication
-  type: operation
-  actions:
-    - subFlowRef: startApplicationWorkflowId
-  end: true
-- name: RejectApplication
-  type: operation
-  actionMode: sequential
-  actions:
-  - functionRef:
-      refName: sendRejectionEmailFunction
-      arguments:
-        applicant: "${ .applicant }"
-  end: true
+  - name: check-application
+    type: switch
+    dataConditions:
+      - condition: ${ .applicants | .age >= 18 }
+        transition: start-application
+        name: adult-condition
+      - condition: ${ .applicants | .age < 18 }
+        transition: reject-application
+        name: minor-condition
+    defaultCondition:
+      transition: reject-application
+  - name: start-application
+    type: operation
+    actions:
+      - name: start-app-action
+        subFlowRef: startApplicationWorkflowId
+    end: true
+  - name: reject-application
+    type: operation
+    actionMode: sequential
+    actions:
+      - name: send-reject-action
+        functionRef:
+          refName: send-rejection-email-function
+          arguments:
+            applicant: ${ .applicant }
+    end: true
 ```
 
 </td>
@@ -1089,163 +1126,172 @@ The data output of the workflow contains the information of the exception caught
 
 ```json
 {
-"id": "provisionorders",
-"version": "1.0.0",
-"specVersion": "0.8",
-"name": "Provision Orders",
-"description": "Provision Orders and handle errors thrown",
-"start": "ProvisionOrder",
-"functions": [
-  {
-     "name": "provisionOrderFunction",
-     "operation": "http://myapis.org/provisioningapi.json#doProvision"
-  }
-],
-"errors": [
- {
-  "name": "Missing order id"
- },
- {
-  "name": "Missing order item"
- },
- {
-  "name": "Missing order quantity"
- }
-],
-"states":[
-  {
-    "name":"ProvisionOrder",
-    "type":"operation",
-    "actionMode":"sequential",
-    "actions":[
-       {
-          "functionRef": {
-             "refName": "provisionOrderFunction",
-             "arguments": {
-               "order": "${ .order }"
-             }
-          }
-       }
+    "id": "provisionorders",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "provision-orders",
+    "description": "Provision Orders and handle errors thrown",
+    "start": "provision-order",
+    "functions": [
+        {
+            "name": "provision-order-function",
+            "operation": "http://myapis.org/provisioningapi.json#doProvision"
+        }
     ],
-    "stateDataFilter": {
-       "output": "${ .exceptions }"
-    },
-    "transition": "ApplyOrder",
-    "onErrors": [
-       {
-         "errorRef": "Missing order id",
-         "transition": "MissingId"
-       },
-       {
-         "errorRef": "Missing order item",
-         "transition": "MissingItem"
-       },
-       {
-        "errorRef": "Missing order quantity",
-        "transition": "MissingQuantity"
-       }
+    "errors": [
+        {
+            "name": "missing-order-id"
+        },
+        {
+            "name": "missing-order-item"
+        },
+        {
+            "name": "missing-order-quantity"
+        }
+    ],
+    "states": [
+        {
+            "name": "provision-order",
+            "type": "operation",
+            "actionMode": "sequential",
+            "actions": [
+                {
+                    "name": "provision-action",
+                    "functionRef": {
+                        "refName": "provision-order-function",
+                        "arguments": {
+                            "order": "${ .order }"
+                        }
+                    }
+                }
+            ],
+            "stateDataFilter": {
+                "output": "${ .exceptions }"
+            },
+            "transition": "apply-order",
+            "onErrors": [
+                {
+                    "errorRef": "missing-order-id",
+                    "transition": "missing-id"
+                },
+                {
+                    "errorRef": "missing-order-item",
+                    "transition": "missing-item"
+                },
+                {
+                    "errorRef": "missing-order-quantity",
+                    "transition": "missing-quantity"
+                }
+            ]
+        },
+        {
+            "name": "missing-id",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "missing-action",
+                    "subFlowRef": "handleMissingIdExceptionWorkflow"
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "missing-item",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "missing-item",
+                    "subFlowRef": "handleMissingItemExceptionWorkflow"
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "missing-quantity",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "missing-quantity",
+                    "subFlowRef": "handleMissingQuantityExceptionWorkflow"
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "apply-order",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "apply-order",
+                    "subFlowRef": "applyOrderWorkflowId"
+                }
+            ],
+            "end": true
+        }
     ]
-},
-{
-   "name": "MissingId",
-   "type": "operation",
-   "actions": [
-     {
-       "subFlowRef": "handleMissingIdExceptionWorkflow"
-     }
-   ],
-   "end": true
-},
-{
-   "name": "MissingItem",
-   "type": "operation",
-   "actions": [
-     {
-       "subFlowRef": "handleMissingItemExceptionWorkflow"
-     }
-   ],
-   "end": true
-},
-{
-   "name": "MissingQuantity",
-   "type": "operation",
-   "actions": [
-     {
-       "subFlowRef": "handleMissingQuantityExceptionWorkflow"
-     }
-   ],
-   "end": true
-},
-{
-   "name": "ApplyOrder",
-   "type": "operation",
-   "actions": [
-     {
-       "subFlowRef": "applyOrderWorkflowId"
-     }
-   ],
-   "end": true
-}
-]
-}
-```
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: provisionorders
-version: '1.0.0'
-specVersion: '0.8'
-name: Provision Orders
+version: 1.0.0
+specVersion: "0.8"
+name: provision-orders
 description: Provision Orders and handle errors thrown
-start: ProvisionOrder
+start: provision-order
 functions:
- - name: provisionOrderFunction
-   operation: http://myapis.org/provisioningapi.json#doProvision
+  - name: provision-order-function
+    operation: http://myapis.org/provisioningapi.json#doProvision
 errors:
- - name: Missing order id
- - name: Missing order item
- - name: Missing order quantity
+  - name: missing-order-id
+  - name: missing-order-item
+  - name: missing-order-quantity
 states:
- - name: ProvisionOrder
-   type: operation
-   actionMode: sequential
-   actions:
-    - functionRef:
-       refName: provisionOrderFunction
-       arguments:
-        order: "${ .order }"
-   stateDataFilter:
-    output: "${ .exceptions }"
-   transition: ApplyOrder
-   onErrors:
-    - errorRef: Missing order id
-      transition: MissingId
-    - errorRef: Missing order item
-      transition: MissingItem
-    - errorRef: Missing order quantity
-      transition: MissingQuantity
- - name: MissingId
-   type: operation
-   actions:
-    - subFlowRef: handleMissingIdExceptionWorkflow
-   end: true
- - name: MissingItem
-   type: operation
-   actions:
-    - subFlowRef: handleMissingItemExceptionWorkflow
-   end: true
- - name: MissingQuantity
-   type: operation
-   actions:
-    - subFlowRef: handleMissingQuantityExceptionWorkflow
-   end: true
- - name: ApplyOrder
-   type: operation
-   actions:
-    - subFlowRef: applyOrderWorkflowId
-   end: true
+  - name: provision-order
+    type: operation
+    actionMode: sequential
+    actions:
+      - name: provision-action
+        functionRef:
+          refName: provision-order-function
+          arguments:
+            order: ${ .order }
+    stateDataFilter:
+      output: ${ .exceptions }
+    transition: apply-order
+    onErrors:
+      - errorRef: missing-order-id
+        transition: missing-id
+      - errorRef: missing-order-item
+        transition: missing-item
+      - errorRef: missing-order-quantity
+        transition: missing-quantity
+  - name: missing-id
+    type: operation
+    actions:
+      - name: missing-action
+        subFlowRef: handleMissingIdExceptionWorkflow
+    end: true
+  - name: missing-item
+    type: operation
+    actions:
+      - name: missing-item
+        subFlowRef: handleMissingItemExceptionWorkflow
+    end: true
+  - name: missing-quantity
+    type: operation
+    actions:
+      - name: missing-quantity
+        subFlowRef: handleMissingQuantityExceptionWorkflow
+    end: true
+  - name: apply-order
+    type: operation
+    actions:
+      - name: apply-order
+        subFlowRef: applyOrderWorkflowId
+    end: true
 ```
 
 </td>
@@ -1285,211 +1331,222 @@ In the case job submission raises a runtime error, we transition to an Operation
 
 ```json
 {
-  "id": "jobmonitoring",
-  "version": "1.0.0",
-  "specVersion": "0.8",
-  "name": "Job Monitoring",
-  "description": "Monitor finished execution of a submitted job",
-  "start": "SubmitJob",
-  "functions": [
-    {
-      "name": "submitJob",
-      "operation": "http://myapis.org/monitorapi.json#doSubmit"
-    },
-    {
-      "name": "checkJobStatus",
-      "operation": "http://myapis.org/monitorapi.json#checkStatus"
-    },
-    {
-      "name": "reportJobSuceeded",
-      "operation": "http://myapis.org/monitorapi.json#reportSucceeded"
-    },
-    {
-      "name": "reportJobFailed",
-      "operation": "http://myapis.org/monitorapi.json#reportFailure"
-    }
-  ],
-  "states":[
-    {
-      "name":"SubmitJob",
-      "type":"operation",
-      "actionMode":"sequential",
-      "actions":[
-      {
-          "functionRef": {
-            "refName": "submitJob",
-            "arguments": {
-              "name": "${ .job.name }"
-            }
-          },
-          "actionDataFilter": {
-            "results": "${ .jobuid }"
-          }
-      }
-      ],
-      "stateDataFilter": {
-          "output": "${ .jobuid }"
-      },
-      "transition": "WaitForCompletion"
-  },
-  {
-      "name": "WaitForCompletion",
-      "type": "sleep",
-      "duration": "PT5S",
-      "transition": "GetJobStatus"
-  },
-  {
-      "name":"GetJobStatus",
-      "type":"operation",
-      "actionMode":"sequential",
-      "actions":[
-      {
-        "functionRef": {
-            "refName": "checkJobStatus",
-            "arguments": {
-              "name": "${ .jobuid }"
-            }
-          },
-          "actionDataFilter": {
-            "results": "${ .jobstatus }"
-          }
-      }
-      ],
-      "stateDataFilter": {
-          "output": "${ .jobstatus }"
-      },
-      "transition": "DetermineCompletion"
-  },
-  {
-    "name":"DetermineCompletion",
-    "type":"switch",
-    "dataConditions": [
-      {
-        "condition": "${ .jobStatus == \"SUCCEEDED\" }",
-        "transition": "JobSucceeded"
-      },
-      {
-        "condition": "${ .jobStatus == \"FAILED\" }",
-        "transition": "JobFailed"
-      }
-    ],
-    "defaultCondition": {
-      "transition": "WaitForCompletion"
-    }
-  },
-  {
-      "name":"JobSucceeded",
-      "type":"operation",
-      "actionMode":"sequential",
-      "actions":[
-      {
-        "functionRef": {
-            "refName": "reportJobSuceeded",
-            "arguments": {
-              "name": "${ .jobuid }"
-            }
+    "id": "jobmonitoring",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "jobmonitoring",
+    "description": "Monitor finished execution of a submitted job",
+    "start": "submit-job",
+    "functions": [
+        {
+            "name": "submit-job",
+            "operation": "http://myapis.org/monitorapi.json#doSubmit"
+        },
+        {
+            "name": "check-job-status",
+            "operation": "http://myapis.org/monitorapi.json#checkStatus"
+        },
+        {
+            "name": "report-job-suceeded",
+            "operation": "http://myapis.org/monitorapi.json#reportSucceeded"
+        },
+        {
+            "name": "report-job-failed",
+            "operation": "http://myapis.org/monitorapi.json#reportFailure"
         }
-      }
-      ],
-      "end": true
-  },
-  {
-    "name":"JobFailed",
-    "type":"operation",
-    "actionMode":"sequential",
-    "actions":[
-    {
-        "functionRef": {
-          "refName": "reportJobFailed",
-          "arguments": {
-            "name": "${ .jobuid }"
-          }
-        }
-    }
     ],
-    "end": true
-  }
-  ]
-}
-```
+    "states": [
+        {
+            "name": "submit-job",
+            "type": "operation",
+            "actionMode": "sequential",
+            "actions": [
+                {
+                    "name": "submit-job",
+                    "functionRef": {
+                        "refName": "submit-job",
+                        "arguments": {
+                            "name": "${ .job.name }"
+                        }
+                    },
+                    "actionDataFilter": {
+                        "results": "${ .jobuid }"
+                    }
+                }
+            ],
+            "stateDataFilter": {
+                "output": "${ .jobuid }"
+            },
+            "transition": "wait-for-completion"
+        },
+        {
+            "name": "wait-for-completion",
+            "type": "sleep",
+            "duration": "PT5S",
+            "transition": "get-job-status"
+        },
+        {
+            "name": "get-job-status",
+            "type": "operation",
+            "actionMode": "sequential",
+            "actions": [
+                {
+                    "name": "get-job-status",
+                    "functionRef": {
+                        "refName": "check-job-status",
+                        "arguments": {
+                            "name": "${ .jobuid }"
+                        }
+                    },
+                    "actionDataFilter": {
+                        "results": "${ .jobstatus }"
+                    }
+                }
+            ],
+            "stateDataFilter": {
+                "output": "${ .jobstatus }"
+            },
+            "transition": "determine-completion"
+        },
+        {
+            "name": "determine-completion",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "condition": "${ .jobStatus == \"SUCCEEDED\" }",
+                    "transition": "job-succeeded",
+                    "name": "succeed"
+                },
+                {
+                    "condition": "${ .jobStatus == \"FAILED\" }",
+                    "transition": "job-failed",
+                    "name": "failed"
+                }
+            ],
+            "defaultCondition": {
+                "transition": "wait-for-completion"
+            }
+        },
+        {
+            "name": "job-succeeded",
+            "type": "operation",
+            "actionMode": "sequential",
+            "actions": [
+                {
+                    "name": "job-succeeded",
+                    "functionRef": {
+                        "refName": "report-job-suceeded",
+                        "arguments": {
+                            "name": "${ .jobuid }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "job-failed",
+            "type": "operation",
+            "actionMode": "sequential",
+            "actions": [
+                {
+                    "name": "job-failed",
+                    "functionRef": {
+                        "refName": "report-job-failed",
+                        "arguments": {
+                            "name": "${ .jobuid }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: jobmonitoring
-version: '1.0.0'
-specVersion: '0.8'
-name: Job Monitoring
+version: 1.0.0
+specVersion: "0.8"
+name: jobmonitoring
 description: Monitor finished execution of a submitted job
-start: SubmitJob
+start: submit-job
 functions:
- - name: submitJob
-   operation: http://myapis.org/monitorapi.json#doSubmit
- - name: checkJobStatus
-   operation: http://myapis.org/monitorapi.json#checkStatus
- - name: reportJobSuceeded
-   operation: http://myapis.org/monitorapi.json#reportSucceeded
- - name: reportJobFailed
-   operation: http://myapis.org/monitorapi.json#reportFailure
+  - name: submit-job
+    operation: http://myapis.org/monitorapi.json#doSubmit
+  - name: check-job-status
+    operation: http://myapis.org/monitorapi.json#checkStatus
+  - name: report-job-suceeded
+    operation: http://myapis.org/monitorapi.json#reportSucceeded
+  - name: report-job-failed
+    operation: http://myapis.org/monitorapi.json#reportFailure
 states:
- - name: SubmitJob
-   type: operation
-   actionMode: sequential
-   actions:
-    - functionRef:
-       refName: submitJob
-       arguments:
-        name: "${ .job.name }"
-      actionDataFilter:
-       results: "${ .jobuid }"
-   stateDataFilter:
-    output: "${ .jobuid }"
-   transition: WaitForCompletion
- - name: WaitForCompletion
-   type: sleep
-   duration: PT5S
-   transition: GetJobStatus
- - name: GetJobStatus
-   type: operation
-   actionMode: sequential
-   actions:
-    - functionRef:
-       refName: checkJobStatus
-       arguments:
-        name: "${ .jobuid }"
-      actionDataFilter:
-       results: "${ .jobstatus }"
-   stateDataFilter:
-    output: "${ .jobstatus }"
-   transition: DetermineCompletion
- - name: DetermineCompletion
-   type: switch
-   dataConditions:
-    - condition: ${ .jobStatus == "SUCCEEDED" }
-      transition: JobSucceeded
-    - condition: ${ .jobStatus == "FAILED" }
-      transition: JobFailed
-   defaultCondition:
-    transition: WaitForCompletion
- - name: JobSucceeded
-   type: operation
-   actionMode: sequential
-   actions:
-    - functionRef:
-       refName: reportJobSuceeded
-       arguments:
-        name: "${ .jobuid }"
-   end: true
- - name: JobFailed
-   type: operation
-   actionMode: sequential
-   actions:
-    - functionRef:
-       refName: reportJobFailed
-       arguments:
-        name: "${ .jobuid }"
-   end: true
+  - name: submit-job
+    type: operation
+    actionMode: sequential
+    actions:
+      - name: submit-job
+        functionRef:
+          refName: submit-job
+          arguments:
+            name: ${ .job.name }
+        actionDataFilter:
+          results: ${ .jobuid }
+    stateDataFilter:
+      output: ${ .jobuid }
+    transition: wait-for-completion
+  - name: wait-for-completion
+    type: sleep
+    duration: PT5S
+    transition: get-job-status
+  - name: get-job-status
+    type: operation
+    actionMode: sequential
+    actions:
+      - name: get-job-status
+        functionRef:
+          refName: check-job-status
+          arguments:
+            name: ${ .jobuid }
+        actionDataFilter:
+          results: ${ .jobstatus }
+    stateDataFilter:
+      output: ${ .jobstatus }
+    transition: determine-completion
+  - name: determine-completion
+    type: switch
+    dataConditions:
+      - condition: ${ .jobStatus == "SUCCEEDED" }
+        transition: job-succeeded
+        name: succeed
+      - condition: ${ .jobStatus == "FAILED" }
+        transition: job-failed
+        name: failed
+    defaultCondition:
+      transition: wait-for-completion
+  - name: job-succeeded
+    type: operation
+    actionMode: sequential
+    actions:
+      - name: job-succeeded
+        functionRef:
+          refName: report-job-suceeded
+          arguments:
+            name: ${ .jobuid }
+    end: true
+  - name: job-failed
+    type: operation
+    actionMode: sequential
+    actions:
+      - name: job-failed
+        functionRef:
+          refName: report-job-failed
+          arguments:
+            name: ${ .jobuid }
+    end: true
 ```
 
 </td>
@@ -1576,83 +1633,86 @@ CloudEvent upon completion of the workflow could look like:
 
 ```json
 {
-"id": "sendcloudeventonprovision",
-"version": "1.0.0",
-"specVersion": "0.8",
-"name": "Send CloudEvent on provision completion",
-"start": "ProvisionOrdersState",
-"events": [
-{
-    "name": "provisioningCompleteEvent",
-    "type": "provisionCompleteType",
-    "kind": "produced"
-}
-],
-"functions": [
-{
-    "name": "provisionOrderFunction",
-    "operation": "http://myapis.org/provisioning.json#doProvision"
-}
-],
-"states": [
-{
-    "name": "ProvisionOrdersState",
-    "type": "foreach",
-    "inputCollection": "${ .orders }",
-    "iterationParam": "singleorder",
-    "outputCollection": "${ .provisionedOrders }",
-    "actions": [
+    "id": "sendcloudeventonprovision",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "sendcloudeventonprovision",
+    "start": "provision-orders-state",
+    "events": [
         {
-            "functionRef": {
-                "refName": "provisionOrderFunction",
-                "arguments": {
-                    "order": "${ .singleorder }"
-                }
-            }
+            "name": "provisioning-complete-event",
+            "type": "provisionCompleteType",
+            "kind": "produced"
         }
     ],
-    "end": {
-        "produceEvents": [{
-            "eventRef": "provisioningCompleteEvent",
-            "data": "${ .provisionedOrders }"
-        }]
-    }
-}
-]
-}
-```
+    "functions": [
+        {
+            "name": "provision-order-function",
+            "operation": "http://myapis.org/provisioning.json#doProvision"
+        }
+    ],
+    "states": [
+        {
+            "name": "provision-orders-state",
+            "type": "foreach",
+            "inputCollection": "${ .orders }",
+            "iterationParam": "singleorder",
+            "outputCollection": "${ .provisionedOrders }",
+            "actions": [
+                {
+                    "name": "provision-order-function",
+                    "functionRef": {
+                        "refName": "provision-order-function",
+                        "arguments": {
+                            "order": "${ .singleorder }"
+                        }
+                    }
+                }
+            ],
+            "end": {
+                "produceEvents": [
+                    {
+                        "eventRef": "provisioning-complete-event",
+                        "data": "${ .provisionedOrders }"
+                    }
+                ]
+            }
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: sendcloudeventonprovision
-version: '1.0.0'
-specVersion: '0.8'
-name: Send CloudEvent on provision completion
-start: ProvisionOrdersState
+version: 1.0.0
+specVersion: "0.8"
+name: sendcloudeventonprovision
+start: provision-orders-state
 events:
-- name: provisioningCompleteEvent
-  type: provisionCompleteType
-  kind: produced
+  - name: provisioning-complete-event
+    type: provisionCompleteType
+    kind: produced
 functions:
-- name: provisionOrderFunction
-  operation: http://myapis.org/provisioning.json#doProvision
+  - name: provision-order-function
+    operation: http://myapis.org/provisioning.json#doProvision
 states:
-- name: ProvisionOrdersState
-  type: foreach
-  inputCollection: "${ .orders }"
-  iterationParam: singleorder
-  outputCollection: "${ .provisionedOrders }"
-  actions:
-  - functionRef:
-      refName: provisionOrderFunction
-      arguments:
-        order: "${ .singleorder }"
-  end:
-    produceEvents:
-    - eventRef: provisioningCompleteEvent
-      data: "${ .provisionedOrders }"
+  - name: provision-orders-state
+    type: foreach
+    inputCollection: ${ .orders }
+    iterationParam: singleorder
+    outputCollection: ${ .provisionedOrders }
+    actions:
+      - name: provision-order-function
+        functionRef:
+          refName: provision-order-function
+          arguments:
+            order: ${ .singleorder }
+    end:
+      produceEvents:
+        - eventRef: provisioning-complete-event
+          data: ${ .provisionedOrders }
 ```
 
 </td>
@@ -1709,163 +1769,182 @@ have the matching patient id.
 
 ```json
 {
-"id": "patientVitalsWorkflow",
-"name": "Monitor Patient Vitals",
-"version": "1.0.0",
-"specVersion": "0.8",
-"start": "MonitorVitals",
-"events": [
-{
-    "name": "HighBodyTemperature",
-    "type": "org.monitor.highBodyTemp",
-    "source": "monitoringSource",
-    "correlation": [
-      {
-        "contextAttributeName": "patientId"
-      }
-    ]
-},
-{
-    "name": "HighBloodPressure",
-    "type": "org.monitor.highBloodPressure",
-    "source": "monitoringSource",
-    "correlation": [
-      {
-        "contextAttributeName": "patientId"
-      }
-    ]
-},
-{
-    "name": "HighRespirationRate",
-    "type": "org.monitor.highRespirationRate",
-    "source": "monitoringSource",
-    "correlation": [
-      {
-        "contextAttributeName": "patientId"
-      }
-    ]
-}
-],
-"functions": [
-{
-    "name": "callPulmonologist",
-    "operation": "http://myapis.org/patientapis.json#callPulmonologist"
-},
-{
-    "name": "sendTylenolOrder",
-    "operation": "http://myapis.org/patientapis.json#tylenolOrder"
-},
-{
-    "name": "callNurse",
-    "operation": "http://myapis.org/patientapis.json#callNurse"
-}
-],
-"states": [
-{
-"name": "MonitorVitals",
-"type": "event",
-"exclusive": true,
-"onEvents": [{
-        "eventRefs": ["HighBodyTemperature"],
-        "actions": [{
-            "functionRef": {
-                "refName": "sendTylenolOrder",
-                "arguments": {
-                    "patientid": "${ .patientId }"
+    "id": "patientVitalsWorkflow",
+    "name": "patientVitalsWorkflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "monitor-vitals",
+    "events": [
+        {
+            "name": "high-body-temperature",
+            "type": "org.monitor.highBodyTemp",
+            "source": "monitoringSource",
+            "correlation": [
+                {
+                    "contextAttributeName": "patientId"
                 }
-            }
-        }]
-    },
-    {
-        "eventRefs": ["HighBloodPressure"],
-        "actions": [{
-            "functionRef": {
-                "refName": "callNurse",
-                "arguments": {
-                    "patientid": "${ .patientId }"
+            ]
+        },
+        {
+            "name": "high-blood-pressure",
+            "type": "org.monitor.highBloodPressure",
+            "source": "monitoringSource",
+            "correlation": [
+                {
+                    "contextAttributeName": "patientId"
                 }
-            }
-        }]
-    },
-    {
-        "eventRefs": ["HighRespirationRate"],
-        "actions": [{
-            "functionRef": {
-                "refName": "callPulmonologist",
-                "arguments": {
-                    "patientid": "${ .patientId }"
+            ]
+        },
+        {
+            "name": "high-respiration-rate",
+            "type": "org.monitor.highRespirationRate",
+            "source": "monitoringSource",
+            "correlation": [
+                {
+                    "contextAttributeName": "patientId"
                 }
+            ]
+        }
+    ],
+    "functions": [
+        {
+            "name": "call-pulmonologist",
+            "operation": "http://myapis.org/patientapis.json#callPulmonologist"
+        },
+        {
+            "name": "send-tylenol-order",
+            "operation": "http://myapis.org/patientapis.json#tylenolOrder"
+        },
+        {
+            "name": "call-nurse",
+            "operation": "http://myapis.org/patientapis.json#callNurse"
+        }
+    ],
+    "states": [
+        {
+            "name": "monitor-vitals",
+            "type": "event",
+            "exclusive": true,
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "high-body-temperature"
+                    ],
+                    "actions": [
+                        {
+                            "name": "send-tylenol-order",
+                            "functionRef": {
+                                "refName": "send-tylenol-order",
+                                "arguments": {
+                                    "patientid": "${ .patientId }"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "eventRefs": [
+                        "high-blood-pressure"
+                    ],
+                    "actions": [
+                        {
+                            "name": "call-nurse",
+                            "functionRef": {
+                                "refName": "call-nurse",
+                                "arguments": {
+                                    "patientid": "${ .patientId }"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "eventRefs": [
+                        "high-respiration-rate"
+                    ],
+                    "actions": [
+                        {
+                            "name": "call-pulmonologist",
+                            "functionRef": {
+                                "refName": "call-pulmonologist",
+                                "arguments": {
+                                    "patientid": "${ .patientId }"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "end": {
+                "terminate": true
             }
-        }]
-    }
-],
-"end": {
-    "terminate": true
-}
-}]
-}
-```
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: patientVitalsWorkflow
-name: Monitor Patient Vitals
-version: '1.0.0'
-specVersion: '0.8'
-start: MonitorVitals
+name: patientVitalsWorkflow
+version: 1.0.0
+specVersion: "0.8"
+start: monitor-vitals
 events:
-- name: HighBodyTemperature
-  type: org.monitor.highBodyTemp
-  source: monitoringSource
-  correlation:
-  - contextAttributeName: patientId
-- name: HighBloodPressure
-  type: org.monitor.highBloodPressure
-  source: monitoringSource
-  correlation:
-  - contextAttributeName: patientId
-- name: HighRespirationRate
-  type: org.monitor.highRespirationRate
-  source: monitoringSource
-  correlation:
-  - contextAttributeName: patientId
+  - name: high-body-temperature
+    type: org.monitor.highBodyTemp
+    source: monitoringSource
+    correlation:
+      - contextAttributeName: patientId
+  - name: high-blood-pressure
+    type: org.monitor.highBloodPressure
+    source: monitoringSource
+    correlation:
+      - contextAttributeName: patientId
+  - name: high-respiration-rate
+    type: org.monitor.highRespirationRate
+    source: monitoringSource
+    correlation:
+      - contextAttributeName: patientId
 functions:
-- name: callPulmonologist
-  operation: http://myapis.org/patientapis.json#callPulmonologist
-- name: sendTylenolOrder
-  operation: http://myapis.org/patientapis.json#tylenolOrder
-- name: callNurse
-  operation: http://myapis.org/patientapis.json#callNurse
+  - name: call-pulmonologist
+    operation: http://myapis.org/patientapis.json#callPulmonologist
+  - name: send-tylenol-order
+    operation: http://myapis.org/patientapis.json#tylenolOrder
+  - name: call-nurse
+    operation: http://myapis.org/patientapis.json#callNurse
 states:
-- name: MonitorVitals
-  type: event
-  exclusive: true
-  onEvents:
-  - eventRefs:
-    - HighBodyTemperature
-    actions:
-    - functionRef:
-        refName: sendTylenolOrder
-        arguments:
-          patientid: "${ .patientId }"
-  - eventRefs:
-    - HighBloodPressure
-    actions:
-    - functionRef:
-        refName: callNurse
-        arguments:
-          patientid: "${ .patientId }"
-  - eventRefs:
-    - HighRespirationRate
-    actions:
-    - functionRef:
-        refName: callPulmonologist
-        arguments:
-          patientid: "${ .patientId }"
-  end:
-    terminate: true
+  - name: monitor-vitals
+    type: event
+    exclusive: true
+    onEvents:
+      - eventRefs:
+          - high-body-temperature
+        actions:
+          - name: send-tylenol-order
+            functionRef:
+              refName: send-tylenol-order
+              arguments:
+                patientid: ${ .patientId }
+      - eventRefs:
+          - high-blood-pressure
+        actions:
+          - name: call-nurse
+            functionRef:
+              refName: call-nurse
+              arguments:
+                patientid: ${ .patientId }
+      - eventRefs:
+          - high-respiration-rate
+        actions:
+          - name: call-pulmonologist
+            functionRef:
+              refName: call-pulmonologist
+              arguments:
+                patientid: ${ .patientId }
+    end:
+      terminate: true
 ```
 
 </td>
@@ -1904,125 +1983,126 @@ when all three of these events happened (in no particular order).
 
 ```json
 {
-"id": "finalizeCollegeApplication",
-"name": "Finalize College Application",
-"version": "1.0.0",
-"specVersion": "0.8",
-"start": "FinalizeApplication",
-"events": [
-{
-    "name": "ApplicationSubmitted",
-    "type": "org.application.submitted",
-    "source": "applicationsource",
-    "correlation": [
-    {
-      "contextAttributeName": "applicantId"
-    }
-   ]
-},
-{
-    "name": "SATScoresReceived",
-    "type": "org.application.satscores",
-    "source": "applicationsource",
-    "correlation": [
-      {
-      "contextAttributeName": "applicantId"
-      }
-    ]
-},
-{
-    "name": "RecommendationLetterReceived",
-    "type": "org.application.recommendationLetter",
-    "source": "applicationsource",
-    "correlation": [
-      {
-      "contextAttributeName": "applicantId"
-      }
-    ]
-}
-],
-"functions": [
-{
-    "name": "finalizeApplicationFunction",
-    "operation": "http://myapis.org/collegeapplicationapi.json#finalize"
-}
-],
-"states": [
-{
-    "name": "FinalizeApplication",
-    "type": "event",
-    "exclusive": false,
-    "onEvents": [
+    "id": "finalize-college-application",
+    "name": "finalizeCollegeApplication",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "finalize-application",
+    "events": [
         {
-            "eventRefs": [
-                "ApplicationSubmitted",
-                "SATScoresReceived",
-                "RecommendationLetterReceived"
-            ],
-            "actions": [
+            "name": "application-submitted",
+            "type": "org.application.submitted",
+            "source": "applicationsource",
+            "correlation": [
                 {
-                    "functionRef": {
-                        "refName": "finalizeApplicationFunction",
-                        "arguments": {
-                            "student": "${ .applicantId }"
-                        }
-                    }
+                    "contextAttributeName": "applicantId"
+                }
+            ]
+        },
+        {
+            "name": "sat-scores-received",
+            "type": "org.application.satscores",
+            "source": "applicationsource",
+            "correlation": [
+                {
+                    "contextAttributeName": "applicantId"
+                }
+            ]
+        },
+        {
+            "name": "recommendation-letter-received",
+            "type": "org.application.recommendationLetter",
+            "source": "applicationsource",
+            "correlation": [
+                {
+                    "contextAttributeName": "applicantId"
                 }
             ]
         }
     ],
-    "end": {
-        "terminate": true
-    }
-}
-]
-}
-```
+    "functions": [
+        {
+            "name": "finalize-application-function",
+            "operation": "http://myapis.org/collegeapplicationapi.json#finalize"
+        }
+    ],
+    "states": [
+        {
+            "name": "finalize-application",
+            "type": "event",
+            "exclusive": false,
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "application-submitted",
+                        "sat-scores-received",
+                        "recommendation-letter-received"
+                    ],
+                    "actions": [
+                        {
+                            "name": "finalize-application",
+                            "functionRef": {
+                                "refName": "finalize-application-function",
+                                "arguments": {
+                                    "student": "${ .applicantId }"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "end": {
+                "terminate": true
+            }
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
-id: finalizeCollegeApplication
-name: Finalize College Application
-version: '1.0.0'
-specVersion: '0.8'
-start: FinalizeApplication
+id: finalize-college-application
+name: finalizeCollegeApplication
+version: 1.0.0
+specVersion: "0.8"
+start: finalize-application
 events:
-- name: ApplicationSubmitted
-  type: org.application.submitted
-  source: applicationsource
-  correlation:
-  - contextAttributeName: applicantId
-- name: SATScoresReceived
-  type: org.application.satscores
-  source: applicationsource
-  correlation:
-  - contextAttributeName: applicantId
-- name: RecommendationLetterReceived
-  type: org.application.recommendationLetter
-  source: applicationsource
-  correlation:
-  - contextAttributeName: applicantId
+  - name: application-submitted
+    type: org.application.submitted
+    source: applicationsource
+    correlation:
+      - contextAttributeName: applicantId
+  - name: sat-scores-received
+    type: org.application.satscores
+    source: applicationsource
+    correlation:
+      - contextAttributeName: applicantId
+  - name: recommendation-letter-received
+    type: org.application.recommendationLetter
+    source: applicationsource
+    correlation:
+      - contextAttributeName: applicantId
 functions:
-- name: finalizeApplicationFunction
-  operation: http://myapis.org/collegeapplicationapi.json#finalize
+  - name: finalize-application-function
+    operation: http://myapis.org/collegeapplicationapi.json#finalize
 states:
-- name: FinalizeApplication
-  type: event
-  exclusive: false
-  onEvents:
-  - eventRefs:
-    - ApplicationSubmitted
-    - SATScoresReceived
-    - RecommendationLetterReceived
-    actions:
-    - functionRef:
-        refName: finalizeApplicationFunction
-        arguments:
-          student: "${ .applicantId }"
-  end:
-    terminate: true
+  - name: finalize-application
+    type: event
+    exclusive: false
+    onEvents:
+      - eventRefs:
+          - application-submitted
+          - sat-scores-received
+          - recommendation-letter-received
+        actions:
+          - name: finalize-application
+            functionRef:
+              refName: finalize-application-function
+              arguments:
+                student: ${ .applicantId }
+    end:
+      terminate: true
 ```
 
 </td>
@@ -2119,84 +2199,89 @@ And for denied credit check, for example:
     "id": "customercreditcheck",
     "version": "1.0.0",
     "specVersion": "0.8",
-    "name": "Customer Credit Check Workflow",
+    "name": "customercreditcheck",
     "description": "Perform Customer Credit Check",
-    "start": "CheckCredit",
+    "start": "check-credit",
     "functions": [
         {
-            "name": "creditCheckFunction",
+            "name": "credit-check-function",
             "operation": "http://myapis.org/creditcheckapi.json#doCreditCheck"
         },
         {
-            "name": "sendRejectionEmailFunction",
+            "name": "send-rejection-email-function",
             "operation": "http://myapis.org/creditcheckapi.json#rejectionEmail"
         }
     ],
     "events": [
         {
-            "name": "CreditCheckCompletedEvent",
+            "name": "credit-check-completed-event",
             "type": "creditCheckCompleteType",
             "source": "creditCheckSource",
             "correlation": [
-              {
-                "contextAttributeName": "customerId"
-              }
-           ]
+                {
+                    "contextAttributeName": "customerId"
+                }
+            ]
         }
     ],
     "states": [
         {
-            "name": "CheckCredit",
+            "name": "check-credit",
             "type": "callback",
             "action": {
+                "name": "check-credit",
                 "functionRef": {
-                    "refName": "callCreditCheckMicroservice",
+                    "refName": "call-credit-check-microservice",
                     "arguments": {
                         "customer": "${ .customer }"
                     }
                 }
             },
-            "eventRef": "CreditCheckCompletedEvent",
+            "eventRef": "credit-check-completed-event",
             "timeouts": {
-              "stateExecTimeout": "PT15M"
+                "stateExecTimeout": "PT15M"
             },
-            "transition": "EvaluateDecision"
+            "transition": "evaluate-decision"
         },
         {
-            "name": "EvaluateDecision",
+            "name": "evaluate-decision",
             "type": "switch",
             "dataConditions": [
                 {
                     "condition": "${ .creditCheck | .decision == \"Approved\" }",
-                    "transition": "StartApplication"
+                    "transition": "start-application",
+                    "name": "start-application"
                 },
                 {
                     "condition": "${ .creditCheck | .decision == \"Denied\" }",
-                    "transition": "RejectApplication"
+                    "transition": "reject-application",
+                    "name": "reject-application"
                 }
             ],
             "defaultCondition": {
-               "transition": "RejectApplication"
+                "transition": "reject-application"
             }
         },
         {
-            "name": "StartApplication",
+            "name": "start-application",
             "type": "operation",
             "actions": [
-              {
-                "subFlowRef": "startApplicationWorkflowId"
-              }
+                {
+                    "name": "start-application",
+                    "subFlowRef": "startApplicationWorkflowId"
+                }
             ],
             "end": true
         },
         {
-            "name": "RejectApplication",
+            "name": "reject-application",
             "type": "operation",
             "actionMode": "sequential",
             "actions": [
                 {
+                    "name": "reject-application",
                     "functionRef": {
-                        "refName": "sendRejectionEmailFunction",
+                        "refName": "send-rejection-email-function",
                         "arguments": {
                             "applicant": "${ .customer }"
                         }
@@ -2206,65 +2291,69 @@ And for denied credit check, for example:
             "end": true
         }
     ]
-}
-```
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: customercreditcheck
-version: '1.0.0'
-specVersion: '0.8'
-name: Customer Credit Check Workflow
+version: 1.0.0
+specVersion: "0.8"
+name: customercreditcheck
 description: Perform Customer Credit Check
-start: CheckCredit
+start: check-credit
 functions:
-- name: creditCheckFunction
-  operation: http://myapis.org/creditcheckapi.json#doCreditCheck
-- name: sendRejectionEmailFunction
-  operation: http://myapis.org/creditcheckapi.json#rejectionEmail
+  - name: credit-check-function
+    operation: http://myapis.org/creditcheckapi.json#doCreditCheck
+  - name: send-rejection-email-function
+    operation: http://myapis.org/creditcheckapi.json#rejectionEmail
 events:
-- name: CreditCheckCompletedEvent
-  type: creditCheckCompleteType
-  source: creditCheckSource
-  correlation:
-  - contextAttributeName: customerId
+  - name: credit-check-completed-event
+    type: creditCheckCompleteType
+    source: creditCheckSource
+    correlation:
+      - contextAttributeName: customerId
 states:
-- name: CheckCredit
-  type: callback
-  action:
-    functionRef:
-      refName: callCreditCheckMicroservice
-      arguments:
-        customer: "${ .customer }"
-  eventRef: CreditCheckCompletedEvent
-  timeouts:
-    stateExecTimeout: PT15M
-  transition: EvaluateDecision
-- name: EvaluateDecision
-  type: switch
-  dataConditions:
-  - condition: ${ .creditCheck | .decision == "Approved" }
-    transition: StartApplication
-  - condition: ${ .creditCheck | .decision == "Denied" }
-    transition: RejectApplication
-  defaultCondition:
-    transition: RejectApplication
-- name: StartApplication
-  type: operation
-  actions:
-  - subFlowRef: startApplicationWorkflowId
-  end: true
-- name: RejectApplication
-  type: operation
-  actionMode: sequential
-  actions:
-  - functionRef:
-      refName: sendRejectionEmailFunction
-      arguments:
-        applicant: "${ .customer }"
-  end: true
+  - name: check-credit
+    type: callback
+    action:
+      name: check-credit
+      functionRef:
+        refName: call-credit-check-microservice
+        arguments:
+          customer: ${ .customer }
+    eventRef: credit-check-completed-event
+    timeouts:
+      stateExecTimeout: PT15M
+    transition: evaluate-decision
+  - name: evaluate-decision
+    type: switch
+    dataConditions:
+      - condition: ${ .creditCheck | .decision == "Approved" }
+        transition: start-application
+        name: start-application
+      - condition: ${ .creditCheck | .decision == "Denied" }
+        transition: reject-application
+        name: reject-application
+    defaultCondition:
+      transition: reject-application
+  - name: start-application
+    type: operation
+    actions:
+      - name: start-application
+        subFlowRef: startApplicationWorkflowId
+    end: true
+  - name: reject-application
+    type: operation
+    actionMode: sequential
+    actions:
+      - name: reject-application
+        functionRef:
+          refName: send-rejection-email-function
+          arguments:
+            applicant: ${ .customer }
+    end: true
 ```
 
 </td>
@@ -2321,84 +2410,89 @@ Bidding is done via an online application and bids are received as events are as
 
 ```json
 {
-    "id": "handleCarAuctionBid",
+    "id": "handle-car-auction-bid",
     "version": "1.0.0",
     "specVersion": "0.8",
-    "name": "Car Auction Bidding Workflow",
+    "name": "handle-car-auction-bid",
     "description": "Store a single bid whole the car auction is active",
     "start": {
-      "stateName": "StoreCarAuctionBid",
-      "schedule": "R/PT2H"
+        "stateName": "store-car-auction-bid",
+        "schedule": "R/PT2H"
     },
     "functions": [
         {
-            "name": "StoreBidFunction",
+            "name": "store-bid-function",
             "operation": "http://myapis.org/carauctionapi.json#storeBid"
         }
     ],
     "events": [
         {
-            "name": "CarBidEvent",
+            "name": "car-bid-event",
             "type": "carBidMadeType",
             "source": "carBidEventSource"
         }
     ],
     "states": [
         {
-          "name": "StoreCarAuctionBid",
-          "type": "event",
-          "exclusive": true,
-          "onEvents": [
-            {
-                "eventRefs": ["CarBidEvent"],
-                "actions": [{
-                    "functionRef": {
-                        "refName": "StoreBidFunction",
-                        "arguments": {
-                            "bid": "${ .bid }"
+            "name": "store-car-auction-bid",
+            "type": "event",
+            "exclusive": true,
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "car-bid-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "car-bid-event",
+                            "functionRef": {
+                                "refName": "store-bid-function",
+                                "arguments": {
+                                    "bid": "${ .bid }"
+                                }
+                            }
                         }
-                    }
-                }]
-            }
-          ],
-          "end": true
+                    ]
+                }
+            ],
+            "end": true
         }
     ]
-}
-```
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
-id: handleCarAuctionBid
-version: '1.0.0'
-specVersion: '0.8'
-name: Car Auction Bidding Workflow
+id: handle-car-auction-bid
+version: 1.0.0
+specVersion: "0.8"
+name: handle-car-auction-bid
 description: Store a single bid whole the car auction is active
 start:
-  stateName: StoreCarAuctionBid
+  stateName: store-car-auction-bid
   schedule: R/PT2H
 functions:
-- name: StoreBidFunction
-  operation: http://myapis.org/carauctionapi.json#storeBid
+  - name: store-bid-function
+    operation: http://myapis.org/carauctionapi.json#storeBid
 events:
-- name: CarBidEvent
-  type: carBidMadeType
-  source: carBidEventSource
+  - name: car-bid-event
+    type: carBidMadeType
+    source: carBidEventSource
 states:
-- name: StoreCarAuctionBid
-  type: event
-  exclusive: true
-  onEvents:
-  - eventRefs:
-    - CarBidEvent
-    actions:
-    - functionRef:
-        refName: StoreBidFunction
-        arguments:
-          bid: "${ .bid }"
-  end: true
+  - name: store-car-auction-bid
+    type: event
+    exclusive: true
+    onEvents:
+      - eventRefs:
+          - car-bid-event
+        actions:
+          - name: car-bid-event
+            functionRef:
+              refName: store-bid-function
+              arguments:
+                bid: ${ .bid }
+    end: true
 ```
 
 </td>
@@ -2450,95 +2544,98 @@ The results of the inbox service called is expected to be for example:
 
 ```json
 {
-"id": "checkInbox",
-"name": "Check Inbox Workflow",
-"version": "1.0.0",
-"specVersion": "0.8",
-"description": "Periodically Check Inbox",
-"start": {
-    "stateName": "CheckInbox",
-    "schedule": {
-        "cron": "0 0/15 * * * ?"
-    }
-},
-"functions": [
-    {
-        "name": "checkInboxFunction",
-        "operation": "http://myapis.org/inboxapi.json#checkNewMessages"
+    "id": "check-inbox",
+    "name": "check-inbox",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "description": "Periodically Check Inbox",
+    "start": {
+        "stateName": "check-inbox",
+        "schedule": {
+            "cron": "0 0/15 * * * ?"
+        }
     },
-    {
-        "name": "sendTextFunction",
-        "operation": "http://myapis.org/inboxapi.json#sendText"
-    }
-],
-"states": [
-    {
-        "name": "CheckInbox",
-        "type": "operation",
-        "actionMode": "sequential",
-        "actions": [
-            {
-                "functionRef": "checkInboxFunction"
-            }
-        ],
-        "transition": "SendTextForHighPriority"
-    },
-    {
-        "name": "SendTextForHighPriority",
-        "type": "foreach",
-        "inputCollection": "${ .messages }",
-        "iterationParam": "singlemessage",
-        "actions": [
-            {
-                "functionRef": {
-                    "refName": "sendTextFunction",
-                    "arguments": {
-                        "message": "${ .singlemessage }"
+    "functions": [
+        {
+            "name": "check-inbox-function",
+            "operation": "http://myapis.org/inboxapi.json#checkNewMessages"
+        },
+        {
+            "name": "send-text-function",
+            "operation": "http://myapis.org/inboxapi.json#sendText"
+        }
+    ],
+    "states": [
+        {
+            "name": "check-inbox",
+            "type": "operation",
+            "actionMode": "sequential",
+            "actions": [
+                {
+                    "name":"check-inbox",
+                    "functionRef": "check-inbox-function"
+                }
+            ],
+            "transition": "send-text-for-high-priority"
+        },
+        {
+            "name": "send-text-for-high-priority",
+            "type": "foreach",
+            "inputCollection": "${ .messages }",
+            "iterationParam": "singlemessage",
+            "actions": [
+                {
+                    "name": "send-text-for-high-priority",
+                    "functionRef": {
+                        "refName": "send-text-function",
+                        "arguments": {
+                            "message": "${ .singlemessage }"
+                        }
                     }
                 }
-            }
-        ],
-        "end": true
-    }
-]
-}
-```
+            ],
+            "end": true
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
-id: checkInbox
-name: Check Inbox Workflow
+id: check-inbox
+name: check-inbox
+version: 1.0.0
+specVersion: "0.8"
 description: Periodically Check Inbox
-version: '1.0.0'
-specVersion: '0.8'
 start:
-  stateName: CheckInbox
+  stateName: check-inbox
   schedule:
     cron: 0 0/15 * * * ?
 functions:
-- name: checkInboxFunction
-  operation: http://myapis.org/inboxapi.json#checkNewMessages
-- name: sendTextFunction
-  operation: http://myapis.org/inboxapi.json#sendText
+  - name: check-inbox-function
+    operation: http://myapis.org/inboxapi.json#checkNewMessages
+  - name: send-text-function
+    operation: http://myapis.org/inboxapi.json#sendText
 states:
-- name: CheckInbox
-  type: operation
-  actionMode: sequential
-  actions:
-  - functionRef: checkInboxFunction
-  transition: SendTextForHighPriority
-- name: SendTextForHighPriority
-  type: foreach
-  inputCollection: "${ .messages }"
-  iterationParam: singlemessage
-  actions:
-  - functionRef:
-      refName: sendTextFunction
-      arguments:
-        message: "${ .singlemessage }"
-  end: true
+  - name: check-inbox
+    type: operation
+    actionMode: sequential
+    actions:
+      - name: check-inbox
+        functionRef: check-inbox-function
+    transition: send-text-for-high-priority
+  - name: send-text-for-high-priority
+    type: foreach
+    inputCollection: ${ .messages }
+    iterationParam: singlemessage
+    actions:
+      - name: send-text-for-high-priority
+        functionRef:
+          refName: send-text-function
+          arguments:
+            message: ${ .singlemessage }
+    end: true
 ```
 
 </td>
@@ -2593,21 +2690,21 @@ For this example we assume that the workflow instance is started given the follo
 
 ```json
 {
-    "id": "VetAppointmentWorkflow",
-    "name": "Vet Appointment Workflow",
+    "id": "vet-appointment-workflow",
+    "name": "vet-appointment-workflow",
     "description": "Vet service call via events",
     "version": "1.0.0",
     "specVersion": "0.8",
-    "start": "MakeVetAppointmentState",
+    "start": "make-vet-appointment-state",
     "events": [
         {
-            "name": "MakeVetAppointment",
+            "name": "make-vet-appointment",
             "source": "VetServiceSource",
             "type": "events.vet.appointments",
             "kind": "produced"
         },
         {
-            "name": "VetAppointmentInfo",
+            "name": "vet-appointment-info",
             "source": "VetServiceSource",
             "type": "events.vet.appointments",
             "kind": "consumed"
@@ -2615,15 +2712,15 @@ For this example we assume that the workflow instance is started given the follo
     ],
     "states": [
         {
-            "name": "MakeVetAppointmentState",
+            "name": "make-vet-appointment-state",
             "type": "operation",
             "actions": [
                 {
-                    "name": "MakeAppointmentAction",
+                    "name": "make-appointment-action",
                     "eventRef": {
-                       "produceEventRef": "MakeVetAppointment",
-                       "data": "${ .patientInfo }",
-                       "consumeEventRef":  "VetAppointmentInfo"
+                        "produceEventRef": "make-vet-appointment",
+                        "data": "${ .patientInfo }",
+                        "consumeEventRef": "vet-appointment-info"
                     },
                     "actionDataFilter": {
                         "results": "${ .appointmentInfo }"
@@ -2631,47 +2728,46 @@ For this example we assume that the workflow instance is started given the follo
                 }
             ],
             "timeouts": {
-              "actionExecTimeout": "PT15M"
+                "actionExecTimeout": "PT15M"
             },
             "end": true
         }
     ]
-}
-```
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
-id: VetAppointmentWorkflow
-name: Vet Appointment Workflow
+id: vet-appointment-workflow
+name: vet-appointment-workflow
 description: Vet service call via events
-version: '1.0.0'
-specVersion: '0.8'
-start: MakeVetAppointmentState
+version: 1.0.0
+specVersion: "0.8"
+start: make-vet-appointment-state
 events:
- - name: MakeVetAppointment
-   source: VetServiceSource
-   type: events.vet.appointments
-   kind: produced
- - name: VetAppointmentInfo
-   source: VetServiceSource
-   type: events.vet.appointments
-   kind: consumed
+  - name: make-vet-appointment
+    source: VetServiceSource
+    type: events.vet.appointments
+    kind: produced
+  - name: vet-appointment-info
+    source: VetServiceSource
+    type: events.vet.appointments
+    kind: consumed
 states:
- - name: MakeVetAppointmentState
-   type: operation
-   actions:
-    - name: MakeAppointmentAction
-      eventRef:
-       produceEventRef: MakeVetAppointment
-       data: "${ .patientInfo }"
-       consumeEventRef: VetAppointmentInfo
-      actionDataFilter:
-       results: "${ .appointmentInfo }"
-   timeouts:
-    actionExecTimeout: PT15M
-   end: true
+  - name: make-vet-appointment-state
+    type: operation
+    actions:
+      - name: make-appointment-action
+        eventRef:
+          produceEventRef: make-vet-appointment
+          data: ${ .patientInfo }
+          consumeEventRef: vet-appointment-info
+        actionDataFilter:
+          results: ${ .appointmentInfo }
+    timeouts:
+      actionExecTimeout: PT15M
+    end: true
 ```
 
 </td>
@@ -2746,159 +2842,166 @@ In our workflow definition then we can reference these files rather than definin
 
 ```json
 {
-  "id": "paymentconfirmation",
-  "version": "1.0.0",
-  "specVersion": "0.8",
-  "name": "Payment Confirmation Workflow",
-  "description": "Performs Payment Confirmation",
-  "functions": "functiondefs.json",
-  "events": "eventdefs.yml",
-  "states": [
-    {
-      "name": "PaymentReceived",
-      "type": "event",
-      "onEvents": [
+    "id": "paymentconfirmation",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "paymentconfirmation",
+    "description": "Performs Payment Confirmation",
+    "functions": "file://functiondefs.json",
+    "events": "file://eventdefs.yml",
+    "states": [
         {
-          "eventRefs": [
-            "PaymentReceivedEvent"
-          ],
-          "actions": [
-            {
-              "name": "checkfunds",
-              "functionRef": {
-                "refName": "checkFundsAvailability",
-                "arguments": {
-                  "account": "${ .accountId }",
-                  "paymentamount": "${ .payment.amount }"
+            "name": "payment-received",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "payment-received-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "checkfunds",
+                            "functionRef": {
+                                "refName": "check-funds-availability",
+                                "arguments": {
+                                    "account": "${ .accountId }",
+                                    "paymentamount": "${ .payment.amount }"
+                                }
+                            }
+                        }
+                    ]
                 }
-              }
-            }
-          ]
-        }
-      ],
-      "transition": "ConfirmBasedOnFunds"
-    },
-    {
-      "name": "ConfirmBasedOnFunds",
-      "type": "switch",
-      "dataConditions": [
-        {
-          "condition": "${ .funds | .available == \"true\" }",
-          "transition": "SendPaymentSuccess"
+            ],
+            "transition": "confirm-based-on-funds"
         },
         {
-          "condition": "${ .funds | .available == \"false\" }",
-          "transition": "SendInsufficientResults"
-        }
-      ],
-      "defaultCondition": {
-        "transition": "SendPaymentSuccess"
-      }
-    },
-    {
-      "name": "SendPaymentSuccess",
-      "type": "operation",
-      "actions": [
-        {
-          "functionRef": {
-            "refName": "sendSuccessEmail",
-            "arguments": {
-              "applicant": "${ .customer }"
+            "name": "confirm-based-on-funds",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "condition": "${ .funds | .available == \"true\" }",
+                    "transition": "send-payment-success",
+                    "name": "success"
+                },
+                {
+                    "condition": "${ .funds | .available == \"false\" }",
+                    "transition": "send-insufficient-results",
+                    "name": "failed"
+                }
+            ],
+            "defaultCondition": {
+                "transition": "send-payment-success"
             }
-          }
-        }
-      ],
-      "end": {
-        "produceEvents": [
-          {
-            "eventRef": "ConfirmationCompletedEvent",
-            "data": "${ .payment }"
-          }
-        ]
-      }
-    },
-    {
-      "name": "SendInsufficientResults",
-      "type": "operation",
-      "actions": [
+        },
         {
-          "functionRef": {
-            "refName": "sendInsufficientFundsEmail",
-            "arguments": {
-              "applicant": "${ .customer }"
+            "name": "send-payment-success",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "send-payment-success",
+                    "functionRef": {
+                        "refName": "send-success-email",
+                        "arguments": {
+                            "applicant": "${ .customer }"
+                        }
+                    }
+                }
+            ],
+            "end": {
+                "produceEvents": [
+                    {
+                        "eventRef": "confirmation-completed-event",
+                        "data": "${ .payment }"
+                    }
+                ]
             }
-          }
+        },
+        {
+            "name": "send-insufficient-results",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "send-insufficient-results",
+                    "functionRef": {
+                        "refName": "send-insufficient-funds-email",
+                        "arguments": {
+                            "applicant": "${ .customer }"
+                        }
+                    }
+                }
+            ],
+            "end": {
+                "produceEvents": [
+                    {
+                        "eventRef": "confirmation-completed-event",
+                        "data": "${ .payment }"
+                    }
+                ]
+            }
         }
-      ],
-      "end": {
-        "produceEvents": [
-          {
-            "eventRef": "ConfirmationCompletedEvent",
-            "data": "${ .payment }"
-          }
-        ]
-      }
-    }
-  ]
-}
-```
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: paymentconfirmation
-version: '1.0.0'
-specVersion: '0.8'
-name: Payment Confirmation Workflow
+version: 1.0.0
+specVersion: "0.8"
+name: paymentconfirmation
 description: Performs Payment Confirmation
-functions: functiondefs.json
-events: eventdefs.yml
+functions: file://functiondefs.json
+events: file://eventdefs.yml
 states:
-- name: PaymentReceived
-  type: event
-  onEvents:
-  - eventRefs:
-    - PaymentReceivedEvent
+  - name: payment-received
+    type: event
+    onEvents:
+      - eventRefs:
+          - payment-received-event
+        actions:
+          - name: checkfunds
+            functionRef:
+              refName: check-funds-availability
+              arguments:
+                account: ${ .accountId }
+                paymentamount: ${ .payment.amount }
+    transition: confirm-based-on-funds
+  - name: confirm-based-on-funds
+    type: switch
+    dataConditions:
+      - condition: ${ .funds | .available == "true" }
+        transition: send-payment-success
+        name: success
+      - condition: ${ .funds | .available == "false" }
+        transition: send-insufficient-results
+        name: failed
+    defaultCondition:
+      transition: send-payment-success
+  - name: send-payment-success
+    type: operation
     actions:
-    - name: checkfunds
-      functionRef:
-        refName: checkFundsAvailability
-        arguments:
-          account: "${ .accountId }"
-          paymentamount: "${ .payment.amount }"
-  transition: ConfirmBasedOnFunds
-- name: ConfirmBasedOnFunds
-  type: switch
-  dataConditions:
-  - condition: "${ .funds | .available == \"true\" }"
-    transition: SendPaymentSuccess
-  - condition: "${ .funds | .available == \"false\" }"
-    transition: SendInsufficientResults
-  defaultCondition:
-    transition: SendPaymentSuccess
-- name: SendPaymentSuccess
-  type: operation
-  actions:
-  - functionRef:
-      refName: sendSuccessEmail
-      arguments:
-        applicant: "${ .customer }"
-  end:
-    produceEvents:
-    - eventRef: ConfirmationCompletedEvent
-      data: "${ .payment }"
-- name: SendInsufficientResults
-  type: operation
-  actions:
-  - functionRef:
-      refName: sendInsufficientFundsEmail
-      arguments:
-        applicant: "${ .customer }"
-  end:
-    produceEvents:
-    - eventRef: ConfirmationCompletedEvent
-      data: "${ .payment }"
+      - name: send-payment-success
+        functionRef:
+          refName: send-success-email
+          arguments:
+            applicant: ${ .customer }
+    end:
+      produceEvents:
+        - eventRef: confirmation-completed-event
+          data: ${ .payment }
+  - name: send-insufficient-results
+    type: operation
+    actions:
+      - name: send-insufficient-results
+        functionRef:
+          refName: send-insufficient-funds-email
+          arguments:
+            applicant: ${ .customer }
+    end:
+      produceEvents:
+        - eventRef: confirmation-completed-event
+          data: ${ .payment }
 ```
 
 </td>
@@ -2949,135 +3052,146 @@ If the retries are not successful, we want to just gracefully end workflow execu
 
 ```json
 {
-  "id": "patientonboarding",
-  "name": "Patient Onboarding Workflow",
-  "version": "1.0.0",
-  "specVersion": "0.8",
-  "start": "Onboard",
-  "states": [
-    {
-      "name": "Onboard",
-      "type": "event",
-      "onEvents": [
+    "id": "patientonboarding",
+    "name": "patientonboarding",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "onboard",
+    "states": [
         {
-          "eventRefs": [
-            "NewPatientEvent"
-          ],
-          "actions": [
-            {
-              "functionRef": "StorePatient",
-              "retryRef": "ServicesNotAvailableRetryStrategy",
-              "retryableErrors": ["ServiceNotAvailable"]
-            },
-            {
-              "functionRef": "AssignDoctor",
-              "retryRef": "ServicesNotAvailableRetryStrategy",
-              "retryableErrors": ["ServiceNotAvailable"]
-            },
-            {
-              "functionRef": "ScheduleAppt",
-              "retryRef": "ServicesNotAvailableRetryStrategy",
-              "retryableErrors": ["ServiceNotAvailable"]
-            }
-          ]
+            "name": "onboard",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "new-patient-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "store-patient",
+                            "functionRef": "store-patient",
+                            "retryRef": "services-not-available-retry-strategy",
+                            "retryableErrors": [
+                                "service-not-available"
+                            ]
+                        },
+                        {
+                            "name": "assign-doctor",
+                            "functionRef": "assign-doctor",
+                            "retryRef": "services-not-available-retry-strategy",
+                            "retryableErrors": [
+                                "service-not-available"
+                            ]
+                        },
+                        {
+                            "name": "schedule-appt",
+                            "functionRef": "schedule-appt",
+                            "retryRef": "services-not-available-retry-strategy",
+                            "retryableErrors": [
+                                "service-not-available"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "onErrors": [
+                {
+                    "errorRef": "service-not-available",
+                    "end": true
+                }
+            ],
+            "end": true
         }
-      ],
-      "onErrors": [
+    ],
+    "events": [
         {
-          "errorRef": "ServiceNotAvailable",
-          "end": true
+            "name": "store-patient",
+            "type": "new.patients.event",
+            "source": "newpatient/+"
         }
-      ],
-      "end": true
-    }
-  ],
-  "events": [
-    {
-      "name": "StorePatient",
-      "type": "new.patients.event",
-      "source": "newpatient/+"
-    }
-  ],
-  "functions": [
-    {
-      "name": "StoreNewPatientInfo",
-      "operation": "api/services.json#addPatient"
-    },
-    {
-      "name": "AssignDoctor",
-      "operation": "api/services.json#assignDoctor"
-    },
-    {
-      "name": "ScheduleAppt",
-      "operation": "api/services.json#scheduleAppointment"
-    }
-  ],
-  "errors": [
-   {
-    "name": "ServiceNotAvailable",
-    "code": "503"
-   }
-  ],
-  "retries": [
-    {
-      "name": "ServicesNotAvailableRetryStrategy",
-      "delay": "PT3S",
-      "maxAttempts": 10
-    }
-  ]
-}
-```
+    ],
+    "functions": [
+        {
+            "name": "store-new-patient-info",
+            "operation": "api/services.json#addPatient"
+        },
+        {
+            "name": "assign-doctor",
+            "operation": "api/services.json#assignDoctor"
+        },
+        {
+            "name": "schedule-appt",
+            "operation": "api/services.json#scheduleAppointment"
+        }
+    ],
+    "errors": [
+        {
+            "name": "service-not-available",
+            "code": "503"
+        }
+    ],
+    "retries": [
+        {
+            "name": "services-not-available-retry-strategy",
+            "delay": "PT3S",
+            "maxAttempts": 10
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: patientonboarding
-name: Patient Onboarding Workflow
-version: '1.0.0'
-specVersion: '0.8'
-start: Onboard
+name: patientonboarding
+version: 1.0.0
+specVersion: "0.8"
+start: onboard
 states:
- - name: Onboard
-   type: event
-   onEvents:
-    - eventRefs:
-       - NewPatientEvent
-      actions:
-       - functionRef: StorePatient
-         retryRef: ServicesNotAvailableRetryStrategy
-         retryableErrors:
-         - ServiceNotAvailable
-       - functionRef: AssignDoctor
-         retryRef: ServicesNotAvailableRetryStrategy
-         retryableErrors:
-         - ServiceNotAvailable
-       - functionRef: ScheduleAppt
-         retryRef: ServicesNotAvailableRetryStrategy
-         retryableErrors:
-        - ServiceNotAvailable
-   onErrors:
-    - errorRef: ServiceNotAvailable
-      end: true
-   end: true
+  - name: onboard
+    type: event
+    onEvents:
+      - eventRefs:
+          - new-patient-event
+        actions:
+          - name: store-patient
+            functionRef: store-patient
+            retryRef: services-not-available-retry-strategy
+            retryableErrors:
+              - service-not-available
+          - name: assign-doctor
+            functionRef: assign-doctor
+            retryRef: services-not-available-retry-strategy
+            retryableErrors:
+              - service-not-available
+          - name: schedule-appt
+            functionRef: schedule-appt
+            retryRef: services-not-available-retry-strategy
+            retryableErrors:
+              - service-not-available
+    onErrors:
+      - errorRef: service-not-available
+        end: true
+    end: true
 events:
- - name: StorePatient
-   type: new.patients.event
-   source: newpatient/+
+  - name: store-patient
+    type: new.patients.event
+    source: newpatient/+
 functions:
- - name: StoreNewPatientInfo
-   operation: api/services.json#addPatient
- - name: AssignDoctor
-   operation: api/services.json#assignDoctor
- - name: ScheduleAppt
-   operation: api/services.json#scheduleAppointment
+  - name: store-new-patient-info
+    operation: api/services.json#addPatient
+  - name: assign-doctor
+    operation: api/services.json#assignDoctor
+  - name: schedule-appt
+    operation: api/services.json#scheduleAppointment
 errors:
- - name: ServiceNotAvailable
-   code: '503'
+  - name: service-not-available
+    code: "503"
 retries:
- - name: ServicesNotAvailableRetryStrategy
-   delay: PT3S
-   maxAttempts: 10
+  - name: services-not-available-retry-strategy
+    delay: PT3S
+    maxAttempts: 10
 ```
 
 </td>
@@ -3121,250 +3235,264 @@ This example shows the use of the workflow [execTimeout definition](../specifica
 
 ```json
 {
-  "id": "order",
-  "name": "Purchase Order Workflow",
-  "version": "1.0.0",
-  "specVersion": "0.8",
-  "start": "StartNewOrder",
-  "timeouts": {
-    "workflowExecTimeout": {
-      "duration": "PT30D",
-      "runBefore": "CancelOrder"
-    }
-  },
-  "states": [
-    {
-      "name": "StartNewOrder",
-      "type": "event",
-      "onEvents": [
+    "id": "order",
+    "name": "order",
+    "description": "Purchase Order Workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "start-new-order",
+    "timeouts": {
+        "workflowExecTimeout": {
+            "duration": "PT30D",
+            "runBefore": "CancelOrder"
+        }
+    },
+    "states": [
         {
-          "eventRefs": ["OrderCreatedEvent"],
-          "actions": [
-            {
-              "functionRef": {
-                "refName": "LogNewOrderCreated"
-              }
+            "name": "start-new-order",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "order-created-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "log-new-order-created",
+                            "functionRef": {
+                                "refName": "log-new-order-created"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "transition": {
+                "nextState": "wait-for-order-confirmation"
             }
-          ]
-        }
-      ],
-      "transition": {
-        "nextState": "WaitForOrderConfirmation"
-      }
-    },
-    {
-      "name": "WaitForOrderConfirmation",
-      "type": "event",
-      "onEvents": [
+        },
         {
-          "eventRefs": ["OrderConfirmedEvent"],
-          "actions": [
-            {
-              "functionRef": {
-                "refName": "LogOrderConfirmed"
-              }
+            "name": "wait-for-order-confirmation",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "order-confirmed-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "log-order-confirmed",
+                            "functionRef": {
+                                "refName": "log-order-confirmed"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "transition": {
+                "nextState": "wait-order-shipped"
             }
-          ]
-        }
-      ],
-      "transition": {
-        "nextState": "WaitOrderShipped"
-      }
-    },
-    {
-      "name": "WaitOrderShipped",
-      "type": "event",
-      "onEvents": [
+        },
         {
-          "eventRefs": ["ShipmentSentEvent"],
-          "actions": [
-            {
-              "functionRef": {
-                "refName": "LogOrderShipped"
-              }
+            "name": "wait-order-shipped",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "shipment-sent-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "log-order-shipped",
+                            "functionRef": {
+                                "refName": "log-order-shipped"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "end": {
+                "terminate": true,
+                "produceEvents": [
+                    {
+                        "eventRef": "order-finished-event"
+                    }
+                ]
             }
-          ]
-        }
-      ],
-      "end": {
-        "terminate": true,
-        "produceEvents": [
-          {
-            "eventRef": "OrderFinishedEvent"
-          }
-        ]
-      }
-    },
-    {
-      "name": "CancelOrder",
-      "type": "operation",
-      "actions": [
+        },
         {
-          "functionRef": {
-            "refName": "CancelOrder"
-          }
+            "name": "cancel-order",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "cancel-order",
+                    "functionRef": {
+                        "refName": "cancel-order"
+                    }
+                }
+            ],
+            "end": {
+                "terminate": true,
+                "produceEvents": [
+                    {
+                        "eventRef": "order-cancelled-event"
+                    }
+                ]
+            }
         }
-      ],
-      "end": {
-        "terminate": true,
-        "produceEvents": [
-          {
-            "eventRef": "OrderCancelledEvent"
-          }
-        ]
-      }
-    }
-  ],
-  "events": [
-    {
-      "name": "OrderCreatedEvent",
-      "type": "my.company.orders",
-      "source": "/orders/new",
-      "correlation": [
+    ],
+    "events": [
         {
-          "contextAttributeName": "orderid"
-        }
-      ]
-    },
-    {
-      "name": "OrderConfirmedEvent",
-      "type": "my.company.orders",
-      "source": "/orders/confirmed",
-      "correlation": [
+            "name": "order-created-event",
+            "type": "my.company.orders",
+            "source": "/orders/new",
+            "correlation": [
+                {
+                    "contextAttributeName": "orderid"
+                }
+            ]
+        },
         {
-          "contextAttributeName": "orderid"
-        }
-      ]
-    },
-    {
-      "name": "ShipmentSentEvent",
-      "type": "my.company.orders",
-      "source": "/orders/shipped",
-      "correlation": [
+            "name": "order-confirmed-event",
+            "type": "my.company.orders",
+            "source": "/orders/confirmed",
+            "correlation": [
+                {
+                    "contextAttributeName": "orderid"
+                }
+            ]
+        },
         {
-          "contextAttributeName": "orderid"
+            "name": "shipment-sent-event",
+            "type": "my.company.orders",
+            "source": "/orders/shipped",
+            "correlation": [
+                {
+                    "contextAttributeName": "orderid"
+                }
+            ]
+        },
+        {
+            "name": "order-finished-event",
+            "type": "my.company.orders",
+            "kind": "produced"
+        },
+        {
+            "name": "order-cancelled-event",
+            "type": "my.company.orders",
+            "kind": "produced"
         }
-      ]
-    },
-    {
-      "name": "OrderFinishedEvent",
-      "type": "my.company.orders",
-      "kind": "produced"
-    },
-    {
-      "name": "OrderCancelledEvent",
-      "type": "my.company.orders",
-      "kind": "produced"
-    }
-  ],
-  "functions": [
-    {
-      "name": "LogNewOrderCreated",
-      "operation": "http.myorg.io/ordersservices.json#logcreated"
-    },
-    {
-      "name": "LogOrderConfirmed",
-      "operation": "http.myorg.io/ordersservices.json#logconfirmed"
-    },
-    {
-      "name": "LogOrderShipped",
-      "operation": "http.myorg.io/ordersservices.json#logshipped"
-    },
-    {
-      "name": "CancelOrder",
-      "operation": "http.myorg.io/ordersservices.json#calcelorder"
-    }
-  ]
-}
-```
+    ],
+    "functions": [
+        {
+            "name": "log-new-order-created",
+            "operation": "http.myorg.io/ordersservices.json#logcreated"
+        },
+        {
+            "name": "log-order-confirmed",
+            "operation": "http.myorg.io/ordersservices.json#logconfirmed"
+        },
+        {
+            "name": "log-order-shipped",
+            "operation": "http.myorg.io/ordersservices.json#logshipped"
+        },
+        {
+            "name": "cancel-order",
+            "operation": "http.myorg.io/ordersservices.json#calcelorder"
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: order
-name: Purchase Order Workflow
-version: '1.0.0'
-specVersion: '0.8'
-start: StartNewOrder
-
+name: order
+description: Purchase Order Workflow
+version: 1.0.0
+specVersion: "0.8"
+start: start-new-order
 timeouts:
   workflowExecTimeout:
     duration: PT30D
     runBefore: CancelOrder
 states:
-- name: StartNewOrder
-  type: event
-  onEvents:
-  - eventRefs:
-    - OrderCreatedEvent
+  - name: start-new-order
+    type: event
+    onEvents:
+      - eventRefs:
+          - order-created-event
+        actions:
+          - name: log-new-order-created
+            functionRef:
+              refName: log-new-order-created
+    transition:
+      nextState: wait-for-order-confirmation
+  - name: wait-for-order-confirmation
+    type: event
+    onEvents:
+      - eventRefs:
+          - order-confirmed-event
+        actions:
+          - name: log-order-confirmed
+            functionRef:
+              refName: log-order-confirmed
+    transition:
+      nextState: wait-order-shipped
+  - name: wait-order-shipped
+    type: event
+    onEvents:
+      - eventRefs:
+          - shipment-sent-event
+        actions:
+          - name: log-order-shipped
+            functionRef:
+              refName: log-order-shipped
+    end:
+      terminate: true
+      produceEvents:
+        - eventRef: order-finished-event
+  - name: cancel-order
+    type: operation
     actions:
-    - functionRef:
-        refName: LogNewOrderCreated
-  transition:
-    nextState: WaitForOrderConfirmation
-- name: WaitForOrderConfirmation
-  type: event
-  onEvents:
-  - eventRefs:
-    - OrderConfirmedEvent
-    actions:
-    - functionRef:
-        refName: LogOrderConfirmed
-  transition:
-    nextState: WaitOrderShipped
-- name: WaitOrderShipped
-  type: event
-  onEvents:
-  - eventRefs:
-    - ShipmentSentEvent
-    actions:
-    - functionRef:
-        refName: LogOrderShipped
-  end:
-    terminate: true
-    produceEvents:
-    - eventRef: OrderFinishedEvent
-- name: CancelOrder
-  type: operation
-  actions:
-  - functionRef:
-      refName: CancelOrder
-  end:
-    terminate: true
-    produceEvents:
-    - eventRef: OrderCancelledEvent
+      - name: cancel-order
+        functionRef:
+          refName: cancel-order
+    end:
+      terminate: true
+      produceEvents:
+        - eventRef: order-cancelled-event
 events:
-- name: OrderCreatedEvent
-  type: my.company.orders
-  source: "/orders/new"
-  correlation:
-  - contextAttributeName: orderid
-- name: OrderConfirmedEvent
-  type: my.company.orders
-  source: "/orders/confirmed"
-  correlation:
-  - contextAttributeName: orderid
-- name: ShipmentSentEvent
-  type: my.company.orders
-  source: "/orders/shipped"
-  correlation:
-  - contextAttributeName: orderid
-- name: OrderFinishedEvent
-  type: my.company.orders
-  kind: produced
-- name: OrderCancelledEvent
-  type: my.company.orders
-  kind: produced
+  - name: order-created-event
+    type: my.company.orders
+    source: /orders/new
+    correlation:
+      - contextAttributeName: orderid
+  - name: order-confirmed-event
+    type: my.company.orders
+    source: /orders/confirmed
+    correlation:
+      - contextAttributeName: orderid
+  - name: shipment-sent-event
+    type: my.company.orders
+    source: /orders/shipped
+    correlation:
+      - contextAttributeName: orderid
+  - name: order-finished-event
+    type: my.company.orders
+    kind: produced
+  - name: order-cancelled-event
+    type: my.company.orders
+    kind: produced
 functions:
-- name: LogNewOrderCreated
-  operation: http.myorg.io/ordersservices.json#logcreated
-- name: LogOrderConfirmed
-  operation: http.myorg.io/ordersservices.json#logconfirmed
-- name: LogOrderShipped
-  operation: http.myorg.io/ordersservices.json#logshipped
-- name: CancelOrder
-  operation: http.myorg.io/ordersservices.json#calcelorder
+  - name: log-new-order-created
+    operation: http.myorg.io/ordersservices.json#logcreated
+  - name: log-order-confirmed
+    operation: http.myorg.io/ordersservices.json#logconfirmed
+  - name: log-order-shipped
+    operation: http.myorg.io/ordersservices.json#logshipped
+  - name: cancel-order
+    operation: http.myorg.io/ordersservices.json#calcelorder
 ```
 
 </td>
@@ -3405,144 +3533,152 @@ the data for an hour, send report, and so on.
 
 ```json
 {
-  "id": "roomreadings",
-  "name": "Room Temp and Humidity Workflow",
-  "version": "1.0.0",
-  "specVersion": "0.8",
-  "start": "ConsumeReading",
-  "timeouts": {
-    "workflowExecTimeout": {
-      "duration": "PT1H",
-      "runBefore": "GenerateReport"
-    }
-  },
-  "keepActive": true,
-  "states": [
-    {
-      "name": "ConsumeReading",
-      "type": "event",
-      "onEvents": [
+    "id": "roomreadings",
+    "name": "roomreadings",
+    "description": "Room Temp and Humidity Workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "consume-reading",
+    "timeouts": {
+        "workflowExecTimeout": {
+            "duration": "PT1H",
+            "runBefore": "generate-report"
+        }
+    },
+    "keepActive": true,
+    "states": [
         {
-          "eventRefs": ["TemperatureEvent", "HumidityEvent"],
-          "actions": [
-            {
-              "functionRef": {
-                "refName": "LogReading"
-              }
+            "name": "consume-reading",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "temperature-event",
+                        "humidity-event"
+                    ],
+                    "actions": [
+                        {
+                            "name": "log-reading",
+                            "functionRef": {
+                                "refName": "log-reading"
+                            }
+                        }
+                    ],
+                    "eventDataFilter": {
+                        "toStateData": "${ .readings }"
+                    }
+                }
+            ],
+            "end": true
+        },
+        {
+            "name": "generate-report",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "generate-report",
+                    "functionRef": {
+                        "refName": "produce-report",
+                        "arguments": {
+                            "data": "${ .readings }"
+                        }
+                    }
+                }
+            ],
+            "end": {
+                "terminate": true
             }
-          ],
-          "eventDataFilter": {
-            "toStateData": "${ .readings }"
-          }
         }
-      ],
-      "end": true
-    },
-    {
-      "name": "GenerateReport",
-      "type": "operation",
-      "actions": [
+    ],
+    "events": [
         {
-          "functionRef": {
-            "refName": "ProduceReport",
-            "arguments": {
-              "data": "${ .readings }"
-            }
-          }
-        }
-      ],
-      "end": {
-        "terminate": true
-      }
-    }
-  ],
-  "events": [
-    {
-      "name": "TemperatureEvent",
-      "type": "my.home.sensors",
-      "source": "/home/rooms/+",
-      "correlation": [
+            "name": "temperature-event",
+            "type": "my.home.sensors",
+            "source": "/home/rooms/+",
+            "correlation": [
+                {
+                    "contextAttributeName": "roomId"
+                }
+            ]
+        },
         {
-          "contextAttributeName": "roomId"
+            "name": "humidity-event",
+            "type": "my.home.sensors",
+            "source": "/home/rooms/+",
+            "correlation": [
+                {
+                    "contextAttributeName": "roomId"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "name": "HumidityEvent",
-      "type": "my.home.sensors",
-      "source": "/home/rooms/+",
-      "correlation": [
+    ],
+    "functions": [
         {
-          "contextAttributeName": "roomId"
+            "name": "log-reading",
+            "operation": "http.myorg.io/ordersservices.json#logreading"
+        },
+        {
+            "name": "produce-report",
+            "operation": "http.myorg.io/ordersservices.json#produceReport"
         }
-      ]
-    }
-  ],
-  "functions": [
-    {
-      "name": "LogReading",
-      "operation": "http.myorg.io/ordersservices.json#logreading"
-    },
-    {
-      "name": "ProduceReport",
-      "operation": "http.myorg.io/ordersservices.json#produceReport"
-    }
-  ]
-}
-```
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: roomreadings
-name: Room Temp and Humidity Workflow
-version: '1.0.0'
-specVersion: '0.8'
-start: ConsumeReading
+name: roomreadings
+description: Room Temp and Humidity Workflow
+version: 1.0.0
+specVersion: "0.8"
+start: consume-reading
 timeouts:
   workflowExecTimeout:
     duration: PT1H
-    runBefore: GenerateReport
+    runBefore: generate-report
 keepActive: true
 states:
-- name: ConsumeReading
-  type: event
-  onEvents:
-  - eventRefs:
-    - TemperatureEvent
-    - HumidityEvent
+  - name: consume-reading
+    type: event
+    onEvents:
+      - eventRefs:
+          - temperature-event
+          - humidity-event
+        actions:
+          - name: log-reading
+            functionRef:
+              refName: log-reading
+        eventDataFilter:
+          toStateData: ${ .readings }
+    end: true
+  - name: generate-report
+    type: operation
     actions:
-    - functionRef:
-        refName: LogReading
-    eventDataFilter:
-      toStateData: "${ .readings }"
-  end: true
-- name: GenerateReport
-  type: operation
-  actions:
-  - functionRef:
-      refName: ProduceReport
-      arguments:
-        data: "${ .readings }"
-  end:
-    terminate: true
+      - name: generate-report
+        functionRef:
+          refName: produce-report
+          arguments:
+            data: ${ .readings }
+    end:
+      terminate: true
 events:
-- name: TemperatureEvent
-  type: my.home.sensors
-  source: "/home/rooms/+"
-  correlation:
-  - contextAttributeName: roomId
-- name: HumidityEvent
-  type: my.home.sensors
-  source: "/home/rooms/+"
-  correlation:
-  - contextAttributeName: roomId
+  - name: temperature-event
+    type: my.home.sensors
+    source: /home/rooms/+
+    correlation:
+      - contextAttributeName: roomId
+  - name: humidity-event
+    type: my.home.sensors
+    source: /home/rooms/+
+    correlation:
+      - contextAttributeName: roomId
 functions:
-- name: LogReading
-  operation: http.myorg.io/ordersservices.json#logreading
-- name: ProduceReport
-  operation: http.myorg.io/ordersservices.json#produceReport
+  - name: log-reading
+    operation: http.myorg.io/ordersservices.json#logreading
+  - name: produce-report
+    operation: http.myorg.io/ordersservices.json#produceReport
 ```
 
 </td>
@@ -3579,103 +3715,108 @@ We fist define our top-level workflow for this example:
 
 ```json
 {
- "id": "checkcarvitals",
- "name": "Check Car Vitals Workflow",
- "version": "1.0.0",
- "specVersion": "0.8",
- "start": "WhenCarIsOn",
- "states": [
-  {
-   "name": "WhenCarIsOn",
-   "type": "event",
-   "onEvents": [
-    {
-     "eventRefs": ["CarTurnedOnEvent"]
-    }
-   ],
-   "transition": "DoCarVitalChecks"
-  },
-  {
-   "name": "DoCarVitalChecks",
-   "type": "operation",
-   "actions": [
-    {
-     "subFlowRef": "vitalscheck",
-     "sleep": {
-      "after": "PT1S"
-     }
-    }
-   ],
-   "transition": "CheckContinueVitalChecks"
-  },
-  {
-   "name": "CheckContinueVitalChecks",
-   "type": "switch",
-   "eventConditions": [
-    {
-     "name": "Car Turned Off Condition",
-     "eventRef": "CarTurnedOffEvent",
-     "end": true
-    }
-   ],
-   "defaultCondition": {
-    "transition": "DoCarVitalChecks"
-   }
-  }
- ],
- "events": [
-  {
-   "name": "CarTurnedOnEvent",
-   "type": "car.events",
-   "source": "my/car"
-  },
-  {
-   "name": "CarTurnedOffEvent",
-   "type": "car.events",
-   "source": "my/car"
-  }
- ]
-}
-```
+    "id": "checkcarvitals",
+    "name": "checkcarvitals",
+    "description": "Check Car Vitals Workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "when-car-is-on",
+    "states": [
+        {
+            "name": "when-car-is-on",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "car-turned-on-event"
+                    ]
+                }
+            ],
+            "transition": "do-car-vital-checks"
+        },
+        {
+            "name": "do-car-vital-checks",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "do-car-vital-checks",
+                    "subFlowRef": "vitalscheck",
+                    "sleep": {
+                        "after": "PT1S"
+                    }
+                }
+            ],
+            "transition": "check-continue-vital-checks"
+        },
+        {
+            "name": "check-continue-vital-checks",
+            "type": "switch",
+            "eventConditions": [
+                {
+                    "name": "car-turned-off-condition",
+                    "eventRef": "car-turned-off-event",
+                    "end": true
+                }
+            ],
+            "defaultCondition": {
+                "transition": "do-car-vital-checks"
+            }
+        }
+    ],
+    "events": [
+        {
+            "name": "car-turned-on-event",
+            "type": "car.events",
+            "source": "my/car"
+        },
+        {
+            "name": "car-turned-off-event",
+            "type": "car.events",
+            "source": "my/car"
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: checkcarvitals
-name: Check Car Vitals Workflow
-version: '1.0.0'
-specVersion: '0.8'
-start: WhenCarIsOn
+name: checkcarvitals
+description: Check Car Vitals Workflow
+version: 1.0.0
+specVersion: "0.8"
+start: when-car-is-on
 states:
- - name: WhenCarIsOn
-   type: event
-   onEvents:
-    - eventRefs:
-       - CarTurnedOnEvent
-   transition: DoCarVitalChecks
- - name: DoCarVitalChecks
-   type: operation
-   actions:
-    - subFlowRef: vitalscheck
-      sleep:
-       after: PT1S
-   transition: CheckContinueVitalChecks
- - name: CheckContinueVitalChecks
-   type: switch
-   eventConditions:
-    - name: Car Turned Off Condition
-      eventRef: CarTurnedOffEvent
-      end: true
-   defaultCondition:
-    transition: DoCarVitalChecks
+  - name: when-car-is-on
+    type: event
+    onEvents:
+      - eventRefs:
+          - car-turned-on-event
+    transition: do-car-vital-checks
+  - name: do-car-vital-checks
+    type: operation
+    actions:
+      - name: do-car-vital-checks
+        subFlowRef: vitalscheck
+        sleep:
+          after: PT1S
+    transition: check-continue-vital-checks
+  - name: check-continue-vital-checks
+    type: switch
+    eventConditions:
+      - name: car-turned-off-condition
+        eventRef: car-turned-off-event
+        end: true
+    defaultCondition:
+      transition: do-car-vital-checks
 events:
- - name: CarTurnedOnEvent
-   type: car.events
-   source: my/car
- - name: CarTurnedOffEvent
-   type: car.events
-   source: my/car
+  - name: car-turned-on-event
+    type: car.events
+    source: my/car
+  - name: car-turned-off-event
+    type: car.events
+    source: my/car
 ```
 
 </td>
@@ -3694,59 +3835,99 @@ And then our reusable sub-workflow which performs the checking of our car vitals
 
 ```json
 {
- "id": "vitalscheck",
- "name": "Car Vitals Check",
- "version": "1.0.0",
- "specVersion": "0.8",
- "start": "CheckVitals",
- "states": [
-  {
-   "name": "CheckVitals",
-   "type": "operation",
-   "actions": [
-    {
-     "functionRef": "Check Tire Pressure"
-    },
-    {
-     "functionRef": "Check Oil Pressure"
-    },
-    {
-     "functionRef": "Check Coolant Level"
-    },
-    {
-     "functionRef": "Check Battery"
-    }
-   ],
-   "end": {
-    "produceEvents": [
-     {
-      "eventRef": "DisplayChecksOnDashboard",
-      "data": "${ .evaluations }"
-     }
+    "id": "vitalscheck",
+    "name": "vitalscheck",
+    "description": "Car Vitals Check",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "check-vitals",
+    "states": [
+        {
+            "name": "check-vitals",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "check-tire-pressure",
+                    "functionRef": "check-tire-pressure"
+                },
+                {
+                    "name": "check-oil-pressure",
+                    "functionRef": "check-oil-pressure"
+                },
+                {
+                    "name": "check-coolant-level",
+                    "functionRef": "check-coolant-level"
+                },
+                {
+                    "name": "check-battery",
+                    "functionRef": "check-battery"
+                }
+            ],
+            "end": {
+                "produceEvents": [
+                    {
+                        "eventRef": "display-checks-on-dashboard",
+                        "data": "${ .evaluations }"
+                    }
+                ]
+            }
+        }
+    ],
+    "functions": [
+        {
+            "name": "check-tire-pressure",
+            "operation": "mycarservices.json#checktirepressure"
+        },
+        {
+            "name": "check-oil-pressure",
+            "operation": "mycarservices.json#checkoilpressure"
+        },
+        {
+            "name": "check-coolant-level",
+            "operation": "mycarservices.json#checkcoolantlevel"
+        },
+        {
+            "name": "check-battery",
+            "operation": "mycarservices.json#checkbattery"
+        }
     ]
+}```
 
-   }
-  }
- ],
- "functions": [
-  {
-   "name": "checkTirePressure",
-   "operation": "mycarservices.json#checktirepressure"
-  },
-  {
-   "name": "checkOilPressure",
-   "operation": "mycarservices.json#checkoilpressure"
-  },
-  {
-   "name": "checkCoolantLevel",
-   "operation": "mycarservices.json#checkcoolantlevel"
-  },
-  {
-   "name": "checkBattery",
-   "operation": "mycarservices.json#checkbattery"
-  }
- ]
-}
+</td>
+<td valign="top">
+
+```yaml
+id: vitalscheck
+name: vitalscheck
+description: Car Vitals Check
+version: 1.0.0
+specVersion: "0.8"
+start: check-vitals
+states:
+  - name: check-vitals
+    type: operation
+    actions:
+      - name: check-tire-pressure
+        functionRef: check-tire-pressure
+      - name: check-oil-pressure
+        functionRef: check-oil-pressure
+      - name: check-coolant-level
+        functionRef: check-coolant-level
+      - name: check-battery
+        functionRef: check-battery
+    end:
+      produceEvents:
+        - eventRef: display-checks-on-dashboard
+          data: ${ .evaluations }
+functions:
+  - name: check-tire-pressure
+    operation: mycarservices.json#checktirepressure
+  - name: check-oil-pressure
+    operation: mycarservices.json#checkoilpressure
+  - name: check-coolant-level
+    operation: mycarservices.json#checkcoolantlevel
+  - name: check-battery
+    operation: mycarservices.json#checkbattery
 ```
 
 </td>
@@ -3834,249 +4015,264 @@ For the sake of the example we assume the functions and event definitions are de
 
 ```json
 {
- "id": "booklending",
- "name": "Book Lending Workflow",
- "version": "1.0.0",
- "specVersion": "0.8",
- "start": "Book Lending Request",
- "states": [
-  {
-   "name": "Book Lending Request",
-   "type": "event",
-   "onEvents": [
-    {
-     "eventRefs": ["Book Lending Request Event"]
-    }
-   ],
-   "transition": "Get Book Status"
-  },
-  {
-   "name": "Get Book Status",
-   "type": "operation",
-   "actions": [
-    {
-     "functionRef": {
-      "refName": "Get status for book",
-      "arguments": {
-       "bookid": "${ .book.id }"
-      }
-     }
-    }
-   ],
-   "transition": "Book Status Decision"
-  },
-  {
-   "name": "Book Status Decision",
-   "type": "switch",
-   "dataConditions": [
-    {
-     "name": "Book is on loan",
-     "condition": "${ .book.status == \"onloan\" }",
-     "transition": "Report Status To Lender"
-    },
-    {
-     "name": "Check is available",
-     "condition": "${ .book.status == \"available\" }",
-     "transition": "Check Out Book"
-    }
-   ],
-   "defaultCondition": {
-    "end": true
-   }
-  },
-  {
-   "name": "Report Status To Lender",
-   "type": "operation",
-   "actions": [
-    {
-     "functionRef": {
-      "refName": "Send status to lender",
-      "arguments": {
-       "bookid": "${ .book.id }",
-       "message": "Book ${ .book.title } is already on loan"
-      }
-     }
-    }
-   ],
-   "transition": "Wait for Lender response"
-  },
-  {
-   "name": "Wait for Lender response",
-   "type": "switch",
-   "eventConditions": [
-    {
-     "name": "Hold Book",
-     "eventRef": "Hold Book Event",
-     "transition": "Request Hold"
-    },
-    {
-     "name": "Decline Book Hold",
-     "eventRef": "Decline Hold Event",
-     "transition": "Cancel Request"
-    }
-   ],
-   "defaultCondition": {
-    "end": true
-   }
-  },
-  {
-   "name": "Request Hold",
-   "type": "operation",
-   "actions": [
-    {
-     "functionRef": {
-      "refName": "Request hold for lender",
-      "arguments": {
-       "bookid": "${ .book.id }",
-       "lender": "${ .lender }"
-      }
-     }
-    }
-   ],
-   "transition": "Sleep two weeks"
-  },
-  {
-   "name": "Cancel Request",
-   "type": "operation",
-   "actions": [
-    {
-     "functionRef": {
-      "refName": "Cancel hold request for lender",
-      "arguments": {
-       "bookid": "${ .book.id }",
-       "lender": "${ .lender }"
-      }
-     }
-    }
-   ],
-   "transition": "Sleep two weeks"
-  },
-  {
-   "name": "Sleep two weeks",
-   "type": "sleep",
-   "duration": "PT2W",
-   "transition": "Get Book Status"
-  },
-  {
-   "name": "Check Out Book",
-   "type": "operation",
-   "actions": [
-    {
-     "functionRef": {
-      "refName": "Check out book with id",
-      "arguments": {
-       "bookid": "${ .book.id }"
-      }
-     }
-    },
-    {
-     "functionRef": {
-      "refName": "Notify Lender for checkout",
-      "arguments": {
-       "bookid": "${ .book.id }",
-       "lender": "${ .lender }"
-      }
-     }
-    }
-   ],
-   "end": true
-  }
- ],
- "functions": "file://books/lending/functions.json",
- "events": "file://books/lending/events.json"
-}
-```
+    "id": "booklending",
+    "name": "booklending",
+    "description": "Book Lending Workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "book-lending-request",
+    "states": [
+        {
+            "name": "book-lending-request",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "book-lending-request-event"
+                    ]
+                }
+            ],
+            "transition": "get-book-status"
+        },
+        {
+            "name": "get-book-status",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "get-book-status",
+                    "functionRef": {
+                        "refName": "get-status-for-book",
+                        "arguments": {
+                            "bookid": "${ .book.id }"
+                        }
+                    }
+                }
+            ],
+            "transition": "book-status-decision"
+        },
+        {
+            "name": "book-status-decision",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "name": "book-is-on-loan",
+                    "condition": "${ .book.status == \"onloan\" }",
+                    "transition": "report-status-to-lender"
+                },
+                {
+                    "name": "check-is-available",
+                    "condition": "${ .book.status == \"available\" }",
+                    "transition": "check-out-book"
+                }
+            ],
+            "defaultCondition": {
+                "end": true
+            }
+        },
+        {
+            "name": "report-status-to-lender",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "report-status-to-lender",
+                    "functionRef": {
+                        "refName": "send-status-to-lender",
+                        "arguments": {
+                            "bookid": "${ .book.id }",
+                            "message": "Book ${ .book.title } is already on loan"
+                        }
+                    }
+                }
+            ],
+            "transition": "wait-for-lender-response"
+        },
+        {
+            "name": "wait-for-lender-response",
+            "type": "switch",
+            "eventConditions": [
+                {
+                    "name": "hold-book",
+                    "eventRef": "hold-book-event",
+                    "transition": "request-hold"
+                },
+                {
+                    "name": "decline-book-hold",
+                    "eventRef": "decline-hold-event",
+                    "transition": "cancel-request"
+                }
+            ],
+            "defaultCondition": {
+                "end": true
+            }
+        },
+        {
+            "name": "request-hold",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "request-hold",
+                    "functionRef": {
+                        "refName": "request-hold-for-lender",
+                        "arguments": {
+                            "bookid": "${ .book.id }",
+                            "lender": "${ .lender }"
+                        }
+                    }
+                }
+            ],
+            "transition": "sleep-two-weeks"
+        },
+        {
+            "name": "cancel-request",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "cancel-request",
+                    "functionRef": {
+                        "refName": "cancel-hold-request-for-lender",
+                        "arguments": {
+                            "bookid": "${ .book.id }",
+                            "lender": "${ .lender }"
+                        }
+                    }
+                }
+            ],
+            "transition": "sleep-two-weeks"
+        },
+        {
+            "name": "sleep-two-weeks",
+            "type": "sleep",
+            "duration": "PT2W",
+            "transition": "get-book-status"
+        },
+        {
+            "name": "check-out-book",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "check-out-book",
+                    "functionRef": {
+                        "refName": "check-out-book-with-id",
+                        "arguments": {
+                            "bookid": "${ .book.id }"
+                        }
+                    }
+                },
+                {
+                    "name": "notify-lender-for-checkout",
+                    "functionRef": {
+                        "refName": "notify-lender-for-checkout",
+                        "arguments": {
+                            "bookid": "${ .book.id }",
+                            "lender": "${ .lender }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        }
+    ],
+    "functions": "file://books/lending/functions.json",
+    "events": "file://books/lending/events.json"
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: booklending
-name: Book Lending Workflow
-version: '1.0.0'
-specVersion: '0.8'
-start: Book Lending Request
+name: booklending
+description: Book Lending Workflow
+version: 1.0.0
+specVersion: "0.8"
+start: book-lending-request
 states:
- - name: Book Lending Request
-   type: event
-   onEvents:
-    - eventRefs:
-       - Book Lending Request Event
-   transition: Get Book Status
- - name: Get Book Status
-   type: operation
-   actions:
-    - functionRef:
-       refName: Get status for book
-       arguments:
-        bookid: "${ .book.id }"
-   transition: Book Status Decision
- - name: Book Status Decision
-   type: switch
-   dataConditions:
-    - name: Book is on loan
-      condition: ${ .book.status == "onloan" }
-      transition: Report Status To Lender
-    - name: Check is available
-      condition: ${ .book.status == "available" }
-      transition: Check Out Book
-   defaultCondition:
+  - name: book-lending-request
+    type: event
+    onEvents:
+      - eventRefs:
+          - book-lending-request-event
+    transition: get-book-status
+  - name: get-book-status
+    type: operation
+    actions:
+      - name: get-book-status
+        functionRef:
+          refName: get-status-for-book
+          arguments:
+            bookid: ${ .book.id }
+    transition: book-status-decision
+  - name: book-status-decision
+    type: switch
+    dataConditions:
+      - name: book-is-on-loan
+        condition: ${ .book.status == "onloan" }
+        transition: report-status-to-lender
+      - name: check-is-available
+        condition: ${ .book.status == "available" }
+        transition: check-out-book
+    defaultCondition:
+      end: true
+  - name: report-status-to-lender
+    type: operation
+    actions:
+      - name: report-status-to-lender
+        functionRef:
+          refName: send-status-to-lender
+          arguments:
+            bookid: ${ .book.id }
+            message: Book ${ .book.title } is already on loan
+    transition: wait-for-lender-response
+  - name: wait-for-lender-response
+    type: switch
+    eventConditions:
+      - name: hold-book
+        eventRef: hold-book-event
+        transition: request-hold
+      - name: decline-book-hold
+        eventRef: decline-hold-event
+        transition: cancel-request
+    defaultCondition:
+      end: true
+  - name: request-hold
+    type: operation
+    actions:
+      - name: request-hold
+        functionRef:
+          refName: request-hold-for-lender
+          arguments:
+            bookid: ${ .book.id }
+            lender: ${ .lender }
+    transition: sleep-two-weeks
+  - name: cancel-request
+    type: operation
+    actions:
+      - name: cancel-request
+        functionRef:
+          refName: cancel-hold-request-for-lender
+          arguments:
+            bookid: ${ .book.id }
+            lender: ${ .lender }
+    transition: sleep-two-weeks
+  - name: sleep-two-weeks
+    type: sleep
+    duration: PT2W
+    transition: get-book-status
+  - name: check-out-book
+    type: operation
+    actions:
+      - name: check-out-book
+        functionRef:
+          refName: check-out-book-with-id
+          arguments:
+            bookid: ${ .book.id }
+      - name: notify-lender-for-checkout
+        functionRef:
+          refName: notify-lender-for-checkout
+          arguments:
+            bookid: ${ .book.id }
+            lender: ${ .lender }
     end: true
- - name: Report Status To Lender
-   type: operation
-   actions:
-    - functionRef:
-       refName: Send status to lender
-       arguments:
-        bookid: "${ .book.id }"
-        message: Book ${ .book.title } is already on loan
-   transition: Wait for Lender response
- - name: Wait for Lender response
-   type: switch
-   eventConditions:
-    - name: Hold Book
-      eventRef: Hold Book Event
-      transition: Request Hold
-    - name: Decline Book Hold
-      eventRef: Decline Hold Event
-      transition: Cancel Request
-   defaultCondition:
-    end: true
- - name: Request Hold
-   type: operation
-   actions:
-    - functionRef:
-       refName: Request hold for lender
-       arguments:
-        bookid: "${ .book.id }"
-        lender: "${ .lender }"
-   transition: Sleep two weeks
- - name: Cancel Request
-   type: operation
-   actions:
-    - functionRef:
-       refName: Cancel hold request for lender
-       arguments:
-        bookid: "${ .book.id }"
-        lender: "${ .lender }"
-   end: true
- - name: Sleep two weeks
-   type: sleep
-   duration: PT2W
-   transition: Get Book Status
- - name: Check Out Book
-   type: operation
-   actions:
-    - functionRef:
-       refName: Check out book with id
-       arguments:
-        bookid: "${ .book.id }"
-    - functionRef:
-       refName: Notify Lender for checkout
-       arguments:
-        bookid: "${ .book.id }"
-        lender: "${ .lender }"
-   end: true
 functions: file://books/lending/functions.json
 events: file://books/lending/events.json
 ```
@@ -4126,87 +4322,90 @@ Its results are then merged back into the state data according to the "toStateDa
 
 ```json
 {
- "id": "fillglassofwater",
- "name": "Fill glass of water workflow",
- "version": "1.0.0",
- "specVersion": "0.8",
- "start": "Check if full",
- "functions": [
-  {
-   "name": "Increment Current Count Function",
-   "type": "expression",
-   "operation": ".counts.current += 1 | .counts.current"
-  }
- ],
- "states": [
-  {
-   "name": "Check if full",
-   "type": "switch",
-   "dataConditions": [
-    {
-     "name": "Need to fill more",
-     "condition": "${ .counts.current < .counts.max }",
-     "transition": "Add Water"
-    },
-    {
-     "name": "Glass full",
-     "condition": ".counts.current >= .counts.max",
-     "end": true
-    }
-   ],
-   "defaultCondition": {
-    "end": true
-   }
-  },
-  {
-   "name": "Add Water",
-   "type": "operation",
-   "actions": [
-    {
-     "functionRef": "Increment Current Count Function",
-     "actionDataFilter": {
-      "toStateData": ".counts.current"
-     }
-    }
-   ],
-   "transition": "Check if full"
-  }
- ]
-}
-```
+    "id": "fillglassofwater",
+    "name": "fillglassofwater",
+    "description": "Fill glass of water workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "check-if-full",
+    "functions": [
+        {
+            "name": "increment-current-count-function",
+            "type": "expression",
+            "operation": ".counts.current += 1 | .counts.current"
+        }
+    ],
+    "states": [
+        {
+            "name": "check-if-full",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "name": "need-to-fill-more",
+                    "condition": "${ .counts.current < .counts.max }",
+                    "transition": "add-water"
+                },
+                {
+                    "name": "glass-full",
+                    "condition": ".counts.current >= .counts.max",
+                    "end": true
+                }
+            ],
+            "defaultCondition": {
+                "end": true
+            }
+        },
+        {
+            "name": "add-water",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "add-water",
+                    "functionRef": "increment-current-count-function",
+                    "actionDataFilter": {
+                        "toStateData": ".counts.current"
+                    }
+                }
+            ],
+            "transition": "check-if-full"
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: fillglassofwater
-name: Fill glass of water workflow
-version: '1.0.0'
-specVersion: '0.8'
-start: Check if full
+name: fillglassofwater
+description: Fill glass of water workflow
+version: 1.0.0
+specVersion: "0.8"
+start: check-if-full
 functions:
- - name: Increment Current Count Function
-   type: expression
-   operation: ".counts.current += 1 | .counts.current"
+  - name: increment-current-count-function
+    type: expression
+    operation: .counts.current += 1 | .counts.current
 states:
- - name: Check if full
-   type: switch
-   dataConditions:
-    - name: Need to fill more
-      condition: "${ .counts.current < .counts.max }"
-      transition: Add Water
-    - name: Glass full
-      condition: ".counts.current >= .counts.max"
+  - name: check-if-full
+    type: switch
+    dataConditions:
+      - name: need-to-fill-more
+        condition: ${ .counts.current < .counts.max }
+        transition: add-water
+      - name: glass-full
+        condition: .counts.current >= .counts.max
+        end: true
+    defaultCondition:
       end: true
-   defaultCondition:
-    end: true
- - name: Add Water
-   type: operation
-   actions:
-    - functionRef: Increment Current Count Function
-      actionDataFilter:
-       toStateData: ".counts.current"
-   transition: Check if full
+  - name: add-water
+    type: operation
+    actions:
+      - name: add-water
+        functionRef: increment-current-count-function
+        actionDataFilter:
+          toStateData: .counts.current
+    transition: check-if-full
 ```
 
 </td>
@@ -4497,122 +4696,127 @@ We assume that our workflow input has the runtime-imposed quota:
 
 ```json
 {
- "id":"notifycustomerworkflow",
- "name":"Notify Customer",
- "version":"1.0",
- "specVersion": "0.8",
- "start":"WaitForCustomerEvent",
- "states":[
-  {
-   "name":"WaitForCustomerEvent",
-   "type":"event",
-   "onEvents":[
-    {
-     "eventRefs":[
-      "CustomerEvent"
-     ],
-     "eventDataFilter":{
-      "data":"${ .customerId }",
-      "toStateData":"${ .eventCustomerId }"
-     },
-     "actions":[
-      {
-       "functionRef":{
-        "refName":"NotifyCustomerFunction",
-        "arguments":{
-         "customerId":"${ .eventCustomerId }"
+    "id": "notifycustomerworkflow",
+    "name": "notifycustomerworkflow",
+    "description": "Notify Customer",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "wait-for-customer-event",
+    "states": [
+        {
+            "name": "wait-for-customer-event",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "customer-event"
+                    ],
+                    "eventDataFilter": {
+                        "data": "${ .customerId }",
+                        "toStateData": "${ .eventCustomerId }"
+                    },
+                    "actions": [
+                        {
+                            "name": "notify-customer-function",
+                            "functionRef": {
+                                "refName": "notify-customer-function",
+                                "arguments": {
+                                    "customerId": "${ .eventCustomerId }"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "stateDataFilter": {
+                "output": "${ .count = .count + 1 }"
+            },
+            "transition": "check-event-quota"
+        },
+        {
+            "name": "check-event-quota",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "name": "ready",
+                    "condition": "${ try(.customerCount) != null and .customerCount > .quota.maxConsumedEvents }",
+                    "end": {
+                        "continueAs": {
+                            "workflowId": "notifycustomerworkflow",
+                            "version": "1.0.0",
+                            "data": "${ del(.customerCount) }"
+                        }
+                    }
+                }
+            ],
+            "defaultCondition": {
+                "transition": "wait-for-customer-event"
+            }
         }
-       }
-      }
-     ]
-    }
-   ],
-   "stateDataFilter":{
-    "output":"${ .count = .count + 1 }"
-   },
-   "transition":"CheckEventQuota"
-  },
-  {
-   "name":"CheckEventQuota",
-   "type":"switch",
-   "dataConditions":[
-    {
-     "condition":"${ try(.customerCount) != null and .customerCount > .quota.maxConsumedEvents }",
-     "end":{
-      "continueAs": {
-       "workflowId": "notifycustomerworkflow",
-       "version": "1.0.0",
-       "data": "${ del(.customerCount) }"
-      }
-     }
-    }
-   ],
-   "defaultCondition":{
-    "transition":"WaitForCustomerEvent"
-   }
-  }
- ],
- "events":[
-  {
-   "name":"CustomerEvent",
-   "type":"org.events.customerEvent",
-   "source":"customerSource"
-  }
- ],
- "functions":[
-  {
-   "name":"NotifyCustomerFunction",
-   "operation":"http://myapis.org/customerapis.json#notifyCustomer"
-  }
- ]
-}
-```
+    ],
+    "events": [
+        {
+            "name": "customer-event",
+            "type": "org.events.customerEvent",
+            "source": "customerSource"
+        }
+    ],
+    "functions": [
+        {
+            "name": "notify-customer-function",
+            "operation": "http://myapis.org/customerapis.json#notifyCustomer"
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: notifycustomerworkflow
-name: Notify Customer
-version: '1.0.0'
-specVersion: '0.8'
-start: WaitForCustomerEvent
+name: notifycustomerworkflow
+description: Notify Customer
+version: 1.0.0
+specVersion: "0.8"
+start: wait-for-customer-event
 states:
- - name: WaitForCustomerEvent
-   type: event
-   onEvents:
-    - eventRefs:
-       - CustomerEvent
-      eventDataFilter:
-       data: "${ .customerId }"
-       toStateData: "${ .eventCustomerId }"
-      actions:
-       - functionRef:
-          refName: NotifyCustomerFunction
-          arguments:
-           customerId: "${ .eventCustomerId }"
-   stateDataFilter:
-    output: "${ .count = .count + 1 }"
-   transition: CheckEventQuota
- - name: CheckEventQuota
-   type: switch
-   dataConditions:
-    - condition: "${ try(.customerCount) != null and .customerCount > .quota.maxConsumedEvents
-      }"
-      end:
-       continueAs:
-        workflowId: notifycustomerworkflow
-        version: '1.0.0'
-        data: "${ del(.customerCount) }"
-   defaultCondition:
-    transition: WaitForCustomerEvent
+  - name: wait-for-customer-event
+    type: event
+    onEvents:
+      - eventRefs:
+          - customer-event
+        eventDataFilter:
+          data: ${ .customerId }
+          toStateData: ${ .eventCustomerId }
+        actions:
+          - name: notify-customer-function
+            functionRef:
+              refName: notify-customer-function
+              arguments:
+                customerId: ${ .eventCustomerId }
+    stateDataFilter:
+      output: ${ .count = .count + 1 }
+    transition: check-event-quota
+  - name: check-event-quota
+    type: switch
+    dataConditions:
+      - name: ready
+        condition: ${ try(.customerCount) != null and .customerCount >
+          .quota.maxConsumedEvents }
+        end:
+          continueAs:
+            workflowId: notifycustomerworkflow
+            version: 1.0.0
+            data: ${ del(.customerCount) }
+    defaultCondition:
+      transition: wait-for-customer-event
 events:
- - name: CustomerEvent
-   type: org.events.customerEvent
-   source: customerSource
+  - name: customer-event
+    type: org.events.customerEvent
+    source: customerSource
 functions:
- - name: NotifyCustomerFunction
-   operation: http://myapis.org/customerapis.json#notifyCustomer
+  - name: notify-customer-function
+    operation: http://myapis.org/customerapis.json#notifyCustomer
 ```
 
 </td>
@@ -4659,81 +4863,82 @@ decide which activity to perform based on the transaction value.
 
 ```json
 {
- "id": "customerbankingtransactions",
- "name": "Customer Banking Transactions Workflow",
- "version": "1.0.0",
- "specVersion": "0.8",
- "autoRetries": true,
- "constants": {
-  "largetxamount" : 5000
- },
- "states": [
-  {
-   "name": "ProcessTransactions",
-   "type": "foreach",
-   "inputCollection": "${ .customer.transactions }",
-   "iterationParam": "${ .tx }",
-   "actions": [
-    {
-     "name": "Process Larger Transaction",
-     "functionRef": "Banking Service - Larger Tx",
-     "condition": "${ .tx >= $CONST.largetxamount }"
+    "id": "customerbankingtransactions",
+    "name": "customerbankingtransactions",
+    "description": "Customer Banking Transactions Workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "autoRetries": true,
+    "constants": {
+        "largetxamount": 5000
     },
-    {
-     "name": "Process Smaller Transaction",
-     "functionRef": "Banking Service - Smaller Tx",
-     "condition": "${ .tx < $CONST.largetxamount }"
-    }
-   ],
-   "end": true
-  }
- ],
- "functions": [
-  {
-   "name": "Banking Service - Larger Tx",
-   "type": "asyncapi",
-   "operation": "banking.yaml#largerTransation"
-  },
-  {
-   "name": "Banking Service - Smaller T",
-   "type": "asyncapi",
-   "operation": "banking.yaml#smallerTransation"
-  }
- ]
-}
-```
+    "states": [
+        {
+            "name": "process-transactions",
+            "type": "foreach",
+            "inputCollection": "${ .customer.transactions }",
+            "iterationParam": "${ .tx }",
+            "actions": [
+                {
+                    "name": "process-larger-transaction",
+                    "functionRef": "banking-service-larger-tx",
+                    "condition": "${ .tx >= $CONST.largetxamount }"
+                },
+                {
+                    "name": "process-smaller-transaction",
+                    "functionRef": "banking-service-smaller-tx",
+                    "condition": "${ .tx < $CONST.largetxamount }"
+                }
+            ],
+            "end": true
+        }
+    ],
+    "functions": [
+        {
+            "name": "banking-service-larger-tx",
+            "type": "asyncapi",
+            "operation": "banking.yaml#largerTransation"
+        },
+        {
+            "name": "banking-service-smaller-tx",
+            "type": "asyncapi",
+            "operation": "banking.yaml#smallerTransation"
+        }
+    ]
+}```
 
 </td>
 <td valign="top">
 
 ```yaml
 id: customerbankingtransactions
-name: Customer Banking Transactions Workflow
-version: '1.0.0'
-specVersion: '0.8'
+name: customerbankingtransactions
+description: Customer Banking Transactions Workflow
+version: 1.0.0
+specVersion: "0.8"
 autoRetries: true
 constants:
- largetxamount: 5000
+  largetxamount: 5000
 states:
- - name: ProcessTransactions
-   type: foreach
-   inputCollection: "${ .customer.transactions }"
-   iterationParam: "${ .tx }"
-   actions:
-    - name: Process Larger Transaction
-      functionRef: Banking Service - Larger Tx
-      condition: "${ .tx >= $CONST.largetxamount }"
-    - name: Process Smaller Transaction
-      functionRef: Banking Service - Smaller Tx
-      condition: "${ .tx < $CONST.largetxamount }"
-   end: true
+  - name: process-transactions
+    type: foreach
+    inputCollection: ${ .customer.transactions }
+    iterationParam: ${ .tx }
+    actions:
+      - name: process-larger-transaction
+        functionRef: banking-service-larger-tx
+        condition: ${ .tx >= $CONST.largetxamount }
+      - name: process-smaller-transaction
+        functionRef: banking-service-smaller-tx
+        condition: ${ .tx < $CONST.largetxamount }
+    end: true
 functions:
- - name: Banking Service - Larger Tx
-   type: asyncapi
-   operation: banking.yaml#largerTransation
- - name: Banking Service - Smaller T
-   type: asyncapi
-   operation: banking.yaml#smallerTransation
+  - name: banking-service-larger-tx
+    type: asyncapi
+    operation: banking.yaml#largerTransation
+  - name: banking-service-smaller-tx
+    type: asyncapi
+    operation: banking.yaml#smallerTransation
 ```
 
 </td>
