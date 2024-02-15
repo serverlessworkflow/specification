@@ -37,6 +37,7 @@ _Status description:_
 | ✔️| Add the new `WORKFLOW` reserved keyword to workflow expressions  |
 | ✔️| Update `ForEach` state iteration parameter example. This parameter is an expression variable, not a JSON property  |
 | ✔️| Add the new `rest` function type [spec doc](https://github.com/serverlessworkflow/specification/tree/main/specification.md#using-functions-for-restful-service-invocations) |
+| ✔️| Refactor error handling and retries |
 | ✏️️| Add inline state defs in branches |   |
 | ✏️️| Add "completedBy" functionality |   |
 | ✏️️| Define workflow context |   |
