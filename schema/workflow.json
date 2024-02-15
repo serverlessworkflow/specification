@@ -360,13 +360,13 @@
           "description": "References a sub-workflow to invoke",
           "$ref": "#/definitions/subflowref"
         },
+        "errorRef": {
+          "description": "References or defines the error to throw",
+          "$ref": "errors.json#/definitions/errorReference"
+        },
         "sleep": {
           "description": "Defines time periods workflow execution should sleep before / after function execution",
           "$ref": "#/definitions/sleep"
-        },
-        "retryRef": {
-          "type": "string",
-          "description": "References a defined workflow retry definition. If not defined the default retry policy is assumed"
         },
         "onErrors":{
           "$ref": "#/definitions/onerrors"
@@ -405,6 +405,12 @@
           "required": [
             "name",
             "subFlowRef"
+          ]
+        },
+        {
+          "required": [
+            "name",
+            "errorRef"
           ]
         }
       ]
