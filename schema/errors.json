@@ -203,7 +203,7 @@
                     "description":"The unique name of the retry definition to use"
                  },
                  {
-                    "$ref":"retries.json#/retries/definitions/retrydef",
+                    "$ref":"retries.json#/definitions/retrydef",
                     "description":"The inline retry definition to use"
                  }
               ]
