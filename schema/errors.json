@@ -269,7 +269,7 @@
                           "type":"string"
                        },
                        {
-                          "$ref":"retries.json#/retries/definitions/retrydef"
+                          "$ref":"retries.json#/definitions/retrydef"
                        }
                     ]
                  },
