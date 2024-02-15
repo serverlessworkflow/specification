@@ -4950,7 +4950,7 @@ functions:
 
 #### Description
 
-For the example, let's assume we have developped a number of workflows to orchestrate an hypothetical, event-driven management solution around the Swagger Pet Store API.
+For the example, let's assume we have developed a number of workflows to orchestrate an hypothetical, event-driven management solution around the Swagger Pet Store API.
 
 At start, we were copy/pasting the many Pet Store function definitions from workflow to workflow as we needed them. Even though that was very tedious, we just coped with it, until that day where the names of a couple of functions changed in the `swagger.json`, breaking most of our workflows.
 
