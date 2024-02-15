@@ -55,17 +55,20 @@
            "name":{
               "type":"string",
               "description":"The name of the error. Must follow the Serverless Workflow Naming Convention.",
-              "pattern":"^[a-z0-9](-?[a-z0-9])*$"
+              "pattern":"^[a-z0-9](-?[a-z0-9])*$",
+              "minLength": 1
            },
            "source":{
               "type":"string",
               "description":"An RFC6901 JSON pointer that precisely identifies the component within a workflow definition (ex: funcRef, subflowRef, ...) from which the described issue originates",
-              "pattern":"/(\/(([^/~])|(~[01]))*)/g"
+              "pattern":"/(\/(([^/~])|(~[01]))*)/g",
+              "minLength": 1
            },
            "type":{
               "type":"string",
               "description":"A RFC3986 URI reference that identifies the problem type. The RFC7807 Problem Details specification encourages that, when dereferenced, it provide human-readable documentation for the problem type (e.g., using HTML)",
-              "format":"uri"
+              "format":"uri",
+              "minLength": 1
            },
            "status":{
               "type":"integer",
@@ -94,7 +97,8 @@
               "type":"object",
               "properties":{
                  "refName":{
-                    "type":"string"
+                    "type":"string",
+                    "minLength": 1
                  }
               },
               "required":[
@@ -106,10 +110,12 @@
               "type":"object",
               "properties":{
                  "instance":{
-                    "type":"string"
+                    "type":"string",
+                    "minLength": 1
                  },
                  "type":{
-                    "type":"string"
+                    "type":"string",
+                    "minLength": 1
                  },
                  "status":{
                   "oneOf": [
@@ -154,7 +160,8 @@
                     ],
                     "properties":{
                        "type":{
-                          "type":"string"
+                          "type":"string",
+                          "minLength": 1
                        },
                        "status":{
                           "anyOf":[
@@ -162,15 +169,18 @@
                                 "type":"integer"
                              },
                              {
-                                "type":"string"
+                                "type":"string",
+                                "minLength": 1
                              }
                           ]
                        },
                        "title":{
-                          "type":"string"
+                          "type":"string",
+                          "minLength": 1
                        },
                        "detail":{
-                          "type":"string"
+                          "type":"string",
+                          "minLength": 1
                        }
                     }
                  }
@@ -184,7 +194,8 @@
            "name":{
               "type":"string",
               "description":"The unique name which is used to reference the handler.",
-              "pattern":"^[a-z0-9](-?[a-z0-9])*$"
+              "pattern":"^[a-z0-9](-?[a-z0-9])*$",
+              "minLength": 1
            },
            "when":{
               "type":"array",
@@ -256,7 +267,8 @@
               },
               "required":[
                  "refName"
-              ]
+              ],
+              "additionalProperties": false
            },
            {
               "properties":{
@@ -264,18 +276,23 @@
                     "type":"array",
                     "items":{
                        "$ref":"#/definitions/errorReference"
-                    }
+                    },
+                    "additionalItems":false,
+                    "minItems": 1
                  },
                  "exceptWhen":{
                     "type":"array",
                     "items":{
                        "$ref":"#/definitions/errorReference"
-                    }
+                    },
+                    "additionalItems":false,
+                    "minItems": 1
                  },
                  "retry":{
                     "oneOf":[
                        {
-                          "type":"string"
+                          "type":"string",
+                          "minLength": 1
                        },
                        {
                           "$ref":"retries.json#/definitions/retrydef"
@@ -285,7 +302,8 @@
                  "then":{
                     "$ref":"#/definitions/errorOutcomeDefinition"
                  }
-              }
+              },
+              "additionalProperties": false
            }
         ]
      },
@@ -295,7 +313,8 @@
            "name":{
               "type":"string",
               "description":"The unique name which is used to reference the policy.",
-              "pattern":"^[a-z0-9](-?[a-z0-9])*$"
+              "pattern":"^[a-z0-9](-?[a-z0-9])*$",
+              "minLength": 1
            },
            "handlers":{
               "type":"array",
@@ -303,7 +322,8 @@
               "items":{
                  "$ref":"#/definitions/errorHandlerReference"
               },
-              "additionalItems":false
+              "additionalItems":false,
+              "minItems": 1
            }
         },
         "required":[

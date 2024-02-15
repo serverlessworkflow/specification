@@ -10,17 +10,6 @@
             "operation": "http://myapis.org/provisioningapi.json#doProvision"
         }
     ],
-    "errors": [
-        {
-            "name": "missing-order-id"
-        },
-        {
-            "name": "missing-order-item"
-        },
-        {
-            "name": "missing-order-quantity"
-        }
-    ],
     "states": [
         {
             "name": "provision-order",
