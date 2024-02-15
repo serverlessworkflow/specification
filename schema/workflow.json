@@ -174,11 +174,11 @@
       "properties": {
         "before": {
           "type": "string",
-          "description": "Amount of time (ISO 8601 duration format) to sleep before function/subflow invocation. Does not apply if 'eventRef' is defined."
+          "description": "Amount of time (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep before function/subflow invocation. Does not apply if 'eventRef' is defined."
         },
         "after": {
           "type": "string",
-          "description": "Amount of time (ISO 8601 duration format) to sleep after function/subflow invocation. Does not apply if 'eventRef' is defined."
+          "description": "Amount of time (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep after function/subflow invocation. Does not apply if 'eventRef' is defined."
         }
       },
       "anyOf": [
@@ -663,7 +663,7 @@
         },
         "duration": {
           "type": "string",
-          "description": "Duration (ISO 8601 duration format) to sleep"
+          "description": "Duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep"
         },
         "transition": {
           "description": "Next transition of the workflow after the workflow sleep",

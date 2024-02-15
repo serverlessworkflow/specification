@@ -2623,7 +2623,7 @@ The `timeouts` property can be used to define state specific timeout settings. S
 | --- | --- | --- | --- |
 | name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | type | State type | string | yes |
-| duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | string | yes |
+| duration | Duration (ISO 8601 literal duration or an expression which evaluation results in an ISO 8601 duration) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes), or $CONST.timeout, where timeout value is "PT15M" | string | yes |
 | [transition](#Transitions) | Next transition of the workflow after the sleep | string or object | yes (if `end` is not defined) |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
@@ -2665,7 +2665,7 @@ transition: get-job-status
 
 Sleep state 
 suspends workflow execution for a given time duration. The delay is defined in its `duration` property using the ISO 8601 
-duration format.
+duration format. Note that ISO 8601 can be the result of evaluating an expression. 
 
 Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 ##### Parallel State
@@ -4002,8 +4002,8 @@ referenced `produced` event via its `produceEventRef` property and a `consumed` 
 
 The `sleep` property can be used to define time periods that workflow execution should sleep
 before and/or after function execution. It can have two properties:
-* `before` - defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
-* `after` - defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
+* `before` - defines the amount of time (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep before function invocation.
+* `after` - defines the amount of time (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep after function invocation.
 
 Function invocation timeouts should be handled via the states [timeouts](#Workflow-Timeouts) definition.
 
@@ -4133,7 +4133,7 @@ Allows defining invocation of a function via event.
 | --- | --- | --- | --- |
 | [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | no |
-| consumeEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
+| consumeEventTimeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
 | data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 | invoke | Specifies if the function should be invoked sync or async. Default is sync | enum | no |
@@ -4183,7 +4183,7 @@ to be used as payload of the event referenced by `produceEventRef`. If it is of 
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
 to the trigger/produced event.
 
-The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
+The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format literal or expression) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
 If the event defined by the `consumeEventRef` property is not received in that set time, action invocation should raise an error
 that can be handled in the states `onErrors` definition. In case the `consumeEventRef` is not defined, the `consumeEventTimeout` property is ignored.
 
@@ -4340,12 +4340,12 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique retry strategy name | string | yes |
-| delay | Time delay between retry attempts (ISO 8601 duration format) | string | no |
+| delay | Time delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 | maxAttempts | Maximum number of retry attempts. Value of 1 means no retries are performed | string or number | yes |
-| maxDelay | Maximum amount of delay between retry attempts (ISO 8601 duration format) | string | no |
-| increment | Static duration which will be added to the delay between successive retries (ISO 8601 duration format) | string | no |
+| maxDelay | Maximum amount of delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| increment | Static duration which will be added to the delay between successive retries (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 | multiplier | Float value by which the delay is multiplied before each attempt. For example: "1.2" meaning that each successive delay is 20% longer than the previous delay.  For example, if delay is 'PT10S', then the delay between the first and second attempts will be 10 seconds, and the delay before the third attempt will be 12 seconds. | float or string | no |
-| jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format) | float or string | no |
+| jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | float or string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4389,9 +4389,9 @@ defined state [actions](#Action-Definition).
 The `name` property specifies the unique name of the retry definition (strategy). This unique name
 can be referred by workflow states [error definitions](#Error-Definition).
 
-The `delay` property specifies the initial time delay between retry attempts (ISO 8601 duration format).
+The `delay` property specifies the initial time delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration).
 
-The `increment` property specifies a static duration which will be added to the delay between successive retries.
+The `increment` property specifies a duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) which will be added to the delay between successive retries.
 To explain this better, let's say we have the following retry definition:
 
 ```json
@@ -4441,7 +4441,7 @@ a `jitter` value of 0.3, a random amount of time between 0 and 1.8 (0.3 times 6)
 from the calculated delay. 
 
 Alternatively, `jitter` may be defined as an absolute value specified as an ISO
-8601 duration. This way, the maximum amount of random time added is fixed and
+8601 duration (literal or expression). This way, the maximum amount of random time added is fixed and
 will not increase as new attempts are made.
 
 The `maxDelay` property determines the maximum amount of delay that is desired between retry attempts, and is applied
@@ -4922,7 +4922,7 @@ it with its `object` type which has the following properties:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | expression | Cron expression describing when the workflow instance should be created (automatically) | string | yes |
-| validUntil | Specific date and time (ISO 8601 format) when the cron expression is no longer valid | string | no |
+| validUntil | Specific date and time (ISO 8601 format, literal or expression producing it) when the cron expression is no longer valid | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4959,7 +4959,7 @@ validUntil: '2021-11-05T08:15:30-05:00'
 The `expression` property is a a [cron expression](http://crontab.org/) which defines
 when workflow instances should be created (automatically).
 
-The `validUntil` property defines a date and time (using ISO 8601 format). When the
+The `validUntil` property defines a date and time (using ISO 8601 format, literal or expression). When the
 `validUntil` time is reached, the cron expression for instances creations of this workflow
 should no longer be valid.
 
@@ -5653,11 +5653,11 @@ If `object` type, it is used to define the timeout definitions in-line and has t
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [workflowExecTimeout](#workflowexectimeout-definition) | Workflow execution timeout (ISO 8601 duration format) | string or object | no |
-| [stateExecTimeout](#states-timeout-definition) | Workflow state execution timeout (ISO 8601 duration format) | string | no |
-| actionExecTimeout | Actions execution timeout (ISO 8601 duration format) | string | no |
-| [branchExecTimeout](#branch-timeout-definition) | Branch execution timeout (ISO 8601 duration format) | string | no |
-| [eventTimeout](#event-timeout-definition) | Default timeout for consuming defined events (ISO 8601 duration format) | string | no |
+| [workflowExecTimeout](#workflowexectimeout-definition) | Workflow execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string or object | no |
+| [stateExecTimeout](#states-timeout-definition) | Workflow state execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| actionExecTimeout | Actions execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| [branchExecTimeout](#branch-timeout-definition) | Branch execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| [eventTimeout](#event-timeout-definition) | Default timeout for consuming defined events (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 
 The `eventTimeout` property defines the maximum amount of time to wait to consume defined events. If not specified it should default to
 "unlimited".
@@ -5682,7 +5682,7 @@ If Object type it has the following format:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| duration | Timeout duration (ISO 8601 duration format) | string | yes |
+| duration | Timeout duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | yes |
 | interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is stopped immediately. Default is `false`  | boolean | no |
 | runBefore | Name of a workflow state to be executed before workflow instance is terminated | string | no |
 
@@ -5747,7 +5747,7 @@ timeout settings are available for each state type.
 Workflow states timeouts cannot define the `workflowExecTimeout` property.
 
 Workflow states can set their `stateExecTimeout` property inside the `timeouts` definition. 
-The value of this property is a time duration (ISO 8601 duration format). 
+The value of this property is a time duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration). 
 It must be a duration that's greater than zero and defines the total state execution timeout. 
 When this timeout is reached, state execution
 should be stopped and can be handled as a timeout error in the states `onErrors` definition.
