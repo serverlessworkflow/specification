@@ -16,34 +16,19 @@
                         {
                             "name": "store-patient",
                             "functionRef": "store-patient",
-                            "retryRef": "services-not-available-retry-strategy",
-                            "retryableErrors": [
-                                "service-not-available"
-                            ]
+                            "onErrors": "fault-tolerance"
                         },
                         {
                             "name": "assign-doctor",
                             "functionRef": "assign-doctor",
-                            "retryRef": "services-not-available-retry-strategy",
-                            "retryableErrors": [
-                                "service-not-available"
-                            ]
+                            "onErrors": "fault-tolerance"
                         },
                         {
                             "name": "schedule-appt",
                             "functionRef": "schedule-appt",
-                            "retryRef": "services-not-available-retry-strategy",
-                            "retryableErrors": [
-                                "service-not-available"
-                            ]
+                            "onErrors": "fault-tolerance"
                         }
                     ]
-                }
-            ],
-            "onErrors": [
-                {
-                    "errorRef": "service-not-available",
-                    "end": true
                 }
             ],
             "end": true
@@ -70,12 +55,29 @@
             "operation": "api/services.json#scheduleAppointment"
         }
     ],
-    "errors": [
-        {
-            "name": "service-not-available",
-            "code": "503"
-        }
-    ],
+    "errors": {
+        "handlers":[
+            {
+                "name": "handle-503-errors",
+                "when":[
+                    {
+                        "status": 503
+                    }
+                ],
+                "retry": "services-not-available-retry-strategy"
+            }
+        ],
+        "policies":[
+            {
+                "name": "fault-tolerance",
+                "handlers":[
+                    {
+                        "refName": "handle-503-errors"
+                    }
+                ]
+            }
+        ]
+    },
     "retries": [
         {
             "name": "services-not-available-retry-strategy",
