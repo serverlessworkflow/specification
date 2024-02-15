@@ -112,8 +112,15 @@
                     "type":"string"
                  },
                  "status":{
-                    "type":"string"
-                 }
+                  "oneOf": [
+                    {
+                      "type":"string"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
               },
               "minProperties":1,
               "additionalProperties":false
