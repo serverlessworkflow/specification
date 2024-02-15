@@ -4553,10 +4553,10 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | refName | The name of the error handler definition to reference. If set, all other properties are ignored. | string | no |
-| when | References the errors to handle. If null or empty, and if `exceptWhen` is null or empty, all errors are caught. | array of [errorRefs](#error-reference) | no |
-| exceptWhen | References the errors not to handle. If null or empty, and if `when` is null or empty, all errors are caught. | array of [errorRefs](#error-reference) | no |
+| when | References the errors to handle. If null or empty, and if `exceptWhen` is null or empty, all errors are caught. | array of [error references](#error-reference) | no |
+| exceptWhen | References the errors not to handle. If null or empty, and if `when` is null or empty, all errors are caught. | array of [error references](#error-reference) | no |
 | retry | The retry policy to use, if any. If a string, references an existing [retry definition](#retry-definition). | string or [retry definition](#retry-definition) | no |
-| then | Defines the outcome, if any, when handling errors | [outcomeDef](#outcome-definition) | no |
+| then | Defines the outcome, if any, when handling errors | [outcome definition](#error-outcome-definition) | no |
 
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -4686,10 +4686,9 @@ By defining error policies, workflows can easily apply consistent error handling
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| compensate | If `true`, triggers workflow compensation, then proceeds to the current state's outcome. | boolean | yes if `end`, `transition` and `throw` are null, otherwise no. |
-| end | If `true`, ends the workflow. | boolean or [end definition](#end-definition) | yes if `compensate`, `transition` and `throw` are null, otherwise no. |
-| transition | Indicates that the the workflow should transition to the specified state when the error is handled. All potential other activities are terminated. | string or [transition](#transition-definition). | yes if `compensate`, `end` and `throw` are null, otherwise no. |
-| throw | Indicates that the handled error should be rethrown. If true, the error is re-thrown as is. Otherwise, configures the error to throw, potentially using runtime expressions. | boolean or [error throw definition](#error-throw-definition). | yes if `compensate`, `end` and `transition` are null, otherwise no. |
+| end | If `true`, ends the workflow. | boolean or [end definition](#end-definition) | yes if `transition` and `throw` are null, otherwise no. |
+| transition | Indicates that the the workflow should transition to the specified state when the error is handled. All potential other activities are terminated. | string or [transition](#transition-definition). | yes if `end` and `throw` are null, otherwise no. |
+| throw | Indicates that the handled error should be rethrown. If true, the error is re-thrown as is. Otherwise, configures the error to throw, potentially using runtime expressions. | boolean or [error throw definition](#error-throw-definition). | yes if `end` and `transition` are null, otherwise no. |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
