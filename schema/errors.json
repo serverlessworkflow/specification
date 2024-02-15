@@ -194,7 +194,7 @@
               },
               "description":"References the errors not to handle. If null, and if `when` is null, all errors are caught.",
               "additionalItems":false,
-              "minItems":1
+              "minItems": 1
            },
            "retry":{
               "oneOf":[
