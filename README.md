@@ -106,7 +106,7 @@ reference the [Ownership of Copyrights in CNCF Project Contributions](https://gi
 ### Communication
 
 - Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) -  #serverless-workflow
-- [Weekly project meetings](#Meetings)
+- [Weekly project meetings](#weekly-meetings)
 - Project Maintainers Email: [cncf-serverlessws-maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
 - Serverless WG Email: [cncf-wg-serverless](mailto:cncf-wg-serverless@lists.cncf.io)
 - Serverless WG Subscription: [https://lists.cncf.io/g/cncf-wg-serverless](https://lists.cncf.io/g/cncf-wg-serverless)
@@ -127,16 +127,15 @@ See our full project Code of Conduct information [here](code-of-conduct.md).
 
 ### Weekly Meetings
 
-The Serverless Workflow team meets weekly, every Monday at 11AM ET (USA Eastern Time).
+The Serverless Workflow team meets weekly, every Thursday at 9AM ET (USA Eastern Time).
 
-To register for meetings please visit our [website](https://serverlessworkflow.io/) and click on the
-"Register for Weekly Project Meetings" button.
+To register for meetings please visit the [CNCF Community Calendar](https://tockify.com/cncf.public.events/monthly?search=serverless%20workflow).
+
 You can register for individual meetings or for the entire series.
 
-The meeting minutes can be accessed in [this document](https://docs.google.com/document/d/1SY9_n7vcRabmP8xELBP8lmwz14AscPzJq6AL86dbcCY).
+The meeting minutes can be accessed in [the discussions tab](https://github.com/serverlessworkflow/specification/discussions).
 
-World Time Zone Converter:
-http://www.thetimezoneconverter.com/?t=9:00%20am&tz=San%20Francisco&
+[World Time Zone Converter](http://www.thetimezoneconverter.com/?t=9:00%20am&tz=San%20Francisco&).
 
 ## Repository Structure
 

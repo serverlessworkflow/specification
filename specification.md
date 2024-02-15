@@ -23,6 +23,7 @@
     + [Using multiple data filters](#using-multiple-data-filters)
     + [Data Merging](#data-merging)
   * [Workflow Functions](#workflow-functions)
+    + [Using Functions for OpenAPI Service Invocations](#using-functions-for-openapi-service-invocations)
     + [Using Functions for RESTful Service Invocations](#using-functions-for-restful-service-invocations)
     + [Using Functions for Async API Service Invocations](#using-functions-for-async-api-service-invocations)
     + [Using Functions for RPC Service Invocations](#using-functions-for-rpc-service-invocations)
@@ -97,6 +98,7 @@
   * [Workflow Secrets](#workflow-secrets)
   * [Workflow Metadata](#workflow-metadata)
   * [Workflow Context](#workflow-context)
+  * [Naming Convention](#naming-convention)
 - [Extensions](#extensions)
 - [Use Cases](#use-cases)
 - [Examples](#examples)
@@ -211,7 +213,7 @@ unchanged throughout its execution.
 
 Workflow instances can be started providing some data input. This is described in detail in the 
 [workflow data input](#Workflow-Data-Input) section.
-Workflow instances can also wait for examples to start their execution, which is the case
+Workflow instances can also wait for events to start their execution, which is the case
 where a workflow definition contains a [EventState](#Event-State) starting workflow state.
 
 The workflow definition also explicitly defines when a workflow instance should be completed. 
@@ -539,6 +541,7 @@ and have the following action definition:
 {
 "actions":[
     {
+       "name": "fetch-items-to-buy",
        "functionRef": "breadAndPastaTypesFunction",
        "actionDataFilter": {
           "results": "${ [ .breads[0], .pasta[1] ] }",
@@ -647,18 +650,19 @@ a workflow with a single event state and show how data filters can be combined.
     "start": "WaitForCustomerToArrive",
     "states":[
          {
-            "name": "WaitForCustomerToArrive",
+            "name": "wait-for-customer-to-arrive",
             "type": "event",
             "onEvents": [{
-                "eventRefs": ["CustomerArrivesEvent"],
+                "eventRefs": ["customer-arrives-event"],
                 "eventDataFilter": {
                     "data": "${ .customer }",
                     "toStateData": "${ .customerInfo }"
                 },
                 "actions":[
                     {
+                        "name": "greet-customer",
                         "functionRef": {
-                            "refName": "greetingFunction",
+                            "refName": "greeting-function",
                             "arguments": {
                                 "greeting": "${ .hello.spanish } ",
                                 "customerName": "${ .customerInfo.name } "
@@ -680,12 +684,12 @@ a workflow with a single event state and show how data filters can be combined.
         }
     ],
     "events": [{
-        "name": "CustomerArrivesEvent",
+        "name": "customer-arrives-event",
         "type": "customer-arrival-type",
         "source": "customer-arrival-event-source"
      }],
     "functions": [{
-        "name": "greetingFunction",
+        "name": "greeting-function",
         "operation": "http://my.api.org/myapi.json#greeting"
     }]
 }
@@ -991,8 +995,9 @@ They can be referenced by their domain-specific names inside workflow [states](#
 
 Reference the following sections to learn more about workflow functions:
 
-* [Using functions for RESTful service invocations](#Using-Functions-for-RESTful-Service-Invocations)
-* [Using Functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
+* [Using functions for OpenAPI Service invocations](#using-functions-for-openapi-service-invocations)
++ [Using functions for RESTful Service Invocations](#using-functions-for-rest-service-invocations)
+* [Using functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
 * [Using Functions for OData Service Invocations](#Using-Functions-for-OData-Service-Invocations)
@@ -1002,7 +1007,7 @@ Reference the following sections to learn more about workflow functions:
 We can define if functions are invoked sync or async. Reference
 the [functionRef](#FunctionRef-Definition) to learn more on how to do this.
 
-#### Using Functions for RESTful Service Invocations
+#### Using Functions for OpenAPI Service Invocations
 
 [Functions](#Function-Definition) can be used to describe services and their operations that need to be invoked during
 workflow execution. They can be referenced by states [action definitions](#Action-Definition) to clearly
@@ -1030,7 +1035,7 @@ Here is an example function definition for a RESTful service operation.
 {
 "functions": [
   {
-    "name": "sendOrderConfirmation",
+    "name": "send-order-confirmation",
     "operation": "file://confirmationapi.json#sendOrderConfirmation"
   }
 ]
@@ -1044,20 +1049,178 @@ For example:
 {
 "states": [
   {
-      "name":"SendConfirmState",
+      "name":"send-confirm-state",
       "type":"operation",
       "actions":[
        {
-       "functionRef": "sendOrderConfirmation"
+       "functionRef": "send-order-confirmation"
       }],
       "end": true
   }]
 }
 ```
 
-Note that the referenced function definition type in this case must be `rest` (default type).
+Note that the referenced function definition type in this case must be `openapi` (default type).
 
 For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
+#### Using functions for RESTful Service Invocations
+
+The specification also supports describing REST invocations in the [functions definition](#Function-Definition) using [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object).
+
+Here is an example function definition for REST requests with method `GET` and request target corresponding with [URI Template](https://www.rfc-editor.org/rfc/rfc6570.html) `/users/{id}`:
+
+```json
+{
+  "functions":[
+    {
+      "name":"queryUserById",
+      "operation": {
+        "/users": {
+          "get": {
+            "parameters": [{
+              "name": "id",
+              "in": "path",
+              "required": true 
+            }]
+          }
+        }
+      },
+      "type":"rest"
+    }
+  ]
+}
+```
+
+Note that the [Function Definition](#Function-Definition)'s `operation` property must follow the [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object) specification definition.
+
+The function can be referenced during workflow execution when the invocation of the REST service is desired. For example:
+
+```json
+{
+  "states":[
+    {
+      "name":"QueryUserInfo",
+      "type":"operation",
+      "actions":[
+        {
+          "functionRef":"queryUserById",
+          "arguments":{
+            "id":"${ .user.id }"
+          }
+        }
+      ],
+      "end":true
+    }
+  ]
+}
+```
+
+Example of the `POST` request sending the state data as part of the body:
+
+```json
+{
+  "functions":[
+    {
+      "name": "createUser",
+      "type": "rest",
+      "operation": {
+        "/users": {
+          "post": {
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"                     
+                      },
+                      "email": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["name", "email"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+Note that the `requestBody` [`content` attribute](https://spec.openapis.org/oas/v3.1.0#fixed-fields-10) is described inline rather than a reference to an external document.
+
+You can reference the `createUser` function and filter the input data to invoke it. Given the workflow input data:
+
+```json
+{
+  "order":{
+    "id":"1234N",
+    "products":[
+      {
+        "name":"Product 1"
+      }
+    ]
+  },
+  "user":{
+    "name":"John Doe",
+    "email":"john@doe.com"
+  }
+}
+```
+
+Function invocation example:
+
+```json
+{
+  "states":[
+    {
+      "name":"CreateNewUser",
+      "type":"operation",
+      "actions":[
+        {
+          "functionRef":"createUser",
+          "actionDataFilter":{
+            "fromStateData":"${ .user }",
+            "toStateData":"${ .user.id }"
+          }
+        }
+      ],
+      "end":true
+    }
+  ]
+}
+```
+
+In this case, only the contents of the `user` attribute will be passed to the function. The user ID returned by the REST request body will then be added to the state data:
+
+```json
+{
+  "order":{
+    "id":"1234N",
+    "products":[
+      {
+        "name":"Product 1"
+      }
+    ]
+  },
+  "user":{
+    "id":"5678U",
+    "name":"John Doe",
+    "email":"john@doe.com"
+  }
+}
+```
+
+The specification does not support the [Security Requirement Object](https://spec.openapis.org/oas/v3.1.0#security-requirement-object) since its redundat to function [Auth Definition](#Auth-Definition). If provided, this field is ignored.
 
 #### Using Functions for Async API Service Invocations
 
@@ -1111,7 +1274,7 @@ To define a workflow action invocation, we can then use the following workflow [
 {
   "functions": [
   {
-    "name": "publishLightMeasurements",
+    "name": "publish-light-measurements",
     "operation": "file://streetlightsapi.yaml#onLightMeasured",
     "type": "asyncapi"
   }]
@@ -1130,13 +1293,13 @@ Our defined function definition can then we referenced in a workflow [action](#A
 
 ```json
 {
-  "name": "Publish Measurements",
+  "name": "publish-measurements",
   "type": "operation",
   "actions":[
     {
-      "name": "Publish Light Measurements",
+      "name": "publish-light-measurements",
       "functionRef":{
-        "refName": "publishLightMeasurements",
+        "refName": "publish-light-measurements",
         "arguments":{
           "id": "${ .currentLight.id }",
           "lumens": "${ .currentLight.lumens }",
@@ -1193,7 +1356,7 @@ In our workflow definition, we can then use function definitions:
 {
 "functions": [
   {
-    "name": "listUsers",
+    "name": "list-users",
     "operation": "file://myuserservice.proto#UserService#ListUsers",
     "type": "rpc"
   }
@@ -1252,7 +1415,7 @@ In our workflow definition, we can then use a function definition for the `pet` 
 {
   "functions": [
     {
-      "name": "getOnePet",
+      "name": "get-one-pet",
       "operation": "https://example.com/pets/graphql#query#pet",
       "type": "graphql"
     }
@@ -1270,7 +1433,7 @@ In order to invoke this query, we would use the following `functionRef` paramete
 
 ```json
 {
-  "refName": "getOnePet",
+  "refName": "get-one-pet",
   "arguments": {
     "id": 42
   },
@@ -1300,7 +1463,7 @@ Likewise, we would use the following function definition:
 {
   "functions": [
     {
-      "name": "createPet",
+      "name": "create-pet",
       "operation": "https://example.com/pets/graphql#mutation#createPet",
       "type": "graphql"
     }
@@ -1312,7 +1475,7 @@ With the parameters for the `functionRef`:
 
 ```json
 {
-  "refName": "createPet",
+  "refName": "create-pet",
   "arguments": {
     "pet": {
       "id": 43,
@@ -1342,7 +1505,7 @@ Note you can include [expressions](#Workflow-Expressions) in both `arguments` an
 
 ```json
 {
-  "refName": "getOnePet",
+  "refName": "get-one-pet",
   "arguments": {
     "id": "${ .petId }"
   },
@@ -1370,7 +1533,7 @@ We start off by creating a workflow [Functions Definitions](#Function-Definition
 {
 "functions": [
   {
-    "name": "queryPersons",
+    "name": "query-persons",
     "operation": "https://services.odata.org/V3/OData/OData.svc#Persons",
     "type": "odata"
   }
@@ -1391,7 +1554,7 @@ simply reference it in a workflow [Action Definition](#Action-Definition) and se
 
 ```json
 {
-  "refName": "queryPersons",
+  "refName": "query-persons",
   "arguments": {
     "queryOptions":{
       "expand": "PersonDetail/Person",
@@ -1423,12 +1586,12 @@ Let's take a look at an example of such definitions:
 {
 "functions": [
   {
-    "name": "isAdult",
+    "name": "is-adult",
     "operation": ".applicant | .age >= 18",
     "type": "expression"
   },
   {
-    "name": "isMinor",
+    "name": "is-minor",
     "operation": ".applicant | .age < 18",
     "type": "expression"
   }
@@ -1447,22 +1610,22 @@ Our expression function definitions can now be referenced by workflow states whe
 {
 "states":[
   {
-     "name":"CheckApplicant",
+     "name":"check-Applicant",
      "type":"switch",
      "dataConditions": [
         {
-          "name": "Applicant is adult",
-          "condition": "${ fn:isAdult }",
-          "transition": "ApproveApplication"
+          "name": "applicant-is-adult",
+          "condition": "${ fn:is-adult }",
+          "transition": "approve-application"
         },
         {
-          "name": "Applicant is minor",
-          "condition": "${ fn:isMinor }",
-          "transition": "RejectApplication"
+          "name": "applicant-is-minor",
+          "condition": "${ fn:is-minor }",
+          "transition": "reject-application"
         }
      ],
      "defaultCondition": {
-        "transition": "RejectApplication"
+        "transition": "reject-application"
      }
   }
 ]
@@ -1477,27 +1640,27 @@ Let's say we have the following workflow definition:
     "name": "simpleadd",
     "functions": [
         {
-            "name": "Increment Count Function",
+            "name": "increment-count-function",
             "type": "expression",
             "operation": ".count += 1 | .count"
         }
     ],
-    "start": "Initialize Count",
+    "start": "initialize-count",
     "states": [
         {
-            "name": "Initialize Count",
+            "name": "initialize-count",
             "type": "inject",
             "data": {
                 "count": 0
             },
-            "transition": "Increment Count"
+            "transition": "increment-count"
         },
         {
-            "name": "Increment Count",
+            "name": "increment-count",
             "type": "operation",
             "actions": [
                 {
-                    "functionRef": "Increment Count Function",
+                    "functionRef": "increment-count-function",
                     "actionDataFilter": {
                         "toStateData": "${ .count }"
                     }
@@ -1542,7 +1705,7 @@ defined in the specification. In those cases you can define a custom function ty
 {
 "functions": [
   {
-    "name": "sendOrderConfirmation",
+    "name": "send-order-confirmation",
     "operation": "/path/to/my/script/order.ts#myFunction",
     "type": "custom"
   }
@@ -1560,13 +1723,13 @@ Later, the function should be able to be used in an action as any other function
 ```json
 [{
   "states": [{
-      "name": "handleOrder",
+      "name": "handle-order",
       "type": "operation",
       "actions": [
         {
-          "name": "sendOrderConfirmation",
+          "name": "send-order-confirmation",
           "functionRef": {
-            "refName": "sendOrderConfirmation",
+            "refName": "send-order-confirmation",
             "arguments": {
               "order": "${ .order }"
             }
@@ -1654,7 +1817,7 @@ In our workflow model we can define our reusable expression function:
 {
 "functions": [
   {
-    "name": "IsAdultApplicant",
+    "name": "is-adult-applicant",
     "operation": ".applicant | .age > 18",
     "type": "expression"
   }
@@ -1670,7 +1833,7 @@ an inline expression that sets an input parameter inside an action for example:
 "actions": [
     {
         "functionRef": {
-            "refName": "confirmApplicant",
+            "refName": "confirm-applicant",
             "arguments": {
                 "applicantName": "${ .applicant.name }"
             }
@@ -1723,8 +1886,8 @@ We can now get back to our previously defined "IsAdultApplicant" expression func
 ```json
 {
   "dataConditions": [ {
-    "condition": "${ fn:IsAdultApplicant }",
-    "transition": "StartApplication"
+    "condition": "${ fn:is-adult-applicant }",
+    "transition": "start-application"
   }]
 }
 ```
@@ -1769,9 +1932,10 @@ definition "id" must be a constant value.
 | version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
+| dataOutputSchema | Used to validate the workflow data output against a defined JSON Schema| string or object | no |
 | [resources](#Workflow-Resources) | External resources imported by the workflow | array | no |
-| [constants](#Workflow-Constants) | Workflow constants | object | no |
-| [secrets](#Workflow-Secrets) | Workflow secrets | array | no |
+| [constants](#Workflow-Constants) | Workflow constants | string or object | no |
+| [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
 | [start](#Start-Definition) | Workflow start definition | string or object | no |
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
@@ -1860,22 +2024,33 @@ The `version` property can be used to provide a specific workflow version. It mu
 The `annotations` property defines a list of helpful terms describing the workflows intended purpose, subject areas, or other important qualities,
 for example "machine learning", "monitoring", "networking", etc
 
-The `dataInputSchema` property can be used to validate the workflow data input against a defined JSON Schema.
-This check should be done before any states are executed. `dataInputSchema` can have two different types.
-If it is an object type it has the following definition:
+The `dataInputSchema` and `dataOutputSchema` properties can be used to validate input and output data against a defined JSON Schema.
+
+The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). Validation should be performed before any states are executed. In case of
+a start [Event state](#Event-state) the input schema is ignored, if present. The `failOnValidationErrors` property  determines if workflow execution should continue in case of validation errors. 
+
+The `dataOutputSchema` property validates the [Workflow data output](#workflow-data-output). Validation is performed on the output of the workflow execution. 
+The `failOnValidationErrors` property determines what should be done when the workflow output does not match the provided schema. 
+If `failOnValidationErrors` is true, an error should be thrown. If executed within a subprocess, that error can be be handled by the parent workflow. 
+If `failOnValidationErrors` is false, the error should not be propagated. It is up to the implementor to warn the user about that fact. For example, printing a log. 
+
+Both properties can be expressed as object or string type. 
+
+If using object type, their `schema` property might be an URI, which points to the JSON schema used to validate the workflow data input, or it might be the JSON schema object. `failOnValidationErrors` is optional, default value is `true`.
+
+Example for Json schema reference
 
 ```json
 "dataInputSchema": {
-   "schema": "URL_to_json_schema",
+   "schema": "URI to json schema",
    "failOnValidationErrors": false
 }
 ```
 
-It's `schema` property can be an URI, which points to the JSON schema used to validate the workflow data input, or it can be the JSON schema object.
-If it's a JSON schema object, it has the following definition:
+Example for Json schema included in the workflow file
 
 ```json
-"dataInputSchema": {
+"dataOutputSchema": {
    "schema": {
      "title": "MyJSONSchema",
      "properties":{
@@ -1887,22 +2062,18 @@ If it's a JSON schema object, it has the following definition:
        }
      }
    },
-   "failOnValidationErrors": false
+   "failOnValidationErrors": true
 }
 
 ```
-It' `failOnValidationErrors` property  determines if workflow execution should continue in case of validation
-errors. The default value of `failOnValidationErrors` is `true`.
-If `dataInputSchema` has the string type, it has the following definition:
+
+If using string type, then the string value is the external schema URI and `failOnValidationErrors` default value of `true` is assumed.
+
+Example using string type
 
 ```json
-"dataInputSchema": "URL_to_json_schema"
+"dataInputSchema": "URI_to_json_schema"
 ```
-
-In this case the `failOnValidationErrors` default value of `true` is assumed.
-
-The `dataInputSchema` property validates the [workflow data input](#Workflow-Data-Input). In case of
-a starting [Event state](#Event-state), it is not used to validate its event payloads.
 
 The `secrets` property allows you to use sensitive information such as passwords, OAuth tokens, ssh keys, etc. inside your
 Workflow expressions.
@@ -1978,9 +2149,9 @@ If we have the following function definition:
 {
    "functions": [
       {
-         "name": "HelloWorldFunction",
+         "name": "hello-world-function",
          "operation": "https://secure.resources.com/myapi.json#helloWorld",
-         "authRef": "My Basic Auth"
+         "authRef": "my-basic-auth"
       }
    ]
 }
@@ -2018,7 +2189,7 @@ Here is an example of using external resource for function definitions:
 {
    "functions": [
       {
-         "name":"HelloWorldFunction",
+         "name":"hello-world-function",
          "operation":"file://myapi.json#helloWorld"
       }
    ]
@@ -2055,7 +2226,7 @@ Here is an example of using external resource for event definitions:
 {
    "events": [
       {
-         "name": "ApplicantInfo",
+         "name": "applicant-info",
          "type": "org.application.info",
          "source": "applicationssource",
          "correlation": [
@@ -2154,14 +2325,14 @@ Serverless Workflow defines the following Workflow States:
 
 ```json
 {
-"name": "MonitorVitals",
+"name": "monitor-vitals",
 "type": "event",
 "exclusive": true,
 "onEvents": [{
-        "eventRefs": ["HighBodyTemperature"],
+        "eventRefs": ["high-body-temperature"],
         "actions": [{
             "functionRef": {
-                "refName": "sendTylenolOrder",
+                "refName": "send-tylenol-order",
                 "arguments": {
                     "patientid": "${ .patientId }"
                 }
@@ -2169,10 +2340,10 @@ Serverless Workflow defines the following Workflow States:
         }]
     },
     {
-        "eventRefs": ["HighBloodPressure"],
+        "eventRefs": ["high-blood-pressure"],
         "actions": [{
             "functionRef": {
-                "refName": "callNurse",
+                "refName": "call-nurse",
                 "arguments": {
                     "patientid": "${ .patientId }"
                 }
@@ -2180,10 +2351,10 @@ Serverless Workflow defines the following Workflow States:
         }]
     },
     {
-        "eventRefs": ["HighRespirationRate"],
+        "eventRefs": ["high-respiration-rate"],
         "actions": [{
             "functionRef": {
-                "refName": "callPulmonologist",
+                "refName": "call-pulmonologist",
                 "arguments": {
                     "patientid": "${ .patientId }"
                 }
@@ -2206,24 +2377,24 @@ type: event
 exclusive: true
 onEvents:
 - eventRefs:
-  - HighBodyTemperature
+  - high-body-temperature
   actions:
   - functionRef:
-      refName: sendTylenolOrder
+      refName: send-tylenol-order
       arguments:
         patientid: "${ .patientId }"
 - eventRefs:
-  - HighBloodPressure
+  - high-blood-pressure
   actions:
   - functionRef:
-      refName: callNurse
+      refName: call-nurse
       arguments:
         patientid: "${ .patientId }"
 - eventRefs:
-  - HighRespirationRate
+  - high-respiration-rate
   actions:
   - functionRef:
-      refName: callPulmonologist
+      refName: call-pulmonologist
       arguments:
         patientid: "${ .patientId }"
 end:
@@ -2277,7 +2448,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique State name | string | yes |
+| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | type | State type | string | yes |
 | actionMode | Should actions be performed sequentially or in parallel. Default is `sequential`  | enum | no |
 | [actions](#Action-Definition) | Actions to be performed | array | yes |
@@ -2303,13 +2474,13 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ```json
 {
-    "name": "RejectApplication",
+    "name": "reject-application",
     "type": "operation",
     "actionMode": "sequential",
     "actions": [
         {
             "functionRef": {
-                "refName": "sendRejectionEmailFunction",
+                "refName": "send-rejection-email-function",
                 "arguments": {
                     "customer": "${ .customer }"
                 }
@@ -2324,12 +2495,12 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 <td valign="top">
 
 ```yaml
-name: RejectApplication
+name: reject-application
 type: operation
 actionMode: sequential
 actions:
 - functionRef:
-    refName: sendRejectionEmailFunction
+    refName: send-rejection-email-function
     arguments:
       customer: "${ .customer }"
 end: true
@@ -2352,7 +2523,7 @@ the [Workflow Timeouts](#Workflow-Timeouts) section.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique State name | string | yes |
+| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | type | State type | string | yes |
 | [dataConditions](#Switch-state-Data-Conditions) | Defined if the Switch state evaluates conditions and transitions based on state data. | array | yes (if `eventConditions` is not defined) |
 | [eventConditions](#Switch-State-Event-Conditions) | Defined if the Switch state evaluates conditions and transitions based on arrival of events. | array | yes (if `dataConditions` is not defined |
@@ -2377,23 +2548,23 @@ the [Workflow Timeouts](#Workflow-Timeouts) section.
 
 ```json
 {
-     "name":"CheckVisaStatus",
+     "name":"check-visa-status",
      "type":"switch",
      "eventConditions": [
         {
-          "eventRef": "visaApprovedEvent",
-          "transition": "HandleApprovedVisa"
+          "eventRef": "visa-approved-event",
+          "transition": "handle-approved-visa"
         },
         {
-          "eventRef": "visaRejectedEvent",
-          "transition": "HandleRejectedVisa"
+          "eventRef": "visa-rejected-event",
+          "transition": "handle-rejected-visa"
         }
      ],
      "timeouts": {
        "eventTimeout": "PT1H"
      },
      "defaultCondition": {
-        "transition": "HandleNoVisaDecision"
+        "transition": "handle-no-visa-decision"
      }
 }
 ```
@@ -2402,17 +2573,17 @@ the [Workflow Timeouts](#Workflow-Timeouts) section.
 <td valign="top">
 
 ```yaml
-name: CheckVisaStatus
+name: check-visa-status
 type: switch
 eventConditions:
-- eventRef: visaApprovedEvent
-  transition: HandleApprovedVisa
-- eventRef: visaRejectedEvent
-  transition: HandleRejectedVisa
+- eventRef: visa-approved-event
+  transition: handle-approved-visa
+- eventRef: visa-rejected-event
+  transition: handle-rejected-visa
 timeouts:
   eventTimeout: PT1H
 defaultCondition:
-  transition: HandleNoVisaDecision
+  transition: handle-no-visa-decision
 ```
 
 </td>
@@ -2451,9 +2622,9 @@ The `timeouts` property can be used to define state specific timeout settings. S
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique State name | string | yes |
+| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | type | State type | string | yes |
-| duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | string | yes |
+| duration | Duration (ISO 8601 literal duration or an expression which evaluation results in an ISO 8601 duration) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes), or $CONST.timeout, where timeout value is "PT15M" | string | yes |
 | [transition](#Transitions) | Next transition of the workflow after the sleep | string or object | yes (if `end` is not defined) |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
 
@@ -2470,10 +2641,10 @@ The `timeouts` property can be used to define state specific timeout settings. S
 
 ```json
 {
-      "name": "SleepFiveSeconds",
+      "name": "sleep-five-seconds",
       "type": "sleep",
       "duration": "PT5S",
-      "transition": "GetJobStatus"
+      "transition": "get-job-status"
 }
 ```
 
@@ -2481,10 +2652,10 @@ The `timeouts` property can be used to define state specific timeout settings. S
 <td valign="top">
 
 ```yaml
-name: SleepFiveSeconds
+name: sleep-five-seconds
 type: sleep
 duration: PT5S
-transition: GetJobStatus
+transition: get-job-status
 ```
 
 </td>
@@ -2495,14 +2666,14 @@ transition: GetJobStatus
 
 Sleep state 
 suspends workflow execution for a given time duration. The delay is defined in its `duration` property using the ISO 8601 
-duration format.
+duration format. Note that ISO 8601 can be the result of evaluating an expression. 
 
 Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 ##### Parallel State
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique State name | string | yes |
+| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | type | State type | string | yes |
 | [branches](#Parallel-State-Branch) | List of branches for this parallel state| array | yes |
 | completionType | Option types on how to complete branch execution. Default is "allOf" | enum | no |
@@ -2529,16 +2700,16 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ```json
  {
-     "name":"ParallelExec",
+     "name":"parallel-exec",
      "type":"parallel",
      "completionType": "allOf",
      "branches": [
         {
-          "name": "Branch1",
+          "name": "branch-1",
           "actions": [
             {
                 "functionRef": {
-                    "refName": "functionNameOne",
+                    "refName": "function-name-one",
                     "arguments": {
                         "order": "${ .someParam }"
                     }
@@ -2547,11 +2718,11 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
         ]
         },
         {
-          "name": "Branch2",
+          "name": "branch-2",
           "actions": [
               {
                   "functionRef": {
-                      "refName": "functionNameTwo",
+                      "refName": "function-name-two",
                       "arguments": {
                           "order": "${ .someParam }"
                       }
@@ -2568,20 +2739,20 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 <td valign="top">
 
 ```yaml
-name: ParallelExec
+name: parallel-exec
 type: parallel
 completionType: allOf
 branches:
-- name: Branch1
+- name: branch-1
   actions:
   - functionRef:
-      refName: functionNameOne
+      refName: function-name-one
       arguments:
         order: "${ .someParam }"
-- name: Branch2
+- name: branch-2
   actions:
   - functionRef:
-      refName: functionNameTwo
+      refName: function-name-two
       arguments:
         order: "${ .someParam }"
 end: true
@@ -2616,7 +2787,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique State name | string | yes |
+| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | type | State type | string | yes |
 | data | JSON object which can be set as state's data input and can be manipulated via filter | object | yes |
 | [stateDataFilter](#state-data-filters) | State data filter | object | no |
@@ -2639,12 +2810,12 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ```json
 {
-     "name":"Hello",
+     "name":"hello",
      "type":"inject",
      "data": {
         "result": "Hello"
      },
-     "transition": "World"
+     "transition": "world"
 }
 ```
 
@@ -2652,11 +2823,11 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 <td valign="top">
 
 ```yaml
-name: Hello
+name: hello
 type: inject
 data:
   result: Hello
-transition: World
+transition: world
 ```
 
 </td>
@@ -2685,7 +2856,7 @@ as data output to the transition state:
 
   ```json
   {
-   "name":"SimpleInjectState",
+   "name":"simple-inject-state",
    "type":"inject",
    "data": {
       "person": {
@@ -2695,7 +2866,7 @@ as data output to the transition state:
         "age": 40
       }
    },
-   "transition": "GreetPersonState"
+   "transition": "greet-person-state"
   }
   ```
 
@@ -2703,7 +2874,7 @@ as data output to the transition state:
 <td valign="top">
 
 ```yaml
-  name: SimpleInjectState
+  name: simple-inject-state
   type: inject
   data:
     person:
@@ -2711,7 +2882,7 @@ as data output to the transition state:
       lname: Doe
       address: 1234 SomeStreet
       age: 40
-  transition: GreetPersonState
+  transition: greet-person-state
 ```
 
 </td>
@@ -2747,7 +2918,7 @@ You can also use the filter property to filter the state data after data is inje
 
 ```json
   {
-     "name":"SimpleInjectState",
+     "name":"simple-inject-state",
      "type":"inject",
      "data": {
         "people": [
@@ -2774,7 +2945,7 @@ You can also use the filter property to filter the state data after data is inje
      "stateDataFilter": {
         "output": "${ {people: [.people[] | select(.age < 40)]} }"
      },
-     "transition": "GreetPersonState"
+     "transition": "greet-person-state"
     }
 ```
 
@@ -2782,7 +2953,7 @@ You can also use the filter property to filter the state data after data is inje
 <td valign="top">
 
 ```yaml
-  name: SimpleInjectState
+  name: simple-inject-state
   type: inject
   data:
     people:
@@ -2800,7 +2971,7 @@ You can also use the filter property to filter the state data after data is inje
       age: 30
   stateDataFilter:
     output: "${ {people: [.people[] | select(.age < 40)]} }"
-  transition: GreetPersonState
+  transition: greet-person-state
 ```
 
 </td>
@@ -2842,7 +3013,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique State name | string | yes |
+| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | type | State type | string | yes |
 | inputCollection | Workflow expression selecting an array element of the states data | string | yes |
 | outputCollection | Workflow expression specifying an array element of the states data to add the results of each iteration | string | no |
@@ -2872,7 +3043,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ```json
 {
-    "name": "ProvisionOrdersState",
+    "name": "provision-orders-state",
     "type": "foreach",
     "inputCollection": "${ .orders }",
     "iterationParam": "singleorder",
@@ -2880,7 +3051,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
     "actions": [
         {
             "functionRef": {
-                "refName": "provisionOrderFunction",
+                "refName": "provision-order-function",
                 "arguments": {
                     "order": "${ $singleorder }"
                 }
@@ -2894,14 +3065,14 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 <td valign="top">
 
 ```yaml
-name: ProvisionOrdersState
+name: provision-orders-state
 type: foreach
 inputCollection: "${ .orders }"
 iterationParam: "singleorder"
 outputCollection: "${ .provisionresults }"
 actions:
 - functionRef:
-    refName: provisionOrderFunction
+    refName: provision-order-function
     arguments:
       order: "${ $singleorder }"
 ```
@@ -2984,16 +3155,16 @@ and our workflow is defined as:
   "name": "SendConfirmationForCompletedOrders",
   "version": "1.0.0",
   "specVersion": "0.8",
-  "start": "SendConfirmState",
+  "start": "send-confirm-state",
   "functions": [
   {
-    "name": "sendConfirmationFunction",
+    "name": "send-confirmation-function",
     "operation": "file://confirmationapi.json#sendOrderConfirmation"
   }
   ],
   "states": [
   {
-      "name":"SendConfirmState",
+      "name":"send-confirm-state",
       "type":"foreach",
       "inputCollection": "${ [.orders[] | select(.completed == true)] }",
       "iterationParam": "completedorder",
@@ -3001,7 +3172,7 @@ and our workflow is defined as:
       "actions":[
       {
        "functionRef": {
-         "refName": "sendConfirmationFunction",
+         "refName": "send-confirmation-function",
          "arguments": {
            "orderNumber": "${ $completedorder.orderNumber }",
            "email": "${ $completedorder.email }"
@@ -3021,19 +3192,19 @@ id: sendConfirmWorkflow
 name: SendConfirmationForCompletedOrders
 version: '1.0.0'
 specVersion: '0.8'
-start: SendConfirmState
+start: send-confirm-state
 functions:
-- name: sendConfirmationFunction
+- name: send-confirmation-function
   operation: file://confirmationapi.json#sendOrderConfirmation
 states:
-- name: SendConfirmState
+- name: send-confirm-state
   type: foreach
   inputCollection: "${ [.orders[] | select(.completed == true)] }"
   iterationParam: completedorder
   outputCollection: "${ .confirmationresults }"
   actions:
   - functionRef:
-      refName: sendConfirmationFunction
+      refName: send-confirmation-function
       arguments:
         orderNumber: "${ $completedorder.orderNumber }"
         email: "${ $completedorder.email }"
@@ -3086,7 +3257,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique State name | string | yes |
+| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | type | State type | string | yes |
 | [action](#Action-Definition) | Defines the action to be executed | object | yes |
 | eventRef | References an unique callback event name in the defined workflow [events](#Event-Definition) | string | yes |
@@ -3096,7 +3267,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | [onErrors](#Error-Definition) | States error handling and retries definitions | array | no |
 | [transition](#Transitions) | Next transition of the workflow after callback event has been received | string or object | yes (if `end` is not defined) |
 | [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
-| [compensatedBy](#Workflow-Compensation) | Uniaue name of a workflow state which is responsible for compensation of this state | string | no |
+| [compensatedBy](#Workflow-Compensation) | Unique name of a workflow state which is responsible for compensation of this state | string | no |
 | [usedForCompensation](#Workflow-Compensation) | If `true`, this state is used to compensate another state. Default is `false` | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information| object | no |
 
@@ -3113,21 +3284,21 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ```json
 {
-        "name": "CheckCredit",
+        "name": "check-credit",
         "type": "callback",
         "action": {
             "functionRef": {
-                "refName": "callCreditCheckMicroservice",
+                "refName": "call-credit-check-microservice",
                 "arguments": {
                     "customer": "${ .customer }"
                 }
             }
         },
-        "eventRef": "CreditCheckCompletedEvent",
+        "eventRef": "credit-check-completed-event",
         "timeouts": {
           "stateExecTimeout": "PT15M"
         },
-        "transition": "EvaluateDecision"
+        "transition": "evaluate-decision"
 }
 ```
 
@@ -3135,17 +3306,17 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 <td valign="top">
 
 ```yaml
-name: CheckCredit
+name: check-credit
 type: callback
 action:
   functionRef:
-    refName: callCreditCheckMicroservice
+    refName: call-credit-check-microservice
     arguments:
       customer: "${ .customer }"
-eventRef: CreditCheckCompletedEvent
+eventRef: credit-check-completed-event
 timeouts:
   stateExecTimeout: PT15M
-transition: EvaluateDecision
+transition: evaluate-decision
 ```
 
 </td>
@@ -3187,11 +3358,24 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique function name | string | yes |
-| operation | If type is `rest`, <path_to_openapi_definition>#<operation_id>. If type is `asyncapi`, <path_to_asyncapi_definition>#<operation_id>. If type is `rpc`, <path_to_grpc_proto_file>#<service_name>#<service_method>. If type is `graphql`, <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name>. If type is `odata`, <URI_to_odata_service>#<Entity_Set_Name>. If type is `expression`, defines the workflow expression. | string | yes |
-| type | Defines the function type. Can be either `rest`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `rest` | enum | no |
+| name | Unique function name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| operation | See the table "Function Operation description by type" below. | string or object | yes |
+| type | Defines the function type. Can be either `rest`, `openapi`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `openapi` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
+
+Function Operation description by type:
+
+| Type | Operation Description |
+| ---- | --------- |
+| `openapi` | <path_to_openapi_definition>#<operation_id> |
+| `rest` | [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object) definition  |
+| `asyncapi` | <path_to_asyncapi_definition>#<operation_id> |
+| `rpc` | <path_to_grpc_proto_file>#<service_name>#<service_method> |
+| `graphql` | <url_to_graphql_endpoint>#<literal \"mutation\" or \"query\">#<query_or_mutation_name> |
+| `odata` | <URI_to_odata_service>#<Entity_Set_Name> |
+| `expression` | defines the workflow expression |
+| `custom` | see [Defining custom function types](#defining-custom-function-types)
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -3206,7 +3390,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 
 ```json
 {
-   "name": "HelloWorldFunction",
+   "name": "hello-world-function",
    "operation": "https://hellworldservice.api.com/api.json#helloWorld"
 }
 ```
@@ -3215,7 +3399,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 <td valign="top">
 
 ```yaml
-name: HelloWorldFunction
+name: hello-world-function
 operation: https://hellworldservice.api.com/api.json#helloWorld
 ```
 
@@ -3227,12 +3411,14 @@ operation: https://hellworldservice.api.com/api.json#helloWorld
 
 The `name` property defines an unique name of the function definition.
 
-The `type` property defines the function type. Its value can be either `rest` or `expression`. Default value is `rest`.
+The `type` enum property defines the function type. Its value can be either `rest`, `openapi` or `expression`. Default value is `openapi`.
 
 Depending on the function `type`, the `operation` property can be:
 
-* If `type` is `rest`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
+* If `type` is `openapi`, a combination of the function/service OpenAPI definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
   For example `https://petstore.swagger.io/v2/swagger.json#getPetById`.
+* If `type` is `rest`, an object definition of the [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object).
+  For example, see [Using Functions for RESTful Service Invocations](#using-functions-for-rest-service-invocations).
 * If `type` is `asyncapi`, a combination of the AsyncApi definition document URI and the particular service operation that needs to be invoked, separated by a '#'.
   For example `file://streetlightsapi.yaml#onLightMeasured`.
 * If `type` is `rpc`, a combination of the gRPC proto document URI and the particular service name and service method name that needs to be invoked, separated by a '#'.
@@ -3317,7 +3503,7 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique event name | string | yes |
+| name | Unique event name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | source | CloudEvent source. If not set when `kind` is `produced`, runtimes are expected to use a default value, such as https://serverlessworkflow.io in order to comply with the [CloudEvent spec constraints](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1))| string | yes (if `type` is not defined. |
 | type | CloudEvent type | string | yes (if `source` is not defined) |
 | kind | Defines the event is either `consumed` or `produced` by the workflow. Default is `consumed` | enum | no |
@@ -3338,7 +3524,7 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
 
 ```json
 {
-   "name": "ApplicantInfo",
+   "name": "applicant-info",
    "type": "org.application.info",
    "source": "applicationssource",
    "kind": "consumed",
@@ -3354,7 +3540,7 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
 <td valign="top">
 
 ```yaml
-name: ApplicantInfo
+name: applicant-info
 type: org.application.info
 source: applicationssource
 kind: consumed
@@ -3442,7 +3628,7 @@ type that have the **same** value of the `patientId` property to be correlated t
 {
 "events": [
  {
-  "name": "HeartRateReadingEvent",
+  "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
   "kind": "consumed",
@@ -3467,7 +3653,7 @@ and we want to make sure that both are correlated, as in the above example, with
 {
 "events": [
  {
-  "name": "HeartRateReadingEvent",
+  "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
   "kind": "consumed",
@@ -3478,7 +3664,7 @@ and we want to make sure that both are correlated, as in the above example, with
   ]
  },
  {
-   "name": "BloodPressureReadingEvent",
+   "name": "blood-pressure-reading-event",
    "source": "hospitalMonitorSystem",
    "type": "com.hospital.patient.bloodPressureMonitor",
    "kind": "consumed",
@@ -3499,7 +3685,7 @@ on comparing it to custom defined values (string, or expression). For example:
 {
 "events": [
  {
-  "name": "HeartRateReadingEvent",
+  "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
   "kind": "consumed",
@@ -3535,7 +3721,9 @@ It can be used for both the retrieval of the function's resource (as defined by 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique auth definition name | string | yes |
+| name | Unique auth definition name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| scheme | Auth scheme, can be "basic", "bearer", or "oauth2". Default is "basic" | enum | yes |
+| name | Unique auth definition name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | scheme | Auth scheme, can be "basic", "bearer", or "oauth2". Default is "basic" | enum | no |
 | properties | Auth scheme properties. Can be one of ["Basic properties definition"](#basic-properties-definition), ["Bearer properties definition"](#bearer-properties-definition), or ["OAuth2 properties definition"](#oauth2-properties-definition) | object | yes |
 
@@ -3661,10 +3849,10 @@ The `contextAttributeValue` property defines the value of the defined CloudEvent
 
 ```json
 {
-    "eventRefs": ["HighBodyTemperature"],
+    "eventRefs": ["high-body-temperature"],
     "actions": [{
         "functionRef": {
-            "refName": "sendTylenolOrder",
+            "refName": "send-tylenol-order",
             "arguments": {
                 "patientid": "${ .patientId }"
             }
@@ -3678,10 +3866,10 @@ The `contextAttributeValue` property defines the value of the defined CloudEvent
 
 ```yaml
 eventRefs:
-- HighBodyTemperature
+- high-body-temperature
 actions:
 - functionRef:
-    refName: sendTylenolOrder
+    refName: send-tylenol-order
     arguments:
       patientid: "${ .patientId }"
 ```
@@ -3707,10 +3895,10 @@ Let's look at the following JSON definition of 'onEvents' to show this:
 ```json
 {
 	"onEvents": [{
-		"eventRefs": ["HighBodyTemperature", "HighBloodPressure"],
+		"eventRefs": ["high-body-temperature", "high-blood-pressure"],
 		"actions": [{
 				"functionRef": {
-					"refName": "SendTylenolOrder",
+					"refName": "send-tylenol-order",
 					"arguments": {
 						"patient": "${ .patientId }"
 					}
@@ -3718,7 +3906,7 @@ Let's look at the following JSON definition of 'onEvents' to show this:
 			},
 			{
 				"functionRef": {
-					"refName": "CallNurse",
+					"refName": "call-nurse",
 					"arguments": {
 						"patient": "${ .patientId }"
 					}
@@ -3745,7 +3933,7 @@ This is visualized in the diagram below:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Unique Action name | string | no |
+| name | Unique Action name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object or string | yes (if `eventRef` & `subFlowRef` are not defined) |
 | [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes (if `functionRef` & `subFlowRef` are not defined) |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes (if `eventRef` & `functionRef` are not defined) |
@@ -3769,9 +3957,9 @@ This is visualized in the diagram below:
 
 ```json
 {
-    "name": "Finalize Application Action",
+    "name": "finalize-application-action",
     "functionRef": {
-        "refName": "finalizeApplicationFunction",
+        "refName": "finalize-application-function",
         "arguments": {
             "applicantid": "${ .applicantId }"
         }
@@ -3783,9 +3971,9 @@ This is visualized in the diagram below:
 <td valign="top">
 
 ```yaml
-name: Finalize Application Action
+name: finalize-application-action
 functionRef:
-  refName: finalizeApplicationFunction
+  refName: finalize-application-function
   arguments:
     applicantid: "${ .applicantId }"
 ```
@@ -3815,8 +4003,8 @@ referenced `produced` event via its `produceEventRef` property and a `consumed` 
 
 The `sleep` property can be used to define time periods that workflow execution should sleep
 before and/or after function execution. It can have two properties:
-* `before` - defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
-* `after` - defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
+* `before` - defines the amount of time (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep before function invocation.
+* `after` - defines the amount of time (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep after function invocation.
 
 Function invocation timeouts should be handled via the states [timeouts](#Workflow-Timeouts) definition.
 
@@ -3861,7 +4049,7 @@ If `string` type, it defines the name of the referenced [function](#Function-Def
 This can be used as a short-cut definition when you don't need to define any other parameters, for example:
 
 ```json
-"functionRef": "myFunction"
+"functionRef": "my-function"
 ```
 
 Note that if used with `string` type, the invocation of the function is synchronous.
@@ -3871,7 +4059,7 @@ it with its `object` type which has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| refName | Name of the referenced [function](#Function-Definition) | string | yes |
+| refName | Name of the referenced [function](#Function-Definition). Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | arguments | Arguments (inputs) to be passed to the referenced function | object | yes (if function type is `graphql`, otherwise no) |
 | selectionSet | Used if function type is `graphql`. String containing a valid GraphQL [selection set](https://spec.graphql.org/June2018/#sec-Selection-Sets) | string | yes (if function type is `graphql`, otherwise no) |
 | invoke | Specifies if the function should be invoked `sync` or `async`. Default is `sync` | enum | no |
@@ -3889,7 +4077,7 @@ it with its `object` type which has the following properties:
 
 ```json
 {
-    "refName": "finalizeApplicationFunction",
+    "refName": "finalize-application-function",
     "arguments": {
         "applicantid": "${ .applicantId }"
     }
@@ -3900,7 +4088,7 @@ it with its `object` type which has the following properties:
 <td valign="top">
 
 ```yaml
-refName: finalizeApplicationFunction
+refName: finalize-application-function
 arguments:
   applicantid: "${ .applicantId }"
 ```
@@ -3918,7 +4106,7 @@ Here is an example of using the `arguments` property:
 
 ```json
 {
-   "refName": "checkFundsAvailabe",
+   "refName": "check-funds-available",
    "arguments": {
      "account": {
        "id": "${ .accountId }"
@@ -3944,9 +4132,9 @@ Allows defining invocation of a function via event.
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition | string | yes |
-| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition | string | no |
-| consumeEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
+| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | no |
+| consumeEventTimeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
 | data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 | invoke | Specifies if the function should be invoked sync or async. Default is sync | enum | no |
@@ -3965,9 +4153,9 @@ Allows defining invocation of a function via event.
 ```json
 {
    "eventRef": {
-      "produceEventRef": "MakeVetAppointment",
+      "produceEventRef": "make-vet-appointment",
       "data": "${ .patientInfo }",
-      "consumeEventRef":  "VetAppointmentInfo"
+      "consumeEventRef":  "vet-appointment-info"
    }
 }
 ```
@@ -3977,9 +4165,9 @@ Allows defining invocation of a function via event.
 
 ```yaml
 eventRef:
-  produceEventRef: MakeVetAppointment
+  produceEventRef: make-vet-appointment
   data: "${ .patientInfo }"
-  consumeEventRef: VetAppointmentInfo
+  consumeEventRef: vet-appointment-info
 ```
 
 </td>
@@ -3996,7 +4184,7 @@ to be used as payload of the event referenced by `produceEventRef`. If it is of 
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
 to the trigger/produced event.
 
-The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
+The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format literal or expression) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
 If the event defined by the `consumeEventRef` property is not received in that set time, action invocation should raise an error
 that can be handled in the states `onErrors` definition. In case the `consumeEventRef` is not defined, the `consumeEventTimeout` property is ignored.
 
@@ -4153,12 +4341,12 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique retry strategy name | string | yes |
-| delay | Time delay between retry attempts (ISO 8601 duration format) | string | no |
+| delay | Time delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 | maxAttempts | Maximum number of retry attempts. Value of 1 means no retries are performed | string or number | yes |
-| maxDelay | Maximum amount of delay between retry attempts (ISO 8601 duration format) | string | no |
-| increment | Static duration which will be added to the delay between successive retries (ISO 8601 duration format) | string | no |
+| maxDelay | Maximum amount of delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| increment | Static duration which will be added to the delay between successive retries (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 | multiplier | Float value by which the delay is multiplied before each attempt. For example: "1.2" meaning that each successive delay is 20% longer than the previous delay.  For example, if delay is 'PT10S', then the delay between the first and second attempts will be 10 seconds, and the delay before the third attempt will be 12 seconds. | float or string | no |
-| jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format) | float or string | no |
+| jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | float or string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4173,7 +4361,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 
 ```json
 {
-   "name": "TimeoutRetryStrat",
+   "name": "timeout-retry-strat",
    "delay": "PT2M",
    "maxAttempts": 3,
    "jitter": "PT0.001S"
@@ -4184,7 +4372,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 <td valign="top">
 
 ```yaml
-name: TimeoutRetryStrat
+name: timeout-retry-strat
 delay: PT2M
 maxAttempts: 3
 jitter: PT0.001S
@@ -4202,14 +4390,14 @@ defined state [actions](#Action-Definition).
 The `name` property specifies the unique name of the retry definition (strategy). This unique name
 can be referred by workflow states [error definitions](#Error-Definition).
 
-The `delay` property specifies the initial time delay between retry attempts (ISO 8601 duration format).
+The `delay` property specifies the initial time delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration).
 
-The `increment` property specifies a static duration which will be added to the delay between successive retries.
+The `increment` property specifies a duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) which will be added to the delay between successive retries.
 To explain this better, let's say we have the following retry definition:
 
 ```json
 {
-  "name": "Timeout Errors Strategy",
+  "name": "timeout-errors-strategy",
   "delay": "PT10S",
   "increment": "PT2S",
   "maxAttempts": 4
@@ -4224,7 +4412,7 @@ To explain this better, let's say we have the following retry definition:
 
 ```json
 {
-  "name": "Timeout Errors Strategy",
+  "name": "timeout-errors-strategy",
   "delay": "PT10S",
   "multiplier": 2,
   "maxAttempts": 4
@@ -4254,7 +4442,7 @@ a `jitter` value of 0.3, a random amount of time between 0 and 1.8 (0.3 times 6)
 from the calculated delay. 
 
 Alternatively, `jitter` may be defined as an absolute value specified as an ISO
-8601 duration. This way, the maximum amount of random time added is fixed and
+8601 duration (literal or expression). This way, the maximum amount of random time added is fixed and
 will not increase as new attempts are made.
 
 The `maxDelay` property determines the maximum amount of delay that is desired between retry attempts, and is applied
@@ -4264,7 +4452,7 @@ To explain this better, let's say we have the following retry definition:
 
 ```json
 {
-  "name": "Timeout Errors Strategy",
+  "name": "timeout-errors-strategy",
   "delay": "PT10S",
   "maxDelay": "PT100S",
   "multiplier": 4,
@@ -4288,7 +4476,7 @@ If `string`, it defines the name of the state to transition to.
 This can be used as a short-cut definition when you don't need to define any other parameters, for example:
 
 ```json
-"transition": "myNextState"
+"transition": "my-next-state"
 ```
 
 If you need to define additional parameters in your `transition` definition, you can define
@@ -4314,10 +4502,10 @@ it with its `object` type which has the following properties:
 ```json
 {
    "produceEvents": [{
-       "eventRef": "produceResultEvent",
+       "eventRef": "produce-result-event",
        "data": "${ .result.data }"
    }],
-   "nextState": "EvalResultState"
+   "nextState": "eval-result-state"
 }
 ```
 
@@ -4326,9 +4514,9 @@ it with its `object` type which has the following properties:
 
 ```yaml
 produceEvents:
-- eventRef: produceResultEvent
+- eventRef: produce-result-event
   data: "${ .result.data }"
-nextState: EvalResultState
+nextState: eval-result-state
 ```
 
 </td>
@@ -4348,7 +4536,7 @@ Transitions allow you to move from one state (control-logic block) to another. F
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Data condition name | string | no |
+| name | Data condition name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | [condition](#Workflow-Expressions) | Workflow expression evaluated against state data. Must evaluate to `true` or `false` | string | yes |
 | [transition](#Transitions) | Transition to another state if condition is `true` | string or object | yes (if `end` is not defined) |
 | [end](#End-Definition) | End workflow execution if condition is `true` | boolean or object | yes (if `transition` is not defined) |
@@ -4367,9 +4555,9 @@ Transitions allow you to move from one state (control-logic block) to another. F
 
 ```json
 {
-      "name": "Eighteen or older",
+      "name": "eighteen-or-older",
       "condition": "${ .applicant | .age >= 18 }",
-      "transition": "StartApplication"
+      "transition": "start-application"
 }
 ```
 
@@ -4377,9 +4565,9 @@ Transitions allow you to move from one state (control-logic block) to another. F
 <td valign="top">
 
 ```yaml
-name: Eighteen or older
+name: eighteen-or-older
 condition: "${ .applicant | .age >= 18 }"
-transition: StartApplication
+transition: start-application
 ```
 
 </td>
@@ -4401,7 +4589,7 @@ definitions are mutually exclusive, meaning that you can specify either one or t
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Event condition name | string | no |
+| name | Event condition name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | eventRef | References an unique event name in the defined workflow events | string | yes |
 | [transition](#Transitions) | Transition to another state if condition is `true` | string or object | yes (if `end` is not defined) |
 | [end](#End-Definition) | End workflow execution if condition is `true` | boolean or object | yes (if `transition` is not defined) |
@@ -4421,9 +4609,9 @@ definitions are mutually exclusive, meaning that you can specify either one or t
 
 ```json
 {
-      "name": "Visa approved",
-      "eventRef": "visaApprovedEvent",
-      "transition": "HandleApprovedVisa"
+      "name": "visa-approved",
+      "eventRef": "visa-approved-event",
+      "transition": "handle-approved-visa"
 }
 ```
 
@@ -4431,9 +4619,9 @@ definitions are mutually exclusive, meaning that you can specify either one or t
 <td valign="top">
 
 ```yaml
-name: Visa approved
-eventRef: visaApprovedEvent
-transition: HandleApprovedVisa
+name: visa-approved
+eventRef: visa-approved-event
+transition: handle-approved-visa
 ```
 
 </td>
@@ -4458,7 +4646,7 @@ definitions are mutually exclusive, meaning that you can specify either one or t
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| name | Branch name | string | yes |
+| name | Branch name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | [actions](#Action-Definition) | Actions to be executed in this branch | array | yes |
 | [timeouts](#Workflow-Timeouts) | Branch specific timeout settings | object | no |
 
@@ -4475,11 +4663,11 @@ definitions are mutually exclusive, meaning that you can specify either one or t
 
 ```json
 {
-      "name": "Branch1",
+      "name": "branch-1",
       "actions": [
           {
               "functionRef": {
-                  "refName": "functionNameOne",
+                  "refName": "function-name-one",
                   "arguments": {
                       "order": "${ .someParam }"
                   }
@@ -4487,7 +4675,7 @@ definitions are mutually exclusive, meaning that you can specify either one or t
           },
           {
               "functionRef": {
-                  "refName": "functionNameTwo",
+                  "refName": "function-name-two",
                   "arguments": {
                       "order": "${ .someParamTwo }"
                   }
@@ -4501,14 +4689,14 @@ definitions are mutually exclusive, meaning that you can specify either one or t
 <td valign="top">
 
 ```yaml
-name: Branch1
+name: branch-1
 actions:
 - functionRef:
-    refName: functionNameOne
+    refName: function-name-one
     arguments:
       order: "${ .someParam }"
 - functionRef:
-    refName: functionNameTwo
+    refName: function-name-two
     arguments:
       order: "${ .someParamTwo }"
 ```
@@ -4556,7 +4744,7 @@ For more information, see the [Workflow Error Handling](#Workflow-Error-Handling
 Can be either `string` or `object` type. If type string, it defines the name of the workflow starting state.
 
 ```json
-"start": "MyStartingState"
+"start": "my-starting-state"
 ```
 
 In this case it's assumed that the `schedule` property is not defined.
@@ -4565,7 +4753,7 @@ If the start definition is of type `object`, it has the following structure:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| stateName | Name of the starting workflow state | string | no |
+| stateName | Name of the starting workflow state. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | no |
 | [schedule](#Schedule-Definition) | Define the recurring time intervals or cron expressions at which workflow instances should be automatically started. | string or object | yes |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -4581,7 +4769,7 @@ If the start definition is of type `object`, it has the following structure:
 
 ```json
 {
-  "stateName": "MyStartingstate",
+  "stateName": "my-starting-state",
   "schedule": "2020-03-20T09:00:00Z/PT2H"
 }
 ```
@@ -4590,7 +4778,7 @@ If the start definition is of type `object`, it has the following structure:
 <td valign="top">
 
 ```yaml
-stateName: MyStartingstate
+stateName: my-starting-state
 schedule: 2020-03-20T09:00:00Z/PT2H
 ```
 
@@ -4735,7 +4923,7 @@ it with its `object` type which has the following properties:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | expression | Cron expression describing when the workflow instance should be created (automatically) | string | yes |
-| validUntil | Specific date and time (ISO 8601 format) when the cron expression is no longer valid | string | no |
+| validUntil | Specific date and time (ISO 8601 format, literal or expression producing it) when the cron expression is no longer valid | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4772,7 +4960,7 @@ validUntil: '2021-11-05T08:15:30-05:00'
 The `expression` property is a a [cron expression](http://crontab.org/) which defines
 when workflow instances should be created (automatically).
 
-The `validUntil` property defines a date and time (using ISO 8601 format). When the
+The `validUntil` property defines a date and time (using ISO 8601 format, literal or expression). When the
 `validUntil` time is reached, the cron expression for instances creations of this workflow
 should no longer be valid.
 
@@ -4824,7 +5012,7 @@ If the end definition is of type `object`, it has the following structure:
 {
     "terminate": true,
     "produceEvents": [{
-        "eventRef": "provisioningCompleteEvent",
+        "eventRef": "provisioning-complete-event",
         "data": "${ .provisionedOrders }"
     }]
 }
@@ -4836,7 +5024,7 @@ If the end definition is of type `object`, it has the following structure:
 ```yaml
 terminate: true
 produceEvents:
-- eventRef: provisioningCompleteEvent
+- eventRef: provisioning-complete-event
   data: "${ .provisionedOrders }"
 
 ```
@@ -4895,11 +5083,11 @@ before the workflow execution is stopped, and continued as a new workflow instan
 
 ```json
 {
-    "eventRef": "provisioningCompleteEvent",
+    "eventRef": "provisioning-complete-event",
     "data": "${ .provisionedOrders }",
-    "contextAttributes": [{
+    "contextAttributes": {
          "buyerId": "${ .buyerId }"
-     }]
+     }
  }
 ```
 
@@ -4907,10 +5095,10 @@ before the workflow execution is stopped, and continued as a new workflow instan
 <td valign="top">
 
 ```yaml
-eventRef: provisioningCompleteEvent
+eventRef: provisioning-complete-event
 data: "${ .provisionedOrders }"
 contextAttributes:
-- buyerId: "${ .buyerId }"
+  buyerId: "${ .buyerId }"
 ```
 
 </td>
@@ -5146,12 +5334,12 @@ Let's take a look at an example. To start, let's define a workflow top-level `re
 {
 "retries": [
   {
-    "name": "FirstRetryStrategy",
+    "name": "first-retry-strategy",
     "delay": "PT1M",
     "maxAttempts": 5
   },
   {
-    "name": "SecondRetryStrategy",
+    "name": "second-retry-strategy",
     "delay": "PT10M",
     "maxAttempts": 10
   }
@@ -5164,10 +5352,10 @@ Let's take a look at an example. To start, let's define a workflow top-level `re
 
 ```yaml
 retries:
-  - name: FirstRetryStrategy
+  - name: first-retry-strategy
     delay: PT1M
     maxAttempts: 5
-  - name: SecondRetryStrategy
+  - name: second-retry-strategy
     delay: PT10M
     maxAttempts: 10
 
@@ -5191,17 +5379,17 @@ Our `retries` definitions can be referenced by actions. For example:
 {
   "actions": [
     {
-      "functionRef": "MyFirstFunction",
-      "retryRef": "FirstRetryStrategy",
+      "functionRef": "my-first-function",
+      "retryRef": "first-retry-strategy",
       "retryableErrors": ["SomeErrorOne", "SomeErrorTwo"]
     },
     {
-      "functionRef": "MySecondFunction",
-      "retryRef": "SecondRetryStrategy",
+      "functionRef": "my-second-function",
+      "retryRef": "second-retry-strategy",
       "retryableErrors": ["SomeErrorTwo", "SomeErrorThree"]
     },
     {
-      "functionRef": "MyThirdFunction"
+      "functionRef": "my-third-function"
     }
   ]
 }
@@ -5212,17 +5400,17 @@ Our `retries` definitions can be referenced by actions. For example:
 
 ```yaml
 actions:
-  - functionRef: MyFirstFunction
-    retryRef: FirstRetryStrategy
+  - functionRef: my-first-function
+    retryRef: first-retry-strategy
     nonRetryableErrors:
       - SomeErrorOne
       - SomeErrorTwo
-  - functionRef: MySecondFunction
-    retryRef: SecondRetryStrategy
+  - functionRef: my-second-function
+    retryRef: second-retry-strategy
     nonRetryableErrors:
       - SomeErrorTwo
       - SomeErrorThree
-  - functionRef: MyThirdFunction
+  - functionRef: my-third-function
 ```
 
 </td>
@@ -5284,17 +5472,17 @@ To start, let's define a workflow top-level `retries` definition:
 {
 "retries": [
   {
-    "name": "FirstRetryStrategy",
+    "name": "first-retry-strategy",
     "delay": "PT1M",
     "maxAttempts": 5
   },
   {
-    "name": "SecondRetryStrategy",
+    "name": "second-retry-strategy",
     "delay": "PT10M",
     "maxAttempts": 10
   },
   {
-    "name": "DoNotRetryStrategy",
+    "name": "no-retry-strategy",
     "maxAttempts": 1
   }
 ]
@@ -5306,13 +5494,13 @@ To start, let's define a workflow top-level `retries` definition:
 
 ```yaml
 retries:
-  - name: FirstRetryStrategy
+  - name: first-retry-strategy
     delay: PT1M
     maxAttempts: 5
-  - name: SecondRetryStrategy
+  - name: second-retry-strategy
     delay: PT10M
     maxAttempts: 10
-  - name: DoNotRetryStrategy
+  - name: no-retry-strategy
     maxAttempts: 1
 
 ```
@@ -5335,21 +5523,21 @@ Our retry definitions can be referenced by state actions. For example:
 {
   "actions": [
     {
-      "functionRef": "MyFirstFunction",
-      "retryRef": "FirstRetryStrategy",
+      "functionRef": "my-first-function",
+      "retryRef": "first-retry-strategy",
       "nonRetryableErrors": ["SomeErrorOne", "SomeErrorTwo"]
     },
     {
-      "functionRef": "MySecondFunction",
-      "retryRef": "SecondRetryStrategy",
+      "functionRef": "my-second-function",
+      "retryRef": "second-retry-strategy",
       "nonRetryableErrors": ["SomeErrorTwo", "SomeErrorThree"]
     },
     {
-      "functionRef": "MyThirdFunction"
+      "functionRef": "my-thrid-function"
     },
     {
-      "functionRef": "MyFourthFunction",
-      "retryRef": "DoNotRetryStrategy"
+      "functionRef": "my-fourth-function",
+      "retryRef": "no-retry-strategy"
     }
   ]
 }
@@ -5360,19 +5548,19 @@ Our retry definitions can be referenced by state actions. For example:
 
 ```yaml
 actions:
-  - functionRef: MyFirstFunction
-    retryRef: FirstRetryStrategy
+  - functionRef: my-first-function
+    retryRef: first-retry-strategy
     nonRetryableErrors:
       - SomeErrorOne
       - SomeErrorTwo
-  - functionRef: MySecondFunction
-    retryRef: SecondRetryStrategy
+  - functionRef: my-second-function
+    retryRef: second-retry-strategy
     nonRetryableErrors:
       - SomeErrorTwo
       - SomeErrorThree
-  - functionRef: MyThirdFunction
-  - functionRef: MyFourthFunction
-    retryRef: DoNotRetryStrategy
+  - functionRef: my-third-function
+  - functionRef: my-fourth-function
+    retryRef: no-retry-strategy
 
 ```
 
@@ -5431,7 +5619,7 @@ Now let's say that we have worfklow states "A" and "B". State "A" does not defin
 
 ```json
 {
-   "name": "B",
+   "name": "b",
    "type": "operation",
    ...
    "timeouts": {
@@ -5466,11 +5654,11 @@ If `object` type, it is used to define the timeout definitions in-line and has t
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [workflowExecTimeout](#workflowexectimeout-definition) | Workflow execution timeout (ISO 8601 duration format) | string or object | no |
-| [stateExecTimeout](#states-timeout-definition) | Workflow state execution timeout (ISO 8601 duration format) | string | no |
-| actionExecTimeout | Actions execution timeout (ISO 8601 duration format) | string | no |
-| [branchExecTimeout](#branch-timeout-definition) | Branch execution timeout (ISO 8601 duration format) | string | no |
-| [eventTimeout](#event-timeout-definition) | Default timeout for consuming defined events (ISO 8601 duration format) | string | no |
+| [workflowExecTimeout](#workflowexectimeout-definition) | Workflow execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string or object | no |
+| [stateExecTimeout](#states-timeout-definition) | Workflow state execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| actionExecTimeout | Actions execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| [branchExecTimeout](#branch-timeout-definition) | Branch execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| [eventTimeout](#event-timeout-definition) | Default timeout for consuming defined events (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 
 The `eventTimeout` property defines the maximum amount of time to wait to consume defined events. If not specified it should default to
 "unlimited".
@@ -5495,7 +5683,7 @@ If Object type it has the following format:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| duration | Timeout duration (ISO 8601 duration format) | string | yes |
+| duration | Timeout duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | yes |
 | interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is stopped immediately. Default is `false`  | boolean | no |
 | runBefore | Name of a workflow state to be executed before workflow instance is terminated | string | no |
 
@@ -5560,7 +5748,7 @@ timeout settings are available for each state type.
 Workflow states timeouts cannot define the `workflowExecTimeout` property.
 
 Workflow states can set their `stateExecTimeout` property inside the `timeouts` definition. 
-The value of this property is a time duration (ISO 8601 duration format). 
+The value of this property is a time duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration). 
 It must be a duration that's greater than zero and defines the total state execution timeout. 
 When this timeout is reached, state execution
 should be stopped and can be handled as a timeout error in the states `onErrors` definition.
@@ -5593,7 +5781,7 @@ between arrival of specified events. To give an example, consider the following:
 {
 "states": [
 {
-    "name": "ExampleEventState",
+    "name": "example-event-state",
     "type": "event",
     "exclusive": false,
     "timeouts": {
@@ -5602,8 +5790,8 @@ between arrival of specified events. To give an example, consider the following:
     "onEvents": [
         {
             "eventRefs": [
-                "ExampleEvent1",
-                "ExampleEvent2"
+                "example-event-1",
+                "example-event-2"
             ],
             "actions": [
               ...
@@ -5677,17 +5865,17 @@ state it references:
  {
  "states": [
       {
-          "name": "NewItemPurchase",
+          "name": "new-item-purchase",
           "type": "event",
           "onEvents": [
             {
               "eventRefs": [
-                "NewPurchase"
+                "new-purchase"
               ],
               "actions": [
                 {
                   "functionRef": {
-                    "refName": "DebitCustomerFunction",
+                    "refName": "debit-customer-function",
                     "arguments": {
                         "customerid": "${ .purchase.customerid }",
                         "amount": "${ .purchase.amount }"
@@ -5696,7 +5884,7 @@ state it references:
                 },
                 {
                   "functionRef": {
-                    "refName": "SendPurchaseConfirmationEmailFunction",
+                    "refName": "send-purchase-confirmation-email-function",
                     "arguments": {
                         "customerid": "${ .purchase.customerid }"
                     }
@@ -5705,17 +5893,17 @@ state it references:
               ]
             }
           ],
-          "compensatedBy": "CancelPurchase",
-          "transition": "SomeNextWorkflowState"
+          "compensatedBy": "cancel-purchase",
+          "transition": "some-next-workflow-state"
       },
       {
-        "name": "CancelPurchase",
+        "name": "cancel-purchase",
         "type": "operation",
         "usedForCompensation": true,
         "actions": [
             {
               "functionRef": {
-                "refName": "CreditCustomerFunction",
+                "refName": "credit-customer-function",
                 "arguments": {
                     "customerid": "${ .purchase.customerid }",
                     "amount": "${ .purchase.amount }"
@@ -5724,7 +5912,7 @@ state it references:
             },
             {
               "functionRef": {
-                "refName": "SendPurchaseCancellationEmailFunction",
+                "refName": "send-purchase-cancellation-email-function",
                 "arguments": {
                     "customerid": "${ .purchase.customerid }"
                 }
@@ -5741,34 +5929,34 @@ state it references:
 
 ```yaml
 states:
-- name: NewItemPurchase
+- name: new-item-purchase
   type: event
   onEvents:
   - eventRefs:
-    - NewPurchase
+    - new-purchase
     actions:
     - functionRef:
-        refName: DebitCustomerFunction
+        refName: debit-customer-function
         arguments:
           customerid: "${ .purchase.customerid }"
           amount: "${ .purchase.amount }"
     - functionRef:
-        refName: SendPurchaseConfirmationEmailFunction
+        refName: send-purchase-confirmation-email-function
         arguments:
           customerid: "${ .purchase.customerid }"
-  compensatedBy: CancelPurchase
-  transition: SomeNextWorkflowState
+  compensatedBy: cancel-purchase
+  transition: some-next-workflow-state
 - name: CancelPurchase
   type: operation
   usedForCompensation: true
   actions:
   - functionRef:
-      refName: CreditCustomerFunction
+      refName: credit-customer-function
       arguments:
         customerid: "${ .purchase.customerid }"
         amount: "${ .purchase.amount }"
   - functionRef:
-      refName: SendPurchaseCancellationEmailFunction
+      refName: send-purchase-cancellation-email-function
       arguments:
         customerid: "${ .purchase.customerid }"
 ```
@@ -5803,7 +5991,7 @@ Let's take a look at each:
 {
   "transition": {
       "compensate": true,
-      "nextState": "NextWorkflowState"
+      "nextState": "next-workflow-state"
   }
 }
 ```
@@ -5814,7 +6002,7 @@ Let's take a look at each:
 ```yaml
 transition:
   compensate: true
-  nextState: NextWorkflowState
+  nextState: next-workflow-state
 ```
 
 </td>
@@ -6075,18 +6263,18 @@ Here is an example of using constants in Workflow expressions:
 ...
 "states":[
   {
-     "name":"CheckApplicant",
+     "name":"check-applicant",
      "type":"switch",
      "dataConditions": [
         {
-          "name": "Applicant is adult",
+          "name": "applicant-is-adult",
           "condition": "${ .applicant | .age >= $CONST.AGE.MIN_ADULT }",
-          "transition": "ApproveApplication"
+          "transition": "approve-application"
         },
         {
-          "name": "Applicant is minor",
+          "name": "applicant-is-minor",
           "condition": "${ .applicant | .age < $CONST.AGE.MIN_ADULT }",
-          "transition": "RejectApplication"
+          "transition": "reject-application"
         }
      ],
      ...
@@ -6103,12 +6291,12 @@ for example:
 {
 "functions": [
   {
-    "name": "isAdult",
+    "name": "is-adult",
     "operation": ".applicant | .age >= $CONST.AGE.MIN_ADULT",
     "type": "expression"
   },
   {
-    "name": "isMinor",
+    "name": "is-minor",
     "operation": ".applicant | .age < $CONST.AGE.MIN_ADULT",
     "type": "expression"
   }
@@ -6147,7 +6335,7 @@ Here is an example on how to use secrets and pass them as arguments to a functio
 ...
 
 {
-  "refName": "uploadToAzure",
+  "refName": "upload-to-azure",
     "arguments": {
       "account": "${ $SECRETS.AZURE_STORAGE_ACCOUNT }",
       "account-key": "${ $SECRETS.AZURE_STORAGE_KEY }",
@@ -6223,17 +6411,17 @@ Implementations may use this keyword to give access to any relevant information 
   "name": "Process Sales Orders",
   "version": "1.0.0",
   "specVersion": "0.8",
-  "start": "MyStartingState",
+  "start": "my-starting-state",
   "functions": [{
-    "name": "myFunction",
+    "name": "my-function",
     "operation": "myopenapi.json#myFunction"
   }],
   "states":[
   {
-     "name":"MyStartingState",
+     "name":"my-starting-state",
      "type":"operation",
      "actions": [{
-       "functionRef": "myFunction",
+       "functionRef": "my-function",
        "args": {
           "order": "${ .orderId }",
           "callerId": "${ $WORKFLOW.instanceId  }"
@@ -6247,6 +6435,14 @@ Implementations may use this keyword to give access to any relevant information 
 In this use case, a third-party service may require information from the caller for traceability purposes.
 
 The specification doesn't define any specific variable within the `WORKFLOW` bucket, but it's considered a reserved keyword.
+
+### Naming Convention
+
+Identifiable components of a workflow definition, such as states, actions, branches, events and functions define a required non-null `name` property which is based on DNS label names as defined by [RFC 1123](https://datatracker.ietf.org/doc/html/rfc1123#page-13) with further restrictions.
+
+Specifically, `names` must be lowercase, start and end with an alphanumeric character, and consist entirely of alphanumeric characters with optional isolated medial dashes '-' (i.e., dashes must not be adjacent to each other).
+
+The regular expression used in [schemas](/schema/workflow.json) is: `^[a-z0-9](-?[a-z0-9])*$`.
 
 ## Extensions
 
@@ -6263,7 +6459,7 @@ You can define extensions in your workflow definition using its top-level `exten
 For more information about this property, see the `extensions` property in the 
 [Workflow Definition Structure section](#Workflow-Definition-Structure).
 
-Even tho users can define their own extensions, it is encouraged to use the ones provided by the specification.
+Even though users can define their own extensions, it is encouraged to use the ones provided by the specification.
 We also encourage users to contribute their extensions to the specification. That way they can be shared
 with the rest of the community.
 

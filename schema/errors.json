@@ -23,7 +23,8 @@
         "name": {
           "type": "string",
           "description": "Domain-specific error name",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "code": {
           "type": "string",

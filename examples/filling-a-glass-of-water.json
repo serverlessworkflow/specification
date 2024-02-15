@@ -1,0 +1,50 @@
+{
+    "id": "fillglassofwater",
+    "name": "fillglassofwater",
+    "description": "Fill glass of water workflow",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "start": "check-if-full",
+    "functions": [
+        {
+            "name": "increment-current-count-function",
+            "type": "expression",
+            "operation": ".counts.current += 1 | .counts.current"
+        }
+    ],
+    "states": [
+        {
+            "name": "check-if-full",
+            "type": "switch",
+            "dataConditions": [
+                {
+                    "name": "need-to-fill-more",
+                    "condition": "${ .counts.current < .counts.max }",
+                    "transition": "add-water"
+                },
+                {
+                    "name": "glass-full",
+                    "condition": ".counts.current >= .counts.max",
+                    "end": true
+                }
+            ],
+            "defaultCondition": {
+                "end": true
+            }
+        },
+        {
+            "name": "add-water",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "add-water",
+                    "functionRef": "increment-current-count-function",
+                    "actionDataFilter": {
+                        "toStateData": ".counts.current"
+                    }
+                }
+            ],
+            "transition": "check-if-full"
+        }
+    ]
+}

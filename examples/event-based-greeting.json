@@ -1,0 +1,53 @@
+{
+    "id": "eventbasedgreeting",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "Event Based Greeting Workflow",
+    "description": "Event Based Greeting",
+    "start": "greet",
+    "events": [
+        {
+            "name": "greeting-event",
+            "type": "greetingEventType",
+            "source": "greetingEventSource"
+        }
+    ],
+    "functions": [
+        {
+            "name": "greeting-function",
+            "operation": "file://myapis/greetingapis.json#greeting"
+        }
+    ],
+    "states": [
+        {
+            "name": "greet",
+            "type": "event",
+            "onEvents": [
+                {
+                    "eventRefs": [
+                        "greeting-event"
+                    ],
+                    "eventDataFilter": {
+                        "data": "${ .greet }",
+                        "toStateData": "${ .greet }"
+                    },
+                    "actions": [
+                        {
+                            "name": "greet-action",
+                            "functionRef": {
+                                "refName": "greeting-function",
+                                "arguments": {
+                                    "name": "${ .greet.name }"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "stateDataFilter": {
+                "output": "${ .payload.greeting }"
+            },
+            "end": true
+        }
+    ]
+}

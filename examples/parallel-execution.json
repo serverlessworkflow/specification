@@ -1,0 +1,36 @@
+{
+    "id": "parallelexec",
+    "version": "1.0.0",
+    "specVersion": "0.8",
+    "name": "parallel-execution",
+    "description": "Executes two branches in parallel",
+    "start": "parallelexec",
+    "states": [
+        {
+            "name": "parallelexec",
+            "type": "parallel",
+            "completionType": "allOf",
+            "branches": [
+                {
+                    "name": "short-delay-branch",
+                    "actions": [
+                        {
+                            "name": "short-delay-action",
+                            "subFlowRef": "shortdelayworkflowid"
+                        }
+                    ]
+                },
+                {
+                    "name": "long-delay-branch",
+                    "actions": [
+                        {
+                            "name": "short-delay-action",
+                            "subFlowRef": "longdelayworkflowid"
+                        }
+                    ]
+                }
+            ],
+            "end": true
+        }
+    ]
+}

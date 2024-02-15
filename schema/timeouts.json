@@ -34,7 +34,7 @@
       "oneOf": [
         {
           "type": "string",
-          "description": "Workflow execution timeout duration (ISO 8601 duration format). If not specified should be 'unlimited'",
+          "description": "Workflow execution timeout duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration). If not specified should be 'unlimited'",
           "minLength": 1
         },
         {
@@ -42,7 +42,7 @@
           "properties": {
             "duration": {
               "type": "string",
-              "description": "Workflow execution timeout duration (ISO 8601 duration format). If not specified should be 'unlimited'",
+              "description": "Workflow execution timeout duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration). If not specified should be 'unlimited'",
               "minLength": 1
             },
             "interrupt": {
@@ -65,22 +65,22 @@
     },
     "stateExecTimeout": {
       "type": "string",
-      "description": "Workflow state execution timeout duration (ISO 8601 duration format)",
+      "description": "Workflow state execution timeout duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration)",
       "minLength": 1
     },
     "actionExecTimeout": {
       "type": "string",
-      "description": "Action execution timeout duration (ISO 8601 duration format)",
+      "description": "Action execution timeout duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration)",
       "minLength": 1
     },
     "branchExecTimeout": {
       "type": "string",
-      "description": "Branch execution timeout duration (ISO 8601 duration format)",
+      "description": "Branch execution timeout duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration)",
       "minLength": 1
     },
     "eventTimeout": {
       "type": "string",
-      "description": "Timeout duration to wait for consuming defined events (ISO 8601 duration format)",
+      "description": "Timeout duration to wait for consuming defined events (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration)",
       "minLength": 1
     }
   }
