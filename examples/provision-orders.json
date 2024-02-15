@@ -44,16 +44,34 @@
             "transition": "apply-order",
             "onErrors": [
                 {
-                    "errorRef": "missing-order-id",
-                    "transition": "missing-id"
+                    "when": [
+                        {
+                            "type": "/samples/errors/missing-order-id"
+                        }
+                    ],
+                    "then": {
+                        "transition": "missing-id"
+                    } 
                 },
                 {
-                    "errorRef": "missing-order-item",
-                    "transition": "missing-item"
+                    "when": [
+                        {
+                            "type": "/samples/errors/missing-order-item"
+                        }
+                    ],
+                    "then": {
+                        "transition": "missing-item"
+                    } 
                 },
                 {
-                    "errorRef": "missing-order-quantity",
-                    "transition": "missing-quantity"
+                    "when": [
+                        {
+                            "type": "/samples/errors/missing-order-quantity"
+                        }
+                    ],
+                    "then": {
+                        "transition": "missing-quantity"
+                    } 
                 }
             ]
         },
