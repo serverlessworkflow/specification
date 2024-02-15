@@ -88,11 +88,6 @@
     "functions": {
       "$ref": "functions.json#/functions"
     },
-    "autoRetries": {
-      "type": "boolean",
-      "default": false,
-      "description": "If set to true, actions should automatically be retried on unchecked errors. Default is false"
-    },
     "retries": {
       "$ref": "retries.json#/retries"
     },
@@ -284,57 +279,18 @@
         }
       ]
     },
-    "error": {
-      "type": "object",
-      "properties": {
-        "errorRef": {
-          "type": "string",
-          "description": "Reference to a unique workflow error definition. Used of errorRefs is not used",
-          "minLength": 1
-        },
-        "errorRefs": {
-          "type": "array",
-          "description": "References one or more workflow error definitions. Used if errorRef is not used",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "transition": {
-          "description": "Transition to next state to handle the error.",
-          "$ref": "#/definitions/transition"
-        },
-        "end": {
-          "description": "End workflow execution in case of this error.",
-          "$ref": "#/definitions/end"
-        }
-      },
-      "additionalProperties": false,
+    "onerrors": {
       "oneOf": [
         {
-          "required": [
-            "errorRef",
-            "transition"
-          ]
+          "type": "string",
+          "description": "References the error policy to use."
         },
         {
-          "required": [
-            "errorRef",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "errorRefs",
-            "transition"
-          ]
-        },
-        {
-          "required": [
-            "errorRefs",
-            "end"
-          ]
+          "type": "array",
+          "items": {
+            "$ref": "errors.json#/definitions/errorHandlerReference"
+          },
+          "description": "References multiple error handlers."
         }
       ]
     },
@@ -412,23 +368,8 @@
           "type": "string",
           "description": "References a defined workflow retry definition. If not defined the default retry policy is assumed"
         },
-        "nonRetryableErrors": {
-          "type": "array",
-          "description": "List of unique references to defined workflow errors for which the action should not be retried. Used only when `autoRetries` is set to `true`",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
-        },
-        "retryableErrors": {
-          "type": "array",
-          "description": "List of unique references to defined workflow errors for which the action should be retried. Used only when `autoRetries` is set to `false`",
-          "minItems": 1,
-          "items": {
-            "type": "string"
-          },
-          "additionalItems": false
+        "onErrors":{
+          "$ref": "#/definitions/onerrors"
         },
         "actionDataFilter": {
           "description": "Action data filter",
@@ -691,13 +632,7 @@
           "$ref": "#/definitions/statedatafilter"
         },
         "onErrors": {
-          "type": "array",
-          "description": "States error handling definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
+          "$ref": "#/definitions/onerrors"
         },
         "transition": {
           "description": "Next transition of the workflow after all the actions have been performed",
@@ -790,13 +725,7 @@
           "required": []
         },
         "onErrors": {
-          "type": "array",
-          "description": "States error handling definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
+          "$ref": "#/definitions/onerrors"
         },
         "transition": {
           "description": "Next transition of the workflow after all the actions have been performed",
@@ -919,13 +848,7 @@
           "description": "Used when completionType is set to 'atLeast' to specify the minimum number of branches that must complete before the state will transition."
         },
         "onErrors": {
-          "type": "array",
-          "description": "States error handling definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
+          "$ref": "#/definitions/onerrors"
         },
         "transition": {
           "description": "Next transition of the workflow after all branches have completed execution",
@@ -1036,13 +959,7 @@
           "additionalItems": false
         },
         "onErrors": {
-          "type": "array",
-          "description": "States error handling definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
+          "$ref": "#/definitions/onerrors"
         },
         "defaultCondition": {
           "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition",
@@ -1109,13 +1026,7 @@
           "additionalItems": false
         },
         "onErrors": {
-          "type": "array",
-          "description": "States error handling definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
+          "$ref": "#/definitions/onerrors"
         },
         "defaultCondition": {
           "description": "Default transition of the workflow if there is no matching data conditions. Can include a transition or end definition",
@@ -1466,13 +1377,7 @@
           "$ref": "#/definitions/statedatafilter"
         },
         "onErrors": {
-          "type": "array",
-          "description": "States error handling definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
+          "$ref": "#/definitions/onerrors"
         },
         "transition": {
           "description": "Next transition of the workflow after state has completed",
@@ -1592,13 +1497,7 @@
           "$ref": "#/definitions/statedatafilter"
         },
         "onErrors": {
-          "type": "array",
-          "description": "States error handling definitions",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/error"
-          },
-          "additionalItems": false
+          "$ref": "#/definitions/onerrors"
         },
         "transition": {
           "description": "Next transition of the workflow after all the actions have been performed",
