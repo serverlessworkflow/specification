@@ -32,6 +32,7 @@ const disclaimer = `<!--
         console.error('Enable to parse JSON or convert it to YAML, output as it is.', ex);
       }
     }
+    fileContent = fileContent.trim() + '\n';
     readMe = readMe.replace(include[0], fileContent);
   };
   await fs.promises.writeFile(readMeOutputPath, disclaimer + readMe, { encoding: 'utf8', flag: 'w' });
