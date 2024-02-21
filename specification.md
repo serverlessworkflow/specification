@@ -1925,11 +1925,10 @@ definition "id" must be a constant value.
 
 | Parameter | Description | Type | Required |
 | --- | --- |  --- | --- |
-| id | Workflow unique identifier | string | yes (if `key` is not defined) |
-| key | Domain-specific workflow identifier | string | yes (if `id` is not defined) |
-| name | Workflow name | string | no |
+| name | Workflow definition unique identifier (which must be human readable) | string | yes |
+| version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format. If not provided, latest is assumed | string | no |
 | description | Workflow description | string | no |
-| version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format | string | no |
+| key | Expression that will be used to generate a domain-specific workflow instance identifier  | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | dataOutputSchema | Used to validate the workflow data output against a defined JSON Schema| string or object | no |

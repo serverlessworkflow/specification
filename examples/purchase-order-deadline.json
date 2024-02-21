@@ -1,5 +1,4 @@
 {
-    "id": "order",
     "name": "order",
     "description": "Purchase Order Workflow",
     "version": "1.0.0",

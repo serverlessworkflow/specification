@@ -1,5 +1,4 @@
 {
-    "id": "eventbasedgreeting",
     "version": "1.0.0",
     "specVersion": "0.8",
     "name": "Event Based Greeting Workflow",

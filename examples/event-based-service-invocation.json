@@ -1,5 +1,4 @@
 {
-    "id": "vet-appointment-workflow",
     "name": "vet-appointment-workflow",
     "description": "Vet service call via events",
     "version": "1.0.0",
