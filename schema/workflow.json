@@ -413,9 +413,13 @@
           "description": "References a function to be invoked",
           "$ref": "#/definitions/functionref"
         },
-        "eventRef": {
-          "description": "References a `produce` and `consume` reusable event definitions",
-          "$ref": "#/definitions/eventref"
+        "produceEventRef": {
+          "description": "References a `produce` reusable event definition",
+          "$ref": "#/definitions/produceeventref"
+        },
+        "consumeEventRef": {
+          "description": "References a `consume` reusable event definition",
+          "$ref": "#/definitions/consumeeventref"
         },
         "subFlowRef": {
           "description": "References a sub-workflow to invoke",
@@ -468,7 +472,13 @@
         {
           "required": [
             "name",
-            "eventRef"
+            "produceEventRef"
+          ]
+        },
+        {
+          "required": [
+            "name",
+            "consumeEventRef"
           ]
         },
         {
@@ -521,23 +531,14 @@
         }
       ]
     },
-    "eventref": {
+    "produceeventref": {
       "type": "object",
-      "description": "Event References",
+      "description": "Publish an event",
       "properties": {
-        "produceEventRef": {
+        "name": {
           "type": "string",
           "description": "Reference to the unique name of a 'produced' event definition",
           "pattern": "^[a-z0-9](-?[a-z0-9])*$"
-        },
-        "consumeEventRef": {
-          "type": "string",
-          "description": "Reference to the unique name of a 'consumed' event definition",
-          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
-        },
-        "consumeEventTimeout": {
-          "type": "string",
-          "description": "Maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the actionExecutionTimeout"
         },
         "data": {
           "type": [
@@ -556,7 +557,26 @@
       },
       "additionalProperties": false,
       "required": [
-        "produceEventRef"
+        "name", "data"
+      ]
+    },
+    "consumeeventref": {
+      "type": "object",
+      "description": "Waits for an event",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Reference to the unique name of a 'consumed' event definition",
+          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
+        },
+        "consumeEventTimeout": {
+          "type": "string",
+          "description": "Maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the actionExecutionTimeout"
+        }
+       },
+      "additionalProperties": false,
+      "required": [
+        "name"
       ]
     },
     "subflowref": {
@@ -1690,7 +1710,7 @@
           "name",
           "type",
           "action",
-          "eventRef"
+          ""
         ]
       },
       "else": {

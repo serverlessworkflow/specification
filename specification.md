@@ -3987,7 +3987,8 @@ Actions specify invocations of services or other workflows during workflow execu
 Service invocation can be done in three different ways:
 
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
-* Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
+* Reference a `produced` [event definitions](#Event-Definition) via the `produceEventRef` property.
+* Reference a `consumed` [event definitions](#Event-Definition) via the `consumeEventRef` property.
 * Reference a sub-workflow invocation via the `subFlowRef` property.
 
 Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, meaning that only one of them can be
@@ -3995,10 +3996,9 @@ specified in a single action definition.
 
 The `name` property specifies the action name.
 
-In the event-based scenario a service, or a set of services we want to invoke
-are not exposed via a specific resource URI for example, but can only be invoked via an event.
-The [eventRef](#EventRef-Definition) property defines the
-referenced `produced` event via its `produceEventRef` property and a `consumed` event via its `consumeEventRef` property.
+In the event-based scenario a service, or a set of services we want to invoke are not exposed via a specific resource URI for example, but can only be invoked via an event.
+In that case, a `produced` event might be referenced via its `produceEventRef` property. 
+Also, if there is the need to consume an event within a set of actions (for example, wait for the result of a previous action invocation) a `consumed` event might be referenced via its `consumeEventRef` property.
 
 The `sleep` property can be used to define time periods that workflow execution should sleep
 before and/or after function execution. It can have two properties:
@@ -4125,18 +4125,15 @@ In addition, functions that are invoked async do not propagate their errors to t
 workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states 
 onErrors definition. Note that errors raised during functions that are invoked async should not fail workflow execution.
 
-##### EventRef Definition
+##### ProduceEventRef Definition
 
-Allows defining invocation of a function via event. 
+Publish an event. It references the unique name of a `produced` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention)
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | no |
-| consumeEventTimeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
+| [name](#Event-Definition) | Reference to the unique name of a `produced` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | yes |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
-| invoke | Specifies if the function should be invoked sync or async. Default is sync | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4151,10 +4148,60 @@ Allows defining invocation of a function via event.
 
 ```json
 {
-   "eventRef": {
-      "produceEventRef": "make-vet-appointment",
+   "produceEventRef": {
+      "name": "make-vet-appointment",
       "data": "${ .patientInfo }",
-      "consumeEventRef":  "vet-appointment-info"
+   }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+produceEventRef:
+  name: make-vet-appointment
+  data: "${ .patientInfo }"
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+References a `produced`  [event definitions](#Event-Definition) via the `name` property.
+
+The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
+to be used as payload of the event referenced by `produceEventRef`. If it is of object type, you can define a custom object to be the event payload.
+
+The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
+to the trigger/produced event.
+
+##### ConsumeEventRef Definition
+
+Wait for an event to arrive. 
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| [name](#Event-Definition) | Reference to the unique name of a `consumed` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| consumeEventTimeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+   "consumeEventRef": {
+      "name": "approved-appointment",
    }
 }
 ```
@@ -4164,9 +4211,8 @@ Allows defining invocation of a function via event.
 
 ```yaml
 eventRef:
-  produceEventRef: make-vet-appointment
-  data: "${ .patientInfo }"
-  consumeEventRef: vet-appointment-info
+  consumeEventRef: approved-appointment
+
 ```
 
 </td>
@@ -4175,27 +4221,10 @@ eventRef:
 
 </details>
 
-References a `produced` and `consumed` [event definitions](#Event-Definition) via the `produceEventRef` and `consumeEventRef` properties, respectively.
-
-The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
-to be used as payload of the event referenced by `produceEventRef`. If it is of object type, you can define a custom object to be the event payload.
-
-The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
-to the trigger/produced event.
+References a `consumed`  [event definitions](#Event-Definition) via the `name` property.
 
 The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format literal or expression) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
-If the event defined by the `consumeEventRef` property is not received in that set time, action invocation should raise an error
-that can be handled in the states `onErrors` definition. In case the `consumeEventRef` is not defined, the `consumeEventTimeout` property is ignored.
-
-The `invoke` property defines how the function is invoked (sync or async). Default value of this property is
-`sync`, meaning that workflow execution should wait until the function completes (the result event is received).
-If set to `async`, workflow execution should just produce the trigger event and should not wait for the result event.
-Note that in this case the action does not produce any results (payload of the result event) and the associated actions eventDataFilter as well as
-its retry definition, if defined, should be ignored.
-Functions that are invoked via events (sync or async) do not propagate their errors to the associated action definition and the
-workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states
-onErrors definition. Note that errors raised during functions that are invoked sync or async in this case
-should not fail workflow execution.
+If the event defined by the `name` property is not received in that set time, action invocation should raise an error that can be handled in the states `onErrors` definition. 
 
 ##### SubFlowRef Definition
 

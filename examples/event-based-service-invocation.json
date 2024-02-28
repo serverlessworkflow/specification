@@ -26,10 +26,15 @@
             "actions": [
                 {
                     "name": "make-appointment-action",
-                    "eventRef": {
-                        "produceEventRef": "make-vet-appointment",
-                        "data": "${ .patientInfo }",
-                        "consumeEventRef": "vet-appointment-info"
+                    "produceEventRef": {
+                        "name": "make-vet-appointment",
+                        "data": "${ .patientInfo }"
+                    }
+                },
+                {
+                    "name": "wait-appointement-confirmation",
+                    "consumeEventRef": {
+                        "name": "vet-appointment-info"
                     },
                     "actionDataFilter": {
                         "results": "${ .appointmentInfo }"
