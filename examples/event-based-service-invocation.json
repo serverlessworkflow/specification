@@ -9,14 +9,12 @@
         {
             "name": "make-vet-appointment",
             "source": "VetServiceSource",
-            "type": "events.vet.appointments",
-            "kind": "produced"
+            "type": "events.vet.appointments"
         },
         {
             "name": "vet-appointment-info",
             "source": "VetServiceSource",
-            "type": "events.vet.appointments",
-            "kind": "consumed"
+            "type": "events.vet.appointments"
         }
     ],
     "states": [

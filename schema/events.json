@@ -43,15 +43,6 @@
           "type": "string",
           "description": "CloudEvent type"
         },
-        "kind": {
-          "type": "string",
-          "enum": [
-            "consumed",
-            "produced"
-          ],
-          "description": "Defines the CloudEvent as either 'consumed' or 'produced' by the workflow. Default is 'consumed'",
-          "default": "consumed"
-        },
         "correlation": {
           "type": "array",
           "description": "CloudEvent correlation definitions",

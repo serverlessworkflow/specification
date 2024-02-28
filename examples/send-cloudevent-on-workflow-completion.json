@@ -7,8 +7,7 @@
     "events": [
         {
             "name": "provisioning-complete-event",
-            "type": "provisionCompleteType",
-            "kind": "produced"
+            "type": "provisionCompleteType"
         }
     ],
     "functions": [
