@@ -24,15 +24,15 @@
             "actions": [
                 {
                     "name": "make-appointment-action",
-                    "produceEventRef": {
-                        "name": "make-vet-appointment",
+                    "publish": {
+                        "event": "make-vet-appointment",
                         "data": "${ .patientInfo }"
                     }
                 },
                 {
                     "name": "wait-appointement-confirmation",
-                    "consumeEventRef": {
-                        "name": "vet-appointment-info"
+                    "subscribe": {
+                        "event": "vet-appointment-info"
                     },
                     "actionDataFilter": {
                         "results": "${ .appointmentInfo }"

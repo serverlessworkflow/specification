@@ -413,13 +413,13 @@
           "description": "References a function to be invoked",
           "$ref": "#/definitions/functionref"
         },
-        "produceEventRef": {
-          "description": "References a `produce` reusable event definition",
-          "$ref": "#/definitions/produceeventref"
+        "publish": {
+          "description": "Publish an event",
+          "$ref": "#/definitions/publish"
         },
-        "consumeEventRef": {
-          "description": "References a `consume` reusable event definition",
-          "$ref": "#/definitions/consumeeventref"
+        "subscribe": {
+          "description": "Subscribe to an event channel",
+          "$ref": "#/definitions/subscribe"
         },
         "subFlowRef": {
           "description": "References a sub-workflow to invoke",
@@ -472,13 +472,13 @@
         {
           "required": [
             "name",
-            "produceEventRef"
+            "publish"
           ]
         },
         {
           "required": [
             "name",
-            "consumeEventRef"
+            "subscribe"
           ]
         },
         {
@@ -531,13 +531,13 @@
         }
       ]
     },
-    "produceeventref": {
+    "publish": {
       "type": "object",
       "description": "Publish an event",
       "properties": {
-        "name": {
+        "event": {
           "type": "string",
-          "description": "Reference to the unique name of a 'produced' event definition",
+          "description": "Reference to the unique name of a 'published' event definition",
           "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
         "data": {
@@ -545,7 +545,7 @@
             "string",
             "object"
           ],
-          "description": "If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by 'produceEventRef'. If object type, a custom object to become the data (payload) of the event referenced by 'produceEventRef'."
+          "description": "If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by 'publish'. If object type, a custom object to become the data (payload) of the event referenced by 'publish'."
         },
         "contextAttributes": {
           "type": "object",
@@ -557,26 +557,26 @@
       },
       "additionalProperties": false,
       "required": [
-        "name", "data"
+        "event", "data"
       ]
     },
-    "consumeeventref": {
+    "subscribe": {
       "type": "object",
-      "description": "Waits for an event",
+      "description": "Subscribe to an event channel",
       "properties": {
-        "name": {
+        "event": {
           "type": "string",
-          "description": "Reference to the unique name of a 'consumed' event definition",
+          "description": "Reference to the unique name of a 'subscribed' event definition",
           "pattern": "^[a-z0-9](-?[a-z0-9])*$"
         },
-        "consumeEventTimeout": {
+        "timeout": {
           "type": "string",
           "description": "Maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the actionExecutionTimeout"
         }
        },
       "additionalProperties": false,
       "required": [
-        "name"
+        "event"
       ]
     },
     "subflowref": {

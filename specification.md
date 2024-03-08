@@ -3968,22 +3968,21 @@ functionRef:
 
 </details>
 
-Actions specify invocations of services or other workflows during workflow execution.
-Service invocation can be done in three different ways:
+An action can:
 
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
-* Reference a [event definitions](#Event-Definition) via the `produceEventRef` property in order to publish that event.
-* Reference a [event definitions](#Event-Definition) via the `consumeEventRef` property in order to consume that event.
+* Publish an event [event definitions](#Event-Definition) via the `publish` property.
+* Subscribe to an event [event definitions](#Event-Definition) via the `subscribe` property.
 * Reference a sub-workflow invocation via the `subFlowRef` property.
 
-Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, meaning that only one of them can be
+Note that `functionRef`, `publish`, `subscribe` and `subFlowRef` are mutually exclusive, meaning that only one of them can be
 specified in a single action definition.
 
 The `name` property specifies the action name.
 
 In the event-based scenario a service, or a set of services we want to invoke are not exposed via a specific resource URI for example, but can only be invoked via an event.
-In that case, an event definition might be referenced via its `produceEventRef` property. 
-Also, if there is the need to consume an event within a set of actions (for example, wait for the result of a previous action invocation) an event definition might be referenced via its `consumeEventRef` property.
+In that case, an event definition might be referenced via its `publish` property. 
+Also, if there is the need to consume an event within a set of actions (for example, wait for the result of a previous action invocation) an event definition might be referenced via its `susbcribe` property.
 
 The `sleep` property can be used to define time periods that workflow execution should sleep
 before and/or after function execution. It can have two properties:
@@ -4110,14 +4109,14 @@ In addition, functions that are invoked async do not propagate their errors to t
 workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states 
 onErrors definition. Note that errors raised during functions that are invoked async should not fail workflow execution.
 
-##### ProduceEventRef Definition
+##### Publish Definition
 
 Publish an event. 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [name](#Event-Definition) | Reference to the unique name of an event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | yes |
+| [event](#Event-Definition) | Reference to the unique name of an event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `publish`. If object type, a custom object to become the data (payload) of the event referenced by `publish`. | string or object | yes |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
@@ -4133,8 +4132,8 @@ Publish an event.
 
 ```json
 {
-   "produceEventRef": {
-      "name": "make-vet-appointment",
+   "publish": {
+      "event": "make-vet-appointment",
       "data": "${ .patientInfo }",
    }
 }
@@ -4144,8 +4143,8 @@ Publish an event.
 <td valign="top">
 
 ```yaml
-produceEventRef:
-  name: make-vet-appointment
+publish:
+  event: make-vet-appointment
   data: "${ .patientInfo }"
 ```
 
@@ -4155,22 +4154,22 @@ produceEventRef:
 
 </details>
 
-Publish an [event definition](#Event-Definition) referenced via the `name` property.
+Publish an [event definition](#Event-Definition) referenced via the `event` property.
 
 The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
-to be used as payload of the event referenced by `produceEventRef`. If it is of object type, you can define a custom object to be the event payload.
+to be used as payload of the event referenced by `publish`. If it is of object type, you can define a custom object to be the event payload.
 
 The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
 to the trigger/produced event.
 
-##### ConsumeEventRef Definition
+##### Susbscribe Definition
 
 Wait for an event to arrive. 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [name](#Event-Definition) | Reference to the unique name of an event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| consumeEventTimeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
+| [event](#Event-Definition) | Reference to the unique name of an event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| timeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4185,7 +4184,7 @@ Wait for an event to arrive.
 
 ```json
 {
-   "consumeEventRef": {
+   "subscribe": {
       "name": "approved-appointment",
    }
 }
@@ -4196,7 +4195,7 @@ Wait for an event to arrive.
 
 ```yaml
 eventRef:
-  consumeEventRef: approved-appointment
+  subscribe: approved-appointment
 
 ```
 
@@ -4206,9 +4205,9 @@ eventRef:
 
 </details>
 
-Consumes an [event definition](#Event-Definition) referenced via the `name` property.
+Consumes an [event definition](#Event-Definition) referenced via the `event` property.
 
-The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format literal or expression) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
+The `timeout` property defines the maximum amount of time (ISO 8601 format literal or expression) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
 If the event defined by the `name` property is not received in that set time, action invocation should raise an error that can be handled in the states `onErrors` definition. 
 
 ##### SubFlowRef Definition
