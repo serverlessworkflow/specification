@@ -5994,7 +5994,7 @@ The `transition` outcome instructs the workflow to transition to the specified s
 
 Finally, the `throw` outcome allows workflows to rethrow the [handled error](#error-definition) or throw a new [error](#error-definition). When set to `true`, the error is rethrown as is, propagating it up the workflow hierarchy. Alternatively, the outcome can define or reference a new error to throw, potentially using runtime expressions to customize error details dynamically.
 
-Overall, error outcomes in ServerlessWorkflow offer a comprehensive set of options for managing errors within workflows. By defining precise error handling strategies using these outcomes, workflows can effectively handle errors, recover from failures, and maintain robustness and resilience in various execution scenarios.
+Overall, error outcomes in Serverless Workflow offer a comprehensive set of options for managing errors within workflows. By defining precise error handling strategies using these outcomes, workflows can effectively handle errors, recover from failures, and maintain robustness and resilience in various execution scenarios.
 
 #### Error Bubbling
 
