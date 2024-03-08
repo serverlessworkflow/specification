@@ -643,7 +643,7 @@ a workflow with a single event state and show how data filters can be combined.
 
 ```json
 {
-    "name": "GreetCustomersWorkflow",
+    "name": "greet-customers-workflow",
     "description": "Greet Customers when they arrive",
     "version": "1.0.0",
     "specVersion": "0.8",
@@ -1910,7 +1910,7 @@ we can use this expression in the workflow "version" parameter:
 
 ```json
 {
-   "name": "MySampleWorkflow",
+   "name": "my-sample-workflow",
    "description": "Sample Workflow",
    "version": "${ .inputVersion }",
    "specVersion": "0.8"
@@ -1925,10 +1925,10 @@ definition "name" must be a constant value.
 
 | Parameter | Description | Type | Required |
 | --- | --- |  --- | --- |
-| name | Workflow definition unique identifier (which must be human readable) | string | yes |
-| version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format. If not provided, latest is assumed | string | no |
+| name | The name that identifies the workflow definition, and which, when combined with its version, forms a unique identifier. | string | yes |
+| version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format. If not provided, `latest` is assumed | string | no |
 | description | Workflow description | string | no |
-| key | Expression that will be used to generate a domain-specific workflow instance identifier  | string | no |
+| key | Optional expression that will be used to generate a domain-specific workflow instance identifier  | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | dataOutputSchema | Used to validate the workflow data output against a defined JSON Schema| string or object | no |
@@ -1962,7 +1962,7 @@ definition "name" must be a constant value.
 
 ```json
 {
-   "name": "sampleWorkflow",
+   "name": "sample-workflow",
    "version": "1.0.0",
    "specVersion": "0.8",
    "description": "Sample Workflow",
@@ -1979,7 +1979,7 @@ definition "name" must be a constant value.
 <td valign="top">
 
 ```yaml
-name: sampleWorkflow
+name: sample-workflow
 version: '1.0.0'
 specVersion: '0.8'
 description: Sample Workflow
@@ -2161,7 +2161,7 @@ Here is an example of using external resource for function definitions:
 
 ```json
 {
-   "name": "sampleWorkflow",
+   "name": "sample-workflow",
    "version": "1.0.0",
    "specVersion": "0.8",
    "description": "Sample Workflow",
@@ -2197,7 +2197,7 @@ Here is an example of using external resource for event definitions:
 
 ```json
 {
-   "name": "sampleWorkflow",
+   "name": "sample-workflow",
    "version": "1.0.0",
    "specVersion": "0.8",
    "description": "Sample Workflow",
@@ -2361,7 +2361,7 @@ Serverless Workflow defines the following Workflow States:
 <td valign="top">
 
 ```yaml
-name: MonitorVitals
+name: monitor-vitals
 type: event
 exclusive: true
 onEvents:
@@ -3140,7 +3140,7 @@ and our workflow is defined as:
 
 ```json
 {
-  "name": "SendConfirmationForCompletedOrders",
+  "name": "send-confirmation-for-completed-orders",
   "version": "1.0.0",
   "specVersion": "0.8",
   "start": "send-confirm-state",
@@ -3176,7 +3176,7 @@ and our workflow is defined as:
 <td valign="top">
 
 ```yaml
-name: SendConfirmationForCompletedOrders
+name: send-confirmation-for-completed-orders
 version: '1.0.0'
 specVersion: '0.8'
 start: send-confirm-state
@@ -3454,7 +3454,7 @@ Example of a function definition configured to use an [auth definition](#Auth-De
 
 ```yaml
 functions:
-- name: SecuredFunctionInvocation
+- name: secured-function-invocation
   operation: https://test.com/swagger.json#HelloWorld
   authRef: My Basic Auth
 ```
@@ -3463,7 +3463,7 @@ Example of a function definition configured to use an [auth definition](#Auth-De
 
 ```yaml
 functions:
-- name: SecuredFunctionInvocation
+- name: secured-function-invocation
   operation: https://test.com/swagger.json#HelloWorld
   authRef:
     resource: My Basic Auth
@@ -3476,11 +3476,11 @@ This is done to avoid unnecessary repetitions of [auth definition](#Auth-Definit
 
 ```yaml
 functions:
-  - name: MySecuredFunction1
+  - name: secured-function-1
     operation: https://secure.resources.com/myapi.json#helloWorld
     authRef:
       resource: My ApiKey Auth 
-  - name: MySecuredFunction2
+  - name: secured-function-2
     operation: https://secure.resources.com/myapi.json#holaMundo
 ```
 
@@ -5141,7 +5141,7 @@ Let's take a look at an example of additional properties:
 
 ```json
 {
-  "name": "myworkflow",
+  "name": "my-workflow",
   "version": "1.0.0",
   "specVersion": "0.8",
   "description": "My Test Workflow",
@@ -5159,7 +5159,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 
 ```json
 {
-  "name": "myworkflow",
+  "name": "my-workflow",
   "version": "1.0.0",
   "specVersion": "0.8",
   "description": "Py Test Workflow",
@@ -5555,18 +5555,18 @@ actions:
 </tr>
 </table>
 
-In our example the first action named `MyFirstFunction` is going to be retried according to the `FirstRetryStrategy`
+In our example the first action named `my-first-function` is going to be retried according to the `first-retry-strategy`
 retry policy
 for all errors except `SomeErrorOne` and `SomeErrorTwo`.
 
-The seconds action named `MySecondFunction` is going to be retried according to the `SecondRetryStrategy`
+The seconds action named `my-second-function` is going to be retried according to the `second-retry-strategy`
 retry policy 
 for all errors except `SomeErrorTwo` and `SomeErrorThree`.
 
-The third action named `MyThirdFunction` is going to retried according to the default runtime retry policy.
+The third action named `my-third-function` is going to retried according to the default runtime retry policy.
 It will be retried for all errors both known (checked) as well as unknown (unckecked).
 
-The fourth action named `MyFourthFunction` is going to be retried according to the `DoNotRetryStrategy`
+The fourth action named `my-fourth-function` is going to be retried according to the `no-retry-strategy`
 retry policy which has the `maxAttempts` property set to `1`, meaning that this action will not be retried.
 
 ### Workflow Timeouts
@@ -5587,8 +5587,7 @@ timeout settings should take in effect.
 To give an example, let's say that in our workflow definition we define the timeout for state execution:
 
 ```json
-{
-   "name": "testWorkflow",
+   "name": "test-workflow",
    ...
    "timeouts": {
      ...
@@ -6304,7 +6303,7 @@ Here is an example of metadata attached to the core workflow definition:
 
 ```json
 {
-  "name": "processSalesOrders",
+  "name": "process-sales-orders",
   "description": "Process Sales Orders",
   "version": "1.0.0",
   "specVersion": "0.8",
@@ -6340,7 +6339,7 @@ Implementations may use this keyword to give access to any relevant information 
 ```json
 
 {
-  "name": "processSalesOrders",
+  "name": "process-sales-orders",
   "description": "Process Sales Orders",
   "version": "1.0.0",
   "specVersion": "0.8",

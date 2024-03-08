@@ -6,7 +6,8 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "Workflow definition unique identifier (which must be human readable)",
+      "description": "The name that identifies the workflow definition, and which, when combined with its version, forms a unique identifier.",
+	  "pattern": "^[a-z0-9](-?[a-z0-9])*$",
       "minLength": 1
     },
     "version": {
@@ -20,7 +21,7 @@
     },
     "key": {
       "type": "string",
-      "description": "Expression that will be used to generate a domain-specific workflow instance identifier"
+      "description": "Optional expression that will be used to generate a domain-specific workflow instance identifier"
     },
     "annotations": {
       "type": "array",
