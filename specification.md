@@ -5998,7 +5998,7 @@ Overall, error outcomes in Serverless Workflow offer a comprehensive set of opti
 
 #### Error Bubbling
 
-Error bubbling within ServerlessWorkflow describes the process by which an unhandled or rethrown error propagates or "bubbles up" from its current location to its parent component, typically the state in which it originated. This mechanism ensures that errors are managed and handled effectively within the workflow hierarchy, maintaining consistent error handling and workflow behavior.
+Error bubbling within Serverless Workflow describes the process by which an unhandled or rethrown error propagates or "bubbles up" from its current location to its parent component, typically the state in which it originated. This mechanism ensures that errors are managed and handled effectively within the workflow hierarchy, maintaining consistent error handling and workflow behavior.
 
 When an error arises within a workflow, it initially occurs at the lowest level of execution, such as within an action. If the error remains unhandled or uncaught at this level, it ascends through the workflow's structure until it reaches the parent component of the location where the error originated. If the error persists and is not addressed at the state level, it ultimately terminates the workflow.
 
