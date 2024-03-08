@@ -6002,7 +6002,7 @@ Error bubbling within ServerlessWorkflow describes the process by which an unhan
 
 When an error arises within a workflow, it initially occurs at the lowest level of execution, such as within an action. If the error remains unhandled or uncaught at this level, it ascends through the workflow's structure until it reaches the parent component of the location where the error originated. If the error persists and is not addressed at the state level, it ultimately terminates the workflow.
 
-The termination of the workflow due to an unhandled error at the state level serves as a means of ensuring that errors are appropriately dealt with and do not result in erroneous or inconsistent workflow behavior. By halting the workflow's execution at the point of error occurrence, ServerlessWorkflow promotes resilience and reliability, averting potential cascading failures and ensuring predictable error handling behavior.
+The termination of the workflow due to an unhandled error at the state level serves as a means of ensuring that errors are appropriately dealt with and do not result in erroneous or inconsistent workflow behavior. By halting the workflow's execution at the point of error occurrence, Serverless Workflow promotes resilience and reliability, averting potential cascading failures and ensuring predictable error handling behavior.
 
 In essence, the error handling mechanism within Serverless Workflow is designed to guarantee that errors are managed and resolved effectively within workflows, thereby preventing unexpected outcomes and fostering reliability and consistency in workflow execution.
 
