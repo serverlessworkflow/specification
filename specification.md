@@ -5952,7 +5952,7 @@ When an error arises within a workflow, it initially occurs at the lowest level 
 
 The termination of the workflow due to an unhandled error at the state level serves as a means of ensuring that errors are appropriately dealt with and do not result in erroneous or inconsistent workflow behavior. By halting the workflow's execution at the point of error occurrence, ServerlessWorkflow promotes resilience and reliability, averting potential cascading failures and ensuring predictable error handling behavior.
 
-In essence, the error handling mechanism within ServerlessWorkflow is designed to guarantee that errors are managed and resolved effectively within workflows, thereby preventing unexpected outcomes and fostering reliability and consistency in workflow execution.
+In essence, the error handling mechanism within Serverless Workflow is designed to guarantee that errors are managed and resolved effectively within workflows, thereby preventing unexpected outcomes and fostering reliability and consistency in workflow execution.
 
 #### Error Handling Best Practices
 
