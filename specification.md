@@ -6008,7 +6008,7 @@ In essence, the error handling mechanism within Serverless Workflow is designed 
 
 #### Error Handling Best Practices
 
-When designing error handling logic in ServerlessWorkflow, it's essential to adhere to best practices to ensure robustness and reliability:
+When designing error handling logic in Serverless Workflow, it's essential to adhere to best practices to ensure robustness and reliability:
 
 - Define Clear Error Definitions: Clearly define error types and their corresponding definitions to provide meaningful information about encountered errors.
 - Use Default Error Types: Whenever possible, use the predefined default error types provided by ServerlessWorkflow to ensure consistency and compatibility.
