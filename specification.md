@@ -1956,7 +1956,7 @@ definition "id" must be a constant value.
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | string or object | no |
-| [errors](#error-definitions) | Defines the workflow's error handling configuration, including error definitions, error handlers and error policies | string or [error handling configuration](#error-handling-configuration) | no |
+| [errors](#error-definitions) | Defines the workflow's error handling configuration, including error definitions, error handlers, and error policies | string or [error handling configuration](#error-handling-configuration) | no |
 | keepActive | If `true`, workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
 | [auth](#Auth-Definition) | Workflow authentication definitions | array or string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
