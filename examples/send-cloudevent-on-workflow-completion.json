@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "specVersion": "0.8",
-    "name": "sendcloudeventonprovision",
+    "name": "send-cloudevent-provision",
     "start": "provision-orders-state",
     "events": [
         {

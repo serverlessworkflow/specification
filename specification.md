@@ -4194,7 +4194,7 @@ This short-hand definition can be used if sub-workflow lookup is done only by it
 property and not its `version` property.
 
 ```json
-"subFlowRef": "mySubFlowName"
+"subFlowRef": "my-subflow-id"
 ```
 
 If you need to define the `version` properties, you can use its `object` type:
@@ -4219,7 +4219,7 @@ If you need to define the `version` properties, you can use its `object` type:
 
 ```json
 {
-    "workflowId": "handleApprovedVisaWorkflowID",
+    "workflowId": "handle-approved-visa",
     "version": "2.0.0"
 }
 ```
@@ -4228,7 +4228,7 @@ If you need to define the `version` properties, you can use its `object` type:
 <td valign="top">
 
 ```yaml
-workflowId: handleApprovedVisaWorkflowID
+workflowId: handle-approved-visa
 version: '2.0.0'
 ```
 
@@ -6107,13 +6107,13 @@ If string type, it contains the unique workflow name of the workflow that the ex
 ```json
 { 
   "end": {
-    "continueAs": "myworkflowname"
+    "continueAs": "my-workflow-name"
   }
 }
 ```
 
 Defining this should stop the current workflow execution, and continue execution as a new workflow instance of the 
-workflow which defines the workflow name of "myworkflowbane". The state data where this is define should 
+workflow which defines the workflow name of "my-workflow-name". The state data where this is define should 
 become the workflow data input of the workflow that is continuing the current workflow execution.
 
 Note that any defined `produceEvents` and `compensate` definitions should be honored before `continueAs` is applied.

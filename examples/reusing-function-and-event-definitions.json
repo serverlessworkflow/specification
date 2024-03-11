@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "specVersion": "0.8",
-    "name": "paymentconfirmation",
+    "name": "payment-confirmation",
     "description": "Performs Payment Confirmation",
     "functions": "file://functiondefs.json",
     "events": "file://eventdefs.yml",

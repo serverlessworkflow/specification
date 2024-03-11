@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "specVersion": "0.8",
-    "name": "jobmonitoring",
+    "name": "job-monitoring",
     "description": "Monitor finished execution of a submitted job",
     "start": "submit-job",
     "functions": [
