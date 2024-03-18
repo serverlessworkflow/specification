@@ -455,7 +455,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 | fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
 | useResults | If set to `false`, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is `true`.  | boolean | no |
 | results | Workflow expression that filters the actions data results | string | no |
-| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
+| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element. In case it is not specified and the result of the action is not an object, that result should be merged as value of `response` key. If that `response` key already exist in the model, its value will be overwritten. | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
