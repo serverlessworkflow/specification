@@ -45,12 +45,6 @@
             "stateDataFilter": {
                 "output": "${ .jobuid }"
             },
-            "transition": "wait-for-completion"
-        },
-        {
-            "name": "wait-for-completion",
-            "type": "sleep",
-            "duration": "PT5S",
             "transition": "get-job-status"
         },
         {
@@ -68,6 +62,9 @@
                     },
                     "actionDataFilter": {
                         "results": "${ .jobstatus }"
+                    },
+                    "sleep" : {
+                      "before": "PT5S"
                     }
                 }
             ],
@@ -92,7 +89,7 @@
                 }
             ],
             "defaultCondition": {
-                "transition": "wait-for-completion"
+                "transition": "get-job-status"
             }
         },
         {

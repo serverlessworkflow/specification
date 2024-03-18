@@ -41,7 +41,6 @@
       - [Event State](#event-state)
       - [Operation State](#operation-state)
       - [Switch State](#switch-state)
-      - [Sleep State](#sleep-state)
       - [Parallel State](#parallel-state)
       - [Inject State](#inject-state)
       - [ForEach State](#foreach-state)
@@ -2289,7 +2288,6 @@ Serverless Workflow defines the following Workflow States:
 | **[Event](#Event-State)** | Define events that trigger action execution | yes | yes | yes | yes | yes | no | yes | yes |
 | **[Operation](#Operation-State)** | Execute one or more actions | no | yes | yes | yes | yes | no | yes | yes |
 | **[Switch](#Switch-State)** | Define data-based or event-based workflow transitions | no | yes | no | yes | no | yes | yes | no |
-| **[Sleep](#Sleep-State)** | Sleep workflow execution for a specific time duration | no | yes | no | yes | no | no | yes | yes |
 | **[Parallel](#Parallel-State)** | Causes parallel execution of branches (set of states) | no | yes | no | yes | yes | no | yes | yes |
 | **[Inject](#Inject-State)** | Inject static data into state data | no | yes | no | yes | no | no | yes | yes |
 | **[ForEach](#ForEach-State)** | Parallel execution of states for each element of a data array | no | yes | no | yes | yes | no | yes | yes |
@@ -2617,57 +2615,6 @@ The `timeouts` property can be used to define state specific timeout settings. S
 `stateExecTimeout` setting. If `eventConditions` is defined, the switch state can also define the
 `eventTimeout` property. For more information on workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 
-##### Sleep State
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| type | State type | string | yes |
-| duration | Duration (ISO 8601 literal duration or an expression which evaluation results in an ISO 8601 duration) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes), or $CONST.timeout, where timeout value is "PT15M" | string | yes |
-| [transition](#Transitions) | Next transition of the workflow after the sleep | string or object | yes (if `end` is not defined) |
-| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-      "name": "sleep-five-seconds",
-      "type": "sleep",
-      "duration": "PT5S",
-      "transition": "get-job-status"
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-name: sleep-five-seconds
-type: sleep
-duration: PT5S
-transition: get-job-status
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-Sleep state 
-suspends workflow execution for a given time duration. The delay is defined in its `duration` property using the ISO 8601 
-duration format. Note that ISO 8601 can be the result of evaluating an expression. 
-
-Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 ##### Parallel State
 
 | Parameter | Description | Type | Required |
@@ -5739,7 +5686,7 @@ not obeyed in the workflow definition.
 
 #### States Timeout Definition
 
-All workflow states except Sleep and Inject States can define the `timeouts` property and can define different timeout
+All workflow states except Inject State can define the `timeouts` property and can define different timeout
 settings depending on their state type.
 Please reference each [workflow state definitions](#Workflow-States) for more information on which
 timeout settings are available for each state type.
