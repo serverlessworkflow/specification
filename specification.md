@@ -565,6 +565,27 @@ into. With this, after our action executes the state data would be:
 }
 ```
 
+To  illustrate merge of not json both object,  let`s assume that, in previous example, the action definition is at follows
+
+```json
+"actions":[
+    {
+       "name": "fetch_only_pasta",
+       "functionRef": "breadAndPastaTypesFunction",
+       "actionDataFilter": {
+          "results": "${ .pasta[1] ]",
+       }
+    }
+ ]
+}
+```
+Since there is not `toStateData` and the result is not a json object but an string, the state would be
+
+```json
+{
+  "response": "spaghetti"
+}
+```
 In the case action results should not be added/merged to state data, we can set the `useResults` property to `false`.
 In this case, the `results` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
 If `useResults` is not specified (or it's value set to `true`), action results, if available, should be added/merged to state data.
