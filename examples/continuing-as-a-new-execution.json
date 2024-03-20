@@ -1,6 +1,5 @@
 {
-    "id": "notifycustomerworkflow",
-    "name": "notifycustomerworkflow",
+    "name": "notify-customer-workflow",
     "description": "Notify Customer",
     "version": "1.0.0",
     "specVersion": "0.8",

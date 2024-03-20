@@ -1,6 +1,5 @@
 {
-    "id": "finalize-college-application",
-    "name": "finalizeCollegeApplication",
+    "name": "finalize-college-application",
     "version": "1.0.0",
     "specVersion": "0.8",
     "start": "finalize-application",

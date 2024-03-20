@@ -1,33 +1,27 @@
 {
-  "$id": "https://serverlessworkflow.io/schemas/0.8/workflow.json",
+  "$id": "https://serverlessworkflow.io/schemas/0.9/workflow.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Serverless Workflow specification - workflow schema",
   "type": "object",
   "properties": {
-    "id": {
-      "type": "string",
-      "description": "Workflow unique identifier",
-      "minLength": 1
-    },
-    "key": {
-      "type": "string",
-      "description": "Domain-specific workflow identifier",
-      "minLength": 1
-    },
     "name": {
       "type": "string",
-      "description": "Workflow name",
+      "description": "The name that identifies the workflow definition, and which, when combined with its version, forms a unique identifier.",
+	  "pattern": "^[a-z0-9](-?[a-z0-9])*$",
       "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "description": "Workflow version",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
     },
     "description": {
       "type": "string",
       "description": "Workflow description"
     },
-    "version": {
+    "key": {
       "type": "string",
-      "description": "Workflow version",
-      "minLength": 1,
-      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+      "description": "Optional expression that will be used to generate a domain-specific workflow instance identifier"
     },
     "annotations": {
       "type": "array",
@@ -152,22 +146,11 @@
     }
   },
   "additionalProperties": false,
-  "oneOf": [
-    {
-      "required": [
-        "id",
-        "specVersion",
-        "states"
-      ]
-    },
-    {
-      "required": [
-        "key",
-        "specVersion",
-        "states"
-      ]
-    }
-  ],
+  "required": [
+    "name",
+    "specVersion",
+    "states"
+   ],
   "definitions": {
     "sleep": {
       "type": "object",

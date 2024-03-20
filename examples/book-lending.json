@@ -1,6 +1,5 @@
 {
-    "id": "booklending",
-    "name": "booklending",
+    "name": "book-lending",
     "description": "Book Lending Workflow",
     "version": "1.0.0",
     "specVersion": "0.8",

@@ -1,8 +1,7 @@
 {
-    "id": "customercreditcheck",
     "version": "1.0.0",
     "specVersion": "0.8",
-    "name": "customercreditcheck",
+    "name": "customer-credit-check",
     "description": "Perform Customer Credit Check",
     "start": "check-credit",
     "functions": [

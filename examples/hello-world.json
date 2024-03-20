@@ -1,8 +1,7 @@
 {
-   "id": "helloworld",
    "version": "1.0.0",
    "specVersion": "0.8",
-   "name": "Hello World Workflow",
+   "name": "hello-world-workflow",
    "description": "Inject Hello World",
    "start": "hello-state",
    "states": [
