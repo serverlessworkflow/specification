@@ -108,10 +108,6 @@
       "items": {
         "anyOf": [
           {
-            "title": "Sleep State",
-            "$ref": "#/definitions/sleepstate"
-          },
-          {
             "title": "Event State",
             "$ref": "#/definitions/eventstate"
           },
@@ -644,56 +640,6 @@
       "required": [
         "name",
         "actions"
-      ]
-    },
-    "sleepstate": {
-      "type": "object",
-      "description": "Causes the workflow execution to sleep for a specified duration",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "State name",
-          "pattern": "^[a-z0-9](-?[a-z0-9])*$"
-        },
-        "type": {
-          "type": "string",
-          "const": "sleep",
-          "description": "State type"
-        },
-        "end": {
-          "$ref": "#/definitions/end",
-          "description": "State end definition"
-        },
-        "duration": {
-          "type": "string",
-          "description": "Duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep"
-        },
-        "transition": {
-          "description": "Next transition of the workflow after the workflow sleep",
-          "$ref": "#/definitions/transition"
-        },
-        "metadata": {
-          "$ref": "common.json#/definitions/metadata"
-        }
-      },
-      "additionalProperties": false,
-      "oneOf": [
-        {
-          "required": [
-            "name",
-            "type",
-            "duration",
-            "end"
-          ]
-        },
-        {
-          "required": [
-            "name",
-            "type",
-            "duration",
-            "transition"
-          ]
-        }
       ]
     },
     "eventstate": {
