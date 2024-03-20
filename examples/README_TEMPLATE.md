@@ -1091,7 +1091,6 @@ events:
   - contextAttributeName: accountId
 - name: ConfirmationCompletedEvent
   type: payment.confirmation
-  kind: produced
 
 ```
 

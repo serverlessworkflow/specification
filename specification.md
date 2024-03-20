@@ -233,7 +233,7 @@ in detail in the [Continuing a new Execution](#Continuing-as-a-new-Execution) se
 The Serverless Workflow language is composed of:
 
 * [Function definitions](#Function-Definition) -  Reusable functions that can declare services that need to be invoked, or expressions to be evaluated.
-* [Event definitions](#Event-Definition) - Reusable declarations of events that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
+* [Event definitions](#Event-Definition) - Reusable declarations of events that need to be consumed to start or continue workflow instances, trigger function/service execution, or be produced during workflow execution.
 * [Retry definitions](#Retry-Definition) - Reusable retry definitions. Can specify retry strategies for service invocations during workflow execution.
 * [Timeout definitions](#Workflow-Timeouts) - Reusable timeout definitions. Can specify default workflow execution timeout, as well as workflow state, action, and branch execution timeouts.
 * [Errors definition](#Defining-Errors) - Reusable error definitions. Provide domain-specific error definitions which can be referenced in workflow states error handling.
@@ -3503,9 +3503,8 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique event name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| source | CloudEvent source. If not set when `kind` is `produced`, runtimes are expected to use a default value, such as https://serverlessworkflow.io in order to comply with the [CloudEvent spec constraints](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1))| string | yes (if `type` is not defined. |
+| source | CloudEvent source. If not set when producing an event, runtimes are expected to use a default value, such as https://serverlessworkflow.io in order to comply with the [CloudEvent spec constraints](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1))| string | yes (if `type` is not defined. |
 | type | CloudEvent type | string | yes (if `source` is not defined) |
-| kind | Defines the event is either `consumed` or `produced` by the workflow. Default is `consumed` | enum | no |
 | [correlation](#Correlation-Definition) | Define event correlation rules for this event. Only used for consumed events | array | no |
 | dataOnly | If `true` (default value), only the Event payload is accessible to consuming Workflow states. If `false`, both event payload and context attributes should be accessible | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
@@ -3526,7 +3525,6 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
    "name": "applicant-info",
    "type": "org.application.info",
    "source": "applicationssource",
-   "kind": "consumed",
    "correlation": [
     {
       "contextAttributeName": "applicantId"
@@ -3542,7 +3540,6 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
 name: applicant-info
 type: org.application.info
 source: applicationssource
-kind: consumed
 correlation:
 - contextAttributeName: applicantId
 ```
@@ -3566,14 +3563,6 @@ The `source` property matches this event definition with the [source](https://gi
 property of the CloudEvent required attributes.
 
 The `type` property matches this event definition with the [type](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#type) property of the CloudEvent required attributes.
-
-The `kind` property defines this event as either `consumed` or `produced`. In terms of the workflow, this means it is either an event
-that triggers workflow instance creation, or continuation of workflow instance execution (consumed), or an event
-that the workflow instance creates during its execution (produced).
-The default value (if not specified) of the `kind` property is `consumed`.
-Note that for `produced` event definitions, implementations must provide the value of the CloudEvent source attribute.
-In this case (i.e., when the `kind` property is set to `produced`), the `source` property of the event is not required in the workflow definition.
-Otherwise, (i.e., when the `kind` property is set to `consumed`), the `source` property must be defined in the event definition.
 
 Event correlation plays a big role in large event-driven applications. Correlating one or more events with a particular workflow instance
 can be done by defining the event correlation rules within the `correlation` property.
@@ -3630,7 +3619,6 @@ type that have the **same** value of the `patientId` property to be correlated t
   "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
-  "kind": "consumed",
   "correlation": [
     {
       "contextAttributeName": "patientId"
@@ -3655,7 +3643,6 @@ and we want to make sure that both are correlated, as in the above example, with
   "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
-  "kind": "consumed",
   "correlation": [
     {
       "contextAttributeName": "patientId"
@@ -3666,7 +3653,6 @@ and we want to make sure that both are correlated, as in the above example, with
    "name": "blood-pressure-reading-event",
    "source": "hospitalMonitorSystem",
    "type": "com.hospital.patient.bloodPressureMonitor",
-   "kind": "consumed",
    "correlation": [
        {
          "contextAttributeName": "patientId"
@@ -3687,7 +3673,6 @@ on comparing it to custom defined values (string, or expression). For example:
   "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
-  "kind": "consumed",
   "correlation": [
     {
       "contextAttributeName": "patientId"
@@ -3821,7 +3806,7 @@ correlation:
 
 </details>
 
-Used to define event correlation rules. Only usable for `consumed` event definitions.
+Used to define event correlation rules.
 
 The `contextAttributeName` property defines the name of the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
 The `contextAttributeValue` property defines the value of the defined CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
@@ -3983,22 +3968,21 @@ functionRef:
 
 </details>
 
-Actions specify invocations of services or other workflows during workflow execution.
-Service invocation can be done in three different ways:
+An action can:
 
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
-* Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
+* Publish an event [event definitions](#Event-Definition) via the `publish` property.
+* Subscribe to an event [event definitions](#Event-Definition) via the `subscribe` property.
 * Reference a sub-workflow invocation via the `subFlowRef` property.
 
-Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, meaning that only one of them can be
+Note that `functionRef`, `publish`, `subscribe` and `subFlowRef` are mutually exclusive, meaning that only one of them can be
 specified in a single action definition.
 
 The `name` property specifies the action name.
 
-In the event-based scenario a service, or a set of services we want to invoke
-are not exposed via a specific resource URI for example, but can only be invoked via an event.
-The [eventRef](#EventRef-Definition) property defines the
-referenced `produced` event via its `produceEventRef` property and a `consumed` event via its `consumeEventRef` property.
+In the event-based scenario a service, or a set of services we want to invoke are not exposed via a specific resource URI for example, but can only be invoked via an event.
+In that case, an event definition might be referenced via its `publish` property. 
+Also, if there is the need to consume an event within a set of actions (for example, wait for the result of a previous action invocation) an event definition might be referenced via its `susbcribe` property.
 
 The `sleep` property can be used to define time periods that workflow execution should sleep
 before and/or after function execution. It can have two properties:
@@ -4125,18 +4109,15 @@ In addition, functions that are invoked async do not propagate their errors to t
 workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states 
 onErrors definition. Note that errors raised during functions that are invoked async should not fail workflow execution.
 
-##### EventRef Definition
+##### Publish Definition
 
-Allows defining invocation of a function via event. 
+Publish an event. 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | no |
-| consumeEventTimeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
+| [event](#Event-Definition) | Reference to the unique name of an event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `publish`. If object type, a custom object to become the data (payload) of the event referenced by `publish`. | string or object | yes |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
-| invoke | Specifies if the function should be invoked sync or async. Default is sync | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4151,10 +4132,60 @@ Allows defining invocation of a function via event.
 
 ```json
 {
-   "eventRef": {
-      "produceEventRef": "make-vet-appointment",
+   "publish": {
+      "event": "make-vet-appointment",
       "data": "${ .patientInfo }",
-      "consumeEventRef":  "vet-appointment-info"
+   }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+publish:
+  event: make-vet-appointment
+  data: "${ .patientInfo }"
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Publish an [event definition](#Event-Definition) referenced via the `event` property.
+
+The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
+to be used as payload of the event referenced by `publish`. If it is of object type, you can define a custom object to be the event payload.
+
+The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
+to the trigger/produced event.
+
+##### Susbscribe Definition
+
+Wait for an event to arrive. 
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| [event](#Event-Definition) | Reference to the unique name of an event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| timeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+   "subscribe": {
+      "name": "approved-appointment",
    }
 }
 ```
@@ -4164,9 +4195,8 @@ Allows defining invocation of a function via event.
 
 ```yaml
 eventRef:
-  produceEventRef: make-vet-appointment
-  data: "${ .patientInfo }"
-  consumeEventRef: vet-appointment-info
+  subscribe: approved-appointment
+
 ```
 
 </td>
@@ -4175,27 +4205,10 @@ eventRef:
 
 </details>
 
-References a `produced` and `consumed` [event definitions](#Event-Definition) via the `produceEventRef` and `consumeEventRef` properties, respectively.
+Consumes an [event definition](#Event-Definition) referenced via the `event` property.
 
-The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
-to be used as payload of the event referenced by `produceEventRef`. If it is of object type, you can define a custom object to be the event payload.
-
-The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
-to the trigger/produced event.
-
-The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format literal or expression) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
-If the event defined by the `consumeEventRef` property is not received in that set time, action invocation should raise an error
-that can be handled in the states `onErrors` definition. In case the `consumeEventRef` is not defined, the `consumeEventTimeout` property is ignored.
-
-The `invoke` property defines how the function is invoked (sync or async). Default value of this property is
-`sync`, meaning that workflow execution should wait until the function completes (the result event is received).
-If set to `async`, workflow execution should just produce the trigger event and should not wait for the result event.
-Note that in this case the action does not produce any results (payload of the result event) and the associated actions eventDataFilter as well as
-its retry definition, if defined, should be ignored.
-Functions that are invoked via events (sync or async) do not propagate their errors to the associated action definition and the
-workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states
-onErrors definition. Note that errors raised during functions that are invoked sync or async in this case
-should not fail workflow execution.
+The `timeout` property defines the maximum amount of time (ISO 8601 format literal or expression) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
+If the event defined by the `name` property is not received in that set time, action invocation should raise an error that can be handled in the states `onErrors` definition. 
 
 ##### SubFlowRef Definition
 
@@ -5108,7 +5121,7 @@ contextAttributes:
 
 Defines the event (CloudEvent format) to be produced when workflow execution completes or during a workflow [transitions](#Transitions).
 The `eventRef` property must match the name of
-one of the defined `produced` events in the [events](#Event-Definition) definition.
+one of the defined events in the [events](#Event-Definition) definition.
 
 The `data` property can have two types, object or string. If of string type, it is an expression that can select parts of state data
 to be used as the event payload. If of object type, you can define a custom object to be the event payload.
@@ -5131,7 +5144,7 @@ state to transition to next.
 Implementers **must** use the unique State `name` property for determining the transition.
 
 Events can be produced during state transitions. The `produceEvents` property of the `transition` definitions allows you
-to reference one or more defined `produced` events in the workflow [events definitions](#Event-Definition).
+to reference one or more defined events in the workflow [events definitions](#Event-Definition).
 For each of the produced events you can select what parts of state data to be the event payload.
 
 Transitions can trigger compensation via their `compensate` property. See the [Workflow Compensation](#Workflow-Compensation)

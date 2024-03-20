@@ -137,13 +137,11 @@
         },
         {
             "name": "order-finished-event",
-            "type": "my.company.orders",
-            "kind": "produced"
+            "type": "my.company.orders"
         },
         {
             "name": "order-cancelled-event",
-            "type": "my.company.orders",
-            "kind": "produced"
+            "type": "my.company.orders"
         }
     ],
     "functions": [
