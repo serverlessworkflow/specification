@@ -1932,6 +1932,7 @@ definition "name" must be a constant value.
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | dataOutputSchema | Used to validate the workflow data output against a defined JSON Schema| string or object | no |
+| [resources](#Workflow-Resources) | External resources imported by the workflow | array | no |
 | [constants](#Workflow-Constants) | Workflow constants | string or object | no |
 | [secrets](#Workflow-Secrets) | Workflow secrets | string or array | no |
 | [start](#Start-Definition) | Workflow start definition | string or object | no |
@@ -6172,6 +6173,60 @@ There are two places in the [workflow definition](#Workflow-Definition-Structure
 2. Actions [subflowRef](#SubFlowRef-Definition) `version` property.
 
 The `version` property must respect the [semantic versioning](https://semver.org/) guidelines.
+
+### Workflow Resources
+
+Third parties have the ability to declare a set of resources that can be imported in a workflow and which are used to declare a set of reusable functionalities. It can be seen as a document describing the interactions supported by a given service with Serverless Workflows. 
+
+External resources are defined by the workflow's top-level [resources property](#Workflow-Definition-Structure).
+
+Because a workflow can reference multiple resources that can potentially define components with conflicting names (ex: resource 'A' and resource 'B' both define a function called 'F'), resources are name spaced, which means that references to the components they define must be prefixed with their name (i.e. 'A.F' references the function 'F' defined in the resource 'A').
+
+*Example of an external definition located at the mock address https://test.com/myresource.json:*
+
+```yaml
+functions:
+  - name: getPetById
+    type: openapi
+    operation: https://petstore.swagger.io/v2/swagger.json#getPetById
+```
+
+*Example of a workflow using the above external definition:*
+
+```yaml
+id: get-pet-availability
+name: Get Pet Availability
+version: 1.0.0
+specVersion: 0.8
+resources:
+  - name: petstore
+    uri: https://test.com/myresource.json
+functions:
+  - name: email-send
+    type: openapi
+    operation: smtp.json#send
+states:
+  - name: Get Pet from PetStore
+    type: operation
+    actions:
+      - name: Get Pet
+        functionRef:
+          refName: petstore.getPetById #note that the reference is prefixed with 'petstore', which is the name of the external resource that defines the 'getPetById' function
+          arguments:
+            petId: ${ .input.petId }
+        actionDataFilter:
+          toStateData: ${ .pet }
+      - name: Send Status By Email
+        functionRef:
+          refName: email-send #note that the function name is prefixless because the function has been defined inline, and is therefore considered as part of the 'default' name space
+          arguments:
+            from: info@petstore.io
+            to: ${ .input.client.email }
+            subject: Pet Inquiry Result
+            isBodyHtml: true
+            body: The status of the pet you enquired (${ .input.petId }) about is '${ .pet.status }'
+    end: true
+```
 
 ### Workflow Constants
 

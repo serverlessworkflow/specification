@@ -4,23 +4,14 @@
   "description": "Serverless Workflow specification - errors schema",
   "type": "object",
   "errors": {
-    "oneOf": [
-      {
-        "type": "string",
-        "format": "uri",
-        "description": "URI to a resource containing error definitions (json or yaml)"
-      },
-      {
-        "type": "array",
-        "description": "Workflow Error definitions. Defines checked errors that can be explicitly handled during workflow execution",
-        "items": {
-          "type": "object",
-          "$ref": "#/definitions/errordef"
-        },
-        "additionalItems": false,
-        "minItems": 1
-      }
-    ]
+    "type": "array",
+    "description": "Workflow Error definitions. Defines checked errors that can be explicitly handled during workflow execution",
+    "items": {
+      "type": "object",
+      "$ref": "#/definitions/errordef"
+    },
+    "additionalItems": false,
+    "minItems": 1
   },
   "required": [
     "errors"
