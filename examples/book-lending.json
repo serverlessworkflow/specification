@@ -4,6 +4,7 @@
     "version": "1.0.0",
     "specVersion": "0.8",
     "start": "book-lending-request",
+    "constants" : { "WAIT_BEFORE_POLL" : "PT2W"},
     "states": [
         {
             "name": "book-lending-request",
@@ -100,10 +101,13 @@
                             "bookid": "${ .book.id }",
                             "lender": "${ .lender }"
                         }
+                    }, 
+                    "sleep" : {
+                      "after" : "$CONST.WAIT_BEFORE_POLL"
                     }
                 }
             ],
-            "transition": "sleep-two-weeks"
+            "transition": "get-book-status"
         },
         {
             "name": "cancel-request",
@@ -117,15 +121,12 @@
                             "bookid": "${ .book.id }",
                             "lender": "${ .lender }"
                         }
+                    }, 
+                    "sleep" : {
+                      "after" : "$CONST.WAIT_BEFORE_POLL"
                     }
                 }
             ],
-            "transition": "sleep-two-weeks"
-        },
-        {
-            "name": "sleep-two-weeks",
-            "type": "sleep",
-            "duration": "PT2W",
             "transition": "get-book-status"
         },
         {
