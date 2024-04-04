@@ -439,7 +439,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 | fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
 | useResults | If set to `false`, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is `true`.  | boolean | no |
 | results | Workflow expression that filters the actions data results | string | no |
-| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element. In case it is not specified and the result of the action is not an object, that result should be merged as value of an automatically generated key. That key name will be the result of concatenating the action name with `_output` suffix. | string | no |
+| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged. If not specified denotes the top-level state data element. In case it is not specified and the result of the action is not an object, that result should be merged as the value of an automatically generated key. That key name will be the result of concatenating the action name with `-output` suffix. | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -565,25 +565,24 @@ into. With this, after our action executes the state data would be:
 }
 ```
 
-To  illustrate merge of not json both object,  let`s assume that, in previous example, the action definition is at follows
+To illustrate the merge of non-JSON for both objects,  let's assume that, in the previous example, the action definition is the follows
 
 ```json
 "actions":[
     {
-       "name": "fetch_only_pasta",
+       "name": "fetch-only-pasta",
        "functionRef": "breadAndPastaTypesFunction",
        "actionDataFilter": {
           "results": "${ .pasta[1] ]",
        }
     }
  ]
-}
 ```
-Since there is not `toStateData` and the result is not a json object but an string, the model would be
+Since there is no `toStateData` attribute and the result is not a JSON object but a string, the model would be:
 
 ```json
 {
-  "fetch_only_pasta_output": "spaghetti"
+  "fetch-only-pasta-output": "spaghetti"
 }
 ```
 In the case action results should not be added/merged to state data, we can set the `useResults` property to `false`.
