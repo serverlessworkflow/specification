@@ -101,7 +101,8 @@
             "^/": {
               "type": "object"
             }
-          }
+          },
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -133,7 +134,8 @@
               "additionalProperties": { "type": "string" }
             }
           },
-          "required": ["method", "uri"]
+          "required": ["method", "uri"],
+          "additionalProperties": false
         }
       ]
     }
