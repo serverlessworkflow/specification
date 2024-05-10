@@ -1,8 +1,7 @@
 {
-    "id": "curl",
+    "name": "curlgoogle",
     "version": "1.0.0",
     "specVersion": "0.8",
-    "name": "curlgoogle",
     "description": "Curl Google",
     "start": "curl",
     "functions": [
