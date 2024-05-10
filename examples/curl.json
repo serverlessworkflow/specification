@@ -1,0 +1,36 @@
+{
+    "id": "curl",
+    "version": "1.0.0",
+    "specVersion": "0.9",
+    "name": "curl-workflow",
+    "description": "Curl Google",
+    "start": "curl",
+    "functions": [
+        {
+            "name": "curl-google",
+            "type": "http",
+            "operation": {
+                "method": "GET",
+                "uri": "https://www.google.com/search?q={query}"
+            }
+        }
+    ],
+    "states": [
+        {
+            "name": "curl",
+            "type": "operation",
+            "actions": [
+                {
+                    "name": "do-curl",
+                    "functionRef": {
+                        "refName": "curl-google",
+                        "arguments": {
+                            "query": "${ .query }"
+                        }
+                    }
+                }
+            ],
+            "end": true
+        }
+    ]
+}
