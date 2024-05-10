@@ -1,8 +1,8 @@
 {
     "id": "curl",
     "version": "1.0.0",
-    "specVersion": "0.9",
-    "name": "curl-workflow",
+    "specVersion": "0.8",
+    "name": "curlgoogle",
     "description": "Curl Google",
     "start": "curl",
     "functions": [
