@@ -108,6 +108,7 @@
           "description": "HTTP Function operation definition",
           "properties": {
             "method": {
+              "type": "string",
               "enum": [
                 "GET",
                 "HEAD",
