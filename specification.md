@@ -438,7 +438,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 | fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
 | useResults | If set to `false`, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is `true`.  | boolean | no |
 | results | Workflow expression that filters the actions data results | string | no |
-| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
+| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged. If not specified denotes the top-level state data element. In case it is not specified and the result of the action is not an object, that result should be merged as the value of an automatically generated key. That key name will be the result of concatenating the action name with `-output` suffix. | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -564,6 +564,26 @@ into. With this, after our action executes the state data would be:
 }
 ```
 
+To illustrate the merge of non-JSON for both objects,  let's assume that, in the previous example, the action definition is the follows
+
+```json
+"actions":[
+    {
+       "name": "fetch-only-pasta",
+       "functionRef": "breadAndPastaTypesFunction",
+       "actionDataFilter": {
+          "results": "${ .pasta[1] ]",
+       }
+    }
+ ]
+```
+Since there is no `toStateData` attribute and the result is not a JSON object but a string, the model would be:
+
+```json
+{
+  "fetch-only-pasta-output": "spaghetti"
+}
+```
 In the case action results should not be added/merged to state data, we can set the `useResults` property to `false`.
 In this case, the `results` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
 If `useResults` is not specified (or it's value set to `true`), action results, if available, should be added/merged to state data.
