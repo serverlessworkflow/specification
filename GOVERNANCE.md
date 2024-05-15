@@ -45,7 +45,7 @@ If approved, a maintainer will contact the candidate to invite them to open a pu
 
 ## Adding Emeritus Maintainers
 
-To transition a maintainer to an emeritus role, the current maintainers can nominate a retiring maintainer who has expressed interest in staying involved as an advisor. The nomination process follows the same voting and approval procedures as adding new maintainers, requiring a 66% approval vote from the current maintainers. Once approved, the emeritus maintainer is added to the EMERITUS file and announced to the community.
+To transition a maintainer to an emeritus role, the process follows the same voting and approval procedures as adding new maintainers, a new PR is created that requires a 66% approval vote from the current maintainers. Once approved, the emeritus maintainer is added to the EMERITUS file and announced to the community.
 
 ## Subprojects
 
