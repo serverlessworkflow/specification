@@ -131,9 +131,8 @@ document for more information about opening pull requests.
 
 ## Conflict Resolution
 
-To merge changes into the specification, at least 66% approval from the project's maintainers is required.
-Maintainers who do not explicitly voice their opinions on the pull request within the two-day approval period are
-assumed to agree through [lazy consensus](http://communitymgt.wikia.com/wiki/Lazy_consensus).
+To merge changes into the specification, approval from at least one maintainer, other than the pull request's author, is required.
+Maintainers who do not explicitly voice their opinions on the pull request within the two-day approval period are assumed to agree through [lazy consensus](http://communitymgt.wikia.com/wiki/Lazy_consensus).
 
 Discussions and voting can be posponed in case one of the maintainers expressed that
 they won't be available for personal reasons, e.g. parental leave, vacations, sick leave, etc.
