@@ -20,12 +20,11 @@ Main responsibilities of maintainers include:
 ## Reviewers
 
 A reviewer is a core role within the project. They share in reviewing issues and pull requests.
-Their pull request approvals are needed to merge significant code changes into the project.
+Their pull request approvals are needed to merge code changes into the project.
 
 ## Emeritus Maintainers
 
-Emeritus maintainers are retired maintainers who have chosen to remain involved in the project as advisors.
-Their main responsibilities include:
+Emeritus maintainers are retired maintainers who have provided valuable contributions to the project in the past but are not able to dedicate the time necessary to be fully active maintainers going forward. While their efforts will be focused elsewhere, it is hoped that they will try to find the time to continue to be active participants in the community by:
 
 1) Providing guidance and mentorship to current maintainers and contributors.
 2) Offering historical context and insights based on their past experiences.
@@ -37,9 +36,9 @@ Maintainers are first and foremost contributors who have demonstrated their comm
 
 Just contributing does not make you a maintainer; it is about building trust with the current maintainers and being someone they can depend on to make decisions in the project's best interest.
 
-Periodically, the existing maintainers curate a list of contributors who have shown regular activity over the prior months. From this list, maintainer candidates are selected and proposed on the project mailing list. Only one maintainer per organization is allowed to avoid conflicts of interest.
+Periodically, the existing maintainers curate a list of contributors who have shown regular activity over the prior months. From this list, maintainer candidates are selected and proposed on a pull request. Only one maintainer per organization is allowed to avoid conflicts of interest.
 
-After a candidate is announced on the project mailing list, the existing maintainers have fourteen business days to discuss, raise objections, and vote on the candidate. Votes can be cast on the mailing list or via pull request comments. Candidates must be approved by at least 66% of the current maintainers. The reviewer role has the same process but only requires 33% approval from current maintainers. Only maintainers of the repository the candidate is proposed for are allowed to vote.
+After a candidate is announced on the pull request, the existing maintainers have fourteen business days to discuss, raise objections, and vote on the candidate. Votes can be cast on via pull request comments. Candidates must be approved by at least 66% of the current maintainers. The reviewer role has the same process but only requires 33% approval from current maintainers. Only maintainers of the repository the candidate is proposed for are allowed to vote.
 
 If approved, a maintainer will contact the candidate to invite them to open a pull request adding themselves to the MAINTAINERS file. The voting process can also take place inside a pull request if a maintainer has already discussed the candidacy with the candidate and is willing to sponsor them by opening the pull request. The candidate becomes a maintainer once the pull request is merged.
 
