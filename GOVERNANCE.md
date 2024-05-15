@@ -13,48 +13,39 @@ You can contact the project maintainers at any time by sending an email to the
 
 Main responsibilities of maintainers include:
 
-1) They share responsibility in the project's success.
-2) They have made a long-term, recurring time investment to improve the project.
-3) They spend that time doing whatever needs to be done, not necessarily what
-is the most interesting or fun.
+1) Sharing responsibility for the project's success.
+2) Making a long-term, recurring time investment to improve the project.
+3) Performing necessary tasks, even if they are not the most interesting or fun.
 
 ## Reviewers
 
-A reviewer is a core role within the project.
-They share in reviewing issues and pull requests. Their pull request approvals
-are needed to merge a large code change into the project.
+A reviewer is a core role within the project. They share in reviewing issues and pull requests.
+Their pull request approvals are needed to merge significant code changes into the project.
+
+## Emeritus Maintainers
+
+Emeritus maintainers are retired maintainers who have chosen to remain involved in the project as advisors.
+Their main responsibilities include:
+
+1) Providing guidance and mentorship to current maintainers and contributors.
+2) Offering historical context and insights based on their past experiences.
+3) Participating in discussions and reviews on an advisory basis, without the obligations of active maintainers.
 
 ## Adding maintainers
 
-Maintainers are first and foremost contributors that have shown they are
-committed to the long term success of a project. Contributors wanting to become
-maintainers are expected to be deeply involved in contributing code, pull
-request review, and triage of issues in the project for more than three months.
+Maintainers are first and foremost contributors who have demonstrated their commitment to the long-term success of the project. Contributors wishing to become maintainers are expected to be deeply involved in contributing code, reviewing pull requests, and triaging issues for more than three months.
 
-Just contributing does not make you a maintainer, it is about building trust
-with the current maintainers of the project and being a person that they can
-depend on and trust to make decisions in the best interest of the project.
+Just contributing does not make you a maintainer; it is about building trust with the current maintainers and being someone they can depend on to make decisions in the project's best interest.
 
-Periodically, the existing maintainers curate a list of contributors that have
-shown regular activity on the project over the prior months. From this list,
-maintainer candidates are selected and proposed on the project mailing list.
-Only one maintainer per organization is allowed to avoid taking over votes in case of conflicts.
+Periodically, the existing maintainers curate a list of contributors who have shown regular activity over the prior months. From this list, maintainer candidates are selected and proposed on the project mailing list. Only one maintainer per organization is allowed to avoid conflicts of interest.
 
-After a candidate has been announced on the project mailing list, the
-existing maintainers are given fourteen business days to discuss the candidate,
-raise objections and cast their vote. Votes may take place on the mailing list
-or via pull request comment. Candidates must be approved by at least 66% of the
-current maintainers by adding their vote on the mailing list. The reviewer role
-has the same process but only requires 33% of current maintainers. Only
-maintainers of the repository that the candidate is proposed for are allowed to
-vote.
+After a candidate is announced on the project mailing list, the existing maintainers have fourteen business days to discuss, raise objections, and vote on the candidate. Votes can be cast on the mailing list or via pull request comments. Candidates must be approved by at least 66% of the current maintainers. The reviewer role has the same process but only requires 33% approval from current maintainers. Only maintainers of the repository the candidate is proposed for are allowed to vote.
 
-If a candidate is approved, a maintainer will contact the candidate to invite
-the candidate to open a pull request that adds the contributor to the
-MAINTAINERS file. The voting process may take place inside a pull request if a
-maintainer has already discussed the candidacy with the candidate and a
-maintainer is willing to be a sponsor by opening the pull request. The candidate
-becomes a maintainer once the pull request is merged.
+If approved, a maintainer will contact the candidate to invite them to open a pull request adding themselves to the MAINTAINERS file. The voting process can also take place inside a pull request if a maintainer has already discussed the candidacy with the candidate and is willing to sponsor them by opening the pull request. The candidate becomes a maintainer once the pull request is merged.
+
+## Adding Emeritus Maintainers
+
+To transition a maintainer to an emeritus role, the current maintainers can nominate a retiring maintainer who has expressed interest in staying involved as an advisor. The nomination process follows the same voting and approval procedures as adding new maintainers, requiring a 66% approval vote from the current maintainers. Once approved, the emeritus maintainer is added to the EMERITUS file and announced to the community.
 
 ## Subprojects
 
@@ -140,9 +131,9 @@ document for more information about opening pull requests.
 
 ## Conflict Resolution
 
-At least 66% approval from the project's maintainers is necessary to merge changes
-in the specification. [Lazy consensus](http://communitymgt.wikia.com/wiki/Lazy_consensus)
-is considered by maintainers that do not directly express their opinions in the pull request.
+To merge changes into the specification, at least 66% approval from the project's maintainers is required.
+Maintainers who do not explicitly voice their opinions on the pull request within the two-day approval period are
+assumed to agree through [lazy consensus](http://communitymgt.wikia.com/wiki/Lazy_consensus).
 
 Discussions and voting can be posponed in case one of the maintainers expressed that
 they won't be available for personal reasons, e.g. parental leave, vacations, sick leave, etc.
