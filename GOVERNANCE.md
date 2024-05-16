@@ -32,15 +32,15 @@ Emeritus maintainers are retired maintainers who have provided valuable contribu
 
 ## Adding maintainers
 
-Maintainers are first and foremost contributors who have demonstrated their commitment to the long-term success of the project. Contributors wishing to become maintainers are expected to be deeply involved in contributing code, reviewing pull requests, and triaging issues for more than three months.
+Maintainers are primarily contributors who have shown a strong commitment to the long-term success of the project. Contributors aspiring to become maintainers are expected to be actively involved in coding, reviewing pull requests, and managing issues for over three months.
 
-Just contributing does not make you a maintainer; it is about building trust with the current maintainers and being someone they can depend on to make decisions in the project's best interest.
+Becoming a maintainer is not just about contributing; it involves building trust with the current maintainers and proving to be a reliable decision-maker for the project.
 
-Periodically, the existing maintainers curate a list of contributors who have shown regular activity over the prior months. From this list, maintainer candidates are selected and proposed on a pull request. Only one maintainer per organization is allowed to avoid conflicts of interest.
+Periodically, the existing maintainers compile a list of contributors who have been consistently active in recent months. From this list, maintainer candidates are selected and proposed via a pull request. To avoid conflicts of interest, only one maintainer per organization is allowed.
 
-After a candidate is announced on the pull request, the existing maintainers have fourteen business days to discuss, raise objections, and vote on the candidate. Votes can be cast on via pull request comments. Candidates must be approved by at least 66% of the current maintainers. The reviewer role has the same process but only requires 33% approval from current maintainers. Only maintainers of the repository the candidate is proposed for are allowed to vote.
+Once a candidate is proposed by adding them to the MAINTAINERS file via a pull request, the existing maintainers have fourteen business days to discuss, raise objections, and vote. Votes are cast through pull request comments, and candidates must receive at least 66% approval from the current maintainers.
 
-If approved, a maintainer will contact the candidate to invite them to open a pull request adding themselves to the MAINTAINERS file. The voting process can also take place inside a pull request if a maintainer has already discussed the candidacy with the candidate and is willing to sponsor them by opening the pull request. The candidate becomes a maintainer once the pull request is merged.
+The process for the reviewer role is similar but requires only 33% approval from current maintainers. Voting is restricted to maintainers of the repository for which the candidate is proposed.
 
 ## Adding Emeritus Maintainers
 
