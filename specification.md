@@ -4505,7 +4505,7 @@ detail: "The function 'my-function' timed out."
 
 </details>
 
-Error definitions are [RFC7807](https://datatracker.ietf.org/doc/html/rfc7807) compliant descriptions of errors that are produced by/originating from the execution of a workflow. Runtimes use them to describe workflow related errors in a user-friendly, technology agnostic and cross-platform way.
+Error definitions are [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) compliant descriptions of errors that are produced by/originating from the execution of a workflow. Runtimes use them to describe workflow related errors in a user-friendly, technology agnostic, and cross-platform way.
 
 Property `instance` identifies the component within a workflow definition from which the described error originates. It is set by runtimes when throwing an error.
 
