@@ -4520,7 +4520,7 @@ Property `status` identifies the error's status code.
 
 Properties `title` and `detail` are used to provide additional information about the error.
 
-Note that an error definition should **NOT** carry any implementation-specific information such as stack traces or code references: its purpose is to provide users a consistent, human-readable description of an error.
+Note that an error definition should **NOT** carry any implementation-specific information such as stack traces or code references: its purpose is to provide users with a consistent, human-readable description of an error.
 
 ##### Error Types
 
