@@ -5769,7 +5769,7 @@ Error handling is a crucial aspect of any workflow system, ensuring that the wor
 
 #### Error Definitions
 
-[Error definitions](#error-definition) in ServerlessWorkflow follow the [RFC7807 Problem Details specification](https://datatracker.ietf.org/doc/html/rfc7807), providing a standardized format for describing errors that may occur during workflow execution. These definitions include parameters such as name, instance, type, status, title, and detail, which collectively provide a comprehensive description of the error. By adhering to this standard, errors can be described in a consistent, technology-agnostic, and human-readable manner, facilitating effective communication and resolution.
+[Error definitions](#error-definition) in Serverless Workflow follow the [RFC7807 Problem Details specification](https://datatracker.ietf.org/doc/html/rfc7807), providing a standardized format for describing errors that may occur during workflow execution. These definitions include parameters such as name, instance, type, status, title, and detail, which collectively provide a comprehensive description of the error. By adhering to this standard, errors can be described in a consistent, technology-agnostic, and human-readable manner, facilitating effective communication and resolution.
 
 #### Error Types
 
