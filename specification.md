@@ -6039,7 +6039,7 @@ states:
 
 #### Error Retries
 
-ServerlessWorkflow offers a robust error retry mechanism designed to enhance the reliability and resilience of workflows by automatically attempting to execute failed operations again under specific conditions. When an error is caught within a workflow, the retry mechanism is activated, providing an opportunity to retry the failed operation. This retry behavior is configured using the `retry` property within the [error handling definition](#error-handler-definition).
+Serverless Workflow offers a robust error retry mechanism designed to enhance the reliability and resilience of workflows by automatically attempting to execute failed operations again under specific conditions. When an error is caught within a workflow, the retry mechanism is activated, providing an opportunity to retry the failed operation. This retry behavior is configured using the `retry` property within the [error handling definition](#error-handler-definition).
 
 The retry mechanism provides several benefits to workflow developers. Firstly, it improves reliability by automatically retrying failed operations, thereby reducing the likelihood of transient errors causing workflow failures. Additionally, it enhances the resilience of workflows by enabling them to recover from temporary issues or transient faults in the underlying systems, ensuring continuous execution even in the face of occasional errors. Moreover, the built-in retry capabilities simplify error handling logic, eliminating the need for manual implementation of complex retry mechanisms. This streamlines workflow development and maintenance, making it easier for developers to manage and troubleshoot error scenarios effectively.
 
