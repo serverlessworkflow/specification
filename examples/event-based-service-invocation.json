@@ -1,5 +1,4 @@
 {
-    "id": "vet-appointment-workflow",
     "name": "vet-appointment-workflow",
     "description": "Vet service call via events",
     "version": "1.0.0",
@@ -9,14 +8,12 @@
         {
             "name": "make-vet-appointment",
             "source": "VetServiceSource",
-            "type": "events.vet.appointments",
-            "kind": "produced"
+            "type": "events.vet.appointments"
         },
         {
             "name": "vet-appointment-info",
             "source": "VetServiceSource",
-            "type": "events.vet.appointments",
-            "kind": "consumed"
+            "type": "events.vet.appointments"
         }
     ],
     "states": [
@@ -26,10 +23,15 @@
             "actions": [
                 {
                     "name": "make-appointment-action",
-                    "eventRef": {
-                        "produceEventRef": "make-vet-appointment",
-                        "data": "${ .patientInfo }",
-                        "consumeEventRef": "vet-appointment-info"
+                    "publish": {
+                        "event": "make-vet-appointment",
+                        "data": "${ .patientInfo }"
+                    }
+                },
+                {
+                    "name": "wait-appointement-confirmation",
+                    "subscribe": {
+                        "event": "vet-appointment-info"
                     },
                     "actionDataFilter": {
                         "results": "${ .appointmentInfo }"

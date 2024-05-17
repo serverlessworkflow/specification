@@ -22,9 +22,7 @@
       }
     ]
   },
-  "required": [
-    "functions"
-  ],
+  "required": ["functions"],
   "definitions": {
     "function": {
       "type": "object",
@@ -40,9 +38,9 @@
         },
         "type": {
           "type": "string",
-          "description": "Defines the function type. Is either `rest`, `openapi`,`asyncapi, `rpc`, `graphql`, `odata`, `expression`, or `custom`. Default is `openapi`.",
+          "description": "Defines the function type. Is either `http`, `openapi`,`asyncapi, `rpc`, `graphql`, `odata`, `expression`, or `custom`. Default is `openapi`.",
           "enum": [
-            "rest",
+            "http",
             "openapi",
             "asyncapi",
             "rpc",
@@ -77,9 +75,7 @@
                 }
               },
               "additionalProperties": false,
-              "required": [
-                "resource"
-              ]
+              "required": ["resource"]
             }
           ]
         },
@@ -88,10 +84,7 @@
         }
       },
       "additionalProperties": false,
-      "required": [
-        "name",
-        "operation"
-      ]
+      "required": ["name", "operation"]
     },
     "operation": {
       "oneOf": [
@@ -108,7 +101,41 @@
             "^/": {
               "type": "object"
             }
-          }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "HTTP Function operation definition",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "GET",
+                "HEAD",
+                "POST",
+                "PUT",
+                "DELETE",
+                "CONNECT",
+                "OPTIONS",
+                "TRACE"
+              ],
+              "default": "GET"
+            },
+            "uri": {
+              "type": "string"
+            },
+            "headers": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
+            "cookies": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            }
+          },
+          "required": ["method", "uri"],
+          "additionalProperties": false
         }
       ]
     }

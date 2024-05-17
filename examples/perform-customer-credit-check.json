@@ -1,13 +1,12 @@
 {
-    "id": "customercreditcheck",
     "version": "1.0.0",
     "specVersion": "0.8",
-    "name": "customercreditcheck",
+    "name": "customer-credit-check",
     "description": "Perform Customer Credit Check",
     "start": "check-credit",
     "functions": [
         {
-            "name": "credit-check-function",
+            "name": "check-credit-function",
             "operation": "http://myapis.org/creditcheckapi.json#doCreditCheck"
         },
         {
@@ -34,7 +33,7 @@
             "action": {
                 "name": "check-credit",
                 "functionRef": {
-                    "refName": "call-credit-check-microservice",
+                    "refName": "check-credit-function",
                     "arguments": {
                         "customer": "${ .customer }"
                     }

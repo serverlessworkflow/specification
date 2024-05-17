@@ -25,7 +25,7 @@ export module SWSchemaValidator {
     addFormats(ajv)
 
 
-    const workflowSchemaId = 'https://serverlessworkflow.io/schemas/0.8/workflow.json'
+    const workflowSchemaId = 'https://serverlessworkflow.io/schemas/0.9/workflow.json'
     const schemaPath = '../../../schema'
     export const defaultEncoding = 'utf-8'
 

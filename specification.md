@@ -24,7 +24,7 @@
     + [Data Merging](#data-merging)
   * [Workflow Functions](#workflow-functions)
     + [Using Functions for OpenAPI Service Invocations](#using-functions-for-openapi-service-invocations)
-    + [Using Functions for RESTful Service Invocations](#using-functions-for-restful-service-invocations)
+    + [Using Functions for HTTP Service Invocations](#using-functions-for-http-service-invocations)
     + [Using Functions for Async API Service Invocations](#using-functions-for-async-api-service-invocations)
     + [Using Functions for RPC Service Invocations](#using-functions-for-rpc-service-invocations)
     + [Using Functions for GraphQL Service Invocations](#using-functions-for-graphql-service-invocations)
@@ -41,7 +41,6 @@
       - [Event State](#event-state)
       - [Operation State](#operation-state)
       - [Switch State](#switch-state)
-      - [Sleep State](#sleep-state)
       - [Parallel State](#parallel-state)
       - [Inject State](#inject-state)
       - [ForEach State](#foreach-state)
@@ -250,7 +249,7 @@ in detail in the [Continuing a new Execution](#Continuing-as-a-new-Execution) se
 The Serverless Workflow language is composed of:
 
 * [Function definitions](#Function-Definition) -  Reusable functions that can declare services that need to be invoked, or expressions to be evaluated.
-* [Event definitions](#Event-Definition) - Reusable declarations of events that need to be `consumed` to start or continue workflow instances, trigger function/service execution, or be `produced` during workflow execution.
+* [Event definitions](#Event-Definition) - Reusable declarations of events that need to be consumed to start or continue workflow instances, trigger function/service execution, or be produced during workflow execution.
 * [Retry definitions](#Retry-Definition) - Reusable retry definitions. Can specify retry strategies for service invocations during workflow execution.
 * [Timeout definitions](#Workflow-Timeouts) - Reusable timeout definitions. Can specify default workflow execution timeout, as well as workflow state, action, and branch execution timeouts.
 * [Errors definition](#Defining-Errors) - Reusable error definitions. Provide domain-specific error definitions which can be referenced in workflow states error handling.
@@ -456,7 +455,7 @@ The second way would be to directly filter only the "veggie like" vegetables wit
 | fromStateData | Workflow expression that filters state data that can be used by the action | string | no |
 | useResults | If set to `false`, action data results are not added/merged to state data. In this case 'results' and 'toStateData' should be ignored. Default is `true`.  | boolean | no |
 | results | Workflow expression that filters the actions data results | string | no |
-| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged into. If not specified denotes the top-level state data element | string | no |
+| toStateData | Workflow expression that selects a state data element to which the action results should be added/merged. If not specified denotes the top-level state data element. In case it is not specified and the result of the action is not an object, that result should be merged as the value of an automatically generated key. That key name will be the result of concatenating the action name with `-output` suffix. | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -582,6 +581,26 @@ into. With this, after our action executes the state data would be:
 }
 ```
 
+To illustrate the merge of non-JSON for both objects,  let's assume that, in the previous example, the action definition is the follows
+
+```json
+"actions":[
+    {
+       "name": "fetch-only-pasta",
+       "functionRef": "breadAndPastaTypesFunction",
+       "actionDataFilter": {
+          "results": "${ .pasta[1] ]",
+       }
+    }
+ ]
+```
+Since there is no `toStateData` attribute and the result is not a JSON object but a string, the model would be:
+
+```json
+{
+  "fetch-only-pasta-output": "spaghetti"
+}
+```
 In the case action results should not be added/merged to state data, we can set the `useResults` property to `false`.
 In this case, the `results` and `toStateData` properties should be ignored, and nothing is added/merged to state data.
 If `useResults` is not specified (or it's value set to `true`), action results, if available, should be added/merged to state data.
@@ -660,8 +679,8 @@ a workflow with a single event state and show how data filters can be combined.
 
 ```json
 {
-    "id": "GreetCustomersWorkflow",
-    "name": "Greet Customers when they arrive",
+    "name": "greet-customers-workflow",
+    "description": "Greet Customers when they arrive",
     "version": "1.0.0",
     "specVersion": "0.8",
     "start": "WaitForCustomerToArrive",
@@ -1013,7 +1032,7 @@ They can be referenced by their domain-specific names inside workflow [states](#
 Reference the following sections to learn more about workflow functions:
 
 * [Using functions for OpenAPI Service invocations](#using-functions-for-openapi-service-invocations)
-+ [Using functions for RESTful Service Invocations](#using-functions-for-rest-service-invocations)
++ [Using functions for HTTP Service Invocations](#using-functions-for-http-service-invocations)
 * [Using functions for Async API Service Invocations](#Using-Functions-for-Async-API-Service-Invocations)
 * [Using functions for gRPC service invocation](#Using-Functions-For-RPC-Service-Invocations)
 * [Using functions for GraphQL service invocation](#Using-Functions-For-GraphQL-Service-Invocations)
@@ -1079,11 +1098,7 @@ For example:
 
 Note that the referenced function definition type in this case must be `openapi` (default type).
 
-For more information about functions, reference the [Functions definitions](#Function-Definition) section.
-
-#### Using functions for RESTful Service Invocations
-
-The specification also supports describing REST invocations in the [functions definition](#Function-Definition) using [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object).
+The specification also supports describing OpenAPI for REST invocations inline in the [functions definition](#Function-Definition) using [OpenAPI Paths Object](https://spec.openapis.org/oas/v3.1.0#paths-object).
 
 Here is an example function definition for REST requests with method `GET` and request target corresponding with [URI Template](https://www.rfc-editor.org/rfc/rfc6570.html) `/users/{id}`:
 
@@ -1103,7 +1118,7 @@ Here is an example function definition for REST requests with method `GET` and r
           }
         }
       },
-      "type":"rest"
+      "type":"openapi"
     }
   ]
 }
@@ -1140,7 +1155,7 @@ Example of the `POST` request sending the state data as part of the body:
   "functions":[
     {
       "name": "createUser",
-      "type": "rest",
+      "type": "openapi",
       "operation": {
         "/users": {
           "post": {
@@ -1237,7 +1252,119 @@ In this case, only the contents of the `user` attribute will be passed to the fu
 }
 ```
 
-The specification does not support the [Security Requirement Object](https://spec.openapis.org/oas/v3.1.0#security-requirement-object) since its redundat to function [Auth Definition](#Auth-Definition). If provided, this field is ignored.
+When inlining the OpenAPI operation, the specification does not support the [Security Requirement Object](https://spec.openapis.org/oas/v3.1.0#security-requirement-object) since its redundat to function [Auth Definition](#Auth-Definition). If provided, this field is ignored.
+
+For more information about functions, reference the [Functions definitions](#Function-Definition) section.
+
+#### Using functions for HTTP Service Invocations
+
+The HTTP function can make HTTP requests to a given endpoint. It can be used in cases a service doesn't have an OpenAPI definition or users require a simple HTTP, curl-style invocation.
+
+The table below lists the `operation` properties for the `http` function type.
+
+| Property | Description | Type | Required |
+| --- | --- |  --- | --- |
+
+| uri     | The URI where to send the request | String | yes |
+| method  | The HTTP method according to the [RFC 2616](https://datatracker.ietf.org/doc/html/rfc2616#page-36) | String | yes |
+| headers | Headers to send in the HTTP call. The `Content-Type` header mandates the body convertion. | Map | no |
+| cookies | Cookies to send in the HTTP call. | Map | no |
+
+Note that in the function definition, these values are static. When invoking the function in the `actions` definition, `jq` can be used to set the attribute values.
+
+Here is a function definition example for a HTTP service operation.
+
+```json
+{
+"functions": [
+  {
+    "name": "getPetById",
+    "type": "http",
+    "operation": {
+      "method": "GET",
+      "uri": "https://petstore.swagger.io/v2/pet/{petId}"
+    }
+  }
+]
+}
+```
+
+This function can be used later in the workflow definition:
+
+```json
+{
+  "states":[
+    {
+      "name": "getpet",
+      "type": "operation",
+      "actions":[
+        {
+          "functionRef": "getPetById",
+          "arguments":{
+            "petId": "${ .pet.id }"
+          }
+        }
+      ],
+      "end":true
+    }
+  ]
+}
+```
+
+Not that the `arguments` attribute must map the template in the `uri` definition so the underlying engine can map the arguments correctly.
+
+The `arguments` attribute accepts the following reserved properties when calling a HTTP function type:
+
+| Property | Description | Type | Required |
+| --- | --- |  --- | --- |
+
+| body | The HTTP body. If an object, it will be sent as a JSON payload by default if the `Content-Type` header is missing. Otherwise, it will try to convert it based on the `Content-Type` header definition | Object or String | no |
+| headers | Headers to send in the HTTP call. The `Content-Type` header mandates the body convertion. | Map | no |
+| cookies | Cookies to send in the HTTP call. | Map | no |
+
+These attributes are merged with the ones in the function definition.
+
+The listing below exemplifies how to define and call a HTTP POST endpoint.
+
+```json
+{
+"functions": [
+  {
+    "name": "createPet",
+    "type": "http",
+    "operation": {
+      "method": "POST",
+      "uri": "https://petstore.swagger.io/v2/pet/",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    }
+  }
+]
+},
+{
+  "states":[
+    {
+      "name":"create-pet",
+      "type":"operation",
+      "actions":[
+        {
+          "functionRef":"createPet",
+          "arguments":{
+            "body": {
+              "name": "Lulu"
+            },
+            "headers": {
+              "my-header": "my-value"
+            }
+          }
+        }
+      ],
+      "end":true
+    }
+  ]
+}
+```
 
 #### Using Functions for Async API Service Invocations
 
@@ -1927,26 +2054,25 @@ we can use this expression in the workflow "version" parameter:
 
 ```json
 {
-   "id": "MySampleWorkflow",
-   "name": "Sample Workflow",
+   "name": "my-sample-workflow",
+   "description": "Sample Workflow",
    "version": "${ .inputVersion }",
    "specVersion": "0.8"
 }
 ```
 
 which would set the workflow version to "1.0.0".
-Note that the workflow "id" property value is not allowed to use an expression. The workflow
-definition "id" must be a constant value.
+Note that the workflow "name" property value is not allowed to use an expression. The workflow
+definition "name" must be a constant value.
 
 ### Workflow Definition Structure
 
 | Parameter | Description | Type | Required |
 | --- | --- |  --- | --- |
-| id | Workflow unique identifier | string | yes (if `key` is not defined) |
-| key | Domain-specific workflow identifier | string | yes (if `id` is not defined) |
-| name | Workflow name | string | no |
+| name | The name that identifies the workflow definition, and which, when combined with its version, forms a unique identifier. | string | yes |
+| version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format. If not provided, `latest` is assumed | string | no |
 | description | Workflow description | string | no |
-| version | Workflow version. MUST respect the [semantic versioning](https://semver.org/) format | string | no |
+| key | Optional expression that will be used to generate a domain-specific workflow instance identifier  | string | no |
 | annotations | List of helpful terms describing the workflows intended purpose, subject areas, or other important qualities | array | no |
 | dataInputSchema | Used to validate the workflow data input against a defined JSON Schema| string or object | no |
 | dataOutputSchema | Used to validate the workflow data output against a defined JSON Schema| string or object | no |
@@ -1979,10 +2105,9 @@ definition "id" must be a constant value.
 
 ```json
 {
-   "id": "sampleWorkflow",
+   "name": "sample-workflow",
    "version": "1.0.0",
    "specVersion": "0.8",
-   "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
    "states": [],
@@ -1997,10 +2122,9 @@ definition "id" must be a constant value.
 <td valign="top">
 
 ```yaml
-id: sampleWorkflow
+name: sample-workflow
 version: '1.0.0'
 specVersion: '0.8'
-name: Sample Workflow
 description: Sample Workflow
 start: MyStartingState
 states: []
@@ -2023,18 +2147,13 @@ Following figure describes the main workflow definition blocks.
 <img src="media/spec/workflowdefinitionblocks.png" height="300px" alt="Serverless Workflow Definitions Blocks"/>
 </p>
 
-The `id` property defines the unique, domain-specific workflow identifier, for example "orders", "payment", etc.
+The required `name` property  defines the unique workflow definition identifier, for example "orders", "payment", etc.
 
-The `key` property defines the unique, domain-specific workflow identifier.
-It can be used when the `id` property is auto-generated by a content-management system for example.
-In these cases, you can specify the `key` property to be the domain-specific identifier of the workflow definition.
-The `id` and `key` properties are mutually exclusive, meaning you cannot define both.
+The optional `key` property is an expression that evaluates to a domain related, unique running workflow instance identifier, for example "orders-1", "orders-2"...
 
-The `name` property is the workflow logical name.
+The `description` property might be used to give further information about the workflow.
 
-The `description` property can be used to give further information about the workflow.
-
-The `version` property can be used to provide a specific workflow version. It must use the [semantic versioning](https://semver.org/) format.
+The `version` property can be used to provide a specific workflow version. It must use the [semantic versioning](https://semver.org/) format.If not specified, "latest" is assumed. 
 
 The `annotations` property defines a list of helpful terms describing the workflows intended purpose, subject areas, or other important qualities,
 for example "machine learning", "monitoring", "networking", etc
@@ -2185,10 +2304,9 @@ Here is an example of using external resource for function definitions:
 
 ```json
 {
-   "id": "sampleWorkflow",
+   "name": "sample-workflow",
    "version": "1.0.0",
    "specVersion": "0.8",
-   "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
    "functions": "http://myhost:8080/functiondefs.json",
@@ -2222,10 +2340,9 @@ Here is an example of using external resource for event definitions:
 
 ```json
 {
-   "id": "sampleWorkflow",
+   "name": "sample-workflow",
    "version": "1.0.0",
    "specVersion": "0.8",
-   "name": "Sample Workflow",
    "description": "Sample Workflow",
    "start": "MyStartingState",
    "events": "http://myhost:8080/eventsdefs.json",
@@ -2305,7 +2422,6 @@ Serverless Workflow defines the following Workflow States:
 | **[Event](#Event-State)** | Define events that trigger action execution | yes | yes | yes | yes | yes | no | yes | yes |
 | **[Operation](#Operation-State)** | Execute one or more actions | no | yes | yes | yes | yes | no | yes | yes |
 | **[Switch](#Switch-State)** | Define data-based or event-based workflow transitions | no | yes | no | yes | no | yes | yes | no |
-| **[Sleep](#Sleep-State)** | Sleep workflow execution for a specific time duration | no | yes | no | yes | no | no | yes | yes |
 | **[Parallel](#Parallel-State)** | Causes parallel execution of branches (set of states) | no | yes | no | yes | yes | no | yes | yes |
 | **[Inject](#Inject-State)** | Inject static data into state data | no | yes | no | yes | no | no | yes | yes |
 | **[ForEach](#ForEach-State)** | Parallel execution of states for each element of a data array | no | yes | no | yes | yes | no | yes | yes |
@@ -2387,7 +2503,7 @@ Serverless Workflow defines the following Workflow States:
 <td valign="top">
 
 ```yaml
-name: MonitorVitals
+name: monitor-vitals
 type: event
 exclusive: true
 onEvents:
@@ -2633,57 +2749,6 @@ The `timeouts` property can be used to define state specific timeout settings. S
 `stateExecTimeout` setting. If `eventConditions` is defined, the switch state can also define the
 `eventTimeout` property. For more information on workflow timeouts reference the [Workflow Timeouts](#Workflow-Timeouts) section.
 
-##### Sleep State
-
-| Parameter | Description | Type | Required |
-| --- | --- | --- | --- |
-| name | Unique State name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| type | State type | string | yes |
-| duration | Duration (ISO 8601 duration format) to sleep. For example: "PT15M" (sleep 15 minutes), or "P2DT3H4M" (sleep 2 days, 3 hours and 4 minutes) | string | yes |
-| [transition](#Transitions) | Next transition of the workflow after the sleep | string or object | yes (if `end` is not defined) |
-| [end](#End-Definition) | Is this state an end state | boolean or object | yes (if `transition` is not defined) |
-
-<details><summary><strong>Click to view example definition</strong></summary>
-<p>
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-      "name": "sleep-five-seconds",
-      "type": "sleep",
-      "duration": "PT5S",
-      "transition": "get-job-status"
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-name: sleep-five-seconds
-type: sleep
-duration: PT5S
-transition: get-job-status
-```
-
-</td>
-</tr>
-</table>
-
-</details>
-
-Sleep state 
-suspends workflow execution for a given time duration. The delay is defined in its `duration` property using the ISO 8601 
-duration format.
-
-Note that `transition` and `end` properties are mutually exclusive, meaning that you cannot define both of them at the same time.
 ##### Parallel State
 
 | Parameter | Description | Type | Required |
@@ -3166,8 +3231,7 @@ and our workflow is defined as:
 
 ```json
 {
-  "id": "sendConfirmWorkflow",
-  "name": "SendConfirmationForCompletedOrders",
+  "name": "send-confirmation-for-completed-orders",
   "version": "1.0.0",
   "specVersion": "0.8",
   "start": "send-confirm-state",
@@ -3203,8 +3267,7 @@ and our workflow is defined as:
 <td valign="top">
 
 ```yaml
-id: sendConfirmWorkflow
-name: SendConfirmationForCompletedOrders
+name: send-confirmation-for-completed-orders
 version: '1.0.0'
 specVersion: '0.8'
 start: send-confirm-state
@@ -3375,7 +3438,7 @@ Note that `transition` and `end` properties are mutually exclusive, meaning that
 | --- | --- | --- | --- |
 | name | Unique function name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
 | operation | See the table "Function Operation description by type" below. | string or object | yes |
-| type | Defines the function type. Can be either `rest`, `openapi`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `openapi` | enum | no |
+| type | Defines the function type. Can be either `http`, `openapi`, `asyncapi`, `rpc`, `graphql`, `odata`, `expression`, or [`custom`](#defining-custom-function-types). Default is `openapi` | enum | no |
 | authRef | References an [auth definition](#Auth-Definition) name to be used to access to resource defined in the operation parameter | string | no |
 | [metadata](#Workflow-Metadata) | Metadata information. Can be used to define custom function information | object | no |
 
@@ -3482,7 +3545,7 @@ Example of a function definition configured to use an [auth definition](#Auth-De
 
 ```yaml
 functions:
-- name: SecuredFunctionInvocation
+- name: secured-function-invocation
   operation: https://test.com/swagger.json#HelloWorld
   authRef: My Basic Auth
 ```
@@ -3491,7 +3554,7 @@ Example of a function definition configured to use an [auth definition](#Auth-De
 
 ```yaml
 functions:
-- name: SecuredFunctionInvocation
+- name: secured-function-invocation
   operation: https://test.com/swagger.json#HelloWorld
   authRef:
     resource: My Basic Auth
@@ -3504,11 +3567,11 @@ This is done to avoid unnecessary repetitions of [auth definition](#Auth-Definit
 
 ```yaml
 functions:
-  - name: MySecuredFunction1
+  - name: secured-function-1
     operation: https://secure.resources.com/myapi.json#helloWorld
     authRef:
       resource: My ApiKey Auth 
-  - name: MySecuredFunction2
+  - name: secured-function-2
     operation: https://secure.resources.com/myapi.json#holaMundo
 ```
 
@@ -3519,9 +3582,8 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique event name. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| source | CloudEvent source. If not set when `kind` is `produced`, runtimes are expected to use a default value, such as https://serverlessworkflow.io in order to comply with the [CloudEvent spec constraints](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1))| string | yes (if `type` is not defined. |
+| source | CloudEvent source. If not set when producing an event, runtimes are expected to use a default value, such as https://serverlessworkflow.io in order to comply with the [CloudEvent spec constraints](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/spec.md#source-1))| string | yes (if `type` is not defined. |
 | type | CloudEvent type | string | yes (if `source` is not defined) |
-| kind | Defines the event is either `consumed` or `produced` by the workflow. Default is `consumed` | enum | no |
 | [correlation](#Correlation-Definition) | Define event correlation rules for this event. Only used for consumed events | array | no |
 | dataOnly | If `true` (default value), only the Event payload is accessible to consuming Workflow states. If `false`, both event payload and context attributes should be accessible | boolean | no |
 | [metadata](#Workflow-Metadata) | Metadata information | object | no |
@@ -3542,7 +3604,6 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
    "name": "applicant-info",
    "type": "org.application.info",
    "source": "applicationssource",
-   "kind": "consumed",
    "correlation": [
     {
       "contextAttributeName": "applicantId"
@@ -3558,7 +3619,6 @@ It's worth noting that if an [auth definition](#Auth-Definition) has been define
 name: applicant-info
 type: org.application.info
 source: applicationssource
-kind: consumed
 correlation:
 - contextAttributeName: applicantId
 ```
@@ -3582,14 +3642,6 @@ The `source` property matches this event definition with the [source](https://gi
 property of the CloudEvent required attributes.
 
 The `type` property matches this event definition with the [type](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#type) property of the CloudEvent required attributes.
-
-The `kind` property defines this event as either `consumed` or `produced`. In terms of the workflow, this means it is either an event
-that triggers workflow instance creation, or continuation of workflow instance execution (consumed), or an event
-that the workflow instance creates during its execution (produced).
-The default value (if not specified) of the `kind` property is `consumed`.
-Note that for `produced` event definitions, implementations must provide the value of the CloudEvent source attribute.
-In this case (i.e., when the `kind` property is set to `produced`), the `source` property of the event is not required in the workflow definition.
-Otherwise, (i.e., when the `kind` property is set to `consumed`), the `source` property must be defined in the event definition.
 
 Event correlation plays a big role in large event-driven applications. Correlating one or more events with a particular workflow instance
 can be done by defining the event correlation rules within the `correlation` property.
@@ -3646,7 +3698,6 @@ type that have the **same** value of the `patientId` property to be correlated t
   "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
-  "kind": "consumed",
   "correlation": [
     {
       "contextAttributeName": "patientId"
@@ -3671,7 +3722,6 @@ and we want to make sure that both are correlated, as in the above example, with
   "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
-  "kind": "consumed",
   "correlation": [
     {
       "contextAttributeName": "patientId"
@@ -3682,7 +3732,6 @@ and we want to make sure that both are correlated, as in the above example, with
    "name": "blood-pressure-reading-event",
    "source": "hospitalMonitorSystem",
    "type": "com.hospital.patient.bloodPressureMonitor",
-   "kind": "consumed",
    "correlation": [
        {
          "contextAttributeName": "patientId"
@@ -3703,7 +3752,6 @@ on comparing it to custom defined values (string, or expression). For example:
   "name": "heart-rate-reading-event",
   "source": "hospitalMonitorSystem",
   "type": "com.hospital.patient.heartRateMonitor",
-  "kind": "consumed",
   "correlation": [
     {
       "contextAttributeName": "patientId"
@@ -3837,7 +3885,7 @@ correlation:
 
 </details>
 
-Used to define event correlation rules. Only usable for `consumed` event definitions.
+Used to define event correlation rules.
 
 The `contextAttributeName` property defines the name of the CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
 The `contextAttributeValue` property defines the value of the defined CloudEvent [extension context attribute](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes).
@@ -3997,27 +4045,26 @@ functionRef:
 
 </details>
 
-Actions specify invocations of services or other workflows during workflow execution.
-Service invocation can be done in three different ways:
+An action can:
 
 * Reference [functions definitions](#Function-Definition) by its unique name using the `functionRef` property.
-* Reference a `produced` and `consumed` [event definitions](#Event-Definition) via the `eventRef` property.
+* Publish an event [event definitions](#Event-Definition) via the `publish` property.
+* Subscribe to an event [event definitions](#Event-Definition) via the `subscribe` property.
 * Reference a sub-workflow invocation via the `subFlowRef` property.
 
-Note that `functionRef`, `eventRef`, and `subFlowRef` are mutually exclusive, meaning that only one of them can be
+Note that `functionRef`, `publish`, `subscribe` and `subFlowRef` are mutually exclusive, meaning that only one of them can be
 specified in a single action definition.
 
 The `name` property specifies the action name.
 
-In the event-based scenario a service, or a set of services we want to invoke
-are not exposed via a specific resource URI for example, but can only be invoked via an event.
-The [eventRef](#EventRef-Definition) property defines the
-referenced `produced` event via its `produceEventRef` property and a `consumed` event via its `consumeEventRef` property.
+In the event-based scenario a service, or a set of services we want to invoke are not exposed via a specific resource URI for example, but can only be invoked via an event.
+In that case, an event definition might be referenced via its `publish` property. 
+Also, if there is the need to consume an event within a set of actions (for example, wait for the result of a previous action invocation) an event definition might be referenced via its `susbcribe` property.
 
 The `sleep` property can be used to define time periods that workflow execution should sleep
 before and/or after function execution. It can have two properties:
-* `before` - defines the amount of time (ISO 8601 duration format) to sleep before function invocation.
-* `after` - defines the amount of time (ISO 8601 duration format) to sleep after function invocation.
+* `before` - defines the amount of time (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep before function invocation.
+* `after` - defines the amount of time (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) to sleep after function invocation.
 
 Function invocation timeouts should be handled via the states [timeouts](#Workflow-Timeouts) definition.
 
@@ -4036,9 +4083,9 @@ multiple other workflow definitions.
 <img src="media/spec/subflowstateref.png" height="350px" alt="Referencing reusable workflow via SubFlow actions"/>
 </p>
 
-Reusable workflows are referenced by their `id` property via the SubFlow action `workflowId` parameter.
+Reusable workflows are referenced by their `name` property via the SubFlow action `workflowId` parameter.
 
-For the simple case, `subFlowRef` can be a string containing the `id` of the sub-workflow to invoke.
+For the simple case, `subFlowRef` can be a string containing the `name` of the sub-workflow to invoke.
 If you want to specify other parameters then a [subFlowRef](#SubFlowRef-Definition) should be provided instead.
 
 Each referenced workflow receives the SubFlow actions data as workflow data input.
@@ -4129,18 +4176,15 @@ In addition, functions that are invoked async do not propagate their errors to t
 workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states 
 onErrors definition. Note that errors raised during functions that are invoked async should not fail workflow execution.
 
-##### EventRef Definition
+##### Publish Definition
 
-Allows defining invocation of a function via event. 
+Publish an event. 
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [produceEventRef](#Event-Definition) | Reference to the unique name of a `produced` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
-| [consumeEventRef](#Event-Definition) | Reference to the unique name of a `consumed` event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | no |
-| consumeEventTimeout | Maximum amount of time (ISO 8601 format) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
-| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `produceEventRef`. If object type, a custom object to become the data (payload) of the event referenced by `produceEventRef`. | string or object | no |
+| [event](#Event-Definition) | Reference to the unique name of an event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| data | If string type, an expression which selects parts of the states data output to become the data (payload) of the event referenced by `publish`. If object type, a custom object to become the data (payload) of the event referenced by `publish`. | string or object | yes |
 | contextAttributes | Add additional event extension context attributes to the trigger/produced event | object | no |
-| invoke | Specifies if the function should be invoked sync or async. Default is sync | enum | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4155,10 +4199,60 @@ Allows defining invocation of a function via event.
 
 ```json
 {
-   "eventRef": {
-      "produceEventRef": "make-vet-appointment",
+   "publish": {
+      "event": "make-vet-appointment",
       "data": "${ .patientInfo }",
-      "consumeEventRef":  "vet-appointment-info"
+   }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+publish:
+  event: make-vet-appointment
+  data: "${ .patientInfo }"
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Publish an [event definition](#Event-Definition) referenced via the `event` property.
+
+The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
+to be used as payload of the event referenced by `publish`. If it is of object type, you can define a custom object to be the event payload.
+
+The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
+to the trigger/produced event.
+
+##### Susbscribe Definition
+
+Wait for an event to arrive. 
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| [event](#Event-Definition) | Reference to the unique name of an event definition. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| timeout | Maximum amount of time (ISO 8601 format literal or expression) to wait for the consume event. If not defined it be set to the [actionExecutionTimeout](#Workflow-Timeout-Definition) | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+   "subscribe": {
+      "name": "approved-appointment",
    }
 }
 ```
@@ -4168,9 +4262,8 @@ Allows defining invocation of a function via event.
 
 ```yaml
 eventRef:
-  produceEventRef: make-vet-appointment
-  data: "${ .patientInfo }"
-  consumeEventRef: vet-appointment-info
+  subscribe: approved-appointment
+
 ```
 
 </td>
@@ -4179,45 +4272,28 @@ eventRef:
 
 </details>
 
-References a `produced` and `consumed` [event definitions](#Event-Definition) via the `produceEventRef` and `consumeEventRef` properties, respectively.
+Consumes an [event definition](#Event-Definition) referenced via the `event` property.
 
-The `data` property can have two types: string or object. If it is of string type, it is an expression that can select parts of state data
-to be used as payload of the event referenced by `produceEventRef`. If it is of object type, you can define a custom object to be the event payload.
-
-The `contextAttributes` property allows you to add one or more [extension context attributes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes)
-to the trigger/produced event.
-
-The `consumeEventTimeout` property defines the maximum amount of time (ISO 8601 format) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
-If the event defined by the `consumeEventRef` property is not received in that set time, action invocation should raise an error
-that can be handled in the states `onErrors` definition. In case the `consumeEventRef` is not defined, the `consumeEventTimeout` property is ignored.
-
-The `invoke` property defines how the function is invoked (sync or async). Default value of this property is
-`sync`, meaning that workflow execution should wait until the function completes (the result event is received).
-If set to `async`, workflow execution should just produce the trigger event and should not wait for the result event.
-Note that in this case the action does not produce any results (payload of the result event) and the associated actions eventDataFilter as well as
-its retry definition, if defined, should be ignored.
-Functions that are invoked via events (sync or async) do not propagate their errors to the associated action definition and the
-workflow state, meaning that any errors that happen during their execution cannot be handled in the workflow states
-onErrors definition. Note that errors raised during functions that are invoked sync or async in this case
-should not fail workflow execution.
+The `timeout` property defines the maximum amount of time (ISO 8601 format literal or expression) to wait for the result event. If not defined it should default to the  [actionExecutionTimeout](#Workflow-Timeout-Definition).
+If the event defined by the `name` property is not received in that set time, action invocation should raise an error that can be handled in the states `onErrors` definition. 
 
 ##### SubFlowRef Definition
 
 `SubFlowRef` definition can have two types, namely `string` or `object`.
 
-If `string` type, it defines the unique id of the sub-workflow to be invoked.
-This short-hand definition can be used if sub-workflow lookup is done only by its `id`
+If `string` type, it defines the unique name of the sub-workflow to be invoked.
+This short-hand definition can be used if sub-workflow lookup is done only by its `name`
 property and not its `version` property.
 
 ```json
-"subFlowRef": "mySubFlowId"
+"subFlowRef": "my-subflow-id"
 ```
 
 If you need to define the `version` properties, you can use its `object` type:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| workflowId | Sub-workflow unique id | string | yes |
+| workflowId | Sub-workflow unique name | string | yes |
 | version | Sub-workflow version | string | no |
 | invoke | Specifies if the subflow should be invoked `sync` or `async`. Default is `sync` | enum | no |
 | onParentComplete | If `invoke` is `async`, specifies if subflow execution should `terminate` or `continue` when parent workflow completes. Default is `terminate` | enum | no |
@@ -4235,7 +4311,7 @@ If you need to define the `version` properties, you can use its `object` type:
 
 ```json
 {
-    "workflowId": "handleApprovedVisaWorkflowID",
+    "workflowId": "handle-approved-visa",
     "version": "2.0.0"
 }
 ```
@@ -4244,7 +4320,7 @@ If you need to define the `version` properties, you can use its `object` type:
 <td valign="top">
 
 ```yaml
-workflowId: handleApprovedVisaWorkflowID
+workflowId: handle-approved-visa
 version: '2.0.0'
 ```
 
@@ -4254,8 +4330,8 @@ version: '2.0.0'
 
 </details>
 
-The `workflowId` property define the unique ID of the sub-workflow to be invoked.
-Usually, the workflow id should not be the same id of the workflow where the action is defined. Otherwise, it may occur undesired recurring calls to the same workflow.
+The `workflowId` property define the unique name of the sub-workflow to be invoked.
+The workflow id should not be the same name  of the workflow where the action is defined. Otherwise, it may occur undesired recurring calls to the same workflow.
 
 The `version` property defined the unique version of the sub-workflow to be invoked.
 If this property is defined, runtimes should match both the `id` and the `version` properties
@@ -4842,12 +4918,12 @@ By specifying the error to be thrown and optionally providing a runtime expressi
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | name | Unique retry strategy name | string | yes |
-| delay | Time delay between retry attempts (ISO 8601 duration format) | string | no |
+| delay | Time delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 | maxAttempts | Maximum number of retry attempts. Value of 1 means no retries are performed | string or number | yes |
-| maxDelay | Maximum amount of delay between retry attempts (ISO 8601 duration format) | string | no |
-| increment | Static duration which will be added to the delay between successive retries (ISO 8601 duration format) | string | no |
+| maxDelay | Maximum amount of delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| increment | Static duration which will be added to the delay between successive retries (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 | multiplier | Float value by which the delay is multiplied before each attempt. For example: "1.2" meaning that each successive delay is 20% longer than the previous delay.  For example, if delay is 'PT10S', then the delay between the first and second attempts will be 10 seconds, and the delay before the third attempt will be 12 seconds. | float or string | no |
-| jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (ISO 8601 duration format) | float or string | no |
+| jitter | If float type, maximum amount of random time added or subtracted from the delay between each retry relative to total delay (between 0.0 and 1.0). If string type, absolute maximum amount of random time added or subtracted from the delay between each retry (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | float or string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4891,9 +4967,9 @@ defined state [actions](#Action-Definition).
 The `name` property specifies the unique name of the retry definition (strategy). This unique name
 can be referred by workflow states [error definitions](#Error-Definition).
 
-The `delay` property specifies the initial time delay between retry attempts (ISO 8601 duration format).
+The `delay` property specifies the initial time delay between retry attempts (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration).
 
-The `increment` property specifies a static duration which will be added to the delay between successive retries.
+The `increment` property specifies a duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) which will be added to the delay between successive retries.
 To explain this better, let's say we have the following retry definition:
 
 ```json
@@ -4943,7 +5019,7 @@ a `jitter` value of 0.3, a random amount of time between 0 and 1.8 (0.3 times 6)
 from the calculated delay. 
 
 Alternatively, `jitter` may be defined as an absolute value specified as an ISO
-8601 duration. This way, the maximum amount of random time added is fixed and
+8601 duration (literal or expression). This way, the maximum amount of random time added is fixed and
 will not increase as new attempts are made.
 
 The `maxDelay` property determines the maximum amount of delay that is desired between retry attempts, and is applied
@@ -5210,7 +5286,7 @@ actions:
 
 Each branch receives the same copy of the Parallel state's data input.
 
-A branch can define actions that need to be executed. For the [`SubFlowRef`](#SubFlowRef-Definition) action, the workflow id should not be the same id of the workflow where the branch is defined. Otherwise, it may occur undesired recurring calls to the same workflow.
+A branch can define actions that need to be executed. For the [`SubFlowRef`](#SubFlowRef-Definition) action, the workflow name should not be the same name of the workflow where the branch is defined. Otherwise, it may occur undesired recurring calls to the same workflow.
 
 
 The `timeouts` property can be used to set branch specific timeout settings. Parallel state branches can set the
@@ -5424,7 +5500,7 @@ it with its `object` type which has the following properties:
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | expression | Cron expression describing when the workflow instance should be created (automatically) | string | yes |
-| validUntil | Specific date and time (ISO 8601 format) when the cron expression is no longer valid | string | no |
+| validUntil | Specific date and time (ISO 8601 format, literal or expression producing it) when the cron expression is no longer valid | string | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -5461,7 +5537,7 @@ validUntil: '2021-11-05T08:15:30-05:00'
 The `expression` property is a a [cron expression](http://crontab.org/) which defines
 when workflow instances should be created (automatically).
 
-The `validUntil` property defines a date and time (using ISO 8601 format). When the
+The `validUntil` property defines a date and time (using ISO 8601 format, literal or expression). When the
 `validUntil` time is reached, the cron expression for instances creations of this workflow
 should no longer be valid.
 
@@ -5496,7 +5572,7 @@ If the end definition is of type `object`, it has the following structure:
 | terminate | If `true`.  terminates workflow instance execution | boolean | no |
 | produceEvents | Array of [producedEvent](#ProducedEvent-Definition) definitions. Defines events that should be produced. | array | no |
 | [compensate](#Workflow-Compensation) | If set to `true`, triggers workflow compensation before workflow execution completes. Default is `false` | boolean | no |
-| [continueAs](#continuing-as-a-new-execution) | Defines that current workflow execution should stop, and execution should continue as a new workflow instance of the provided id | string or object | no |
+| [continueAs](#continuing-as-a-new-execution) | Defines that current workflow execution should stop, and execution should continue as a new workflow instance of the provided name | string or object | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -5561,7 +5637,7 @@ The [continueAs](#Continuing-as-a-new-Execution) property defines that the curre
 and worklow execution should continue as a new instance of a new workflow.
 When defined, it should be assumed that `terminate` is `true`. If `continueAs` is defined, and `terminate` is explicitly
 set to `false`, runtimes should report this to users. Producing events, and compensation should still be performed (if defined)
-before the workflow execution is stopped, and continued as a new workflow instance with the defined workflow id.
+before the workflow execution is stopped, and continued as a new workflow instance with the defined workflow name.
 
 ##### ProducedEvent Definition
 
@@ -5610,7 +5686,7 @@ contextAttributes:
 
 Defines the event (CloudEvent format) to be produced when workflow execution completes or during a workflow [transitions](#Transitions).
 The `eventRef` property must match the name of
-one of the defined `produced` events in the [events](#Event-Definition) definition.
+one of the defined events in the [events](#Event-Definition) definition.
 
 The `data` property can have two types, object or string. If of string type, it is an expression that can select parts of state data
 to be used as the event payload. If of object type, you can define a custom object to be the event payload.
@@ -5633,7 +5709,7 @@ state to transition to next.
 Implementers **must** use the unique State `name` property for determining the transition.
 
 Events can be produced during state transitions. The `produceEvents` property of the `transition` definitions allows you
-to reference one or more defined `produced` events in the workflow [events definitions](#Event-Definition).
+to reference one or more defined events in the workflow [events definitions](#Event-Definition).
 For each of the produced events you can select what parts of state data to be the event payload.
 
 Transitions can trigger compensation via their `compensate` property. See the [Workflow Compensation](#Workflow-Compensation)
@@ -5655,10 +5731,10 @@ Let's take a look at an example of additional properties:
 
 ```json
 {
-  "id": "myworkflow",
+  "name": "my-workflow",
   "version": "1.0.0",
   "specVersion": "0.8",
-  "name": "My Test Workflow",
+  "description": "My Test Workflow",
   "start": "My First State",
   "loglevel": "Info",
   "environment": "Production",
@@ -5673,10 +5749,10 @@ Note the same can be also specified using workflow metadata, which is the prefer
 
 ```json
 {
-  "id": "myworkflow",
+  "name": "my-workflow",
   "version": "1.0.0",
   "specVersion": "0.8",
-  "name": "Py Test Workflow",
+  "description": "Py Test Workflow",
   "start": "My First State",
   "metadata": {
     "loglevel": "Info",
@@ -6033,8 +6109,7 @@ timeout settings should take in effect.
 To give an example, let's say that in our workflow definition we define the timeout for state execution:
 
 ```json
-{
-   "id": "testWorkflow",
+   "name": "test-workflow",
    ...
    "timeouts": {
      ...
@@ -6087,11 +6162,11 @@ If `object` type, it is used to define the timeout definitions in-line and has t
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| [workflowExecTimeout](#workflowexectimeout-definition) | Workflow execution timeout (ISO 8601 duration format) | string or object | no |
-| [stateExecTimeout](#states-timeout-definition) | Workflow state execution timeout (ISO 8601 duration format) | string | no |
-| actionExecTimeout | Actions execution timeout (ISO 8601 duration format) | string | no |
-| [branchExecTimeout](#branch-timeout-definition) | Branch execution timeout (ISO 8601 duration format) | string | no |
-| [eventTimeout](#event-timeout-definition) | Default timeout for consuming defined events (ISO 8601 duration format) | string | no |
+| [workflowExecTimeout](#workflowexectimeout-definition) | Workflow execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string or object | no |
+| [stateExecTimeout](#states-timeout-definition) | Workflow state execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| actionExecTimeout | Actions execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| [branchExecTimeout](#branch-timeout-definition) | Branch execution timeout (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
+| [eventTimeout](#event-timeout-definition) | Default timeout for consuming defined events (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | no |
 
 The `eventTimeout` property defines the maximum amount of time to wait to consume defined events. If not specified it should default to
 "unlimited".
@@ -6116,7 +6191,7 @@ If Object type it has the following format:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| duration | Timeout duration (ISO 8601 duration format) | string | yes |
+| duration | Timeout duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration) | string | yes |
 | interrupt | If `false`, workflow instance is allowed to finish current execution. If `true`, current workflow execution is stopped immediately. Default is `false`  | boolean | no |
 | runBefore | Name of a workflow state to be executed before workflow instance is terminated | string | no |
 
@@ -6173,7 +6248,7 @@ not obeyed in the workflow definition.
 
 #### States Timeout Definition
 
-All workflow states except Sleep and Inject States can define the `timeouts` property and can define different timeout
+All workflow states except Inject State can define the `timeouts` property and can define different timeout
 settings depending on their state type.
 Please reference each [workflow state definitions](#Workflow-States) for more information on which
 timeout settings are available for each state type.
@@ -6181,7 +6256,7 @@ timeout settings are available for each state type.
 Workflow states timeouts cannot define the `workflowExecTimeout` property.
 
 Workflow states can set their `stateExecTimeout` property inside the `timeouts` definition. 
-The value of this property is a time duration (ISO 8601 duration format). 
+The value of this property is a time duration (literal ISO 8601 duration format or expression which evaluation results in an ISO 8601 duration). 
 It must be a duration that's greater than zero and defines the total state execution timeout. 
 When this timeout is reached, state execution
 should be stopped and can be handled as a timeout error in the states `onErrors` definition.
@@ -6544,23 +6619,23 @@ likely to be forced to stop before reaching its completion. This can result in u
 mission-critical workflows.
 
 For those cases, the Serverless Workflow DSL provides a way to explicitly define stopping the current workflow
-instance execution, and starting a new one (for the same workflow id or a different one).
+instance execution, and starting a new one (for the same workflow name or a different one).
 This can be done via the [end definitions](#end-definition) `continueAs` property.
 
 The end definitions `continueAs` can be either of type `string` or `object`.
-If string type, it contains the unique workflow id of the workflow that the execution should continue as, for example:
+If string type, it contains the unique workflow name of the workflow that the execution should continue as, for example:
 
 
 ```json
 { 
   "end": {
-    "continueAs": "myworkflowid"
+    "continueAs": "my-workflow-name"
   }
 }
 ```
 
 Defining this should stop the current workflow execution, and continue execution as a new workflow instance of the 
-workflow which defines the workflow id of "myworkflowid". The state data where this is define should 
+workflow which defines the workflow name of "my-workflow-name". The state data where this is define should 
 become the workflow data input of the workflow that is continuing the current workflow execution.
 
 Note that any defined `produceEvents` and `compensate` definitions should be honored before `continueAs` is applied.
@@ -6569,7 +6644,7 @@ If `object` type, the `continueAs` property has the following properties:
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| workflowId | Unique id of the workflow to continue execution as. | string | yes |
+| workflowId | Unique name of the workflow to continue execution as. | string | yes |
 | version | Version of the workflow to continue execution as. | string | no |
 | data | If string type, a workflow expression which selects parts of the states data output to become the workflow data input of continued execution. If object type, a custom object to become the workflow data input of the continued execution. | string or object | no |
 | [`workflowExecTimeout`](#Workflow-Timeouts) | Workflow execution timeout to be used by the workflow continuing execution. Overwrites any specific settings set by that workflow. | string or object | no |
@@ -6584,7 +6659,7 @@ in workflow states [Action](#Action-Definition) definitions.
 
 Just like "parent" workflows, sub-workflow can also be long-running, and can run into the same type of runtime/serverless platform
 limitations as previously discussed. As such they can also use `continueAs` to stop their current execution and continue it as 
-a new one of the same or different workflow id.
+a new one of the same or different workflow name.
 
 Note that when a sub-workflow is invoked it can produce a result that is then merged into the parent workflow state data.
 This may bring up a question as to what happens when a sub-workflow calls `continueAs` in terms of what is returned as
@@ -6750,8 +6825,8 @@ Here is an example of metadata attached to the core workflow definition:
 
 ```json
 {
-  "id": "processSalesOrders",
-  "name": "Process Sales Orders",
+  "name": "process-sales-orders",
+  "description": "Process Sales Orders",
   "version": "1.0.0",
   "specVersion": "0.8",
   "start": "MyStartingState",
@@ -6786,8 +6861,8 @@ Implementations may use this keyword to give access to any relevant information 
 ```json
 
 {
-  "id": "processSalesOrders",
-  "name": "Process Sales Orders",
+  "name": "process-sales-orders",
+  "description": "Process Sales Orders",
   "version": "1.0.0",
   "specVersion": "0.8",
   "start": "my-starting-state",
