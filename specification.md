@@ -4510,7 +4510,7 @@ Error definitions are [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) 
 Property `instance` identifies the component within a workflow definition from which the described error originates. It is set by runtimes when throwing an error.
 
 For example, in the above definition, the source `/states/0/actions/0` indicates that the error originates from the execution of the first action of the first state of the workflow definitions.
-This helps both users and implementers to describe and communicate about origins of errors without technical, technology/platform specific knowledge or understanding.
+This helps both users and implementers to describe and communicate the origins of errors without technical, technology/platform-specific knowledge or understanding.
 
 Property `type` is an URI used to identify the type of the error. 
 **For cross-compatibility concerns, the specification strongly encourage using the [default types](#default-error-types).**
