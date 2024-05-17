@@ -5773,7 +5773,7 @@ Error handling is a crucial aspect of any workflow system, ensuring that the wor
 
 #### Error Types
 
-ServerlessWorkflow defines a set of [default error types](#error-types), each identified by a unique URI reference and associated with specific status code(s). These error types cover common scenarios such as configuration errors, validation failures, authentication issues, timeouts, and runtime exceptions. By utilizing these predefined error types, workflows can maintain cross-compatibility and ensure consistent error identification and handling across different platforms and implementations.
+Serverless Workflow defines a set of [default error types](#error-types), each identified by a unique URI reference and associated with specific status code(s). These error types cover common scenarios such as configuration errors, validation failures, authentication issues, timeouts, and runtime exceptions. By utilizing these predefined error types, workflows can maintain cross-compatibility and ensure consistent error identification and handling across different platforms and implementations.
 
 #### Error Source
 
