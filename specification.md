@@ -4580,7 +4580,7 @@ status: 504
 
 An Error Reference in a Serverless Workflow provides a means to point to specific error instances or types within the workflow definition. It serves as a convenient way to refer to errors without duplicating their definitions.
 
-If multiple properties are set, they are considered as cumulative conditions to match an error.
+If multiple properties are set, they are considered cumulative conditions to match an error.
 
 For example, the above definition is the same than saying "match errors with `type` 'https://example.com/errors#timeout' AND with `status` '504'".
 
