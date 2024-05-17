@@ -5765,7 +5765,7 @@ Note the same can be also specified using workflow metadata, which is the prefer
 
 ### Workflow Error Handling
 
-Error handling is a crucial aspect of any workflow system, ensuring that the workflow can gracefully handle unexpected situations or errors that may occur during its execution. In ServerlessWorkflow, error handling is a well-defined and structured process aimed at providing developers with the tools and mechanisms necessary to manage errors effectively within their workflows.
+Error handling is a crucial aspect of any workflow system, ensuring that the workflow can gracefully handle unexpected situations or errors that may occur during its execution. In Serverless Workflow, error handling is a well-defined and structured process aimed at providing developers with the tools and mechanisms necessary to manage errors effectively within their workflows.
 
 #### Error Definitions
 
