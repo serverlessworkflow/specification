@@ -4794,7 +4794,7 @@ errors:
   policies:
     - name: 'my-retry-policy'
       handlers:
-	      - refName: 'handle-timeout-error'
+                - refName: 'handle-timeout-error'
         - when:
       	    - status: 503
           retry: 'my-retry-policy'
