@@ -6060,7 +6060,7 @@ If the maximum configured number of retry attempts is reached without success, t
 
 #### Error Outcomes
 
-Error outcomes in ServerlessWorkflow provide a flexible mechanism for defining the behavior of the workflow after handling errors. They enable precise error handling strategies tailored to the workflow's requirements, ensuring that errors are managed effectively and workflows can gracefully recover from unexpected situations.
+Error outcomes in Serverless Workflow provide a flexible mechanism for defining the behavior of the workflow after handling errors. They enable precise error handling strategies tailored to the workflow's requirements, ensuring that errors are managed effectively and workflows can gracefully recover from unexpected situations.
 
 The `compensate` outcome triggers workflow compensation. This outcome allows workflows to execute compensation logic to undo any previously completed actions and restore the system to a consistent state before proceeding to the current state's outcome. It ensures that workflows can recover from errors and maintain data integrity.
 
