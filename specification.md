@@ -59,7 +59,15 @@
       - [FunctionRef Definition](#functionref-definition)
       - [EventRef Definition](#eventref-definition)
       - [SubFlowRef Definition](#subflowref-definition)
+      - [Error Handling Configuration](#error-handling-configuration)
       - [Error Definition](#error-definition)
+      - [Error Types](#error-types)
+      - [Error Reference](#error-reference)
+      - [Error Handler Definition](#error-handler-definition)
+      - [Error Handler Reference](#error-handler-reference)
+      - [Error Policy Definition](#error-policy-definition)
+      - [Error Outcome Definition](#error-outcome-definition)
+      - [Error Throw Definition](#error-throw-definition)
       - [Retry Definition](#retry-definition)
       - [Transition Definition](#transition-definition)
       - [Switch State Data Conditions](#switch-state-data-conditions)
@@ -74,10 +82,19 @@
       - [Transitions](#transitions)
       - [Additional Properties](#additional-properties)
   * [Workflow Error Handling](#workflow-error-handling)
-    + [Defining Errors](#defining-errors)
-  * [Action retries](#action-retries)
-    + [Retry actions on known errors](#retry-actions-on-known-errors)
-    + [Automatic retries on known and unknown errors](#automatic-retries-on-known-and-unknown-errors)
+    + [Error Definitions](#error-definitions)
+    + [Error Types](#error-types)
+    + [Error Source](#error-source)
+    + [Error Handling Strategies](#error-handling-strategies)
+      - [Error Handlers](#error-handlers)
+      - [Error Policies](#error-policies)
+    + [Error Retries](#error-retries)
+      - [Retry Policy Execution](#retry-policy-execution)
+      - [Retry Behavior](#retry-behavior)
+      - [Retry Exhaustion](#retry-exhaustion)
+    + [Error Outcomes](#error-outcomes)
+    + [Error Bubbling](#error-bubbling)
+    + [Error Handling Best Practices](#error-handling-best-practices)
   * [Workflow Timeouts](#workflow-timeouts)
     + [Workflow Timeout Definition](#workflow-timeout-definition)
       - [WorkflowExecTimeout Definition](#workflowexectimeout-definition)
@@ -2065,12 +2082,11 @@ definition "name" must be a constant value.
 | specVersion | Serverless Workflow specification release version | string | yes |
 | expressionLang | Identifies the expression language used for workflow expressions. Default value is "jq" | string | no |
 | [timeouts](#Workflow-Timeouts) | Defines the workflow default timeout settings | string or object | no |
-| [errors](#Defining-Errors) | Defines checked errors that can be explicitly handled during workflow execution | string or array | no |
+| [errors](#error-definitions) | Defines the workflow's error handling configuration, including error definitions, error handlers, and error policies | string or [error handling configuration](#error-handling-configuration) | no |
 | keepActive | If `true`, workflow instances is not terminated when there are no active execution paths. Instance can be terminated with "terminate end definition" or reaching defined "workflowExecTimeout" | boolean | no |
 | [auth](#Auth-Definition) | Workflow authentication definitions | array or string | no |
 | [events](#Event-Definition) | Workflow event definitions.  | array or string | no |
 | [functions](#Function-Definition) | Workflow function definitions. Can be either inline function definitions (if array) or URI pointing to a resource containing json/yaml function definitions (if string) | array or string| no |
-| autoRetries | If set to `true`, [actions](#Action-Definition) should automatically be retried on unchecked errors. Default is `false` | boolean| no |
 | [retries](#Retry-Definition) | Workflow retries definitions. Can be either inline retries definitions (if array) or URI pointing to a resource containing json/yaml retry definitions (if string) | array or string| no |
 | [states](#Workflow-States) | Workflow states | array | yes |
 | [extensions](#Extensions) | Workflow extensions definitions | array or string | no |
@@ -3984,9 +4000,7 @@ This is visualized in the diagram below:
 | [functionRef](#FunctionRef-Definition) | References a reusable function definition | object or string | yes (if `eventRef` & `subFlowRef` are not defined) |
 | [eventRef](#EventRef-Definition) | References a `produce` and `consume` reusable event definitions | object | yes (if `functionRef` & `subFlowRef` are not defined) |
 | [subFlowRef](#SubFlowRef-Definition) | References a workflow to be invoked | object or string | yes (if `eventRef` & `functionRef` are not defined) |
-| [retryRef](#retry-definition) | References a defined workflow retry definition. If not defined uses the default runtime retry definition | string | no |
-| nonRetryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should not be retried. Used only when `autoRetries` is set to `true` | array | no |
-| retryableErrors | List of references to defined [workflow errors](#Defining-Errors) for which the action should be retried. Used only when `autoRetries` is set to `false` | array | no |
+| onErrors | Defines the error handling policy to use | string or array of [error handler references](#error-handler-reference) | no |
 | [actionDataFilter](#Action-data-filters) | Action data filter definition | object | no |
 | sleep | Defines time periods workflow execution should sleep before / after function execution | object | no |
 | [condition](#Workflow-Expressions) | Expression, if defined, must evaluate to `true` for this action to be performed. If `false`, action is disregarded | string | no |
@@ -4054,17 +4068,7 @@ before and/or after function execution. It can have two properties:
 
 Function invocation timeouts should be handled via the states [timeouts](#Workflow-Timeouts) definition.
 
-The `retryRef` property references one of the defined workflow retries by it's unique name. If not set, the action 
-should be retried according to the default retry policy of the runtime implementation. For more information about workflow
-retries reference [this section](#retry-definition).
-
-The `nonRetryableErrors` property is a list that references one or more unique names of workflow error definitions. 
-This is the list of known errors for which the action should not be retried for. 
-It should be used only when the workflow top-level `autoRetries` property is set to `true`.
-
-The `retryableErrors` property is a list that references one or more unique names of workflow error definitions.
-This is the list of known errors for which the action should be retried for.
-It should be used only when the workflow top-level `autoRetries` property is set to `false`.
+The `onErrors` property can be used to define the error handling policy to use. If a string, references the [error policy definition](#error-policy-definition) to use. Otherwise, defines an array of the [error handlers](#error-handler-reference) to use. 
 
 The `condition` property is a [workflow expression](#Workflow-Expressions). If defined, it must evaluate to `true`
 for this action to be performed. If it evaluates to `false` the action is skipped. 
@@ -4349,13 +4353,13 @@ The default value of this property is `terminate`, meaning that if the parent wo
 completes, execution of the subflow should be terminated.
 If it is set to `continue`, if the parent workflow completes, the subflow execution is allowed to continue its own execution.
 
-##### Error Definition
+##### Error Handling Configuration
 
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
-| errorRef or errorRefs | Reference one unique workflow error definition, or multiple unique workflow error definitions | string (errorRef) or array (errorRefs) | yes |
-| [transition](#Transitions) | Transition to next state to handle the error | string or object | yes (if `end` is not defined) |
-| [end](#End-Definition) | End workflow execution if this error is encountered | boolean or object | yes (if `transition` is not defined) |
+| definitions | An array containing reusable definitions of errors to throw and/or to handle. | array of [error definitions](#error-definition) | no |
+| handlers | An array containing reusable error handlers, which are used to configure what to do when catching specific errors. | array of [error handler definitions](#error-handler-definition) | no |
+| policies | An array containg named groups of error handlers that define reusable error policies | array of [error handling policies](#error-policy-definition) | no |
 
 <details><summary><strong>Click to view example definition</strong></summary>
 <p>
@@ -4370,8 +4374,49 @@ If it is set to `continue`, if the parent workflow completes, the subflow execut
 
 ```json
 {
-   "errorRef": "Item not in inventory",
-   "transition": "IssueRefundToCustomer"
+  "retries": [
+    {
+      "name": "retry-five-times",
+      "maxAttempts": 5
+    }
+  ],
+  "errors": {
+    "definitions": [
+      {
+        "name": "service-not-available-error",
+        "type": "https://serverlessworkflow.io/spec/errors/communication",
+        "status": 503,
+        "title": "Service Not Available",
+        "detail": "Failed to contact service, even after multiple retries"
+      }
+    ],
+    "handlers": [
+      {
+        "name": "handle-503",
+        "when": [
+          {
+            "status": 503
+          }
+        ],
+        "retry": "retry-five-times",
+        "then": {
+          "throw": {
+            "refName": "service-not-available-error"
+          }
+        }
+      }
+    ],
+    "policies": [
+      {
+        "name": "fault-tolerance-policy",
+        "handlers": [
+          {
+            "refName": "handle-503"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -4379,8 +4424,28 @@ If it is set to `continue`, if the parent workflow completes, the subflow execut
 <td valign="top">
 
 ```yaml
-errorRef: Item not in inventory
-transition: IssueRefundToCustomer
+retries:
+  - name: retry-five-times
+    maxAttempts: 5
+errors:
+  definitions:
+    - name: service-not-available-error
+      type: https://serverlessworkflow.io/spec/errors/communication
+      status: 503
+      title: Service Not Available
+      detail: Failed to contact service, even after multiple retries
+  handlers:
+    - name: handle-503
+      when:
+        - status: 503
+      retry: retry-five-times
+      then:
+        throw: 
+          refName: service-not-available-error
+  policies:
+    - name: fault-tolerance-policy
+      handlers:
+        - refName: handle-503
 ```
 
 </td>
@@ -4389,27 +4454,464 @@ transition: IssueRefundToCustomer
 
 </details>
 
-Error definitions describe checked errors that can occur during workflow execution and how to handle them.
+Represents the workflow's error handling configuration, including error definitions, error handlers and error policies.
 
-The `errorRef` property references the unique workflow error definition. For more info on workflow error handling
-referece [this section](#Defining-Errors).
+##### Error Definition
 
-The `errorRefs`property references at least one of the defined workflow error definitions. 
-Can be used when `errorRef` is not used. Usable when you want to define multiple error refs for which the same transition
-or end definition should be applied.For more info on workflow error handling
-referece [this section](#Defining-Errors).
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | The name of the error. Must follow the [Serverless Workflow Naming Convention](#naming-convention) | string | yes |
+| instance | An [RFC 6901 JSON pointer](https://datatracker.ietf.org/doc/html/rfc6901) that precisely identifies the component within a workflow definition (ex: funcRef, subflowRef, ...) from which the described error originates. | string | yes, but is added by runtime when throwing an error |
+| type | An [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) URI reference that identifies the error type. The [RFC 7807 Problem Details specification](https://datatracker.ietf.org/doc/html/rfc7807) encourages that, when dereferenced, it provides human-readable documentation for the error type (e.g., using HTML). The specification strongly recommends using [default error types](#error-types) for cross-compatibility concerns. | string | yes |
+| status | The status code generated by the origin for the occurrence of an error. Status codes are extensible by nature and runtimes are not required to understand the meaning of all defined status codes. However, for cross-compatibility concerns, the specification encourages using [RFC 7231 HTTP Status Codes](https://datatracker.ietf.org/doc/html/rfc7231). | string | yes |
+| title | A short, human-readable summary of an error type. It SHOULD NOT change from occurrence to occurrence of an error, except for purposes of localization. | string | no |
+| detail | A human-readable explanation specific to the occurrence of an error. | string | no |
 
-Note that the `errorRef` and `errorRefs` properties are mutually exclusive, meaning that you can only specify one or the other,
-but not both at the same time.
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
 
-The `transition` property defines the transition to the next workflow state in cases when the defined
-error happens during runtime execution.
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
 
-If `transition` is not defined you can also define the `end` property which will end workflow execution at that point.
-Note that the `transition` and `end` properties are mutually exclusive, meaning that you can only specify one or the other,
-but not both at the same time.
+```json
+{
+  "instance": "/states/0/actions/0",
+  "type": "https://example.com/errors#timeout",
+  "status": 504,
+  "title": "Function Timeout",
+  "detail": "The function 'my-function' timed out."
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+instance: "/states/0/actions/0"
+type: "https://example.com/errors#timeout"
+status: 504
+title: "Function Timeout"
+detail: "The function 'my-function' timed out."
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Error definitions are [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807) compliant descriptions of errors that are produced by/originating from the execution of a workflow. Runtimes use them to describe workflow related errors in a user-friendly, technology agnostic, and cross-platform way.
+
+Property `instance` identifies the component within a workflow definition from which the described error originates. It is set by runtimes when throwing an error.
+
+For example, in the above definition, the source `/states/0/actions/0` indicates that the error originates from the execution of the first action of the first state of the workflow definitions.
+This helps both users and implementers to describe and communicate the origins of errors without technical, technology/platform-specific knowledge or understanding.
+
+Property `type` is a URI used to identify the type of the error. 
+**For cross-compatibility concerns, the specification strongly encourages using the [default types](#default-error-types).**
+
+Property `status` identifies the error's status code. 
+**For cross-compatibility concerns, the specification strongly encourage using [HTTP Status Codes](https://datatracker.ietf.org/doc/html/rfc7231#section-6.1).**
+
+Properties `title` and `detail` are used to provide additional information about the error.
+
+Note that an error definition should **NOT** carry any implementation-specific information such as stack traces or code references: its purpose is to provide users with a consistent, human-readable description of an error.
+
+##### Error Types
+
+| Type | Status | Description 
+| --- | --- | --- |
+| [https://serverlessworkflow.io/spec/errors/configuration](#) | 400 | Errors resulting from incorrect or invalid configuration settings, such as missing or misconfigured environment variables, incorrect parameter values, or configuration file errors. |
+| [https://serverlessworkflow.io/spec/errors/validation](#) | 400 | Errors arising from validation processes, such as validation of input data, schema validation failures, or validation constraints not being met. These errors indicate that the provided data or configuration does not adhere to the expected format or requirements specified by the workflow. |
+| [https://serverlessworkflow.io/spec/errors/expression](#) | 400 | Errors occurring during the evaluation of runtime expressions, such as invalid syntax or unsupported operations. |
+| [https://serverlessworkflow.io/spec/errors/authentication](#) | 401 | Errors related to authentication failures. |
+| [https://serverlessworkflow.io/spec/errors/authorization](#) | 403 | Errors related to unauthorized access attempts or insufficient permissions to perform certain actions within the workflow. |
+| [https://serverlessworkflow.io/spec/errors/timeout](#) | 408 | Errors caused by timeouts during the execution of tasks or during interactions with external services. |
+| [https://serverlessworkflow.io/spec/errors/communication](#) | 500 | Errors encountered while communicating with external services, including network errors, service unavailable, or invalid responses. |
+| [https://serverlessworkflow.io/spec/errors/runtime](#) | 500 | Errors occurring during the runtime execution of a workflow, including unexpected exceptions, errors related to resource allocation, or failures in handling workflow tasks. These errors typically occur during the actual execution of workflow components and may require runtime-specific handling and resolution strategies. |
+
+The specification promotes the use of default error types by runtimes and workflow authors for describing thrown [errors](#error-definition). This approach ensures consistent identification, handling, and behavior across various platforms and implementations.
+
+##### Error Reference
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| refName | The name of the error definition to reference. If set, all other properties are ignored. | string | no |
+| instance | An RFC6901 JSON pointer that precisely identifies the component within a workflow definition from which the error to reference originates | string | no |
+| type | A RFC3986 URI reference that identifies the type of error(s) to reference | string | no |
+| status | The status code of the error(s) to reference | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "type": "https://example.com/errors#timeout",
+  "status": 504
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+type: "https://example.com/errors#timeout"
+status: 504
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+An Error Reference in a Serverless Workflow provides a means to point to specific error instances or types within the workflow definition. It serves as a convenient way to refer to errors without duplicating their definitions.
+
+If multiple properties are set, they are considered cumulative conditions to match an error.
+
+For example, the above definition is the same as saying "match errors with `type` 'https://example.com/errors#timeout' AND with `status` '504'".
+
+##### Error Handler Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | The unique name which is used to reference the defined handler. | string | yes |
+| when | References the errors to handle. If null or empty, and if `exceptWhen` is null or empty, all errors are caught. | array of [error references](#error-reference) | no |
+| exceptWhen | References the errors not to handle. If null or empty, and if `when` is null or empty, all errors are caught. | array of [error references](#error-reference) | no |
+| retry | The retry policy to use, if any. If a string, references an existing [retry definition](#retry-definition). | string or [retry definition](#retry-definition) | no |
+| then | Defines the outcome, if any, when handling errors | [error outcome definition](#error-outcome-definition) | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "errors": {
+    "handlers": [
+      {
+        "name": "handle-invalid-error",
+        "when": [
+          { "error": "invalid" },
+          { "status": 404 },
+          { "status": 403 }
+        ],
+        "then": {
+          "transition": "my-state"
+        }
+      },
+      {
+        "name": "handle-timeout-error",
+        "when": [
+          { "status": 503 }
+        ],
+        "retry": "my-retry-policy",
+        "then": {
+          "transition": "my-state"
+        }
+      }
+    ]
+  }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+errors:
+  handlers:
+    - name: 'handle-invalid-error'
+      when:
+    	- type: 'invalid'
+    	- status: 404
+    	- status: 403
+      then:
+    	  transition: 'my-state'
+    - name: 'handle-timeout-error'
+      when:
+    	- status: 503
+      retry: 'my-retry-policy'
+      then:
+        transition: 'my-state'
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Error handler definitions specify which errors to handle and how they should be handled within a workflow.
+
+The `name` property specifies the distinct identifier utilized to reference the error handler.
+
+The `when` property defines the specific errors to handle. Allows for handling only specific errors.
+
+The `exceptWhen` property defines the specified errors NOT to handle. Allows for handling all errors, excluding specific ones.
+
+The `retry` property serves to either reference an existing retry policy or define a new one to be employed when handling specified errors within the workflow. If a retry policy is designated, the error source identified by the [error source](#error-source) will undergo retries according to the guidelines outlined in the associated [policy](#retry-definition). If a retry attempt is successful, the workflow seamlessly proceeds as though the error had not transpired. However, if the maximum number of configured retry attempts is exhausted without success, the workflow proceeds to execute the error outcome stipulated by the `then` property.
+
+The `then` property defines caught error outcomes, if any. If not defined, caught errors will be considered as handled, and the execution of the workflow will continue as if the error never occurred. Handled errors that are not [rethrown](#error-outcome-definition) do NOT [bubble up](#error-bubbling).
 
 For more information, see the [Workflow Error Handling](#Workflow-Error-Handling) sections.
+
+##### Error Handler Reference
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| refName | The name of the error handler definition to reference. If set, all other properties are ignored. | string | no |
+| when | References the errors to handle. If null or empty, and if `exceptWhen` is null or empty, all errors are caught. | array of [error references](#error-reference) | no |
+| exceptWhen | References the errors not to handle. If null or empty, and if `when` is null or empty, all errors are caught. | array of [error references](#error-reference) | no |
+| retry | The retry policy to use, if any. If a string, references an existing [retry definition](#retry-definition). | string or [retry definition](#retry-definition) | no |
+| then | Defines the outcome, if any, when handling errors | [outcome definition](#error-outcome-definition) | no |
+
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "errors": {
+    "policies": [
+      {
+        "name": "my-retry-policy",
+        "handlers": [
+          {
+            "refName": "handle-timeout-error"
+          },
+          {
+            "when": [
+              { "status": 503 }
+            ],
+            "retry": "my-retry-policy"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+errors:
+  policies:
+    - name: 'my-retry-policy'
+      handlers:
+            - refName: 'handle-timeout-error'
+        - when:
+      	    - status: 503
+          retry: 'my-retry-policy'
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Error Handler References streamline the error handling process by enabling workflows to leverage established error handling logic. 
+
+By referencing pre-defined error handler definitions, workflows can ensure consistency and reusability of error handling strategies, promoting maintainability and clarity within the workflow definition.
+
+##### Error Policy Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| name | The name of the error handler | string | yes |
+| handlers | A list of the error handlers to use | array of [error handler references](#error-handler-reference) | yes |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "errors": {
+    "policies": [
+      {
+        "name": "my-retry-policy",
+        "handlers": [
+          {
+            "refName": "handle-timeout-error"
+          },
+          {
+            "when": [
+              { "status": 503 }
+            ],
+            "retry": "my-retry-policy"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+errors:
+  policies:
+    - name: 'my-retry-policy'
+      handlers:
+                - refName: 'handle-timeout-error'
+        - when:
+      	    - status: 503
+          retry: 'my-retry-policy'
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Error Policy Definition in a Serverless Workflow specifies a named collection of error handlers to be applied for error handling within the workflow. They are used to streamline error handling by organizing and grouping error handlers into reusable sets. 
+
+By defining error policies, workflows can easily apply consistent error handling strategies across multiple components or states within the workflow, promoting modularity and maintainability of the workflow definition.
+
+##### Error Outcome Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| end | If `true`, ends the workflow. | boolean or [end definition](#end-definition) | yes if `transition` and `throw` are null, otherwise no. |
+| transition | Indicates that the workflow should transition to the specified state when the error is handled. All potential other activities are terminated. | string or [transition](#transition-definition). | yes if `end` and `throw` are null, otherwise no. |
+| throw | Indicates that the handled error should be rethrown. If true, the error is re-thrown as is. Otherwise, configures the error to throw, potentially using runtime expressions. | boolean or [error throw definition](#error-throw-definition). | yes if `end` and `transition` are null, otherwise no. |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "when": [
+    { 
+      "status": 503 
+    }
+  ],
+  "then": {
+    "transition": "my-state"
+  }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+when:
+  - status: 503
+then:
+  transition: 'my-state'
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Error Outcome Definitions provide a flexible mechanism for defining the behavior of the workflow after handling errors. 
+
+By specifying actions such as compensation, ending the workflow, retrying failed actions, transitioning to specific states, or rethrowing errors, Error Outcome Definitions enable precise error handling strategies tailored to the workflow's requirements.
+
+##### Error Throw Definition
+
+| Parameter | Description | Type | Required |
+| --- | --- | --- | --- |
+| refName | The name of the [error definition](#error-definition) to throw. If set, all other properties are ignored. | string | yes, if no other property has been set, otherwise no. |
+| type | The URI reference that identifies the type of error to throw. Supports runtime expressions. | string | yes if `name` has not been set, otherwise no. |
+| status | The status code generated by the origin for an occurrence of a problem. Supports runtime expressions. | integer or string | yes if `name` has not been set, otherwise no. |
+| title | A short, human-readable summary of a problem type. Supports runtime expressions. | string | no |
+| detail | A human-readable explanation specific to an occurrence of a problem. Supports runtime expressions. | string | no |
+
+<details><summary><strong>Click to view example definition</strong></summary>
+<p>
+
+<table>
+<tr>
+    <th>JSON</th>
+    <th>YAML</th>
+</tr>
+<tr>
+<td valign="top">
+
+```json
+{
+  "throw": {
+    "type": "https://serverlessworkflow.io/spec/errors/runtime",
+    "status": 400,
+    "detail": "${ $CONST.localizedErrorDetail }"
+  }
+}
+```
+
+</td>
+<td valign="top">
+
+```yaml
+throw:
+  type: https://serverlessworkflow.io/spec/errors/runtime
+  status: 400
+  detail: ${ $CONST.localizedErrorDetail }
+```
+
+</td>
+</tr>
+</table>
+
+</details>
+
+Error Throw Definitions provide a mechanism for throwing custom errors within the workflow. 
+
+By specifying the error to be thrown and optionally providing a runtime expression, Error Throw Definitions enable workflows to generate and throw errors dynamically, enhancing flexibility and adaptability in error handling strategies.
 
 ##### Retry Definition
 
@@ -5263,44 +5765,35 @@ Note the same can be also specified using workflow metadata, which is the prefer
 
 ### Workflow Error Handling
 
-Serverless Workflow language allows you to define `explicit` error handling, meaning you can define what should happen
-in case of errors inside your workflow model rather than some generic error handling entity.
-This allows error handling to become part of your orchestration activities and as such part of your business problem
-solutions.
+Error handling is a crucial aspect of any workflow system, ensuring that the workflow can gracefully handle unexpected situations or errors that may occur during its execution. In Serverless Workflow, error handling is a well-defined and structured process aimed at providing developers with the tools and mechanisms necessary to manage errors effectively within their workflows.
 
-The idea behind the way Serverless Workflow defines error handling is that workflows should only fail due to unknown bugs 
-during execution. In general, you should always write your workflows so that they do not fail on any known failures.
+#### Error Definitions
 
-Each workflow state can define error handling, which is related only to errors that may arise during its
-execution. Error handling defined in one state cannot be used to handle errors that happened during execution of another state
-during workflow execution.
+[Error definitions](#error-definition) in Serverless Workflow follow the [RFC7807 Problem Details specification](https://datatracker.ietf.org/doc/html/rfc7807), providing a standardized format for describing errors that may occur during workflow execution. These definitions include parameters such as name, instance, type, status, title, and detail, which collectively provide a comprehensive description of the error. By adhering to this standard, errors can be described in a consistent, technology-agnostic, and human-readable manner, facilitating effective communication and resolution.
 
-Unknown errors that may arise during workflow state execution that are not explicitly handled within the workflow definition
-should be reported by runtime implementations and halt workflow execution.
+#### Error Types
 
-Within workflow definitions, errors defined are `domain specific`, meaning they are defined within
-the actual business domain, rather than their technical (programming-language-specific) description.
+Serverless Workflow defines a set of [default error types](#error-types), each identified by a unique URI reference and associated with specific status code(s). These error types cover common scenarios such as configuration errors, validation failures, authentication issues, timeouts, and runtime exceptions. By utilizing these predefined error types, workflows can maintain cross-compatibility and ensure consistent error identification and handling across different platforms and implementations.
 
-For example, we can define errors such as "Order not found", or "Item not in inventory", rather than having to
-use terms such as "java.lang.IllegalAccessError", or "response.status == 404", which
-might make little to no sense to our specific problem domain, as well as may not be portable across various runtime implementations.
+#### Error Source
 
-In addition to the domain specific error name, users have the option to also add an optional error code
-to help runtime implementations with mapping defined errors to concrete underlying technical ones.
+In Serverless Workflow, the concept of "Error Source" refers to the precise origin or location within the workflow definition where an error occurs during its execution. This crucial aspect is identified and pinpointed using the [error definition's ](#error-definition) `instance` property, which is defined as an [RFC6901 JSON pointer](https://datatracker.ietf.org/doc/html/rfc6901).
 
-Runtime implementations must be able to map the error domain specific name (and the optional error code)
-to concrete technical errors that arise during workflow execution.
+When an error arises during the execution of a workflow, whether it's at the level of an action or a state, the Error Source becomes instrumental in identifying the specific component within the workflow where the error originated. This granular identification is essential for efficient debugging and troubleshooting, as it allows developers to swiftly locate and address the root cause of the error.
 
-#### Defining Errors
+By leveraging the Error Source, developers can streamline the error-handling process, facilitating quicker resolution of issues and enhancing the overall reliability and robustness of the workflow.
 
-Known workflow errors, that we know we need to handle during workflow execution should be defined in
-the workflow top-level 'errors' property. This property can be either a string type, meaning it can reference 
-a reusable JSON or Yaml definition file including the error definitions, or it can have an array type where you can
-define these checked errors in-line in your workflow definition.
+#### Error Handling Strategies
 
-Here is an example of such a definition for both cases:
+In Serverless Workflow, you have the flexibility to define error handling strategies using error handlers, policies, and outcome definitions.
 
-1. Referencing a reusable JSON/Yaml error definition file:
+Errors can be configured at both the state and action levels, allowing you to tailor error handling to specific components within your workflow.
+
+When choosing an error handling strategy, consider your workflow requirements and strike a balance between simplicity, maintainability, and flexibility. Choose the approach that best fits the needs of your workflow to ensure effective error management.
+
+##### Inline Error Handling
+
+The most basic method involves configuring the `onErrors` property directly within a state or an action and adding an inline handler. While suitable for specific scenarios, this approach should be used sparingly as it may lead to code duplication and reduced maintainability.
 
 <table>
 <tr>
@@ -5312,22 +5805,46 @@ Here is an example of such a definition for both cases:
 
 ```json
 {
-"errors": "file://documents/reusable/errors.json"
+  "actions": [
+    {
+      "name": "my-action",
+      "functionRef": "my-function",
+      "onErrors": [
+        {
+          "when": [
+            {
+              "status": 503
+            }
+          ],
+          "retry": "retry-five-times"
+        }
+      ]
+    }
+  ]
 }
+
 ```
 
 </td>
 <td valign="top">
 
 ```yaml
-errors: file://documents/reusable/errors.json
+actions:
+  - name: my-action
+    functionRef: my-function
+    onErrors:
+      - when:
+          - status: 503
+        retry: retry-five-times
 ```
 
 </td>
 </tr>
 </table>
 
-2. Defining workflow errors in-line:
+##### Error Handler Reference
+
+A more structured approach is to reference a pre-configured, reusable error handler. However, in most cases, it's recommended to reference an error policy instead, for improved maintainability and consistency.
 
 <table>
 <tr>
@@ -5339,14 +5856,52 @@ errors: file://documents/reusable/errors.json
 
 ```json
 {
-"errors": [
-  {
-    "name": "Service not found error",
-    "code": "404",
-    "description": "Server has not found anything matching the provided service endpoint information"
-  }
-]
+  "errors": {
+    "definitions": [
+      {
+        "name": "service-not-available-error",
+        "type": "https://serverlessworkflow.io/spec/errors/communication",
+        "status": 503,
+        "title": "Service Not Available",
+        "detail": "Failed to contact service, even after multiple retries"
+      }
+    ],
+    "handlers": [
+      {
+        "name": "handle-503",
+        "when": [
+          {
+            "status": 503
+          }
+        ],
+        "retry": "retry-five-times",
+        "then": {
+          "throw": {
+            "refName": "service-not-available-error"
+          }
+        }
+      }
+    ]
+  },
+  "states": [
+    {
+      "name": "my-state",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "my-action",
+          "functionRef": "my-function",
+          "onErrors": [
+            {
+              "refName": "handle-503"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
+
 ```
 
 </td>
@@ -5354,48 +5909,37 @@ errors: file://documents/reusable/errors.json
 
 ```yaml
 errors:
-  - name: Service not found error
-    code: '404'
-    description: Server has not found anything matching the provided service endpoint
-      information
+  definitions:
+    - name: service-not-available-error
+      type: https://serverlessworkflow.io/spec/errors/communication
+      status: 503
+      title: Service Not Available
+      detail: Failed to contact service, even after multiple retries
+  handlers:
+    - name: handle-503
+      when:
+        - status: 503
+      retry: retry-five-times
+      then:
+        throw: 
+          refName: service-not-available-error
+states:
+  - name: my-state
+    type: operation
+    actions:
+      - name: my-action
+        functionRef: my-function
+        onErrors:
+          - refName: handle-503
 ```
 
 </td>
 </tr>
 </table>
 
-These defined errors can then be referenced by their unique name in both states `onErrors` definitions as well as in 
-actions `nonRetryableErrors` and `retryableErrors` properties.
+##### Error Policy Reference
 
-### Action retries
-
-Retries allow workflows to deal with intermittent failures of services they are trying to invoke.
-In addition, retries allow workflows to continue (not fail) execution and allow us to fix possible errors with invoked 
-services and continue execution after they are fixed. 
-Retries are important for both short-lived and long-lived workflows, as well as in both stateless and stateful 
-scenarios.
-
-Serverless workflow supports two distinct ways of defining retries:
-1. Retrying on specified known (checked) errors.
-2. Automatic retrying on both known (checked) and not-known (unchecked) errors.
-
-Which retry option the workflow should use by default is defined via the workflow top-level `autoRetries` property.
-By default, the value of the `autoRetries` is set to `false`, meaning that retry option 1) is used by default.
-You can enable automatic retrying (option 2) by setting `autoRetries` to `true`.
-
-Regardless of the chosen retries option, note that workflows in general should be designed to not fail. 
-Workflows should be able to recover from intermittent failures. 
-
-The next sections provide more details to each action retry option.
-
-#### Retry actions on known errors
-
-This is the default option when the workflow top-level `autoRetries` property is not specified or is set to `false`.
-This retry options is suited for stateless / short-running workflows where retries should  be performed when specifically
-wanted. Note that in this scenario when unknown (unchecked) errors happen during action execution (service invocation), 
-workflow execution should fail.
-
-Let's take a look at an example. To start, let's define a workflow top-level `retries` definition:
+The optimal approach for addressing most error handling scenarios is to reference a configurable, reusable error policy. This promotes consistency, simplifies maintenance, and enhances workflow readability.
 
 <table>
 <tr>
@@ -5407,255 +5951,145 @@ Let's take a look at an example. To start, let's define a workflow top-level `re
 
 ```json
 {
-"retries": [
-  {
-    "name": "first-retry-strategy",
-    "delay": "PT1M",
-    "maxAttempts": 5
+  "errors": {
+    "definitions": [
+      {
+        "name": "service-not-available-error",
+        "type": "https://serverlessworkflow.io/spec/errors/communication",
+        "status": 503,
+        "title": "Service Not Available",
+        "detail": "Failed to contact service, even after multiple retries"
+      }
+    ],
+    "handlers": [
+      {
+        "name": "handle-503",
+        "when": [
+          {
+            "status": 503
+          }
+        ],
+        "retry": "retry-five-times",
+        "then": {
+          "throw": {
+            "refName": "service-not-available-error"
+          }
+        }
+      }
+    ]
   },
-  {
-    "name": "second-retry-strategy",
-    "delay": "PT10M",
-    "maxAttempts": 10
-  }
-]
-}
-```
-
-</td>
-<td valign="top">
-
-```yaml
-retries:
-  - name: first-retry-strategy
-    delay: PT1M
-    maxAttempts: 5
-  - name: second-retry-strategy
-    delay: PT10M
-    maxAttempts: 10
-
-```
-
-</td>
-</tr>
-</table>
-
-Our `retries` definitions can be referenced by actions. For example:
-
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
-
-```json
-{
-  "actions": [
+  "states": [
     {
-      "functionRef": "my-first-function",
-      "retryRef": "first-retry-strategy",
-      "retryableErrors": ["SomeErrorOne", "SomeErrorTwo"]
-    },
-    {
-      "functionRef": "my-second-function",
-      "retryRef": "second-retry-strategy",
-      "retryableErrors": ["SomeErrorTwo", "SomeErrorThree"]
-    },
-    {
-      "functionRef": "my-third-function"
+      "name": "my-state",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "my-action",
+          "functionRef": "my-function",
+          "onErrors": [
+            {
+              "refName": "handle-503"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
+
 ```
 
 </td>
 <td valign="top">
 
 ```yaml
-actions:
-  - functionRef: my-first-function
-    retryRef: first-retry-strategy
-    nonRetryableErrors:
-      - SomeErrorOne
-      - SomeErrorTwo
-  - functionRef: my-second-function
-    retryRef: second-retry-strategy
-    nonRetryableErrors:
-      - SomeErrorTwo
-      - SomeErrorThree
-  - functionRef: my-third-function
+errors:
+  definitions:
+    - name: service-not-available-error
+      type: https://serverlessworkflow.io/spec/errors/communication
+      status: 503
+      title: Service Not Available
+      detail: Failed to contact service, even after multiple retries
+  handlers:
+    - name: handle-503
+      when:
+        - status: 503
+      retry: retry-five-times
+      then:
+        throw: 
+          refName: service-not-available-error
+  policy:
+    - name: fault-tolerance
+      handlers:
+        - refName: handle-503
+states:
+  - name: my-state
+    type: operation
+    actions:
+      - name: my-action
+        functionRef: my-function
+        onErrors: fault-tolerance
 ```
 
 </td>
 </tr>
 </table>
 
-Each action can define the retry strategy it wants to use. If it does not define one, the action is in this case not retries.
-Actions can define a list of known errors in its `retryableErrors` array. If defined, then the action should be retried
-for those errors according to the referenced retry strategy.
 
-In our example, "MyFirstFunction" invocation should be retried according to the "FirstRetryStrategy" policy only on known errors
-"SomeErrorOne" and "SomeErrorTwo".
 
-If for a known error (defined in `retryableErrors`) the retry limit is reached and the error still persist, it can be handled in the states
-`onErrors` definition. 
+#### Error Retries
 
-If an unknown (unchecked) error happens during action execution, and this error is also not handled in the states `onErrors` definition, the
-workflow execution should fail.
+Serverless Workflow offers a robust error retry mechanism designed to enhance the reliability and resilience of workflows by automatically attempting to execute failed operations again under specific conditions. When an error is caught within a workflow, the retry mechanism is activated, providing an opportunity to retry the failed operation. This retry behavior is configured using the `retry` property within the [error handling definition](#error-handler-definition).
 
-#### Automatic retries on known and unknown errors
+The retry mechanism provides several benefits to workflow developers. Firstly, it improves reliability by automatically retrying failed operations, thereby reducing the likelihood of transient errors causing workflow failures. Additionally, it enhances the resilience of workflows by enabling them to recover from temporary issues or transient faults in the underlying systems, ensuring continuous execution even in the face of occasional errors. Moreover, the built-in retry capabilities simplify error handling logic, eliminating the need for manual implementation of complex retry mechanisms. This streamlines workflow development and maintenance, making it easier for developers to manage and troubleshoot error scenarios effectively.
 
-This is the option used when the workflow top-level `autoRetries` property is set to `true`.
-Automatic retries are well suited to long-running and stateful workflow orchestrations. It allows workflows
-to recover from failures thus providing more resilience. There is a possible cost associated with automatic retries
-in terms of resource and computing power utilization. 
+In summary, Serverless Workflow's error retry mechanism offers a comprehensive solution for handling errors during workflow execution, providing improved reliability, enhanced resilience, and simplified error handling logic. By automatically retrying failed operations under specific conditions, it ensures smoother workflow execution and minimizes the impact of errors on overall system performance.
+Serverless Workflow offers a robust error retry mechanism to handle errors that occur during workflow execution. This retry mechanism is designed to enhance the reliability and resilience of workflows by automatically attempting to execute failed operations again under certain conditions.
 
-With this retries option, action executions should be retried automatically for both known (checked) as well as unknown (unchecked)
-errors. This means that you do not have to define a retry strategy for actions for them to have retried, it's included by default.
-Users can still define a custom retry strategy for each action via the `retryRef` property.
+##### Retry Policy Execution
 
-If a retry strategy is not defined, a default retry strategy should be used.
-Runtime implementations can define their own default retry strategy. Serverless Workflow recommends the following settings:
+Upon encountering a defined error, if a retry policy is defined, the workflow runtime will initiate a retry attempt according to the specified policy. The [error source](#error-source), whether it be an action or a state, will be retried based on the configured policy.
 
-* `maxAttempts` to be `unlimited`, meaning that the action should be retried indefinitely until successful.
-* `delay` to be set to one second, meaning that there is a one second delay between action retries.
-* `multiplier` to be set to two meaning that the delay should be multiplied by two for each retry attempt.
+##### Retry Behavior
 
-Runtimes should document their default retry strategy to users, so it's clear which
-property values they are using for the default.
+During each retry attempt, the workflow runtime will make another attempt to execute the operation that resulted in the error. If the retry attempt is successful, the workflow will continue execution as if the error never occurred, seamlessly progressing through the workflow.
 
-Actions can define for which known (checked) errors they should not be retried for. 
-This is done via the actions `nonRetryableErrors` property. If a known error happens during action execution 
-which is included in the `nonRetryableErrors` property array, that action should not be retried and the error 
-then should be handled in the workflow states `onErrors` property.
+##### Retry Exhaustion
 
-Let's take a look at an examples of defining retries when using the automatic retries option. 
-This example assumes that the workfow top level `autoRetries` property is set to `true`.
-To start, let's define a workflow top-level `retries` definition:
+If the maximum configured number of retry attempts is reached without success, the workflow runtime will execute the error outcome defined by the `then` property within the error handling definition. This outcome could involve transitioning to a specific state, triggering compensation logic, or terminating the workflow, depending on the defined error handling strategy.
 
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
+#### Error Outcomes
 
-```json
-{
-"retries": [
-  {
-    "name": "first-retry-strategy",
-    "delay": "PT1M",
-    "maxAttempts": 5
-  },
-  {
-    "name": "second-retry-strategy",
-    "delay": "PT10M",
-    "maxAttempts": 10
-  },
-  {
-    "name": "no-retry-strategy",
-    "maxAttempts": 1
-  }
-]
-}
-```
+Error outcomes in Serverless Workflow provide a flexible mechanism for defining the behavior of the workflow after handling errors. They enable precise error handling strategies tailored to the workflow's requirements, ensuring that errors are managed effectively and workflows can gracefully recover from unexpected situations.
 
-</td>
-<td valign="top">
+The `compensate` outcome triggers workflow compensation. This outcome allows workflows to execute compensation logic to undo any previously completed actions and restore the system to a consistent state before proceeding to the current state's outcome. It ensures that workflows can recover from errors and maintain data integrity.
 
-```yaml
-retries:
-  - name: first-retry-strategy
-    delay: PT1M
-    maxAttempts: 5
-  - name: second-retry-strategy
-    delay: PT10M
-    maxAttempts: 10
-  - name: no-retry-strategy
-    maxAttempts: 1
+The `end` outcome ends the workflow immediately after handling the error. This outcome is useful when errors indicate unrecoverable situations or when workflows should terminate gracefully after encountering specific errors.
 
-```
+The `transition` outcome instructs the workflow to transition to the specified state when the error is handled. This outcome is particularly useful for redirecting the workflow to alternative paths or recovery mechanisms based on the encountered error.
 
-</td>
-</tr>
-</table>
+Finally, the `throw` outcome allows workflows to rethrow the [handled error](#error-definition) or throw a new [error](#error-definition). When set to `true`, the error is rethrown as is, propagating it up the workflow hierarchy. Alternatively, the outcome can define or reference a new error to throw, potentially using runtime expressions to customize error details dynamically.
 
-Our retry definitions can be referenced by state actions. For example:
+Overall, error outcomes in Serverless Workflow offer a comprehensive set of options for managing errors within workflows. By defining precise error handling strategies using these outcomes, workflows can effectively handle errors, recover from failures, and maintain robustness and resilience in various execution scenarios.
 
-<table>
-<tr>
-    <th>JSON</th>
-    <th>YAML</th>
-</tr>
-<tr>
-<td valign="top">
+#### Error Bubbling
 
-```json
-{
-  "actions": [
-    {
-      "functionRef": "my-first-function",
-      "retryRef": "first-retry-strategy",
-      "nonRetryableErrors": ["SomeErrorOne", "SomeErrorTwo"]
-    },
-    {
-      "functionRef": "my-second-function",
-      "retryRef": "second-retry-strategy",
-      "nonRetryableErrors": ["SomeErrorTwo", "SomeErrorThree"]
-    },
-    {
-      "functionRef": "my-thrid-function"
-    },
-    {
-      "functionRef": "my-fourth-function",
-      "retryRef": "no-retry-strategy"
-    }
-  ]
-}
-```
+Error bubbling within Serverless Workflow describes the process by which an unhandled or rethrown error propagates or "bubbles up" from its current location to its parent component, typically the state in which it originated. This mechanism ensures that errors are managed and handled effectively within the workflow hierarchy, maintaining consistent error handling and workflow behavior.
 
-</td>
-<td valign="top">
+When an error arises within a workflow, it initially occurs at the lowest level of execution, such as within an action. If the error remains unhandled or uncaught at this level, it ascends through the workflow's structure until it reaches the parent component of the location where the error originated. If the error persists and is not addressed at the state level, it ultimately terminates the workflow.
 
-```yaml
-actions:
-  - functionRef: my-first-function
-    retryRef: first-retry-strategy
-    nonRetryableErrors:
-      - SomeErrorOne
-      - SomeErrorTwo
-  - functionRef: my-second-function
-    retryRef: second-retry-strategy
-    nonRetryableErrors:
-      - SomeErrorTwo
-      - SomeErrorThree
-  - functionRef: my-third-function
-  - functionRef: my-fourth-function
-    retryRef: no-retry-strategy
+The termination of the workflow due to an unhandled error at the state level serves as a means of ensuring that errors are appropriately dealt with and do not result in erroneous or inconsistent workflow behavior. By halting the workflow's execution at the point of error occurrence, Serverless Workflow promotes resilience and reliability, averting potential cascading failures and ensuring predictable error handling behavior.
 
-```
+In essence, the error handling mechanism within Serverless Workflow is designed to guarantee that errors are managed and resolved effectively within workflows, thereby preventing unexpected outcomes and fostering reliability and consistency in workflow execution.
 
-</td>
-</tr>
-</table>
+#### Error Handling Best Practices
 
-In our example the first action named `my-first-function` is going to be retried according to the `first-retry-strategy`
-retry policy
-for all errors except `SomeErrorOne` and `SomeErrorTwo`.
+When designing error handling logic in Serverless Workflow, it's essential to adhere to best practices to ensure robustness and reliability:
 
-The seconds action named `my-second-function` is going to be retried according to the `second-retry-strategy`
-retry policy 
-for all errors except `SomeErrorTwo` and `SomeErrorThree`.
-
-The third action named `my-third-function` is going to retried according to the default runtime retry policy.
-It will be retried for all errors both known (checked) as well as unknown (unckecked).
-
-The fourth action named `my-fourth-function` is going to be retried according to the `no-retry-strategy`
-retry policy which has the `maxAttempts` property set to `1`, meaning that this action will not be retried.
+- Define Clear Error Definitions: Clearly define error types and their corresponding definitions to provide meaningful information about encountered errors.
+- Use Default Error Types: Whenever possible, use the predefined default error types provided by ServerlessWorkflow to ensure consistency and compatibility.
+- Group Error Handlers: Group related error handlers into error policies to promote code reuse and maintainability.
+- Handle Errors Gracefully: Handle errors gracefully within workflows by defining appropriate error handlers and outcome definitions to mitigate the impact of errors on workflow execution.
 
 ### Workflow Timeouts
 

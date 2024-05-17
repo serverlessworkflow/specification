@@ -3,7 +3,6 @@
     "description": "Customer Banking Transactions Workflow",
     "version": "1.0.0",
     "specVersion": "0.8",
-    "autoRetries": true,
     "constants": {
         "largetxamount": 5000
     },
