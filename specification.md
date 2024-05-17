@@ -4532,7 +4532,7 @@ Note that an error definition should **NOT** carry any implementation-specific i
 | [https://serverlessworkflow.io/spec/errors/authentication](#) | 401 | Errors related to authentication failures. |
 | [https://serverlessworkflow.io/spec/errors/authorization](#) | 403 | Errors related to unauthorized access attempts or insufficient permissions to perform certain actions within the workflow. |
 | [https://serverlessworkflow.io/spec/errors/timeout](#) | 408 | Errors caused by timeouts during the execution of tasks or during interactions with external services. |
-| [https://serverlessworkflow.io/spec/errors/communication](#) | 500 | Errors  encountered while communicating with external services, including network errors, service unavailable, or invalid responses. |
+| [https://serverlessworkflow.io/spec/errors/communication](#) | 500 | Errors encountered while communicating with external services, including network errors, service unavailable, or invalid responses. |
 | [https://serverlessworkflow.io/spec/errors/runtime](#) | 500 | Errors occurring during the runtime execution of a workflow, including unexpected exceptions, errors related to resource allocation, or failures in handling workflow tasks. These errors typically occur during the actual execution of workflow components and may require runtime-specific handling and resolution strategies. |
 
 The specification promotes the use of default error types by runtimes and workflow authors for describing thrown [errors](#error-definition). This approach ensures consistent identification, handling, and behavior across various platforms and implementations.
