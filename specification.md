@@ -5785,7 +5785,7 @@ By leveraging the Error Source, developers can streamline the error-handling pro
 
 #### Error Handling Strategies
 
-In ServerlessWorkflow, you have the flexibility to define error handling strategies using error handlers, policies, and outcome definitions.
+In Serverless Workflow, you have the flexibility to define error handling strategies using error handlers, policies, and outcome definitions.
 
 Errors can be configured at both the state and action levels, allowing you to tailor error handling to specific components within your workflow.
 
