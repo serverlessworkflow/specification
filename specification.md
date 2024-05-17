@@ -4582,7 +4582,7 @@ An Error Reference in a Serverless Workflow provides a means to point to specifi
 
 If multiple properties are set, they are considered cumulative conditions to match an error.
 
-For example, the above definition is the same than saying "match errors with `type` 'https://example.com/errors#timeout' AND with `status` '504'".
+For example, the above definition is the same as saying "match errors with `type` 'https://example.com/errors#timeout' AND with `status` '504'".
 
 ##### Error Handler Definition
 
