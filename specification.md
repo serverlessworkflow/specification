@@ -4815,7 +4815,7 @@ By defining error policies, workflows can easily apply consistent error handling
 | Parameter | Description | Type | Required |
 | --- | --- | --- | --- |
 | end | If `true`, ends the workflow. | boolean or [end definition](#end-definition) | yes if `transition` and `throw` are null, otherwise no. |
-| transition | Indicates that the the workflow should transition to the specified state when the error is handled. All potential other activities are terminated. | string or [transition](#transition-definition). | yes if `end` and `throw` are null, otherwise no. |
+| transition | Indicates that the workflow should transition to the specified state when the error is handled. All potential other activities are terminated. | string or [transition](#transition-definition). | yes if `end` and `throw` are null, otherwise no. |
 | throw | Indicates that the handled error should be rethrown. If true, the error is re-thrown as is. Otherwise, configures the error to throw, potentially using runtime expressions. | boolean or [error throw definition](#error-throw-definition). | yes if `end` and `transition` are null, otherwise no. |
 
 <details><summary><strong>Click to view example definition</strong></summary>
