@@ -4513,7 +4513,7 @@ For example, in the above definition, the source `/states/0/actions/0` indicates
 This helps both users and implementers to describe and communicate the origins of errors without technical, technology/platform-specific knowledge or understanding.
 
 Property `type` is a URI used to identify the type of the error. 
-**For cross-compatibility concerns, the specification strongly encourage using the [default types](#default-error-types).**
+**For cross-compatibility concerns, the specification strongly encourages using the [default types](#default-error-types).**
 
 Property `status` identifies the error's status code. 
 **For cross-compatibility concerns, the specification strongly encourage using [HTTP Status Codes](https://datatracker.ietf.org/doc/html/rfc7231#section-6.1).**
