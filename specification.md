@@ -5793,7 +5793,7 @@ When choosing an error handling strategy, consider your workflow requirements an
 
 ##### Inline Error Handling
 
-The most basic method involves configuring the onErrors property directly within a state or an action and adding an inline handler. While suitable for specific scenarios, this approach should be used sparingly as it may lead to code duplication and reduced maintainability.
+The most basic method involves configuring the `onErrors` property directly within a state or an action and adding an inline handler. While suitable for specific scenarios, this approach should be used sparingly as it may lead to code duplication and reduced maintainability.
 
 <table>
 <tr>
