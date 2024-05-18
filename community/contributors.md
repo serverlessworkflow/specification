@@ -13,7 +13,6 @@ us know in chat or team meeting.
 * **Independent**
   * Louis Fourie
   * Achilleas Tzenetopoulos
-  * Antonio Mendoza Pérez
   * Richard Gibson
   * Lucas Stocksmeier
 
@@ -38,6 +37,7 @@ us know in chat or team meeting.
   * Chathura Ekanayake
 
 * **Temporal Technologies**
+  * Antonio Mendoza Pérez
   * Tihomir Surdilovic
 
 * **Red Hat**
@@ -83,4 +83,3 @@ us know in chat or team meeting.
 
 * **OpenEnterprise**
   * Maciek Swiderski
-      
