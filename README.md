@@ -85,7 +85,7 @@ No matter your preferred language, our SDKs provide the tools you need to levera
 
 | Name | About |
 | --- | --- |
-| [SonataFlow](https://sonataflow.org) | SonataFlow is a tool for building cloud-native workflow applications. You can use it to do the services and events orchestration and choreography. |
+| [Apache KIE SonataFlow](https://sonataflow.org) | Apache KIE SonataFlow is a tool for building cloud-native workflow applications. You can use it to do the services and events orchestration and choreography. |
 | [Synapse](https://github.com/serverlessworkflow/synapse) | Synapse is a scalable, cross-platform, fully customizable platform for managing and running Serverless Workflows. |
 
 ### Tooling
