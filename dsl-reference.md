@@ -59,7 +59,8 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | document.dsl | `string` | `yes` | The version of the DSL used by the workflow. |
-| document.name | `string` | `yes` | The workflow's name. |
+| document.namespace | `string` | `yes` | The workflow's namespace.<br> |
+| document.name | `string` | `yes` | The workflow's name.<br> |
 | document.version | `string` | `yes` | The workflow's [semantic version](#semantic-version). |
 | document.title | `string` | `no` | The workflow's title. |
 | document.summary | `string` | `no` | The workflow's Markdown summary. |
