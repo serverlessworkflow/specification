@@ -1,0 +1,93 @@
+id: https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.json
+$schema: http://json-schema.org/draft-07/schema
+description: Serverless Workflow specification - Workflow Schema
+type: object
+properties:
+  document:
+    type: object
+    properties:
+      dsl:
+        type: string
+        pattern: ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+        description: The version of the DSL used by the workflow.
+      namespace:
+        type: string
+        pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
+        description: The workflow's namespace.
+      name:
+        type: string
+        pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
+        description: The workflow's name.
+      version:
+        type: string
+        pattern: ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+        description: The workflow's semantic version.
+      title:
+        type: string
+        description: The workflow's title.
+      summary:
+        type: string
+        description: The workflow's Markdown summary.
+      tags:
+        type: object
+        description: A key/value mapping of the workflow's tags, if any.
+        additionalProperties: true
+    required: [ dsl, namespace, name, version ]
+    description: Documents the workflow
+  do:
+    type: object
+    minProperties: 1
+    additionalProperties:
+      $ref: '#/$defs/task'
+    description: Defines the tasks the workflow must perform
+$defs:
+  task:
+    type: object
+    oneOf:
+    - $ref: '#/$defs/callTask'
+    - $ref: '#/$defs/compositeTask'
+  callTask:
+    type: object
+    properties:
+      call:
+        type: string
+        description: The name of the function to call.
+      with:
+        type: object
+        additionalProperties: true
+        description: name/value mapping of the parameters, if any, to call the function with
+    required: [ call ]
+  compositeTask:
+    properties:
+      execute:
+        type: object
+        oneOf:
+        - properties:
+            concurrently:
+              type: object
+              minProperties: 2
+              additionalProperties:
+                $ref: '#/$defs/task'
+              description: A name/definition mapping of the tasks to perform concurrently.
+            compete:
+              type: boolean
+              description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
+          required: [ concurrently ]
+        - properties:  
+            sequentially:
+              type: object
+              minProperties: 2
+              additionalProperties:
+                $ref: '#/$defs/task'
+            description: A name/definition mapping of the tasks to perform sequentially.
+          required: [ sequentially ]
+        description: Configures the task execution strategy to use
+    required: [ execute ]
+  endpoint:
+    type: object
+    properties:
+      uri:
+        type: string
+        format: uri
+    required: [ uri ]
+required: [ document, do ]
