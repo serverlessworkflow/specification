@@ -33,13 +33,47 @@ properties:
         description: A key/value mapping of the workflow's tags, if any.
         additionalProperties: true
     required: [ dsl, namespace, name, version ]
-    description: Documents the workflow
+    description: Documents the workflow.
+  use:
+    type: object
+    properties:
+      authentications:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/authenticationPolicy'
+        description: The workflow's reusable authentication policies.
+      errors:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/error'
+        description: The workflow's reusable errors.
+      extensions:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/extension'
+        description: The workflow's extensions.
+      functions:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/function'
+        description: The workflow's reusable functions.
+      retries:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/retryPolicy'
+        description: The workflow's reusable retry policies.
+      secrets:
+        type: array
+        items:
+          type: string
+        description: The workflow's secrets.
+    description: Defines the workflow's reusable components.
   do:
     type: object
     minProperties: 1
     additionalProperties:
       $ref: '#/$defs/task'
-    description: Defines the tasks the workflow must perform
+    description: Defines the tasks the workflow must perform.
 $defs:
   task:
     type: object
@@ -512,6 +546,24 @@ $defs:
             type: string
         additionalProperties: true
     required: [ with ]
+  extension:
+    type: object
+    properties:
+      extend:
+        type: string
+        enum: [ call, composite, emit, for, listen, raise, run, set, switch, try, wait, all ]
+        description: The type of task to extend.
+      when:
+        type: string
+        description: A runtime expression, if any, used to determine whether or not the extension should apply in the specified context.
+      before:
+        $ref: '#/$defs/task'
+        description: The task to execute before the extended task, if any.
+      after:
+        $ref: '#/$defs/task'
+        description: The task to execute after the extended task, if any.
+    required: [ extend ]
+    description: The definition of a an extension.
   externalResource:
     type: object
     properties:
