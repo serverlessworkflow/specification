@@ -724,7 +724,7 @@ Enables the invocation and execution of nested workflows within a parent workflo
 |:--|:---:|:---:|:---|
 | name | `string` | `yes` | The name of the workflow to run |
 | version | `string` | `yes` | The version of the workflow to run. Defaults to `latest` |
-| input | `any` | `yes` | The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified |
+| input | `any` | `no` | The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified |
 
 ###### Examples
 
@@ -808,7 +808,7 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | try | [`task`](#task) | `yes` | The task to perform. |
-| catch | [`errorCatcher`](#error-catcher) | `yes` | The task to perform. |
+| catch | [`errorCatcher`](#error-catcher) | `yes` | Configures the errors to catch and how to handle them. |
 
 ##### Examples
 
