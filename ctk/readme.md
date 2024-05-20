@@ -18,6 +18,7 @@
         - [Workflow has been cancelled](#workflow-has-been-cancelled)
         - [Workflow ran to completion](#workflow-ran-to-completion)
         - [Workflow has faulted](#workflow-has-faulted)
+        - [Workflow output should have properties](#workflow-output-should-have-properties)
         - [Task ran first](#task-ran-first)
         - [Task ran last](#task-ran-last)
         - [Task ran before](#task-ran-before)
@@ -115,7 +116,7 @@ Sets up the scenario by providing the definition of a workflow in either JSON or
 
 ```gherkin
 Given a workflow with definition:
-"""json|yaml
+"""yaml
 <DEFINITION>
 """
 ```
@@ -126,7 +127,7 @@ Specifies the input data for the workflow being tested. It provides the necessar
 
 ```gherkin
 And given the workflow input is:
-"""json|yaml
+"""yaml
 <INPUT>
 """
 ```
@@ -173,7 +174,7 @@ Expecting a specific output:
 
 ```gherkin
 Then the workflow should complete with output:
-"""json|yaml
+"""yaml
 <EXPECTED_OUTPUT>
 """
 ```
@@ -190,10 +191,36 @@ Expecting a specific error:
 
 ```gherkin
 Then the workflow should fault with error:
-"""json|yaml
+"""yaml
 <EXPECTED_ERROR>
 """
 ```
+
+##### Workflow output should have properties
+
+Asserts that the workflow ran to completion and outputs a map that contains the specified single quoted, comma separated, properties.
+
+```gherkin
+And the workflow output should have properties '<PROPERTY1_PATH>', '<PROPERTY2_PATH>', '<PROPERTY3_PATH>'
+```
+
+##### Workflow output should have property
+
+Asserts that the workflow ran to completion and outputs a map that contains the specified single quoted, comma separated, property, which returns the specified value.
+
+```gherkin
+And the workflow output should have a '<PROPERTY_PATH>' property with value:
+"""yaml
+<EXPECTED_VALUE>
+"""
+```
+
+##### Workflow output should have a property with item count
+
+```gherkin
+And the workflow output should have a '<PROPERTY_PATH>' property containing <ITEMS_COUNT> items
+```
+
 
 ##### Task ran first
 
@@ -247,7 +274,7 @@ Expecting a specific output:
 
 ```gherkin
 And <TASK_NAME> should complete with output:
-"""json|yaml
+"""yaml
 <EXPECTED_OUTPUT>
 """
 ```
@@ -264,7 +291,7 @@ Expecting a specific error:
 
 ```gherkin
 And <TASK_NAME> should fault with error:
-"""json|yaml
+"""yaml
 <EXPECTED_ERROR>
 """
 ```
