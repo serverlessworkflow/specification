@@ -34,163 +34,219 @@ properties:
         additionalProperties: true
     required: [ dsl, namespace, name, version ]
     description: Documents the workflow
+  input:
+    $ref: '#/$defs/input'
+    description: Configures the workflow's input.
+  use:
+    type: object
+    properties:
+      authentications:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/authenticationPolicy'
+        description: The workflow's reusable authentication policies.
+      errors:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/error'
+        description: The workflow's reusable errors.
+      extensions:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/extension'
+        description: The workflow's extensions.
+      functions:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/task'
+        description: The workflow's reusable functions.
+      retries:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/retryPolicy'
+        description: The workflow's reusable retry policies.
+      secrets:
+        type: array
+        items:
+          type: string
+        description: The workflow's secrets.
+    description: Defines the workflow's reusable components.
   do:
     type: object
     minProperties: 1
     additionalProperties:
       $ref: '#/$defs/task'
     description: Defines the tasks the workflow must perform
+  timeout:
+    $ref: '#/$defs/timeout'
+    description: The workflow's timeout configuration, if any.
+  output:
+    $ref: '#/$defs/output'
+    description: Configures the workflow's output.
 $defs:
   task:
     type: object
+    properties:
+      input:
+        $ref: '#/$defs/input'
+        description: Configure the task's input.
+      output:
+        $ref: '#/$defs/output'
+        description: Configure the task's output.
+      timeout:
+        $ref: '#/$defs/timeout'
+        description: The task's timeout configuration, if any.
+      then:
+        $ref: '#/$defs/flowDirective'
+        description: The flow directive to be performed upon completion of the task.
     oneOf:
-    - $ref: '#/$defs/callTask'
-    - $ref: '#/$defs/compositeTask'
-    - $ref: '#/$defs/emitTask'
-    - $ref: '#/$defs/forTask'
-    - $ref: '#/$defs/listenTask'
-    - $ref: '#/$defs/raiseTask'
-    - $ref: '#/$defs/runTask'
-    - $ref: '#/$defs/setTask'
-    - $ref: '#/$defs/switchTask'
-    - $ref: '#/$defs/tryTask'
-    - $ref: '#/$defs/waitTask'
+      - $ref: '#/$defs/callTask'
+      - $ref: '#/$defs/compositeTask'
+      - $ref: '#/$defs/emitTask'
+      - $ref: '#/$defs/forTask'
+      - $ref: '#/$defs/listenTask'
+      - $ref: '#/$defs/raiseTask'
+      - $ref: '#/$defs/runTask'
+      - $ref: '#/$defs/setTask'
+      - $ref: '#/$defs/switchTask'
+      - $ref: '#/$defs/tryTask'
+      - $ref: '#/$defs/waitTask'
   callTask:
     type: object
     oneOf:
-    - properties:
-        call:
-          type: string
-          constant: asyncapi
-        with:
-          type: object
-          properties:
-            document:
-              $ref: '#/$defs/externalResource'
-              description: The document that defines the AsyncAPI operation to call.
-            operation:
-              type: string
-              description: A reference to the AsyncAPI operation to call.
-            server:
-              type: string
-              description: A a reference to the server to call the specified AsyncAPI operation on. If not set, default to the first server matching the operation's channel.
-            message:
-              type: string
-              description: The name of the message to use. If not set, defaults to the first message defined by the operation.
-            binding:
-              type: string
-              description: The name of the binding to use. If not set, defaults to the first binding defined by the operation.
-            payload:
-              type: object
-              description: The payload to call the AsyncAPI operation with, if any.
-            authentication:
-              ref: '#/$defs/authenticationPolicy'
-              description: The authentication policy, if any, to use when calling the AsyncAPI operation.
-          required: [ document, operation ]
-          description: Defines the AsyncAPI call to perform.
-      required: [ call, with ]
-    - properties:
-        call:
-          type: string
-          constant: grpc
-        with:
-          type: object
-          properties:
-            proto:
-              $ref: '#/$defs/externalResource'
-              description: The proto resource that describes the GRPC service to call.
-            service:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: The name of the GRPC service to call.
-                host:
-                  type: string
-                  pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
-                  description: The hostname of the GRPC service to call.
-                port:
-                  type: integer
-                  min: 0
-                  max: 65535
-                  description: The port number of the GRPC service to call.
-                authentication:
-                  $ref: '#/$defs/authenticationPolicy'
-                  description: The endpoint's authentication policy, if any.
-              required: [ name, host ]
-            method:
-              type: string
-              description: The name of the method to call on the defined GRPC service.
-            arguments:
-              type: object
-              additionalProperties: true
-              description: The arguments, if any, to call the method with.
-          required: [ proto, service, method ]
-          description: Defines the GRPC call to perform.
-      required: [ call, with ]
-    - properties:
-        call:
-          type: string
-          constant: http
-        with:
-          type: object
-          properties:
-            method:
-              type: string
-              description: The HTTP method of the HTTP request to perform.
-            endpoint:
-              $ref: '#/$defs/endpoint'
-              description: The HTTP endpoint to send the request to.
-            headers:
-              type: object
-              description: A name/value mapping of the headers, if any, of the HTTP request to perform.
-            body:
-              description: The body, if any, of the HTTP request to perform.
-            output:
-              type: string
-              enum: [ raw, content, response ]
-              description: The http call output format. Defaults to 'content'.
-          required: [ method, endpoint ]
-          description: Defines the HTTP call to perform.
-      required: [ call, with ]
-    - properties:
-        call:
-          type: string
-          constant: openapi
-        with:
-          type: object
-          properties:
-            document:
-              $ref: '#/$defs/externalResource'
-              description: The document that defines the OpenAPI operation to call.
-            operation:
-              type: string
-              description: The id of the OpenAPI operation to call.
-            parameters:
-              type: object
-              additionalProperties: true
-              description: A name/value mapping of the parameters of the OpenAPI operation to call.
-            authentication:
-              $ref: '#/$defs/authenticationPolicy'
-              description: The authentication policy, if any, to use when calling the OpenAPI operation.
-            output:
-              type: string
-              enum: [ raw, content, response ]
-              description: The http call output format. Defaults to 'content'.
-          required: [ document, operation ]
-          description: Defines the OpenAPI call to perform.
-      required: [ call, with ]
-    - properties:
-        call:
-          type: string
-          not:
-            enum: ["asyncapi", "grpc", "http", "openapi"]
-          description: The name of the function to call.
-        with:
-          type: object
-          additionalProperties: true
-          description: A name/value mapping of the parameters, if any, to call the function with.
-      required: [ call ]
+      - properties:
+          call:
+            type: string
+            constant: asyncapi
+          with:
+            type: object
+            properties:
+              document:
+                $ref: '#/$defs/externalResource'
+                description: The document that defines the AsyncAPI operation to call.
+              operation:
+                type: string
+                description: A reference to the AsyncAPI operation to call.
+              server:
+                type: string
+                description: A a reference to the server to call the specified AsyncAPI operation on. If not set, default to the first server matching the operation's channel.
+              message:
+                type: string
+                description: The name of the message to use. If not set, defaults to the first message defined by the operation.
+              binding:
+                type: string
+                description: The name of the binding to use. If not set, defaults to the first binding defined by the operation.
+              payload:
+                type: object
+                description: The payload to call the AsyncAPI operation with, if any.
+              authentication:
+                ref: '#/$defs/authenticationPolicy'
+                description: The authentication policy, if any, to use when calling the AsyncAPI operation.
+            required: [ document, operation ]
+            description: Defines the AsyncAPI call to perform.
+        required: [ call, with ]
+      - properties:
+          call:
+            type: string
+            constant: grpc
+          with:
+            type: object
+            properties:
+              proto:
+                $ref: '#/$defs/externalResource'
+                description: The proto resource that describes the GRPC service to call.
+              service:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: The name of the GRPC service to call.
+                  host:
+                    type: string
+                    pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
+                    description: The hostname of the GRPC service to call.
+                  port:
+                    type: integer
+                    min: 0
+                    max: 65535
+                    description: The port number of the GRPC service to call.
+                  authentication:
+                    $ref: '#/$defs/authenticationPolicy'
+                    description: The endpoint's authentication policy, if any.
+                required: [ name, host ]
+              method:
+                type: string
+                description: The name of the method to call on the defined GRPC service.
+              arguments:
+                type: object
+                additionalProperties: true
+                description: The arguments, if any, to call the method with.
+            required: [ proto, service, method ]
+            description: Defines the GRPC call to perform.
+        required: [ call, with ]
+      - properties:
+          call:
+            type: string
+            constant: http
+          with:
+            type: object
+            properties:
+              method:
+                type: string
+                description: The HTTP method of the HTTP request to perform.
+              endpoint:
+                $ref: '#/$defs/endpoint'
+                description: The HTTP endpoint to send the request to.
+              headers:
+                type: object
+                description: A name/value mapping of the headers, if any, of the HTTP request to perform.
+              body:
+                description: The body, if any, of the HTTP request to perform.
+              output:
+                type: string
+                enum: [ raw, content, response ]
+                description: The http call output format. Defaults to 'content'.
+            required: [ method, endpoint ]
+            description: Defines the HTTP call to perform.
+        required: [ call, with ]
+      - properties:
+          call:
+            type: string
+            constant: openapi
+          with:
+            type: object
+            properties:
+              document:
+                $ref: '#/$defs/externalResource'
+                description: The document that defines the OpenAPI operation to call.
+              operation:
+                type: string
+                description: The id of the OpenAPI operation to call.
+              parameters:
+                type: object
+                additionalProperties: true
+                description: A name/value mapping of the parameters of the OpenAPI operation to call.
+              authentication:
+                $ref: '#/$defs/authenticationPolicy'
+                description: The authentication policy, if any, to use when calling the OpenAPI operation.
+              output:
+                type: string
+                enum: [ raw, content, response ]
+                description: The http call output format. Defaults to 'content'.
+            required: [ document, operation ]
+            description: Defines the OpenAPI call to perform.
+        required: [ call, with ]
+      - properties:
+          call:
+            type: string
+            not:
+              enum: ["asyncapi", "grpc", "http", "openapi"]
+            description: The name of the function to call.
+          with:
+            type: object
+            additionalProperties: true
+            description: A name/value mapping of the parameters, if any, to call the function with.
+        required: [ call ]
   compositeTask:
     properties:
       execute:
@@ -252,6 +308,10 @@ $defs:
         required: [ event ]
     required: [ emit ]
     description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
+  flowDirective:
+    type: string
+    enum: [ continue, exit, end ]
+    default: continue
   forTask:
     properties:
       for:
@@ -322,92 +382,92 @@ $defs:
       run:
         type: object
         oneOf:
-        - properties:
-            container:
-              type: object
-              properties:
-                image:
-                  type: string
-                  description: The name of the container image to run.
-                command:
-                  type: string
-                  description: The command, if any, to execute on the container
-                ports:
-                  type: object
-                  description: The container's port mappings, if any.
-                volumes:
-                  type: object
-                  description: The container's volume mappings, if any.
-                environment:
-                  type: object
-                  description: A key/value mapping of the environment variables, if any, to use when running the configured process.
-              required: [ image ]
-          required: [ container ]
-          description: Enables the execution of external processes encapsulated within a containerized environment.
-        - properties:
-            script:
-              type: object
-              properties:
-                language:
-                  type: string
-                  description: The language of the script to run.
-                environment:
-                  type: object
-                  additionalProperties: true
-                  description: A key/value mapping of the environment variables, if any, to use when running the configured process.
-              oneOf:
-              - properties:
-                  code:
+          - properties:
+              container:
+                type: object
+                properties:
+                  image:
                     type: string
-                required: [ code ]
-                description: The script's code.
-              - properties:
-                  source:
-                    $ref: '#/$defs/externalResource'
-                description: The script's resource.
-                required: [ code ]
-              required: [ language ]
-          required: [ script ]
-          description: Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
-        - properties:
-            shell:
-              type: object
-              properties:
-                command:
-                  type: string
-                  description: The shell command to run.
-                arguments:
-                  type: object
-                  additionalProperties: true
-                  description: A list of the arguments of the shell command to run.
-                environment:
-                  type: object
-                  additionalProperties: true
-                  description: 	A key/value mapping of the environment variables, if any, to use when running the configured process.
-              required: [ command ]
-          required: [ shell ]
-          description: Enables the execution of shell commands within a workflow, enabling workflows to interact with the underlying operating system and perform system-level operations, such as file manipulation, environment configuration, or system administration tasks.
-        - properties:
-            workflow:
-              type: object
-              properties:
-                namespace:
-                  type: string
-                  description: The namespace the workflow to run belongs to.
-                name:
-                  type: string
-                  description: The name of the workflow to run.
-                version:
-                  type: string
-                  default: latest
-                  description: The version of the workflow to run. Defaults to latest
-                input:
-                  type: object
-                  additionalProperties: true
-                  description: The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified.
-              required: [ namespace, name, version ]
-          required: [ workflow ]
-          description: Enables the invocation and execution of nested workflows within a parent workflow, facilitating modularization, reusability, and abstraction of complex logic or business processes by encapsulating them into standalone workflow units.
+                    description: The name of the container image to run.
+                  command:
+                    type: string
+                    description: The command, if any, to execute on the container
+                  ports:
+                    type: object
+                    description: The container's port mappings, if any.
+                  volumes:
+                    type: object
+                    description: The container's volume mappings, if any.
+                  environment:
+                    type: object
+                    description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                required: [ image ]
+            required: [ container ]
+            description: Enables the execution of external processes encapsulated within a containerized environment.
+          - properties:
+              script:
+                type: object
+                properties:
+                  language:
+                    type: string
+                    description: The language of the script to run.
+                  environment:
+                    type: object
+                    additionalProperties: true
+                    description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                oneOf:
+                - properties:
+                    code:
+                      type: string
+                  required: [ code ]
+                  description: The script's code.
+                - properties:
+                    source:
+                      $ref: '#/$defs/externalResource'
+                  description: The script's resource.
+                  required: [ code ]
+                required: [ language ]
+            required: [ script ]
+            description: Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
+          - properties:
+              shell:
+                type: object
+                properties:
+                  command:
+                    type: string
+                    description: The shell command to run.
+                  arguments:
+                    type: object
+                    additionalProperties: true
+                    description: A list of the arguments of the shell command to run.
+                  environment:
+                    type: object
+                    additionalProperties: true
+                    description: 	A key/value mapping of the environment variables, if any, to use when running the configured process.
+                required: [ command ]
+            required: [ shell ]
+            description: Enables the execution of shell commands within a workflow, enabling workflows to interact with the underlying operating system and perform system-level operations, such as file manipulation, environment configuration, or system administration tasks.
+          - properties:
+              workflow:
+                type: object
+                properties:
+                  namespace:
+                    type: string
+                    description: The namespace the workflow to run belongs to.
+                  name:
+                    type: string
+                    description: The name of the workflow to run.
+                  version:
+                    type: string
+                    default: latest
+                    description: The version of the workflow to run. Defaults to latest
+                  input:
+                    type: object
+                    additionalProperties: true
+                    description: The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified.
+                required: [ namespace, name, version ]
+            required: [ workflow ]
+            description: Enables the invocation and execution of nested workflows within a parent workflow, facilitating modularization, reusability, and abstraction of complex logic or business processes by encapsulating them into standalone workflow units.
     required: [ run ]
     description: Provides the capability to execute external containers, shell commands, scripts, or workflows.
   setTask:
@@ -433,9 +493,7 @@ $defs:
               type: string
               description: A runtime expression used to determine whether or not the case matches.
             then:
-              type: string
-              enum: [ continue, exit, end ]
-              default: continue
+              $ref: '#/$defs/flowDirective'
               description: The flow directive to execute when the case matches.
     required: [ switch ]
     description: Enables conditional branching within workflows, allowing them to dynamically select different paths based on specified conditions or criteria
@@ -637,6 +695,24 @@ $defs:
             type: string
         additionalProperties: true
     required: [ with ]
+  extension:
+    type: object
+    properties:
+      extend:
+        type: string
+        enum: [ call, composite, emit, for, listen, raise, run, set, switch, try, wait, all ]
+        description: The type of task to extend.
+      when:
+        type: string
+        description: A runtime expression, if any, used to determine whether or not the extension should apply in the specified context.
+      before:
+        $ref: '#/$defs/task'
+        description: The task to execute before the extended task, if any.
+      after:
+        $ref: '#/$defs/task'
+        description: The task to execute after the extended task, if any.
+    required: [ extend ]
+    description: The definition of a an extension.
   externalResource:
     type: object
     properties:
@@ -651,6 +727,29 @@ $defs:
         type: string
         description: The external resource's name, if any.
     required: [ uri ]
+  input:
+    type: object
+    properties:
+      schema:
+        $ref: '#/$defs/schema'
+        description: The schema used to describe and validate the input of the workflow or task.
+      from:
+        type: string
+        description: A runtime expression, if any, used to mutate and/or filter the input of the workflow or task.
+    description: Configures the input of a workflow or task.
+  output:
+    type: object
+    properties:
+      schema:
+        $ref: '#/$defs/schema'
+        description: The schema used to describe and validate the output of the workflow or task.
+      from:
+        type: string
+        description: A runtime expression, if any, used to mutate and/or filter the output of the workflow or task.
+      to:
+        type: string
+        description: A runtime expression, if any, used to output data to the current context.
+    description: Configures the output of a workflow or task.
   retryPolicy:
     type: object
     properties:
@@ -710,4 +809,30 @@ $defs:
         required: [ from, to ]
         description: The parameters, if any, that control the randomness or variability of the delay between retry attempts.
     description: Defines a retry policy.
+  schema:
+    type: object
+    properties:
+      format:
+        type: string
+        default: json
+        description: The schema's format. Defaults to 'json'. The (optional) version of the format can be set using `{format}:{version}`.
+    oneOf:
+      - properties:
+          document:
+            description: The schema's inline definition.
+        required: [ document ]
+      - properties:
+          resource:
+            $ref: '#/$defs/externalResource'
+            description: The schema's external resource.
+        required: [ resource ]
+    description: Represents the definition of a schema.
+  timeout:
+    type: object
+    properties:
+      after:
+        $ref: '#/$defs/duration'
+        description: The duration after which to timeout.
+    required: [ after ]
+    description: The definition of a timeout.
 required: [ document, do ]

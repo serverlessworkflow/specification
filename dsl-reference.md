@@ -65,8 +65,11 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | document.title | `string` | `no` | The workflow's title. |
 | document.summary | `string` | `no` | The workflow's Markdown summary. |
 | document.tags | `map[string, string]` | `no` | A key/value mapping of the workflow's tags, if any. |
+| input | [`inputDataModel`](#input-data-model) | `no` | Configures the workflow's input. |
 | use | [`componentCollection`](#component-collection) | `no` | A collection containing the workflow's reusable components. |
 | do | [`map[string, task]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
+| timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
+| output | [`outputDataModel`](#output-data-model) | `no` | Configures the workflow's output. |
 
 #### Examples
 
