@@ -50,12 +50,12 @@ Workflows in the Serverless Workflow DSL can exist in several phases, each indic
 
 | Phase |	Description |
 | --- | --- |
-| `Pending` |	The workflow has been initiated and is pending execution. |
-| `Running` |	The workflow is currently in progress. |
-| `Suspended` |	The workflow execution has been paused or halted temporarily. |
-| `Cancelled` |	The workflow execution has been terminated before completion. |
-| `Faulted` |	The workflow execution has encountered an error. |
-| `Completed` |	The workflow execution has successfully finished all tasks. |
+| `pending` |	The workflow has been initiated and is pending execution. |
+| `running` |	The workflow is currently in progress. |
+| `waiting` |	The workflow execution has been paused or halted temporarily and is waiting for something to happen. |
+| `cancelled` |	The workflow execution has been terminated before completion. |
+| `faulted` |	The workflow execution has encountered an error. |
+| `completed` |	The workflow execution has successfully finished all tasks. |
 
 Additionally, the flow of execution within a workflow can be controlled using [directives*](#flow-directives), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
 
