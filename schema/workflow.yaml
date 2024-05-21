@@ -83,6 +83,22 @@ properties:
   output:
     $ref: '#/$defs/output'
     description: Configures the workflow's output.
+  schedule:
+    type: object
+    properties:
+      every:
+        $ref: '#/$defs/duration'
+        description: Specifies the duration of the interval at which the workflow should be executed.
+      cron:
+        type: string
+        description: Specifies the schedule using a cron expression, e.g., '0 0 * * *' for daily at midnight."
+      after:
+        $ref: '#/$defs/duration'
+        description: Specifies a delay duration that the workflow must wait before starting again after it completes.
+      on:
+        $ref: '#/$defs/eventConsumptionStrategy'
+        description: Specifies the events that trigger the workflow execution.
+    description: Schedules the workflow
 $defs:
   task:
     type: object
@@ -343,24 +359,8 @@ $defs:
         type: object
         properties:
           to:
-            type: object
-            oneOf:
-            - properties:
-                all:
-                  type: array
-                  items:
-                    $ref: '#/$defs/eventFilter'
-              required: [ all ]
-            - properties:
-                any:
-                  type: array
-                  items:
-                    $ref: '#/$defs/eventFilter'
-              required: [ any ]
-            - properties:
-                one:
-                  $ref: '#/$defs/eventFilter'
-              required: [ one ]
+            $ref: '#/$defs/eventConsumptionStrategy'
+            description: Defines the event(s) to listen to.
         required: [ to ]
     required: [ listen ]
     description: Provides a mechanism for workflows to await and react to external events, enabling event-driven behavior within workflow systems.
@@ -668,6 +668,28 @@ $defs:
         $ref: '#/$defs/authenticationPolicy'
         description: The authentication policy to use.
     required: [ uri ]
+  eventConsumptionStrategy:
+    type: object
+    oneOf:
+      - properties:
+          all:
+            type: array
+            items:
+              $ref: '#/$defs/eventFilter'
+            description: A list containing all the events that must be consumed.
+        required: [ all ]
+      - properties:
+          any:
+            type: array
+            items:
+              $ref: '#/$defs/eventFilter'
+            description: A list containing any of the events to consume.
+        required: [ any ]
+      - properties:
+          one:
+            $ref: '#/$defs/eventFilter'
+            description: The single event to consume.
+        required: [ one ]
   eventFilter:
     type: object
     properties:

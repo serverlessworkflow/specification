@@ -37,8 +37,8 @@
   + [Error](#error)
   + [Error Filter](#error-filter)
   + [Retry Policy](#retry-policy)
-  + [Input Data Model](#input-data-model)
-  + [Output Data Model](#output-data-model)
+  + [Input](#input)
+  + [Output](#output)
   + [Timeout](#timeout)
   + [Duration](#duration)
   + [HTTP Response](#http-response)
@@ -58,18 +58,38 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| document.dsl | `string` | `yes` | The version of the DSL used by the workflow. |
-| document.namespace | `string` | `yes` | The workflow's namespace.<br> |
-| document.name | `string` | `yes` | The workflow's name.<br> |
-| document.version | `string` | `yes` | The workflow's [semantic version](#semantic-version). |
-| document.title | `string` | `no` | The workflow's title. |
-| document.summary | `string` | `no` | The workflow's Markdown summary. |
-| document.tags | `map[string, string]` | `no` | A key/value mapping of the workflow's tags, if any. |
-| input | [`inputDataModel`](#input-data-model) | `no` | Configures the workflow's input. |
+| document | [`document`](#document) | `yes` | Documents the defined workflow. |
+| input | [`inputDataModel`](#input) | `no` | Configures the workflow's input. |
 | use | [`componentCollection`](#component-collection) | `no` | A collection containing the workflow's reusable components. |
 | do | [`map[string, task]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
 | timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
-| output | [`outputDataModel`](#output-data-model) | `no` | Configures the workflow's output. |
+| output | [`outputDataModel`](#output) | `no` | Configures the workflow's output. |
+| schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
+
+#### Document
+
+Documents the workflow definition.
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| dsl | `string` | `yes` | The version of the DSL used to define the workflow. |
+| namespace | `string` | `yes` | The workflow's namespace.<br> |
+| name | `string` | `yes` | The workflow's name.<br> |
+| version | `string` | `yes` | The workflow's [semantic version]
+| title | `string` | `no` | The workflow's title. |
+| summary | `string` | `no` | The workflow's Markdown summary. |
+| tags | `map[string, string]` | `no` | A key/value mapping of the workflow's tags, if any. |
+
+#### Schedule
+
+Configures a workflow's schedule.
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| every | [`duration`](#duration) | `no` | Specifies the duration of the interval at which the workflow should be executed. Unlike `after`, this option will run the workflow regardless of whether the previous run is still in progress.<br>*Required when no other property has been set.* |
+| cron | `string` | `no` | Specifies the schedule using a CRON expression, e.g., '0 0 * * *' for daily at midnight.<br>*Required when no other property has been set.* |
+| after | [`duration`](#duration) | `no` | Specifies a delay duration that the workflow must wait before starting again after it completes. In other words, when this workflow completes, it should run again after the specified amount of time.<br>*Required when no other property has been set.*  |
+| on | [`eventConsumptionStrategy`](#event-consumption-strategy) | `no` | Specifies the events that trigger the workflow execution.<br>*Required when no other property has been set.* |
 
 #### Examples
 
@@ -182,8 +202,8 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| input | [`inputDataModel`](#input-data-model) | `no` | An object used to customize the task's input and to document its schema, if any. |
-| output | [`outputDataModel`](#output-data-model) | `no` | An object used to customize the task's output and to document its schema, if any. |
+| input | [`inputDataModel`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
+| output | [`outputDataModel`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
 | timeout | [`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any. |
 | then | [`flowDirective`](#flow-directive) | `no` | The flow directive to execute next.<br>*If not set, defaults to `continue`.* |
 
@@ -855,7 +875,7 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | try | [`task`](#task) | `yes` | The task to perform. |
-| catch | [`catchClause`](#catch-clause) | `yes` | Configures the errors to catch and how to handle them. |
+| catch | [`catch`](#catch) | `yes` | Configures the errors to catch and how to handle them. |
 
 ##### Examples
 
@@ -888,9 +908,9 @@ do:
             count: 5
 ```
 
-##### Catch Clause
+##### Catch
 
-Defines the configuration of a concept used to catch errors
+Defines the configuration of a catch clause, which a concept used to catch errors.
 
 ###### Properties
 
@@ -1292,7 +1312,7 @@ Represents the definition of the parameters that control the randomness or varia
 
 ```
 
-### Input Data Model
+### Input
 
 Documents the structure - and optionally configures the filtering of - workflow/task input data.
 
@@ -1321,7 +1341,7 @@ schema:
 from: .order.pet
 ```
 
-### Output Data Model
+### Output
 
 Documents the structure - and optionally configures the filtering of - workflow/task output data.
 
