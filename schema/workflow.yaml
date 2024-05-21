@@ -91,3 +91,643 @@ $defs:
         format: uri
     required: [ uri ]
 required: [ document, do ]
+id: https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.json
+$schema: http://json-schema.org/draft-07/schema
+description: Serverless Workflow specification - Workflow Schema
+type: object
+properties:
+  document:
+    type: object
+    properties:
+      dsl:
+        type: string
+        pattern: ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+        description: The version of the DSL used by the workflow.
+      namespace:
+        type: string
+        pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
+        description: The workflow's namespace.
+      name:
+        type: string
+        pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
+        description: The workflow's name.
+      version:
+        type: string
+        pattern: ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+        description: The workflow's semantic version.
+      title:
+        type: string
+        description: The workflow's title.
+      summary:
+        type: string
+        description: The workflow's Markdown summary.
+      tags:
+        type: object
+        description: A key/value mapping of the workflow's tags, if any.
+        additionalProperties: true
+    required: [ dsl, namespace, name, version ]
+    description: Documents the workflow.
+  use:
+    type: object
+    properties:
+      authentications:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/authenticationPolicy'
+        description: The workflow's reusable authentication policies.
+      errors:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/error'
+        description: The workflow's reusable errors.
+      extensions:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/extension'
+        description: The workflow's extensions.
+      functions:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/function'
+        description: The workflow's reusable functions.
+      retries:
+        type: object
+        additionalProperties:
+          $ref: '#/$defs/retryPolicy'
+        description: The workflow's reusable retry policies.
+      secrets:
+        type: array
+        items:
+          type: string
+        description: The workflow's secrets.
+    description: Defines the workflow's reusable components.
+  do:
+    type: object
+    minProperties: 1
+    additionalProperties:
+      $ref: '#/$defs/task'
+    description: Defines the tasks the workflow must perform.
+$defs:
+  task:
+    type: object
+    oneOf:
+    - $ref: '#/$defs/callTask'
+    - $ref: '#/$defs/compositeTask'
+    - $ref: '#/$defs/emitTask'
+    - $ref: '#/$defs/forTask'
+    - $ref: '#/$defs/listenTask'
+    - $ref: '#/$defs/raiseTask'
+    - $ref: '#/$defs/runTask'
+    - $ref: '#/$defs/setTask'
+    - $ref: '#/$defs/switchTask'
+    - $ref: '#/$defs/tryTask'
+    - $ref: '#/$defs/waitTask'
+  callTask:
+    type: object
+    properties:
+      call:
+        type: string
+        description: The name of the function to call.
+      with:
+        type: object
+        additionalProperties: true
+        description: name/value mapping of the parameters, if any, to call the function with
+    required: [ call ]
+  compositeTask:
+    properties:
+      execute:
+        type: object
+        oneOf:
+        - properties:
+            concurrently:
+              type: object
+              minProperties: 2
+              additionalProperties:
+                $ref: '#/$defs/task'
+              description: A name/definition mapping of the tasks to perform concurrently.
+            compete:
+              type: boolean
+              description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
+          required: [ concurrently ]
+        - properties:  
+            sequentially:
+              type: object
+              minProperties: 2
+              additionalProperties:
+                $ref: '#/$defs/task'
+              description: A name/definition mapping of the tasks to perform sequentially.
+          required: [ sequentially ]
+        description: Configures the task execution strategy to use
+    required: [ execute ]
+    description: Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations
+  emitTask:
+    properties:
+      emit:
+        type: object
+        properties:
+          event:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The event's unique identifier
+              source:
+                type: string
+                format: uri
+                description: Identifies the context in which an event happened
+              type:
+                type: string
+                description: This attribute contains a value describing the type of event related to the originating occurrence.
+              time:
+                type: string
+                format: date-time
+              subject:
+                type: string
+              datacontenttype:
+                type: string
+                description: Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format.
+              dataschema:
+                type: string
+                format: uri
+            required: [ source, type ]
+            additionalProperties: true
+        required: [ event ]
+    required: [ emit ]
+    description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
+  forTask:
+    properties:
+      for:
+        type: object
+        properties:
+          each:
+            type: string
+            description: The name of the variable used to store the current item being enumerated.
+            default: item
+          in:
+            type: string
+            description: A runtime expression used to get the collection to enumerate.
+          at:
+            type: string
+            description: The name of the variable used to store the index of the current item being enumerated.
+            default: index
+        required: [ in ]
+      while:
+        type: string
+        description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
+      do:
+        $ref: '#/$defs/task'
+    description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
+    required: [ for, do ]
+  listenTask:
+    type: object
+    properties:
+      listen:
+        type: object
+        properties:
+          to:
+            type: object
+            oneOf:
+            - properties:
+                all:
+                  type: array
+                  items:
+                    $ref: '#/$defs/eventFilter'
+              required: [ all ]
+            - properties:
+                any:
+                  type: array
+                  items:
+                    $ref: '#/$defs/eventFilter'
+              required: [ any ]
+            - properties:
+                one:
+                  $ref: '#/$defs/eventFilter'
+              required: [ one ]
+        required: [ to ]
+    required: [ listen ]
+    description: Provides a mechanism for workflows to await and react to external events, enabling event-driven behavior within workflow systems.
+  raiseTask:
+    type: object
+    properties:
+      raise:
+        type: object
+        properties:
+          error:
+            $ref: '#/$defs/error'
+            description: Defines the error to raise.
+        required: [ error ]
+    required: [ raise ]
+    description: Intentionally triggers and propagates errors.
+  runTask:
+    type: object
+    properties:
+      run:
+        type: object
+        oneOf:
+        - properties:
+            container:
+              type: object
+              properties:
+                image:
+                  type: string
+                  description: The name of the container image to run.
+                command:
+                  type: string
+                  description: The command, if any, to execute on the container
+                ports:
+                  type: object
+                  description: The container's port mappings, if any.
+                volumes:
+                  type: object
+                  description: The container's volume mappings, if any.
+                environment:
+                  type: object
+                  description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+              required: [ image ]
+          required: [ container ]
+          description: Enables the execution of external processes encapsulated within a containerized environment.
+        - properties:
+            script:
+              type: object
+              properties:
+                language:
+                  type: string
+                  description: The language of the script to run.
+                environment:
+                  type: object
+                  additionalProperties: true
+                  description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+              oneOf:
+              - properties:
+                  code:
+                    type: string
+                required: [ code ]
+                description: The script's code.
+              - properties:
+                  source:
+                    $ref: '#/$defs/externalResource'
+                description: The script's resource.
+                required: [ code ]
+              required: [ language ]
+          required: [ script ]
+          description: Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
+        - properties:
+            shell:
+              type: object
+              properties:
+                command:
+                  type: string
+                  description: The shell command to run.
+                arguments:
+                  type: object
+                  additionalProperties: true
+                  description: A list of the arguments of the shell command to run.
+                environment:
+                  type: object
+                  additionalProperties: true
+                  description: 	A key/value mapping of the environment variables, if any, to use when running the configured process.
+              required: [ command ]
+          required: [ shell ]
+          description: Enables the execution of shell commands within a workflow, enabling workflows to interact with the underlying operating system and perform system-level operations, such as file manipulation, environment configuration, or system administration tasks.
+        - properties:
+            workflow:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: The namespace the workflow to run belongs to.
+                name:
+                  type: string
+                  description: The name of the workflow to run.
+                version:
+                  type: string
+                  default: latest
+                  description: The version of the workflow to run. Defaults to latest
+                input:
+                  type: object
+                  additionalProperties: true
+                  description: The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified.
+              required: [ namespace, name, version ]
+          required: [ workflow ]
+          description: Enables the invocation and execution of nested workflows within a parent workflow, facilitating modularization, reusability, and abstraction of complex logic or business processes by encapsulating them into standalone workflow units.
+    required: [ run ]
+    description: Provides the capability to execute external containers, shell commands, scripts, or workflows.
+  setTask:
+    type: object
+    properties:
+      set:
+        type: object
+        minProperties: 1
+        additionalProperties: true
+        description: The data to set
+    required: [ set ]
+    description: A task used to set data
+  switchTask:
+    type: object
+    properties:
+      switch:
+        type: object
+        minProperties: 1
+        additionalProperties:
+          type: object
+          properties:
+            when:
+              type: string
+              description: A runtime expression used to determine whether or not the case matches.
+            then:
+              type: string
+              enum: [ continue, exit, end ]
+              default: continue
+              description: The flow directive to execute when the case matches.
+    required: [ switch ]
+    description: Enables conditional branching within workflows, allowing them to dynamically select different paths based on specified conditions or criteria
+  tryTask:
+    type: object
+    properties:
+      try:
+        $ref: '#/$defs/task'
+        description: The task to perform.
+      catch:
+        type: object
+        properties:
+          errors:
+            type: object
+          as:
+            type: string
+            description: The name of the runtime expression variable to save the error as. Defaults to 'error'.
+          when:
+            type: string
+            description: A runtime expression used to determine whether or not to catch the filtered error
+          exceptWhen:
+            type: string
+            description: A runtime expression used to determine whether or not to catch the filtered error
+          retry:
+            $ref: '#/$defs/retryPolicy'
+            description: The retry policy to use, if any, when catching errors.
+          do:
+            $ref: '#/$defs/task'
+            description: The definition of the task to run when catching an error.
+    required: [ try, catch ]
+    description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
+  waitTask:
+    type: object
+    properties:
+      wait:
+        $ref: '#/$defs/duration'
+        description: The amount of time to wait.
+    required: [ wait ]
+    description: Allows workflows to pause or delay their execution for a specified period of time.
+  authenticationPolicy:
+    type: object
+    oneOf:
+    - properties:
+        basic:
+          type: object
+          properties:
+            username:
+              type: string
+              description: The username to use.
+            password:
+              type: string
+              description: The password to use.
+          required: [ username, password ]
+      required: [ basic ]
+      description: Use basic authentication.
+    - properties:
+        bearer:
+          type: object
+          properties:
+            token:
+              type: string
+              description: The bearer token to use.
+          required: [ token ]
+      required: [ bearer ]
+      description: Use bearer authentication.
+    - properties:
+        oauth2:
+          type: object
+          properties:
+            authority:
+              type: string
+              format: uri
+              description: The URI that references the OAuth2 authority to use.
+            grant:
+              type: string
+              description: The grant type to use.
+            client:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: The client id to use.
+                secret:
+                  type: string
+                  description: The client secret to use, if any.
+              required: [ id ]
+            scopes:
+              type: array
+              items:
+                type: string
+              description: The scopes, if any, to request the token for.
+            audiences:
+              type: array
+              items:
+                type: string
+              description: The audiences, if any, to request the token for.
+            username:
+              type: string
+              description: The username to use. Used only if the grant type is Password.
+            password:
+              type: string
+              description: The password to use. Used only if the grant type is Password.
+            subject:
+              $ref: '#/$defs/oauth2Token'
+              description: The security token that represents the identity of the party on behalf of whom the request is being made.
+            actor:
+              $ref: '#/$defs/oauth2Token'
+              description: The security token that represents the identity of the acting party.
+          required: [ authority, grant, client ]
+      required: [ oauth2 ]
+      description: Use OAUTH2 authentication.
+    description: Defines an authentication policy.
+  oauth2Token:
+    type: object
+    properties:
+      token:
+        type: string
+        description: The security token to use to use.
+      type:
+        type: string
+        description: The type of the security token to use to use.
+    required: [ token, type ]
+  duration:
+    type: object
+    minProperties: 1
+    properties:
+      days:
+        type: integer
+        description: Number of days, if any.
+      hours:
+        type: integer
+        description: Number of days, if any.
+      minutes:
+        type: integer
+        description: Number of minutes, if any.
+      seconds:
+        type: integer
+        description: Number of seconds, if any.
+      milliseconds:
+        type: integer
+        description: Number of milliseconds, if any.
+    description: The definition of a duration.
+  error:
+    type: object
+    properties:
+      type:
+        type: string
+        format: uri
+        description: A URI reference that identifies the error type.
+      status:
+        type: integer
+        description: The status code generated by the origin for this occurrence of the error.
+      instance:
+        type: string
+        format: uri
+        description: 	A JSON Pointer used to reference the component the error originates from.
+      title:
+        type: string
+        description: A short, human-readable summary of the error.
+      detail:
+        type: string
+        description: A human-readable explanation specific to this occurrence of the error.
+    required: [ type, status, instance ]
+  endpoint:
+    type: object
+    properties:
+      uri:
+        type: string
+        format: uri
+        description: The endpoint's URI.
+      authentication:
+        $ref: '#/$defs/authenticationPolicy'
+        description: The authentication policy to use.
+    required: [ uri ]
+  eventFilter:
+    type: object
+    properties:
+      with:
+        type: object
+        minProperties: 1
+        properties:
+          id:
+            type: string
+            description: The event's unique identifier
+          source:
+            type: string
+            description: Identifies the context in which an event happened
+          type:
+            type: string
+            description: This attribute contains a value describing the type of event related to the originating occurrence.
+          time:
+            type: string
+          subject:
+            type: string
+          datacontenttype:
+            type: string
+            description: Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format.
+          dataschema:
+            type: string
+        additionalProperties: true
+    required: [ with ]
+  extension:
+    type: object
+    properties:
+      extend:
+        type: string
+        enum: [ call, composite, emit, for, listen, raise, run, set, switch, try, wait, all ]
+        description: The type of task to extend.
+      when:
+        type: string
+        description: A runtime expression, if any, used to determine whether or not the extension should apply in the specified context.
+      before:
+        $ref: '#/$defs/task'
+        description: The task to execute before the extended task, if any.
+      after:
+        $ref: '#/$defs/task'
+        description: The task to execute after the extended task, if any.
+    required: [ extend ]
+    description: The definition of a an extension.
+  externalResource:
+    type: object
+    properties:
+      uri:
+        type: string
+        format: uri
+        description: The endpoint's URI.
+      authentication:
+        $ref: '#/$defs/authenticationPolicy'
+        description: The authentication policy to use.
+      name:
+        type: string
+        description: The external resource's name, if any.
+    required: [ uri ]
+  retryPolicy:
+    type: object
+    properties:
+      when:
+        type: string
+        description: A runtime expression, if any, used to determine whether or not to retry running the task, in a given context.
+      exceptWhen:
+        type: string
+        description: A runtime expression used to determine whether or not to retry running the task, in a given context.
+      delay:
+        $ref: '#/$defs/duration'
+        description: The duration to wait between retry attempts.
+      backoff:
+        type: object
+        oneOf:
+        - properties:
+            constant:
+              type: object
+              description: The definition of the constant backoff to use, if any.
+          required: [ constant ]
+        - properties:
+            exponential:
+              type: object
+              description: The definition of the exponential backoff to use, if any.
+          required: [ exponential ]
+        - properties:
+            linear:
+              type: object
+              description: The definition of the linear backoff to use, if any.
+          required: [ linear ]
+        description: The retry duration backoff.
+      limit:
+        type: object
+        properties:
+          attempt:
+            type: object
+            properties:
+              count:
+                type: integer
+                description: The maximum amount of retry attempts, if any.
+              duration:
+                $ref: '#/$defs/duration'
+                description: The maximum duration for each retry attempt.
+          duration:
+            $ref: '#/$defs/duration'
+            description: The duration limit, if any, for all retry attempts.
+        description: The retry limit, if any
+      jitter:
+        type: object
+        properties:
+          from:
+            $ref: '#/$defs/duration'
+            description: The minimum duration of the jitter range
+          to:
+            $ref: '#/$defs/duration'
+            description: The maximum duration of the jitter range
+        required: [ from, to ]
+        description: The parameters, if any, that control the randomness or variability of the delay between retry attempts.
+    description: Defines a retry policy.
+required: [ document, do ]
