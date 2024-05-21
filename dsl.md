@@ -61,7 +61,6 @@ Additionally, the flow of execution within a workflow can be controlled using [d
 
 **To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](#flow-directives).*
 
-
 #TODO:
 + Describe how workflow flows
 + Explain how data flows

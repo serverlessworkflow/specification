@@ -62,7 +62,6 @@ It encompasses a comprehensive suite of components and tools designed to facilit
 
 5. **[Tooling](#tooling)**: Additional utilities and resources tailored to enhance the development, debugging, and management of serverless workflows, streamlining the workflow lifecycle from creation to deployment and maintenance.
 
-
 ### SDKs
 
 The Serverless Workflow SDKs are essential tools designed to assist developers in consuming, parsing, validating, and testing their workflows utilizing the Serverless Workflow DSL.

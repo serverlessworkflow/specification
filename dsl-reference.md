@@ -5,6 +5,9 @@
 - [Abstract](#abstract)
 - [Definitions](#definitions)
   + [Workflow](#workflow)
+    - [Document](#document)
+    - [Use](#use)
+    - [Schedule](#schedule)
   + [Task](#task)
     - [Call](#call)
         + [AsyncAPI](#asyncapi-call)
@@ -36,6 +39,7 @@
   + [Extension](#extension)
   + [Error](#error)
   + [Error Filter](#error-filter)
+  + [Event Consumption Strategy](#event-consumption-strategy)
   + [Retry Policy](#retry-policy)
   + [Input](#input)
   + [Output](#output)
@@ -59,11 +63,11 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | document | [`document`](#document) | `yes` | Documents the defined workflow. |
-| input | [`inputDataModel`](#input) | `no` | Configures the workflow's input. |
-| use | [`componentCollection`](#component-collection) | `no` | A collection containing the workflow's reusable components. |
+| input | [`input`](#input) | `no` | Configures the workflow's input. |
+| use | [`use`](#use) | `no` | Defines the workflow's reusable components, if any. |
 | do | [`map[string, task]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
 | timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
-| output | [`outputDataModel`](#output) | `no` | Configures the workflow's output. |
+| output | [`output`](#output) | `no` | Configures the workflow's output. |
 | schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
 
 #### Document
@@ -79,6 +83,19 @@ Documents the workflow definition.
 | title | `string` | `no` | The workflow's title. |
 | summary | `string` | `no` | The workflow's Markdown summary. |
 | tags | `map[string, string]` | `no` | A key/value mapping of the workflow's tags, if any. |
+
+#### Use
+
+Defines the workflow's reusable components.
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| authentications | [`map[string, authenticationPolicy]`](#authentication-policy) | `no` | A name/value mapping of the workflow's reusable authentication policies. |
+| errors | [`map[string, error]`](#error) | `no` | A name/value mapping of the workflow's reusable errors. | 
+| extensions | [`map[string, extension]`](#extension) | `no` | A name/value mapping of the workflow's reusable extensions. |
+| functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
+| retries | [`map[string, retryPolicy]`](#retry-policy) | `no` | A name/value mapping of the workflow's reusable retry policies. |
+| secrets | `string[]` | `no` | A list containing the workflow's secrets. |
 
 #### Schedule
 
@@ -202,8 +219,8 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| input | [`inputDataModel`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
-| output | [`outputDataModel`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
+| input | [`input`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
+| output | [`output`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
 | timeout | [`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any. |
 | then | [`flowDirective`](#flow-directive) | `no` | The flow directive to execute next.<br>*If not set, defaults to `continue`.* |
 
@@ -550,9 +567,7 @@ Provides a mechanism for workflows to await and react to external events, enabli
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| listen.to.all | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for all defined events before resuming execution.<br>*Required if `any` and `one` have not been set.* |
-| listen.to.any | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for any of the defined events before resuming execution.<br>*Required if `all` and `one` have not been set.* |
-| listen.to.one | [`eventFilter`](#event-filter) | `no` | Configures the workflow to wait for the defined event before resuming execution.<br>*Required if `all` and `any` have not been set.* |
+| listen.to | [`eventConsumptionStrategy`](#event-consumption-strategy) | `yes` | Configures the event(s) the workflow must listen to. |
 
 ##### Examples
 
@@ -1262,6 +1277,18 @@ Standard error types serve the purpose of categorizing errors consistently acros
 | [https://https://serverlessworkflow.io/spec/1.0.0/errors/runtime](#) | `500` | Errors occurring during the runtime execution of a workflow, including unexpected exceptions, errors related to resource allocation, or failures in handling workflow tasks. These errors typically occur during the actual execution of workflow components and may require runtime-specific handling and resolution strategies. |
 
 ¹ *Default value. The `status code` that best describe the error should always be used.*
+
+### Event Consumption Strategy
+
+Represents the configuration of an event consumption strategy.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| all | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for all defined events before resuming execution.<br>*Required if `any` and `one` have not been set.* |
+| any | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for any of the defined events before resuming execution.<br>*Required if `all` and `one` have not been set.* |
+| one | [`eventFilter`](#event-filter) | `no` | Configures the workflow to wait for the defined event before resuming execution.<br>*Required if `all` and `any` have not been set.* |
 
 ### Retry Policy
 
