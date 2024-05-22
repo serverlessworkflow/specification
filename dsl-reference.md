@@ -40,6 +40,7 @@
   + [Error](#error)
     - [Standard Error Types](#standard-error-types)
   + [Event Consumption Strategy](#event-consumption-strategy)
+  + [Event Filter](#event-filter)
   + [Retry](#retry)
   + [Input](#input)
   + [Output](#output)
@@ -1300,6 +1301,28 @@ Represents the configuration of an event consumption strategy.
 | any | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for any of the defined events before resuming execution.<br>*Required if `all` and `one` have not been set.* |
 | one | [`eventFilter`](#event-filter) | `no` | Configures the workflow to wait for the defined event before resuming execution.<br>*Required if `all` and `any` have not been set.* |
 
+### Event Filter
+
+An event filter is a mechanism used to selectively process or handle events based on predefined criteria, such as event type, source, or specific attributes.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| with | `object` | `yes` | A name/value mapping of the attributes filtered events must define. Supports both regular expressions and runtime expressions.  |
+| correlate | [`map[string, correlation]`](#correlation) | `no` | A name/definition mapping of the correlations to attempt when filtering events. |
+
+### Correlation
+
+A correlation is a link between events and data, established by mapping event attributes to specific data attributes, allowing for coordinated processing or handling based on event characteristics.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| from | `string` | `yes` | A runtime expression used to extract the correlation value from the filtered event. |
+| expect | `string` | `no` | A constant or a runtime expression, if any, used to determine whether or not the extracted correlation value matches expectations.<br>If not set, the first extracted value will be used as the correlation's expectation. |
+
 ### Retry
 
 The Retry is a fundamental concept in the Serverless Workflow DSL, used to define the strategy for retrying a failed task when an error is encountered during execution. This policy provides developers with fine-grained control over how and when to retry failed tasks, enabling robust error handling and fault tolerance within workflows.
@@ -1311,7 +1334,7 @@ The Retry is a fundamental concept in the Serverless Workflow DSL, used to defin
 | when | `string` | `no` | A a runtime expression used to determine whether or not to retry running the task, in a given context. |
 | exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to retry running the task, in a given context. |
 | limit | [`retry`](#retry-limit) | `no` | The limits, if any, to impose to the retry policy. |
-| backoff | [`backoff`](#ackoff) | `no` | The backoff strategy to use, if any. |
+| backoff | [`backoff`](#backoff) | `no` | The backoff strategy to use, if any. |
 | jitter | [`jitter`](#jitter) | `no` | The parameters, if any, that control the randomness or variability of the delay between retry attempts. |
 
 #### Retry Limit

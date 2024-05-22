@@ -716,7 +716,20 @@ $defs:
           dataschema:
             type: string
         additionalProperties: true
+        description: An event filter is a mechanism used to selectively process or handle events based on predefined criteria, such as event type, source, or specific attributes.
+      correlate:
+        type: object
+        properties:
+          from:
+            type: string
+            description: A runtime expression used to extract the correlation value from the filtered event.
+          expect:
+            type: string
+            description: A constant or a runtime expression, if any, used to determine whether or not the extracted correlation value matches expectations. If not set, the first extracted value will be used as the correlation's expectation.
+        required: [ from ]
+        description: A correlation is a link between events and data, established by mapping event attributes to specific data attributes, allowing for coordinated processing or handling based on event characteristics.
     required: [ with ]
+    description: An event filter is a mechanism used to selectively process or handle events based on predefined criteria, such as event type, source, or specific attributes.
   extension:
     type: object
     properties:
