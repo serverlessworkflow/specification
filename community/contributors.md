@@ -13,74 +13,73 @@ us know in chat or team meeting.
 * **Independent**
   * Louis Fourie
   * Achilleas Tzenetopoulos
-  * Antonio Mendoza Pérez
   * Richard Gibson
   * Lucas Stocksmeier
+  
+* **Accenture**
+  * Mona Borham
+
+* **Camunda**
+  * Mauricio Salatino
+  * Falko Menge
+
+* **Chargebee**
+  * Manickavasagam Sundaram
+
+* **Fujitsu**
+  * Naohiro Tamura
+
+* **Google**
+  * Evan Anderson
+  * Rachael Myers
 
 * **Huawei**
   * Cathy Hong Zhang
   * Farhad Sunavala
 
-* **Fujitsu**
-  * Naohiro Tamura
-  
-* **Google**
-  * Evan Anderson
-  * Rachael Myers
-  
-* **Serverless**
-  * Brian Neisler
+* **IBM**
+  * Doug Davis
+
+* **Microsoft**
+  * Josh Lane
+  * Chris Gillum
+
+* **Neuroglia**
+  * Charles d'Avernas
+  * Jean-Baptiste Bianchi
+
+* **Nokia**
+  * Manuel Stein
+  * Istemi Ekin Akkus
+
+* **OpenEnterprise**
+  * Maciek Swiderski
 
 * **Oracle**
   * Varun Madan
-  
-* **WSO2**
-  * Chathura Ekanayake
 
-* **Temporal Technologies**
-  * Tihomir Surdilovic
+* **Oracle Cloud Infrastructure**
+  * Kay Singh
+  * Jorgen Johnson
 
 * **Red Hat**
   * Ruben Romero Montes
   * Ricardo Zanini 
   * Lucas Caparelli
   * Paul Morie
-  
-* **Camunda**
-  * Mauricio Salatino
-  * Falko Menge
-
-* **Nokia**
-  * Manuel Stein
-  * Istemi Ekin Akkus
-
-* **IBM**
-  * Doug Davis
 
 * **SecureDocs, Inc**
   * Stephen Crosby
-  
-* **Accenture**
-    * Mona Borham
-    
-* **Oracle Cloud Infrastructure**
-    * Kay Singh
-    * Jorgen Johnson     
-    
+
+* **Serverless**
+  * Brian Neisler
+
 * **Sophos**
-    * Matt Nicholls 
+  * Matt Nicholls
 
-* **Microsoft**
-    * Josh Lane
-    * Chris Gillum
+* **Temporal Technologies**
+  * Antonio Mendoza Pérez
+  * Tihomir Surdilovic
 
-* **Neuroglia**
-    * Charles d'Avernas
-    * Jean-Baptiste Bianchi
-
-* **Chargebee**
-  * Manickavasagam Sundaram 
-
-* **OpenEnterprise**
-  * Maciek Swiderski
-      
+* **WSO2**
+  * Chathura Ekanayake
