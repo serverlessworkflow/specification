@@ -38,6 +38,7 @@
     - [OAUTH2](#oauth2-authentication)
   + [Extension](#extension)
   + [Error](#error)
+    - [Standard Error Types](#standard-error-types)
   + [Event Consumption Strategy](#event-consumption-strategy)
   + [Retry](#retry)
   + [Input](#input)

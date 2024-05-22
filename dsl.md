@@ -92,7 +92,7 @@ Serverless Workflow DSL allows for defining reusable components that can be refe
 - [Extensions](dsl-reference.md#extension)
 - [Functions](dsl-reference.md#task)
 - [Retries](dsl-reference.md#retry)
-- [Secrets](#)
+- [Secrets](#secret)
 
 ##### Task
 
@@ -113,6 +113,12 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 - [Wait](dsl-reference.md#wait), used to pause or wait for a specified duration before proceeding to the next task.
 
 To ensure they conform to the DSL, runtimes **should** pass all the feature conformance test scenarii defined in the [ctk](ctk/README.md).
+
+##### Secret
+
+Secrets are sensitive information required by a workflow to securely access protected resources or services. They provide a way to securely store and manage credentials, tokens, or other sensitive data used during workflow execution.
+
+Runtime **must** implement a mechanism capable of providing the workflow with the data contained within the defined secrets. If a workflow attempts to access a secret to which it does not have access rights or which does not exist, runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/authorization` and status `403`.
 
 #### Scheduling
 
