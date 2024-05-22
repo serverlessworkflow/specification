@@ -181,9 +181,11 @@ Runtime expressions allow for the incorporation of variables, functions, and ope
 
 One key aspect of runtime expressions is their ability to adapt to runtime data and context. This means that expressions can access and manipulate data generated during the execution of a workflow, enabling dynamic decision-making and behavior based on real-time information.
 
-All runtimes **must** support the default runtime expression language, which is [`jq`]().
+Runtime expressions in Serverless Workflow can be evaluated using either the default `strict` mode or the `loose` mode. In `strict` mode, all expressions must be properly identified with `${}` syntax. Conversely, in `loose` mode, expressions are evaluated more liberally, allowing for a wider range of input formats. While `strict` mode ensures strict adherence to syntax rules, `loose` mode offers flexibility, allowing evaluation even if the syntax is not perfectly formed.
 
-Runtimes **may** optionally support other runtime expression languages, which authors can specifically use by adequately configuring the workflow. See [`use.language`](dsl-reference.md#use) for more details.
+All runtimes **must** support the default runtime expression language, which is [`jq`](https://jqlang.github.io/jq/).
+
+Runtimes **may** optionally support other runtime expression languages, which authors can specifically use by adequately configuring the workflow. See [`evaluate.language`](dsl-reference.md#evaluate) for more details.
 
 CloudFlows defines [several arguments](#runtime-expression-arguments) that runtimes **must** provide during the evaluation of runtime expressions.
 

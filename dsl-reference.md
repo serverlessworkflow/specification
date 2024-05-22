@@ -68,6 +68,7 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
 | output | [`output`](#output) | `no` | Configures the workflow's output. |
 | schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
+| evaluate | [`evaluate`](#evaluate) | `no` | Configures runtime expression evaluation. |
 
 #### Document
 
@@ -98,7 +99,7 @@ Defines the workflow's reusable components.
 
 #### Schedule
 
-Configures a workflow's schedule.
+Configures the schedule of a workflow.
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
@@ -106,6 +107,15 @@ Configures a workflow's schedule.
 | cron | `string` | `no` | Specifies the schedule using a CRON expression, e.g., '0 0 * * *' for daily at midnight.<br>*Required when no other property has been set.* |
 | after | [`duration`](#duration) | `no` | Specifies a delay duration that the workflow must wait before starting again after it completes. In other words, when this workflow completes, it should run again after the specified amount of time.<br>*Required when no other property has been set.*  |
 | on | [`eventConsumptionStrategy`](#event-consumption-strategy) | `no` | Specifies the events that trigger the workflow execution.<br>*Required when no other property has been set.* |
+
+#### Evaluate
+
+Configures a workflow's runtime expression evaluation.
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| language | `string` | `yes` | The language used for writting runtime expressions.<br>*Defaults to `jq`.* |
+| mode | `string` | `yes` | The runtime expression evaluation mode.<br>*Supported values are:*<br>- `strict`: requires all expressions to be enclosed within `${ }` for proper identification and evaluation.<br>- `loose`: evaluates any value provided. If the evaluation fails, it results in a string with the expression as its content.<br>*Defaults to `strict`.*
 
 #### Examples
 
