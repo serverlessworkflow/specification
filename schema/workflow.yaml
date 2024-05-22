@@ -140,7 +140,7 @@ $defs:
               document:
                 $ref: '#/$defs/externalResource'
                 description: The document that defines the AsyncAPI operation to call.
-              operation:
+              operationRef:
                 type: string
                 description: A reference to the AsyncAPI operation to call.
               server:
@@ -158,7 +158,7 @@ $defs:
               authentication:
                 ref: '#/$defs/authenticationPolicy'
                 description: The authentication policy, if any, to use when calling the AsyncAPI operation.
-            required: [ document, operation ]
+            required: [ document, operationRef ]
             description: Defines the AsyncAPI call to perform.
         required: [ call, with ]
       - properties:
@@ -235,7 +235,7 @@ $defs:
               document:
                 $ref: '#/$defs/externalResource'
                 description: The document that defines the OpenAPI operation to call.
-              operation:
+              operationId:
                 type: string
                 description: The id of the OpenAPI operation to call.
               parameters:
@@ -249,7 +249,7 @@ $defs:
                 type: string
                 enum: [ raw, content, response ]
                 description: The http call output format. Defaults to 'content'.
-            required: [ document, operation ]
+            required: [ document, operationId ]
             description: Defines the OpenAPI call to perform.
         required: [ call, with ]
       - properties:
