@@ -1,9 +1,9 @@
 # See the GOVERNANCE.md document for the definition of the roles and responsibilities
 maintainers:
-  - tsurdilo
-  - ricardozanini
-  - cdavernas
   - antmendoza
+  - cdavernas
+  - ricardozanini
+  - tsurdilo
 reviewers:
-  - manick02
   - JBBianchi
+  - manick02

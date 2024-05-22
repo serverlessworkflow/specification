@@ -30,7 +30,7 @@
     - [Wait](#wait)
   + [Flow Directive](#flow-directive)
   + [External Resource](#external-resource)
-  + [Authentication Policy](#authentication-policy)
+  + [Authentication](#authentication)
     - [Basic](#basic-authentication)
     - [Bearer](#bearer-authentication)
     - [Certificate](#certificate-authentication)
@@ -38,9 +38,8 @@
     - [OAUTH2](#oauth2-authentication)
   + [Extension](#extension)
   + [Error](#error)
-  + [Error Filter](#error-filter)
   + [Event Consumption Strategy](#event-consumption-strategy)
-  + [Retry Policy](#retry-policy)
+  + [Retry](#retry)
   + [Input](#input)
   + [Output](#output)
   + [Timeout](#timeout)
@@ -90,11 +89,11 @@ Defines the workflow's reusable components.
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| authentications | [`map[string, authenticationPolicy]`](#authentication-policy) | `no` | A name/value mapping of the workflow's reusable authentication policies. |
+| authentications | [`map[string, authentication]`](#authentication) | `no` | A name/value mapping of the workflow's reusable authentication policies. |
 | errors | [`map[string, error]`](#error) | `no` | A name/value mapping of the workflow's reusable errors. | 
 | extensions | [`map[string, extension]`](#extension) | `no` | A name/value mapping of the workflow's reusable extensions. |
 | functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
-| retries | [`map[string, retryPolicy]`](#retry-policy) | `no` | A name/value mapping of the workflow's reusable retry policies. |
+| retries | [`map[string, retryPolicy]`](#retry) | `no` | A name/value mapping of the workflow's reusable retry policies. |
 | secrets | `string[]` | `no` | A list containing the workflow's secrets. |
 
 #### Schedule
@@ -272,7 +271,7 @@ The [AsyncAPI Call](#asyncapi-call) enables workflows to interact with external 
 | message | `string` | `no` | The name of the message to use. <br>If not set, defaults to the first message defined by the operation. |
 | binding | `string` | `no` | The name of the binding to use. <br>If not set, defaults to the first binding defined by the operation |
 | payload | `any` | `no` | The operation's payload, as defined by the configured message |
-| authentication | `string`<br>[`authenticationPolicy`](#authentication-policy) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the AsyncAPI operation. |
+| authentication | `string`<br>[`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the AsyncAPI operation. |
 
 ###### Examples
 
@@ -307,7 +306,7 @@ The [gRPC Call](#grpc-call) enables communication with external systems via the 
 | service.name | `string` | `yes` | The name of the GRPC service to call. |
 | service.host | `string` | `yes` | The hostname of the GRPC service to call. |
 | service.port | `integer` | `no` | The port number of the GRPC service to call. |
-| service.authentication | [`authenticationPolicy`](#authentication-policy) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the GRPC service. |
+| service.authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the GRPC service. |
 | method | `string` | `yes` | The name of the GRPC service method to call. |
 | arguments | `map` | `no` | A name/value mapping of the method call's arguments, if any. |
 
@@ -374,7 +373,7 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 | document | [`externalResource`](#external-resource) | `yes` | The OpenAPI document that defines the operation to call. |
 | operation | `string` | `yes` | The id of the OpenAPI operation to call. |
 | arguments | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
-| authentication | [`authenticationPolicy`](#authentication-policy) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the OpenAPI operation. |
+| authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the OpenAPI operation. |
 | output | `string` | `no` | The OpenAPI call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
 
 ###### Examples
@@ -931,11 +930,11 @@ Defines the configuration of a catch clause, which a concept used to catch error
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| errors | [`errorFilter`](#retry-policy) | `no` | The definition of the errors to catch |
+| errors | [`errorFilter`](#retry) | `no` | The definition of the errors to catch |
 | as | `string` | `no` | The name of the runtime expression variable to save the error as. Defaults to 'error'. |
 | when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error |
 | exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error |
-| retry | [`retryPolicy`](#retry-policy) | `no` | The retry policy to use, if any, when catching errors |
+| retry | [`retryPolicy`](#retry) | `no` | The retry policy to use, if any, when catching errors |
 | do | [`task`](#task) | `no` | The definition of the task to run when catching an error |
 
 #### Wait
@@ -982,7 +981,7 @@ Defines an external resource.
 |----------|:----:|:--------:|-------------|
 | name | `string` | `no` | The name, if any, of the defined resource. |
 | uri | `string` | `yes` | The URI at which to get the defined resource. |
-| authentication | [`authenticationPolicy`](#authentication-policy) | `no` | The authentication policy, or the name of the authentication policy, to use when fecthing the resource. |
+| authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when fecthing the resource. |
 
 ##### Examples
 
@@ -995,9 +994,9 @@ authentication:
     password: 1234
 ```
 
-### Authentication Policy
+### Authentication
 
-Defines the mechanism used to authenticate users and workflows attempting to access a service or a resource
+Defines the mechanism used to authenticate users and workflows attempting to access a service or a resource.
 
 #### Properties
 
@@ -1290,9 +1289,9 @@ Represents the configuration of an event consumption strategy.
 | any | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for any of the defined events before resuming execution.<br>*Required if `all` and `one` have not been set.* |
 | one | [`eventFilter`](#event-filter) | `no` | Configures the workflow to wait for the defined event before resuming execution.<br>*Required if `all` and `any` have not been set.* |
 
-### Retry Policy
+### Retry
 
-The Retry Policy is a fundamental concept in the Serverless Workflow DSL, used to define the strategy for retrying a failed task when an error is encountered during execution. This policy provides developers with fine-grained control over how and when to retry failed tasks, enabling robust error handling and fault tolerance within workflows.
+The Retry is a fundamental concept in the Serverless Workflow DSL, used to define the strategy for retrying a failed task when an error is encountered during execution. This policy provides developers with fine-grained control over how and when to retry failed tasks, enabling robust error handling and fault tolerance within workflows.
 
 #### Properties
 
@@ -1300,11 +1299,11 @@ The Retry Policy is a fundamental concept in the Serverless Workflow DSL, used t
 |----------|:----:|:--------:|-------------|
 | when | `string` | `no` | A a runtime expression used to determine whether or not to retry running the task, in a given context. |
 | exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to retry running the task, in a given context. |
-| limit | [`retryPolicyLimit`](#retry-policy-limit) | `no` | The limits, if any, to impose to the retry policy. |
-| backoff | [`backoffStrategy`](#backoff-strategy) | `no` | The backoff strategy to use, if any. |
+| limit | [`retry`](#retry-limit) | `no` | The limits, if any, to impose to the retry policy. |
+| backoff | [`backoff`](#ackoff) | `no` | The backoff strategy to use, if any. |
 | jitter | [`jitter`](#jitter) | `no` | The parameters, if any, that control the randomness or variability of the delay between retry attempts. |
 
-#### Retry Policy Limit
+#### Retry Limit
 
 The definition of a retry policy.
 
@@ -1314,7 +1313,7 @@ The definition of a retry policy.
 | attempt.duration | [`duration`](#duration) | `no` | The duration limit, if any, for all retry attempts. | 
 | duration | [`duration`](#duration) | `no` | The maximum duration, if any, during which to retry a given task. |
 
-#### Backoff Strategy
+#### Backoff
 
 The definition of a retry backoff strategy.
 
