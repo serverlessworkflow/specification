@@ -35,8 +35,11 @@ Feature: Debug Task
     """
     And given the workflow input is:
     """yaml
-      name: John
+    name: John
     """
     When the workflow is executed
-    Then the workflow should complete
+    Then the workflow should complete with output:
+    """yaml
+    name: John
+    """
 
