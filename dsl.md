@@ -111,8 +111,9 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 - [Set](dsl-reference.md#set), used to dynamically set or update the [workflow](dsl-reference.md#workflow)'s data during the its execution. 
 - [Try](dsl-reference.md#try), used to attempt executing a specified [task](dsl-reference.md#task), and to handle any resulting [errors](dsl-reference.md#error) gracefully, allowing the [workflow](dsl-reference.md#workflow) to continue without interruption.
 - [Wait](dsl-reference.md#wait), used to pause or wait for a specified duration before proceeding to the next task.
+- [Debug](dsl-reference.md#debug), used to print information to standard output
 
-To ensure they conform to the DSL, runtimes **should** pass all the feature conformance test scenarii defined in the [ctk](ctk/README.md).
+To ensure they conform to the DSL, runtimes **should** pass all the feature conformance test scenario defined in the [ctk](ctk/README.md).
 
 ##### Secret
 

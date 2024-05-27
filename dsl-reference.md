@@ -28,6 +28,7 @@
     - [Set](#set)
     - [Try](#try)
     - [Wait](#wait)
+    - [Debug](#debug)
   + [Flow Directive](#flow-directive)
   + [External Resource](#external-resource)
   + [Authentication](#authentication)
@@ -971,6 +972,22 @@ do:
   delay10Seconds:
     wait:
       seconds: 10
+```
+
+#### Debug
+
+Allows workflows to print information to standart output. It accepts a string that can be a literal or an expr
+
+##### Examples
+```yaml
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: sample-workflow
+  version: '0.1.0'
+do:
+  printMessage:
+    debug: Hello world!
 ```
 
 ### Flow Directive

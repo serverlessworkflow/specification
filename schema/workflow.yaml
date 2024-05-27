@@ -127,6 +127,7 @@ $defs:
       - $ref: '#/$defs/switchTask'
       - $ref: '#/$defs/tryTask'
       - $ref: '#/$defs/waitTask'
+      - $ref: '#/$defs/debugTask'
   callTask:
     type: object
     oneOf:
@@ -533,6 +534,12 @@ $defs:
         description: The amount of time to wait.
     required: [ wait ]
     description: Allows workflows to pause or delay their execution for a specified period of time.
+  debugTask:
+     type: object
+     properties: 
+       debug: 
+         type: string
+     description: Print a message (a literal string or an expression) to standard output
   authenticationPolicy:
     type: object
     oneOf:
