@@ -325,9 +325,12 @@ $defs:
     required: [ emit ]
     description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
   flowDirective:
-    type: string
-    enum: [ continue, exit, end ]
-    default: continue
+    additionalProperties: false
+    anyOf:
+      - type: string
+        enum: [ continue, exit, end ]
+        default: continue
+      - type: string
   forTask:
     properties:
       for:
