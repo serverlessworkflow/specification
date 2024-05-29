@@ -37,7 +37,7 @@ jobs:
   build:
     defaults:
       run:
-        working-directory: .ci/validation
+        working-directory: .ci/validation/
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -50,5 +50,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: .ci/validation/package-lock.json
     - run: npm install
     - run: npm test

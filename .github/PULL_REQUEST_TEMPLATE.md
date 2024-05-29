@@ -8,27 +8,22 @@ Enhancements or bugs in a specification are not always easy to describe at first
 We kindly ask you to consider opening a discussion or an issue using the Github tab menu above. The community will be more than happy to discuss your proposals there.
 -->
 
-**Many thanks for submitting your Pull Request :heart:!**
-
 **Please specify parts of this PR update:**
 
 - [ ] Specification
 - [ ] Schema
 - [ ] Examples
 - [ ] Extensions
-- [ ] Roadmap
 - [ ] Use Cases
 - [ ] Community
-- [ ] TCK
+- [ ] CTK
 - [ ] Other
 
 **Discussion or Issue link**:
 <!-- Please consider opening a dicussion or issue for bugs or enhancements. You can ignore this field if this is a typo or spelling fix. -->
 
-**What this PR does / why we need it**:
+**What this PR does**:
 <!-- Brief description of your PR / Short summary of the discussion or issue -->
-
-**Special notes for reviewers**:
 
 **Additional information:**
 <!-- Optional -->
