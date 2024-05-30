@@ -72,11 +72,7 @@ properties:
         description: The workflow's secrets.
     description: Defines the workflow's reusable components.
   do:
-    type: object
-    minProperties: 1
-    additionalProperties:
-      $ref: '#/$defs/task'
-    description: Defines the tasks the workflow must perform
+    $ref: '#/$defs/do'
   timeout:
     $ref: '#/$defs/timeout'
     description: The workflow's timeout configuration, if any.
@@ -100,6 +96,14 @@ properties:
         description: Specifies the events that trigger the workflow execution.
     description: Schedules the workflow
 $defs:
+  do:
+    description: A single unnamed task or a set of named tasks
+    oneOf:
+      - $ref: '#/defs/task'
+      - type: object
+        minProperties: 1
+        additionalProperties:
+         $ref: '#/$defs/task'
   task:
     type: object
     properties:
@@ -352,7 +356,7 @@ $defs:
         type: string
         description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
       do:
-        $ref: '#/$defs/task'
+        $ref: '#/$defs/do'
     description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
     required: [ for, do ]
   listenTask:
@@ -524,7 +528,7 @@ $defs:
             $ref: '#/$defs/retryPolicy'
             description: The retry policy to use, if any, when catching errors.
           do:
-            $ref: '#/$defs/task'
+            $ref: '#/$defs/do'
             description: The definition of the task to run when catching an error.
     required: [ try, catch ]
     description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
