@@ -1087,7 +1087,7 @@ Defines the fundamentals of a 'bearer' authentication
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| bearer | `string` | `yes` | The bearer token to use. |
+| token | `string` | `yes` | The bearer token to use. |
 
 ##### Examples
 
