@@ -446,7 +446,7 @@ $defs:
                   environment:
                     type: object
                     additionalProperties: true
-                    description: 	A key/value mapping of the environment variables, if any, to use when running the configured process.
+                    description: A key/value mapping of the environment variables, if any, to use when running the configured process.
                 required: [ command ]
             required: [ shell ]
             description: Enables the execution of shell commands within a workflow, enabling workflows to interact with the underlying operating system and perform system-level operations, such as file manipulation, environment configuration, or system administration tasks.
@@ -652,7 +652,7 @@ $defs:
       instance:
         type: string
         format: uri
-        description: 	A JSON Pointer used to reference the component the error originates from.
+        description: A JSON Pointer used to reference the component the error originates from.
       title:
         type: string
         description: A short, human-readable summary of the error.
