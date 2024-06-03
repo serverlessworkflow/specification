@@ -49,10 +49,13 @@ Conformance testing is the process of verifying that an implementation adheres t
 git clone https://github.com/serverlessworkflow/specification.git
 ```
 
+<!-- markdownlint-disable-next-line ol-prefix -->
 2. **Install Dependencies**: Ensure that you have all the necessary dependencies installed. This typically involves setting up a testing framework that can execute Gherkin tests.
 
+<!-- markdownlint-disable-next-line ol-prefix -->
 3. **Run the Tests**: Execute the Gherkin features using your preferred test runner.
 
+<!-- markdownlint-disable-next-line ol-prefix -->
 4. **Review Results**: After running the tests, review the results to ensure that your implementation passes all the scenarios. Any failures indicate deviations from the Serverless Workflow specification.
 
 ### Behavior-Driven Development (BDD)
