@@ -159,7 +159,7 @@ $defs:
                 type: object
                 description: The payload to call the AsyncAPI operation with, if any.
               authentication:
-                ref: '#/$defs/authenticationPolicy'
+                $ref: '#/$defs/authenticationPolicy'
                 description: The authentication policy, if any, to use when calling the AsyncAPI operation.
             required: [ document, operationRef ]
             description: Defines the AsyncAPI call to perform.
