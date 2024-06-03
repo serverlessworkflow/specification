@@ -219,7 +219,7 @@ $defs:
                 oneOf:
                   - $ref: '#/$defs/endpoint'
                   - type: string
-                    format: uri
+                    format: uri-template
               headers:
                 type: object
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.
