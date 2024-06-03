@@ -355,7 +355,10 @@ $defs:
         type: string
         description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
       do:
-        $ref: '#/$defs/task'
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/$defs/task'
     description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
     required: [ for, do ]
   listenTask:
@@ -507,8 +510,11 @@ $defs:
     type: object
     properties:
       try:
-        $ref: '#/$defs/task'
-        description: The task to perform.
+        description: The tasks to perform.
+        type: array
+        minItems: 1
+        items:
+          - $ref: '#/$defs/task'
       catch:
         type: object
         properties:
@@ -527,8 +533,11 @@ $defs:
             $ref: '#/$defs/retryPolicy'
             description: The retry policy to use, if any, when catching errors.
           do:
-            $ref: '#/$defs/task'
             description: The definition of the task to run when catching an error.
+            type: array
+            minItems: 1
+            items:
+              $ref: '#/$defs/task'
     required: [ try, catch ]
     description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
   waitTask:
