@@ -1,4 +1,14 @@
 {
   "rewrap.wrappingColumn": 80,
-  "editor.rulers": [80]
+  "editor.rulers": [80],
+  "yaml.format.singleQuote": false,
+  "yaml.format.proseWrap": "always",
+  "yaml.format.bracketSpacing": true,
+  "yaml.format.enable": true,
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "vscode.markdown-language-features"
+  }
 }

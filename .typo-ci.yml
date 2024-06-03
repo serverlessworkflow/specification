@@ -1,5 +1,4 @@
 ---
-
 # What language dictionaries should it use? Currently Typo CI supports:
 # de
 # en
@@ -22,7 +21,7 @@ excluded_files:
   - ".typo-ci.yml"
   - ".markdownlint.yaml"
   - "Makefile"
-  
+
 # Any typos we should ignore?
 excluded_words:
   - typoci
