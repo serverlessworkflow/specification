@@ -4,45 +4,45 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  processOrder:
+  - name: processOrder
     switch:
-      case1:
+      - name: case1
         when: .orderType == "electronic"
         then: processElectronicOrder
-      case2:
+      - name: case2
         when: .orderType == "physical"
         then: processPhysicalOrder
-      default:
+      - name: default
         then: handleUnknownOrderType
-  processElectronicOrder:
+  - name: processElectronicOrder
     execute:
       sequentially:
-        validatePayment:
+        - name: validatePayment
           set:
             validate: true
-        fulfillOrder:
+        - name: fulfillOrder
           set:
             status: fulfilled
     then: exit
-  processPhysicalOrder:
+  - name: processPhysicalOrder
     execute:
       sequentially:
-        checkInventory:
+        - name: checkInventory
           set:
             inventory: clear
-        packItems:
+        - name: packItems
           set:
             items: 1
-        scheduleShipping:
+        - name: scheduleShipping
           set:
             address: Elmer St
     then: exit
   handleUnknownOrderType:
     execute:
       sequentially:
-        logWarning:
+        - name: logWarning
           set:
             log: warn
-        notifyAdmin:
+        - name: notifyAdmin
           set:
             message: something's wrong

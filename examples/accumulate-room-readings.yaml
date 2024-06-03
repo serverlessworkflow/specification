@@ -4,7 +4,7 @@ document:
   name: accumulate-room-readings
   version: 1.0.0-alpha1
 do:
-  consumeReading:
+  - name: consumeReading
     listen:
       to:
         all:
@@ -25,7 +25,7 @@ do:
             output:
               from: .data.reading
       as: readings
-  logReading:
+  - name: logReading
     for:
       each: reading
       in: .readings
@@ -35,7 +35,7 @@ do:
         document:
           uri: http://myorg.io/ordersservices.json
         operationId: logreading
-  generateReport:
+  - name: generateReport
     call: openapi
     with:
       document:
