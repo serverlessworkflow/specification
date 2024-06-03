@@ -1015,10 +1015,10 @@ Defines the mechanism used to authenticate users and workflows attempting to acc
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | basic | [`basicAuthentication`](#basic-authentication) | `no` | The `basic` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
-| bearer | [`basicAuthentication`](#bearer-authentication) | `no` | The `bearer` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
+| bearer | [`bearerAuthentication`](#bearer-authentication) | `no` | The `bearer` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
 | certificate | [`certificateAuthentication`](#certificate-authentication) | `no` | The `certificate` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
 | digest | [`digestAuthentication`](#digest-authentication) | `no` | The `digest` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
-| bearer | [`oauth2`](#oauth2-authentication) | `no` | The `oauth2` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
+| oauth2 | [`oauth2`](#oauth2-authentication) | `no` | The `oauth2` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
 
 ##### Examples
 
@@ -1087,7 +1087,7 @@ Defines the fundamentals of a 'bearer' authentication
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| bearer | `string` | `yes` | The bearer token to use. |
+| token | `string` | `yes` | The bearer token to use. |
 
 ##### Examples
 
