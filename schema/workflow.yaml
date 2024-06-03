@@ -674,7 +674,7 @@ $defs:
     properties:
       uri:
         type: string
-        format: uri
+        format: uri-template
         description: The endpoint's URI.
       authentication:
         description: The authentication policy to use.
