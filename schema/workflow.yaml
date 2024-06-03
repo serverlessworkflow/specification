@@ -159,8 +159,10 @@ $defs:
                 type: object
                 description: The payload to call the AsyncAPI operation with, if any.
               authentication:
-                $ref: '#/$defs/authenticationPolicy'
                 description: The authentication policy, if any, to use when calling the AsyncAPI operation.
+                oneOf:
+                  - $ref: '#/$defs/authenticationPolicy'
+                  - type: string
             required: [ document, operationRef ]
             description: Defines the AsyncAPI call to perform.
         required: [ call, with ]
@@ -190,8 +192,10 @@ $defs:
                     max: 65535
                     description: The port number of the GRPC service to call.
                   authentication:
-                    $ref: '#/$defs/authenticationPolicy'
                     description: The endpoint's authentication policy, if any.
+                    oneOf:
+                      - $ref: '#/$defs/authenticationPolicy'
+                      - type: string
                 required: [ name, host ]
               method:
                 type: string
@@ -246,8 +250,10 @@ $defs:
                 additionalProperties: true
                 description: A name/value mapping of the parameters of the OpenAPI operation to call.
               authentication:
-                $ref: '#/$defs/authenticationPolicy'
                 description: The authentication policy, if any, to use when calling the OpenAPI operation.
+                oneOf:
+                  - $ref: '#/$defs/authenticationPolicy'
+                  - type: string
               output:
                 type: string
                 enum: [ raw, content, response ]
@@ -674,8 +680,10 @@ $defs:
         format: uri-template
         description: The endpoint's URI.
       authentication:
-        $ref: '#/$defs/authenticationPolicy'
         description: The authentication policy to use.
+        oneOf:
+          - $ref: '#/$defs/authenticationPolicy'
+          - type: string
     required: [ uri ]
   eventConsumptionStrategy:
     type: object
@@ -770,8 +778,10 @@ $defs:
         format: uri
         description: The endpoint's URI.
       authentication:
-        $ref: '#/$defs/authenticationPolicy'
         description: The authentication policy to use.
+        oneOf:
+          - $ref: '#/$defs/authenticationPolicy'
+          - type: string
       name:
         type: string
         description: The external resource's name, if any.
