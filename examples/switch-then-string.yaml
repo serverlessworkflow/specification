@@ -37,7 +37,7 @@ do:
           set:
             address: Elmer St
     then: exit
-  handleUnknownOrderType:
+  - name: handleUnknownOrderType
     execute:
       sequentially:
         - name: logWarning
