@@ -133,7 +133,7 @@ $defs:
       - properties:
           call:
             type: string
-            constant: asyncapi
+            const: asyncapi
           with:
             type: object
             properties:
@@ -164,7 +164,7 @@ $defs:
       - properties:
           call:
             type: string
-            constant: grpc
+            const: grpc
           with:
             type: object
             properties:
@@ -203,7 +203,7 @@ $defs:
       - properties:
           call:
             type: string
-            constant: http
+            const: http
           with:
             type: object
             properties:
@@ -228,7 +228,7 @@ $defs:
       - properties:
           call:
             type: string
-            constant: openapi
+            const: openapi
           with:
             type: object
             properties:
