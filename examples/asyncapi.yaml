@@ -4,7 +4,7 @@ document:
   name: bearer-auth
   version: 1.0.0-alpha1
 do:
-  greetUser:
+  - name: greetUser
     call: asyncapi
     with:
       document:

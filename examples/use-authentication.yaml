@@ -9,7 +9,7 @@ use:
       bearer:
         token: ${ .token }
 do:
-  getPetById:
+  - name: getPetById
     call: http
     with:
       method: get
