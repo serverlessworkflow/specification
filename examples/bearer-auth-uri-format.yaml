@@ -4,7 +4,7 @@ document:
   name: bearer-auth-uri-format
   version: 1.0.0-alpha1
 do:
-  getPetById:
+  - name: getPetById:
     call: http
     with:
       method: get
