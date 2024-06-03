@@ -148,6 +148,25 @@ you can also use the formatter of the
 
 To install yamllint follow the [instructions outlined here](https://github.com/adrienverge/yamllint/blob/master/docs/quickstart.rst#installing-yamllint).
 
+### Gherkin style
+
+Gherkin files should be appropriately formatted before a pull request is sent out.
+In this repository, we follow the
+[gherkin-lint rules](https://github.com/gherkin-lint/gherkin-lint?tab=readme-ov-file#available-rules).
+See [gherkin-lint](.gherkin-lintrc) for details.
+
+We highly encourage using line breaks in markdown files at `80` characters
+wide. Some tools can do it for you effectively. Please submit the proposal
+to include your editor settings required to enable this behavior so the
+out-of-the-box settings for this repository will be consistent.
+
+To install gherkin-lint run:
+
+```bash
+npm install -g gherkin-lint
+gherkin-lint **/*.feature
+```
+
 ### Typos
 
 In addition, please make sure to clean up typos before you submit the change.
