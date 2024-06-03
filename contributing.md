@@ -57,26 +57,26 @@ first comment in the issue to include `Assigned to: @person`
 
 ## Versioning
 
-The versioning strategy for the Serverless Workflow DSL is structured to accommodate different types of changes introduced through pull requests (PRs). 
+The versioning strategy for the Serverless Workflow DSL is structured to accommodate different types of changes introduced through pull requests (PRs).
 
-If a PR is labeled with `change: documentation`, indicating modifications related to improving or clarifying documentation, it does not trigger a version change. 
+If a PR is labeled with `change: documentation`, indicating modifications related to improving or clarifying documentation, it does not trigger a version change.
 
-Conversely, if the PR addresses a fix, labeled as `change: fix`, it results in an increase in the patch version (0.0.x). 
-A fix typically refers to corrections made to resolve bugs or errors in the DSL specification or its implementations, ensuring smoother functionality and reliability. 
+Conversely, if the PR addresses a fix, labeled as `change: fix`, it results in an increase in the patch version (0.0.x).
+A fix typically refers to corrections made to resolve bugs or errors in the DSL specification or its implementations, ensuring smoother functionality and reliability.
 
-Similarly, when a PR introduces a new feature, labeled as `change: feature`, it prompts an increase in the minor version (0.x.0). 
-A feature denotes the addition of significant capabilities, enhancements, or functionalities that extend the DSL's capabilities or improve its usability. 
+Similarly, when a PR introduces a new feature, labeled as `change: feature`, it prompts an increase in the minor version (0.x.0).
+A feature denotes the addition of significant capabilities, enhancements, or functionalities that extend the DSL's capabilities or improve its usability.
 
-Lastly, if the PR is marked as `change: breaking`, indicating alterations that are incompatible with previous versions, it leads to an increase in the major version (x.0.0). A breaking change signifies modifications that necessitate adjustments in existing workflows or implementations, potentially impacting backward compatibility. 
+Lastly, if the PR is marked as `change: breaking`, indicating alterations that are incompatible with previous versions, it leads to an increase in the major version (x.0.0). A breaking change signifies modifications that necessitate adjustments in existing workflows or implementations, potentially impacting backward compatibility.
 
 This versioning strategy ensures clarity and transparency in tracking changes and communicating their impact on users and implementations.
 
-| Label | Version Change |  Description  |
-|:-- |:---:|:---|
-| `change: documentation` | - | Modifications related to documentation improvements or clarifications. |
-| `change: fix` | `0.0.x` | Corrections made to resolve bugs or errors in the DSL specification or its implementations. |
-| `change: feature` | `0.x.0` | Addition of significant capabilities, enhancements, or functionalities that extend the DSL's capabilities or improve its usability. |
-| `change: breaking` | `x.0.0` | Alterations that are incompatible with previous versions, necessitating adjustments in existing workflows or implementations. |
+| Label                   | Version Change | Description                                                                                                                         |
+| :---------------------- | :------------: | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `change: documentation` |       -        | Modifications related to documentation improvements or clarifications.                                                              |
+| `change: fix`           |    `0.0.x`     | Corrections made to resolve bugs or errors in the DSL specification or its implementations.                                         |
+| `change: feature`       |    `0.x.0`     | Addition of significant capabilities, enhancements, or functionalities that extend the DSL's capabilities or improve its usability. |
+| `change: breaking`      |    `x.0.0`     | Alterations that are incompatible with previous versions, necessitating adjustments in existing workflows or implementations.       |
 
 In addition to versioning changes denoted by labels in pull requests, pre-release versions will be suffixed with either `alphaX`, `betaX`, or `rcX` where `X` represents the pre-release version number (ex: `1.0.0-alpha1`). These pre-release versions are designated to indicate different stages of development and testing before the final release.
 
@@ -103,8 +103,7 @@ Documents in this repository will adhere to the following rules:
 Markdown files should be appropriately formatted before a pull request is sent out.
 In this repository, we follow the
 [markdownlint rules](https://github.com/DavidAnson/markdownlint#rules--aliases)
-with some customizations. See [markdownlint](.markdownlint.yaml) or
-[settings](.vscode/settings.json) for details.
+with some customizations. See [markdownlint](.markdownlint.yaml) for details.
 
 We highly encourage using line breaks in markdown files at `80` characters
 wide. Some tools can do it for you effectively. Please submit the proposal
@@ -126,6 +125,24 @@ mdl -c .mdlrc .
 To fix style violations, follow the
 [instruction](https://github.com/DavidAnson/markdownlint#optionsresultversion)
 with the Node version of markdownlint.
+
+### YAML style
+
+YAML files should be appropriately formatted before a pull request is sent out.
+In this repository, we follow the
+[yamllint rules](https://github.com/adrienverge/yamllint/blob/master/docs/rules.rst).
+See [yamllint](.yamllint.yaml) for details.
+
+We highly encourage using line breaks in markdown files at `80` characters
+wide. Some tools can do it for you effectively. Please submit the proposal
+to include your editor settings required to enable this behavior so the
+out-of-the-box settings for this repository will be consistent.
+
+If you are using Visual Studio Code,
+you can also use the formatter of the
+[vscode YAML Language Support extension](https://github.com/redhat-developer/vscode-yaml).
+
+To install yamllint follow the [instructions outlined here](https://github.com/adrienverge/yamllint/blob/master/docs/quickstart.rst#installing-yamllint).
 
 ### Typos
 
