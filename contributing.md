@@ -114,12 +114,16 @@ If you are using Visual Studio Code,
 you can also use the `fixAll` command of the
 [vscode markdownlint extension](https://github.com/DavidAnson/vscode-markdownlint).
 
-To otherwise check for style violations, use:
+To otherwise check for style violations, use one of the following commands:
 
 ```bash
-# Ruby and gem are required for mdl
-gem install mdl
-mdl -c .mdlrc .
+npm install -g markdownlint-cli
+markdownlint **/*.md
+```
+
+```bash
+brew install markdownlint-cli
+markdownlint **/*.md
 ```
 
 To fix style violations, follow the

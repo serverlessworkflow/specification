@@ -9,6 +9,14 @@
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
   "[markdown]": {
-    "editor.defaultFormatter": "vscode.markdown-language-features"
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+  },
+  "markdownlint.config": {
+    "MD004": false,
+    "MD013": false,
+    "MD024": { "siblings_only": true },
+    "MD029": { "style": "ordered" },
+    "MD033": false,
+    "MD040": false
   }
 }

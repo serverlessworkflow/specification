@@ -6,31 +6,31 @@
 - [Motivation](#motivation)
 - [Design](#design)
 - [Concepts](#concepts)
-  + [Workflow](#workflow)
+  - [Workflow](#workflow)
     - [Status Phases](#status-phases)
     - [Components](#components)
-      + [Task](#task)
+      - [Task](#task)
     - [Scheduling](#scheduling)
-  + [Task Flow](#task-flow)
-  + [Data Flow](#data-flow)
-  + [Runtime Expressions](#runtime-expressions)
+  - [Task Flow](#task-flow)
+  - [Data Flow](#data-flow)
+  - [Runtime Expressions](#runtime-expressions)
     - [Arguments](#runtime-expression-arguments)
-  + [Fault Tolerance](#fault-tolerance)
-  + [Timeouts](#timeouts)
-  + [Interoperability](#interoperability)
+  - [Fault Tolerance](#fault-tolerance)
+  - [Timeouts](#timeouts)
+  - [Interoperability](#interoperability)
     - [Supported Protocols](#supported-protocols)
     - [Custom and Non-Standard Interactions](#custom-and-non-standard-interactions)
     - [Creating a Custom Function](#creating-a-custom-function)
     - [Using a Custom Function](#using-a-custom-function)
     - [Publishing a Custom Function](#publishing-a-custom-function)
-  + [Events](#events)
-  + [Extensions](#extensions)
-  + [External Resources](#external-resources)
-  + [Authentication](#authentication)
+  - [Events](#events)
+  - [Extensions](#extensions)
+  - [External Resources](#external-resources)
+  - [Authentication](#authentication)
 
 ## Abstract
 
-This document proposes the creation of a Domain Specific Language (DSL) called Serverless Workflow, tailored for building platform agnostic workflows. 
+This document proposes the creation of a Domain Specific Language (DSL) called Serverless Workflow, tailored for building platform agnostic workflows.
 
 Serverless Workflow aims to simplify the orchestration of complex processes across diverse environments, providing developers with a unified syntax and set of tools for defining and executing serverless workflows.
 
@@ -60,9 +60,9 @@ Moreover, the DSL eschews strong-typed enumerations wherever feasible, fostering
 
 ### Workflow
 
-A Serverless Workflow is a sequence of specific [tasks](#tasks) that are executed in a defined order. By default, this order follows the declaration sequence within the workflow definition. Workflows are designed to automate processes and orchestrate various serverless functions and services. 
+A Serverless Workflow is a sequence of specific [tasks](#tasks) that are executed in a defined order. By default, this order follows the declaration sequence within the workflow definition. Workflows are designed to automate processes and orchestrate various serverless functions and services.
 
-Workflows can be triggered in different ways: upon request, scheduled using CRON expressions, or initiated upon correlation with specific events. 
+Workflows can be triggered in different ways: upon request, scheduled using CRON expressions, or initiated upon correlation with specific events.
 
 Additionally, workflows may optionally accept inputs and produce outputs, allowing for data processing and transformation within the workflow execution.
 
@@ -70,18 +70,18 @@ Additionally, workflows may optionally accept inputs and produce outputs, allowi
 
 Workflows in the Serverless Workflow DSL can exist in several phases, each indicating the current state of the workflow execution. These phases include:
 
-| Phase |	Description |
-| --- | --- |
-| `pending` |	The workflow has been initiated and is pending execution. |
-| `running` |	The workflow is currently in progress. |
-| `waiting` |	The workflow execution has been paused or halted temporarily and is waiting for something to happen. |
-| `cancelled` |	The workflow execution has been terminated before completion. |
-| `faulted` |	The workflow execution has encountered an error. |
-| `completed` |	The workflow execution has successfully finished all tasks. |
+| Phase       | Description                                                                                          |
+| ----------- | ---------------------------------------------------------------------------------------------------- |
+| `pending`   | The workflow has been initiated and is pending execution.                                            |
+| `running`   | The workflow is currently in progress.                                                               |
+| `waiting`   | The workflow execution has been paused or halted temporarily and is waiting for something to happen. |
+| `cancelled` | The workflow execution has been terminated before completion.                                        |
+| `faulted`   | The workflow execution has encountered an error.                                                     |
+| `completed` | The workflow execution has successfully finished all tasks.                                          |
 
-Additionally, the flow of execution within a workflow can be controlled using [directives*](#flow-directives), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
+Additionally, the flow of execution within a workflow can be controlled using [directives\*](#flow-directives), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
 
-**To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
+\*_To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive)._
 
 #### Components
 
@@ -106,9 +106,9 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 - [For](dsl-reference.md#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](dsl-reference.md#listen), used to listen for an [event](dsl-reference.md#event) or more.
 - [Raise](dsl-reference.md#raise), used to raise an [error](dsl-reference.md#error) and potentially fault the [workflow](dsl-reference.md#workflow).
-- [Run](dsl-reference.md#run), used to run a [container](dsl-reference.md#container), a [script](dsl-reference.md#script) or event a [shell](dsl-reference.md#shell) command. 
+- [Run](dsl-reference.md#run), used to run a [container](dsl-reference.md#container), a [script](dsl-reference.md#script) or event a [shell](dsl-reference.md#shell) command.
 - [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
-- [Set](dsl-reference.md#set), used to dynamically set or update the [workflow](dsl-reference.md#workflow)'s data during the its execution. 
+- [Set](dsl-reference.md#set), used to dynamically set or update the [workflow](dsl-reference.md#workflow)'s data during the its execution.
 - [Try](dsl-reference.md#try), used to attempt executing a specified [task](dsl-reference.md#task), and to handle any resulting [errors](dsl-reference.md#error) gracefully, allowing the [workflow](dsl-reference.md#workflow) to continue without interruption.
 - [Wait](dsl-reference.md#wait), used to pause or wait for a specified duration before proceeding to the next task.
 
@@ -122,9 +122,9 @@ Runtime **must** implement a mechanism capable of providing the workflow with th
 
 #### Scheduling
 
-Workflow scheduling in ServerlessWorkflow allows developers to specify when and how their workflows should be executed, ensuring timely response to events and efficient resource utilization. It offers four key properties: `every`, `cron`, `after`, and `on`. 
+Workflow scheduling in ServerlessWorkflow allows developers to specify when and how their workflows should be executed, ensuring timely response to events and efficient resource utilization. It offers four key properties: `every`, `cron`, `after`, and `on`.
 
-- The `every` property defines the interval for workflow execution, ensuring periodic runs regardless of the previous run's status. 
+- The `every` property defines the interval for workflow execution, ensuring periodic runs regardless of the previous run's status.
 - With `cron`, developers can use CRON expressions to schedule workflow execution at specific times or intervals.
 - `after` specifies a delay duration before restarting the workflow after completion.
 - `on` enables event-driven scheduling, triggering workflow execution based on specified events.
@@ -139,43 +139,43 @@ Once the task has been executed, different things can happen:
 
 - `continue`: the task ran to completion, and the next task, if any, should be executed. The task to run next is implictly the next in declaration order, or explicitly defined by the `then` property of the executed task. If the executed task is the last task, then the workflow's execution gracefully ends.
 - `fault`: the task raised an uncaught error, which abruptly halts the workflow's execution and makes it transition to `faulted` [status phase](#status-phases).
-- `end`: the task explicitly and gracefully ends the workflow's execution. 
+- `end`: the task explicitly and gracefully ends the workflow's execution.
 
 ### Data Flow
 
-In Serverless Workflow DSL, data flow management is crucial to ensure that the right data is passed between tasks and to the workflow itself. 
+In Serverless Workflow DSL, data flow management is crucial to ensure that the right data is passed between tasks and to the workflow itself.
 
 Here's how data flows through a workflow based on various filtering stages:
 
 1. **Filter Workflow Input**
-Before the workflow starts, the input data provided to the workflow can be filtered to ensure only relevant data is passed into the workflow context. This step allows the workflow to start with a clean and focused dataset, reducing potential overhead and complexity in subsequent tasks.
+   Before the workflow starts, the input data provided to the workflow can be filtered to ensure only relevant data is passed into the workflow context. This step allows the workflow to start with a clean and focused dataset, reducing potential overhead and complexity in subsequent tasks.
 
-*Example: If the workflow receives a JSON object as input, a filter can be applied to remove unnecessary fields and retain only those that are required for the workflow's execution.*
+_Example: If the workflow receives a JSON object as input, a filter can be applied to remove unnecessary fields and retain only those that are required for the workflow's execution._
 
 2. **Filter First Task Input**
-The input data for the first task can be filtered to match the specific requirements of that task. This ensures that the first task receives only the necessary data it needs to perform its operations.
+   The input data for the first task can be filtered to match the specific requirements of that task. This ensures that the first task receives only the necessary data it needs to perform its operations.
 
-*Example: If the first task is a function call that only needs a subset of the workflow input, a filter can be applied to provide only those fields needed for the function to execute.*
+_Example: If the first task is a function call that only needs a subset of the workflow input, a filter can be applied to provide only those fields needed for the function to execute._
 
 3. **Filter First Task Output**
-After the first task completes, its output can be filtered before passing it to the next task or storing it in the workflow context. This helps in managing the data flow and keeping the context clean by removing any unnecessary data produced by the task.
+   After the first task completes, its output can be filtered before passing it to the next task or storing it in the workflow context. This helps in managing the data flow and keeping the context clean by removing any unnecessary data produced by the task.
 
-*Example: If the first task returns a large dataset, a filter can be applied to retain only the relevant results needed for subsequent tasks.*
+_Example: If the first task returns a large dataset, a filter can be applied to retain only the relevant results needed for subsequent tasks._
 
 4. **Filter Last Task Input**
-Before the last task in the workflow executes, its input data can be filtered to ensure it receives only the necessary information. This step is crucial for ensuring that the final task has all the required data to complete the workflow successfully.
+   Before the last task in the workflow executes, its input data can be filtered to ensure it receives only the necessary information. This step is crucial for ensuring that the final task has all the required data to complete the workflow successfully.
 
-*Example: If the last task involves generating a report, the input filter can ensure that only the data required for the report generation is passed to the task.*
+_Example: If the last task involves generating a report, the input filter can ensure that only the data required for the report generation is passed to the task._
 
 5. **Filter Last Task Output**
-After the last task completes, its output can be filtered before it is considered as the workflow output. This ensures that the workflow produces a clean and relevant output, free from any extraneous data that might have been generated during the task execution.
+   After the last task completes, its output can be filtered before it is considered as the workflow output. This ensures that the workflow produces a clean and relevant output, free from any extraneous data that might have been generated during the task execution.
 
-*Example: If the last task outputs various statistics, a filter can be applied to retain only the key metrics that are relevant to the stakeholders.*
+_Example: If the last task outputs various statistics, a filter can be applied to retain only the key metrics that are relevant to the stakeholders._
 
 6. **Filter Workflow Output**
-Finally, the overall workflow output can be filtered before it is returned to the caller or stored. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
+   Finally, the overall workflow output can be filtered before it is returned to the caller or stored. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
 
-*Example: If the workflow's final output is a summary report, a filter can ensure that the report contains only the most important summaries and conclusions, excluding any intermediate data.*
+_Example: If the workflow's final output is a summary report, a filter can ensure that the report contains only the most important summaries and conclusions, excluding any intermediate data._
 
 By applying filters at these strategic points, Serverless Workflow DSL ensures that data flows through the workflow in a controlled and efficient manner, maintaining clarity and relevance at each stage of execution. This approach helps in managing complex workflows and ensures that each task operates with the precise data it requires, leading to more predictable and reliable workflow outcomes.
 
@@ -199,11 +199,11 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 
 #### Runtime expression arguments
 
-| Name | Type | Description |
-|:-----|:----:|:------------|
-| context | `map` | The task's context data. |
-| input | `any` | The task's filtered input. |
-| task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
+| Name     |                    Type                     | Description                     |
+| :------- | :-----------------------------------------: | :------------------------------ |
+| context  |                    `map`                    | The task's context data.        |
+| input    |                    `any`                    | The task's filtered input.      |
+| task     |    [`taskDescriptor`](#task-descriptor)     | Describes the current task.     |
 | workflow | [`workflowDescritor`](#workflow-descriptor) | Describes the current workflow. |
 
 ### Fault Tolerance
@@ -216,7 +216,8 @@ Overall, the fault tolerance features in Serverless Workflow enhance its robustn
 
 Errors in Serverless Workflow are described using the [Problem Details RFC](https://datatracker.ietf.org/doc/html/rfc7807). This specification helps to standardize the way errors are communicated, using the `instance` property as a [JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901) to identify the specific component of the workflow that has raised the error. By adhering to this standard, authors and runtimes can consistently describe and handle errors.
 
-*Example error:*
+_Example error:_
+
 ```yaml
 type: https://https://serverlessworkflow.io/spec/1.0.0/errors/communication
 title: Service Unavailable
@@ -233,7 +234,8 @@ See the [DSL reference](dsl-reference.md#error) for more details about errors.
 
 Errors are critical for both authors and runtimes as they provide a means to communicate and describe the occurrence of problems. This, in turn, enables the definition of mechanisms to catch and act upon these errors. For instance, some errors caught using a [`try`](dsl-reference.md#try) block may be transient and temporary, such as a `503 Service Unavailable`. In such cases, the DSL provides a mechanism to retry a faulted task, allowing for recovery from temporary issues.
 
-*Retrying 5 times when an error with 503 is caught:*
+_Retrying 5 times when an error with 503 is caught:_
+
 ```yaml
 try:
   call: http
@@ -268,7 +270,8 @@ A timeout error **must** have its `type` set to `https://https://serverlessworkf
 Serverless Workflow DSL is designed to seamlessly interact with a variety of services, ensuring robust service interoperability.
 
 #### Supported Protocols
- - [**HTTP**](dsl-reference.md#http-call): Allows the workflow to make standard HTTP requests to web services. This is useful for RESTful services and web APIs that communicate over the HTTP protocol.
+
+- [**HTTP**](dsl-reference.md#http-call): Allows the workflow to make standard HTTP requests to web services. This is useful for RESTful services and web APIs that communicate over the HTTP protocol.
 - [**gRPC**](dsl-reference.md#grpc-call): Supports Remote Procedure Call (RPC) using gRPC, a high-performance, open-source universal RPC framework. This is suitable for connecting to services that require low-latency and high-throughput communication.
 - [**AsyncAPI**](dsl-reference.md#asyncapi-call): Facilitates interaction with asynchronous messaging protocols. AsyncAPI is designed for event-driven architectures, allowing workflows to publish and subscribe to events.
 - [**OpenAPI**](dsl-reference.md#openapi-call): Enables communication with services that provide OpenAPI specifications, which is useful for defining and consuming RESTful APIs.
@@ -277,13 +280,13 @@ Runtimes **must** raise an error with type `https://https://serverlessworkflow.i
 
 #### Custom and Non-Standard Interactions
 
- In addition to the default supported protocols, the DSL also provides mechanisms to interact with services in non-standard or unsupported ways using custom processes. This flexibility allows workflows to extend their capabilities beyond the built-in protocols and integrate with any service, regardless of the communication method.
+In addition to the default supported protocols, the DSL also provides mechanisms to interact with services in non-standard or unsupported ways using custom processes. This flexibility allows workflows to extend their capabilities beyond the built-in protocols and integrate with any service, regardless of the communication method.
 
 For custom interactions, the workflow can define [tasks](dsl-reference.md#run) that [execute shell commands](dsl-reference.md#shell-process), [execute scripts](dsl-reference.md#script-process) or [run containers](dsl-reference.md#container-process) to handle unique service communication requirements. This ensures that the workflow can still maintain interoperability even with services that do not adhere to the standard supported protocols.
 
 ##### Creating a Custom Function
 
-Serverless Workflow DSL supports the creation and publication of custom functions to extend the DSL capabilities. 
+Serverless Workflow DSL supports the creation and publication of custom functions to extend the DSL capabilities.
 
 Custom functions allow you to define specific tasks and interactions that are not covered by the default supported protocols. Here’s how you can define and use custom functions within your workflows.
 
@@ -318,10 +321,9 @@ validateEmailAddress:
         }
         const emailAddress = '${ .emailAddress }';
         return { isValid: validateEmail(emailAddress) };
-
 ```
 
-3. Optionally, add all the local files your function might need into its directory. 
+3. Optionally, add all the local files your function might need into its directory.
 
 4. Commit and push your function to your repository.
 
@@ -329,17 +331,17 @@ validateEmailAddress:
 
 ##### Using a Custom Function
 
-Once a custom function is defined, it can be used within a workflow to perform specific tasks. 
+Once a custom function is defined, it can be used within a workflow to perform specific tasks.
 
 The following example demonstrates how to use the `validateEmailAddress` custom function in a workflow.
 
 ```yaml
 # workflow.yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: "1.0.0-alpha1"
   namespace: default
   name: customFunctionWorkflow
-  version: '0.1.0'
+  version: "0.1.0"
 
 do:
   validateEmail:
@@ -350,7 +352,7 @@ do:
 
 ##### Publishing a Custom Function
 
-Consider submitting your function to the Serverless Workflow Function Registry. 
+Consider submitting your function to the Serverless Workflow Function Registry.
 
 This optional step allows users to discover and utilize your function, enhancing its visibility and usability within the Serverless Workflow community. By registering your function, you contribute to a shared repository of resources that can streamline workflow development for others.
 
@@ -362,7 +364,7 @@ Events in Serverless Workflow adhere to the [Cloud Events specification](https:/
 
 #### Emitting Events
 
-The Emit task allows workflows to publish events to event brokers or messaging systems. This capability enables workflows to broadcast notifications about various events, such as order placements, data updates, or system events. 
+The Emit task allows workflows to publish events to event brokers or messaging systems. This capability enables workflows to broadcast notifications about various events, such as order placements, data updates, or system events.
 
 By emitting events, workflows can seamlessly integrate with event-driven architectures, facilitating event-driven decision-making and enabling reactive behavior based on incoming events. For example, a workflow handling order processing might emit an event signaling the successful placement of an order, triggering downstream processes like inventory management or shipping.
 
@@ -400,7 +402,8 @@ Overall, extensions empower developers to build complex workflows with enhanced 
 
 See the [DSL reference](dsl-reference.md#extension) for more details about extensions.
 
-*Sample logging extension:*
+_Sample logging extension:_
+
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
@@ -435,9 +438,9 @@ do:
 
 ### External Resources
 
-External resources in Serverless Workflow allow you to define and access external assets or services required for workflow execution. 
+External resources in Serverless Workflow allow you to define and access external assets or services required for workflow execution.
 
-These resources can include APIs, databases, files, or any other external entities needed by the workflow. Each external resource can be identified by a unique name and is associated with a URI that specifies its location. 
+These resources can include APIs, databases, files, or any other external entities needed by the workflow. Each external resource can be identified by a unique name and is associated with a URI that specifies its location.
 
 Optionally, you can specify an authentication policy to ensure secure access to the resource. For instance, you can use basic authentication with a username and password, or you can reference a pre-configured authentication policy by name.
 
@@ -452,6 +455,7 @@ Amonst others, [external resources](dsl-reference.md#external-resource) and [cal
 The Serverless Workflow DSL supports a suite of standard authentication mechanisms, amongst which are:
 
 - **Basic Authentication**: Utilizes a username-password pair for authentication.
+
 ```yaml
 sampleBasic:
   basic:
@@ -460,12 +464,14 @@ sampleBasic:
 ```
 
 - **Bearer Authentication**: Uses a bearer token for authentication.
+
 ```yaml
 sampleBearer:
   bearer: ${ .user.token }
 ```
 
 - **OAuth2 Authentication**: Implements OAuth2 authorization framework for secure access.
+
 ```yaml
 sampleOAuth2:
   oauth2:
@@ -474,10 +480,12 @@ sampleOAuth2:
     client:
       id: workflow-runtime
       secret: workflow-runtime-client-secret
-    scopes: [ api ]
-    audiences: [ runtime ]
+    scopes: [api]
+    audiences: [runtime]
 ```
 
-These authentication schemes can be defined globally in the authentication section or associated with specific endpoints. They provide secure access to resources while ensuring proper authorization and identity verification.
+These authentication schemes can be defined globally in the authentication
+section or associated with specific endpoints. They provide secure access to
+resources while ensuring proper authorization and identity verification.
 
 See the [DSL reference](dsl-reference.md#authentication) for more details about authentication.

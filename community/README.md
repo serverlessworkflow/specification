@@ -1,4 +1,4 @@
-# Community  
+# Community
 
 Here you can find information about our:
 
