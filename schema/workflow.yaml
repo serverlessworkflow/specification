@@ -215,8 +215,11 @@ $defs:
                 type: string
                 description: The HTTP method of the HTTP request to perform.
               endpoint:
-                $ref: '#/$defs/endpoint'
                 description: The HTTP endpoint to send the request to.
+                oneOf:
+                  - $ref: '#/$defs/endpoint'
+                  - type: string
+                    format: uri-template
               headers:
                 type: object
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.

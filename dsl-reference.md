@@ -149,14 +149,14 @@ use:
         call: http
         with:
           method: post
-          uri: https://fake.log.collector.com
+          endpoint: https://fake.log.collector.com
           body:
             message: "${ \"Executing task '\($task.reference)'...\" }"
       after:
         call: http
         with:
           method: post
-          uri: https://fake.log.collector.com
+          endpoint: https://fake.log.collector.com
           body:
             message: "${ \"Executed task '\($task.reference)'...\" }"
   functions:
@@ -259,7 +259,7 @@ do:
     call: http
     with:
       method: get
-      uri: https://petstore.swagger.io/v2/pet/{petId}
+      endpoint: https://petstore.swagger.io/v2/pet/{petId}
 ```
 
 Serverless Workflow defines several default functions that **MUST** be supported by all implementations and runtimes:
@@ -371,7 +371,7 @@ do:
     call: http
     with:
       method: get
-      uri: https://petstore.swagger.io/v2/pet/{petId}
+      endpoint: https://petstore.swagger.io/v2/pet/{petId}
 ```
 
 ##### OpenAPI Call
@@ -481,7 +481,7 @@ do:
           call: http
           with:
             method: put
-            uri: https://fake-hospital.com/api/v3/alert/nurses
+            endpoint: https://fake-hospital.com/api/v3/alert/nurses
             body:
               patientId: ${ .patient.fullName }
               room: ${ .room.number }
@@ -489,7 +489,7 @@ do:
           call: http
           with:
             method: put
-            uri: https://fake-hospital.com/api/v3/alert/doctor
+            endpoint: https://fake-hospital.com/api/v3/alert/doctor
             body:
               patientId: ${ .patient.fullName }
               room: ${ .room.number }
@@ -917,7 +917,7 @@ do:
       call: http
       with:
         method: get
-        uri: https://
+        endpoint: https://
     catch:
       errors:
         with:
@@ -1203,14 +1203,14 @@ use:
         call: http
         with:
           method: post
-          uri: https://fake.log.collector.com
+          endpoint: https://fake.log.collector.com
           body:
             message: "${ \"Executing task '\($task.reference)'...\" }"
       after:
         call: http
         with:
           method: post
-          uri: https://fake.log.collector.com
+          endpoint: https://fake.log.collector.com
           body:
             message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
@@ -1218,7 +1218,7 @@ do:
     call: http
     with:
       method: get
-      uri: https://fake.com/sample
+      endpoint: https://fake.com/sample
 ```
 
 *Intercept HTTP calls to 'https://mocked.service.com' and mock its response:*
@@ -1247,7 +1247,7 @@ do:
     call: http
     with:
       method: get
-      uri: https://fake.com/sample
+      endpoint: https://fake.com/sample
 ```
 
 ### Error
