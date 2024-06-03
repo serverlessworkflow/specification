@@ -270,6 +270,7 @@ $defs:
             description: A name/value mapping of the parameters, if any, to call the function with.
         required: [ call ]
   compositeTask:
+    type: object
     properties:
       execute:
         type: object
@@ -297,6 +298,7 @@ $defs:
     required: [ execute ]
     description: Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations
   emitTask:
+    type: object
     properties:
       emit:
         type: object
@@ -338,6 +340,7 @@ $defs:
         default: continue
       - type: string
   forTask:
+    type: object
     properties:
       for:
         type: object
