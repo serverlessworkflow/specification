@@ -141,7 +141,7 @@ $defs:
       - properties:
           call:
             type: string
-            constant: asyncapi
+            const: asyncapi
           with:
             type: object
             properties:
@@ -173,17 +173,19 @@ $defs:
                 description: |
                   The payload to call the AsyncAPI operation with, if any.
               authentication:
-                ref: "#/$defs/authenticationPolicy"
                 description: |
                   The authentication policy, if any, to use when calling the
                   AsyncAPI operation.
+                oneOf:
+                  - $ref: "#/$defs/authenticationPolicy"
+                  - type: string
             required: [document, operationRef]
             description: Defines the AsyncAPI call to perform.
         required: [call, with]
       - properties:
           call:
             type: string
-            constant: grpc
+            const: grpc
           with:
             type: object
             properties:
@@ -207,7 +209,9 @@ $defs:
                     max: 65535
                     description: The port number of the GRPC service to call.
                   authentication:
-                    $ref: "#/$defs/authenticationPolicy"
+                    oneOf:
+                      - $ref: "#/$defs/authenticationPolicy"
+                      - type: string
                     description: The endpoint's authentication policy, if any.
                 required: [name, host]
               method:
@@ -224,7 +228,7 @@ $defs:
       - properties:
           call:
             type: string
-            constant: http
+            const: http
           with:
             type: object
             properties:
@@ -232,8 +236,11 @@ $defs:
                 type: string
                 description: The HTTP method of the HTTP request to perform.
               endpoint:
-                $ref: "#/$defs/endpoint"
                 description: The HTTP endpoint to send the request to.
+                oneOf:
+                  - $ref: "#/$defs/endpoint"
+                  - type: string
+                    format: uri-template
               headers:
                 type: object
                 description: |
@@ -251,7 +258,7 @@ $defs:
       - properties:
           call:
             type: string
-            constant: openapi
+            const: openapi
           with:
             type: object
             properties:
@@ -269,7 +276,9 @@ $defs:
                   A name/value mapping of the parameters of the OpenAPI
                   operation to call.
               authentication:
-                $ref: "#/$defs/authenticationPolicy"
+                oneOf:
+                  - $ref: "#/$defs/authenticationPolicy"
+                  - type: string
                 description: |
                   The authentication policy, if any, to use when calling the
                   OpenAPI operation.
@@ -294,6 +303,7 @@ $defs:
               function with.
         required: [call]
   compositeTask:
+    type: object
     properties:
       execute:
         type: object
@@ -331,6 +341,7 @@ $defs:
       seamless integration and execution of multiple subtasks to accomplish
       complex operations
   emitTask:
+    type: object
     properties:
       emit:
         type: object
@@ -380,6 +391,7 @@ $defs:
         default: continue
       - type: string
   forTask:
+    type: object
     properties:
       for:
         type: object
@@ -787,8 +799,10 @@ $defs:
         format: uri-template
         description: The endpoint's URI.
       authentication:
-        $ref: "#/$defs/authenticationPolicy"
         description: The authentication policy to use.
+        oneOf:
+          - $ref: "#/$defs/authenticationPolicy"
+          - type: string
     required: [uri]
   eventConsumptionStrategy:
     type: object
@@ -916,8 +930,10 @@ $defs:
         format: uri
         description: The endpoint's URI.
       authentication:
-        $ref: "#/$defs/authenticationPolicy"
         description: The authentication policy to use.
+        oneOf:
+          - $ref: "#/$defs/authenticationPolicy"
+          - type: string
       name:
         type: string
         description: The external resource's name, if any.
