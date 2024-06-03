@@ -105,7 +105,7 @@ $defs:
     properties:
       name:
         type: string
-        description: The task's name. **SHOULD** be unique within the workflow.
+        description: The task's name. **SHOULD** be unique within an array. Required if you want to reference the task in `then`.
       input:
         $ref: '#/$defs/input'
         description: Configure the task's input.
@@ -498,6 +498,9 @@ $defs:
         items:
           type: object
           properties:
+            name:
+              type: string
+              description: The case's name.
             when:
               type: string
               description: A runtime expression used to determine whether or not the case matches.
@@ -758,11 +761,17 @@ $defs:
         type: string
         description: A runtime expression, if any, used to determine whether or not the extension should apply in the specified context.
       before:
-        $ref: '#/$defs/task'
         description: The task to execute before the extended task, if any.
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/$defs/task'
       after:
-        $ref: '#/$defs/task'
         description: The task to execute after the extended task, if any.
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/$defs/task'
     required: [ extend ]
     description: The definition of a an extension.
   externalResource:
