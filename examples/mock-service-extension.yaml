@@ -22,4 +22,5 @@ do:
     call: http
     with:
       method: get
-      endpoint: https://fake.com/sample
+      endpoint: 
+        uri: https://fake.com/sample
