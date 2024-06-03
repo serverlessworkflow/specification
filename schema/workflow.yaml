@@ -51,8 +51,8 @@ properties:
           $ref: '#/$defs/error'
         description: The workflow's reusable errors.
       extensions:
-        type: object
-        additionalProperties:
+        type: array
+        items:
           $ref: '#/$defs/extension'
         description: The workflow's extensions.
       functions:
@@ -753,6 +753,9 @@ $defs:
   extension:
     type: object
     properties:
+      name:
+        type: string
+        description: The extension's name.
       extend:
         type: string
         enum: [ call, composite, emit, for, listen, raise, run, set, switch, try, wait, all ]

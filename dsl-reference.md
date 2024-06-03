@@ -94,7 +94,7 @@ Defines the workflow's reusable components.
 |:--|:---:|:---:|:---|
 | authentications | [`map[string, authentication]`](#authentication) | `no` | A name/value mapping of the workflow's reusable authentication policies. |
 | errors | [`map[string, error]`](#error) | `no` | A name/value mapping of the workflow's reusable errors. | 
-| extensions | [`map[string, extension]`](#extension) | `no` | A name/value mapping of the workflow's reusable extensions. |
+| extensions | [`extension[]`](#extension) | `no` | A list of the workflow's reusable extensions. |
 | functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
 | retries | [`map[string, retryPolicy]`](#retry) | `no` | A name/value mapping of the workflow's reusable retry policies. |
 | secrets | `string[]` | `no` | A list containing the workflow's secrets. |
@@ -143,7 +143,7 @@ use:
     petStoreOAuth2:
       oauth2: my-oauth2-secret
   extensions:
-    externalLogging:
+    - name: externalLogging
       extend: all
       before:
         - call: http
@@ -1209,7 +1209,7 @@ document:
   version: '0.1.0'
 use:
   extensions:
-    logging:
+    - name: logging
       extend: all
       before:
         - call: http
@@ -1242,7 +1242,7 @@ document:
   version: '0.1.0'
 use:
   extensions:
-    mockService:
+    - name: mockService
       extend: http
       when: ($task.with.uri != null and ($task.with.uri | startswith("https://mocked.service.com"))) or ($task.with.endpoint.uri != null and ($task.with.endpoint.uri | startswith("https://mocked.service.com")))
       before:
