@@ -53,5 +53,13 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: ${{ github.workspace }}
+
+          VALIDATE_MARKDOWN: true
           MARKDOWN_CONFIG_FILE: .markdownlint.yaml
+
+          VALIDATE_YAML: true
           YAML_CONFIG_FILE: .yamllint.yaml
+
+          VALIDATE_GHERKIN: true
+          VALIDATE_GITHUB_ACTIONS: true
+          VALIDATE_JSON: true
