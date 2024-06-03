@@ -1,0 +1,18 @@
+document:
+  dsl: 1.0.0-alpha1
+  namespace: examples
+  name: bearer-auth
+  version: 1.0.0-alpha1
+use:
+  authentications:
+    petStoreAuth:
+      bearer:
+        token: ${ .token }
+do:
+  getPetById:
+    call: http
+    with:
+      method: get
+      endpoint:
+        uri: https://petstore.swagger.io/v2/pet/{petId}
+        authentication: petStoreAuth
