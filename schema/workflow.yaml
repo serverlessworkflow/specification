@@ -355,10 +355,7 @@ $defs:
         type: string
         description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
       do:
-        type: array
-        minItems: 1
-        items:
-          $ref: '#/$defs/task'
+        $ref: '#/$defs/task'
     description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
     required: [ for, do ]
   listenTask:
@@ -513,11 +510,8 @@ $defs:
     type: object
     properties:
       try:
-        description: The tasks to perform.
-        type: array
-        minItems: 1
-        items:
-          - $ref: '#/$defs/task'
+        description: The task to perform.
+        $ref: '#/$defs/task'
       catch:
         type: object
         properties:
@@ -537,10 +531,7 @@ $defs:
             description: The retry policy to use, if any, when catching errors.
           do:
             description: The definition of the task to run when catching an error.
-            type: array
-            minItems: 1
-            items:
-              $ref: '#/$defs/task'
+            $ref: '#/$defs/task'
     required: [ try, catch ]
     description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
   waitTask:
@@ -765,16 +756,10 @@ $defs:
         description: A runtime expression, if any, used to determine whether or not the extension should apply in the specified context.
       before:
         description: The task to execute before the extended task, if any.
-        type: array
-        minItems: 1
-        items:
-          $ref: '#/$defs/task'
+        $ref: '#/$defs/task'
       after:
         description: The task to execute after the extended task, if any.
-        type: array
-        minItems: 1
-        items:
-          $ref: '#/$defs/task'
+        $ref: '#/$defs/task'
     required: [ extend ]
     description: The definition of a an extension.
   externalResource:

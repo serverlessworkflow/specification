@@ -9,14 +9,14 @@ use:
       extend: call
       when: ($task.with.endpoint != null and ($task.with.endpoint | startswith("https://mocked.service.com"))) or ($task.with.endpoint.uri != null and ($task.with.endpoint.uri | startswith("https://mocked.service.com")))
       before:
-        - set:
-            statusCode: 200
-            headers:
-              Content-Type: application/json
-            content:
-              foo:
-                bar: baz
-          then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
+        set:
+          statusCode: 200
+          headers:
+            Content-Type: application/json
+          content:
+            foo:
+              bar: baz
+        then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
 do:
   - name: get
     call: http

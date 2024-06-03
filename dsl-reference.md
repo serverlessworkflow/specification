@@ -542,7 +542,7 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 | for.in | `string` | `yes` | A [runtime expression](#runtime-expressions) used to get the collection to enumerate. |
 | for.at | `string` | `no` | The name of the variable used to store the index of the current item being enumerated.<br>Defaults to `index`. |
 | while | `string` | `no` | A [runtime expression](#runtime-expressions) that represents the condition, if any, that must be met for the iteration to continue. |
-| do | [`task[]`](#task) | `yes` | The task(s) to perform for each item in the collection. |
+| do | [`task`](#task) | `yes` | The task to perform for each item in the collection. |
 
 ##### Examples
 
@@ -560,12 +560,12 @@ do:
       at: index
     while: .vet != null
     do:
-      - name: checkForFleas
-        listen:
-          to:
-            one:
-              with:
-                type: com.fake.petclinic.pets.checkup.completed.v2
+      name: checkForFleas
+      listen:
+        to:
+          one:
+            with:
+              type: com.fake.petclinic.pets.checkup.completed.v2
         output:
           to: '.pets + [{ "id": $pet.id }]'        
 ```
@@ -911,7 +911,7 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| try | [`task[]`](#task) | `yes` | The task(s) to perform. |
+| try | [`task`](#task) | `yes` | The task(s) to perform. |
 | catch | [`catch`](#catch) | `yes` | Configures the errors to catch and how to handle them. |
 
 ##### Examples
@@ -925,10 +925,10 @@ document:
 do:
   - name: processOrder
     try:
-      - call: http
-        with:
-          method: get
-          uri: https://
+      call: http
+      with:
+        method: get
+        uri: https://
     catch:
       errors:
         with:
@@ -958,7 +958,7 @@ Defines the configuration of a catch clause, which a concept used to catch error
 | when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error |
 | exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error |
 | retry | [`retryPolicy`](#retry) | `no` | The retry policy to use, if any, when catching errors |
-| do | [`task[]`](#task) | `no` | The definition of the task(s) to run when catching an error |
+| do | [`task`](#task) | `no` | The definition of the task to run when catching an error |
 
 #### Wait
 
@@ -1195,8 +1195,8 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 |----------|:----:|:--------:|-------------|
 | extend |  `string` | `yes` | The type of task to extend<br>Supported values are: `call`, `composite`, `emit`, `extension`, `for`, `listen`, `raise`, `run`, `set`, `switch`, `try`, `wait` and `all` |
 | when | `string` | `no` | A runtime expression used to determine whether or not the extension should apply in the specified context |
-| before | [`task[]`](#task) | `no` | The task(s) to execute, if any, before the extended task |
-| after | [`task[]`](#task) | `no` | The task(s) to execute, if any, after the extended task |
+| before | [`task`](#task) | `no` | The task to execute, if any, before the extended task |
+| after | [`task`](#task) | `no` | The task to execute, if any, after the extended task |
 
 #### Examples
 
@@ -1212,19 +1212,19 @@ use:
     - name: logging
       extend: all
       before:
-        - call: http
-          with:
-            method: post
-            uri: https://fake.log.collector.com
-            body:
-              message: "${ \"Executing task '\($task.reference)'...\" }"
+        call: http
+        with:
+          method: post
+          uri: https://fake.log.collector.com
+          body:
+            message: "${ \"Executing task '\($task.reference)'...\" }"
       after:
-        - call: http
-          with:
-            method: post
-            uri: https://fake.log.collector.com
-            body:
-              message: "${ \"Executed task '\($task.reference)'...\" }"
+        call: http
+        with:
+          method: post
+          uri: https://fake.log.collector.com
+          body:
+            message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
   - name: get
     call: http
@@ -1246,14 +1246,14 @@ use:
       extend: http
       when: ($task.with.uri != null and ($task.with.uri | startswith("https://mocked.service.com"))) or ($task.with.endpoint.uri != null and ($task.with.endpoint.uri | startswith("https://mocked.service.com")))
       before:
-        - set:
-            statusCode: 200
-            headers:
-              Content-Type: application/json
-            content:
-              foo:
-                bar: baz
-          then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
+        set:
+          statusCode: 200
+          headers:
+            Content-Type: application/json
+          content:
+            foo:
+              bar: baz
+        then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
 do:
   - name: get
     call: http
