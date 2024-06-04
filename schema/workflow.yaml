@@ -53,7 +53,11 @@ properties:
       extensions:
         type: array
         items:
-          $ref: '#/$defs/extension'
+          type: object
+          minProperties: 1
+          maxProperties: 1
+          additionalProperties:
+            $ref: '#/$defs/extension'
         description: The workflow's extensions.
       functions:
         type: object
@@ -75,7 +79,11 @@ properties:
     type: array
     minItems: 1
     items:
-      $ref: '#/$defs/task'
+      type: object
+      minProperties: 1
+      maxProperties: 1
+      additionalProperties:
+        $ref: '#/$defs/task'
     description: Defines the tasks the workflow must perform
   timeout:
     $ref: '#/$defs/timeout'
@@ -103,9 +111,6 @@ $defs:
   task:
     type: object
     properties:
-      name:
-        type: string
-        description: The task's name. **SHOULD** be unique within an array. Required if you want to reference the task in `then`.
       input:
         $ref: '#/$defs/input'
         description: Configure the task's input.
@@ -286,7 +291,11 @@ $defs:
               type: array
               minItems: 2
               items:
-                $ref: '#/$defs/task'
+                type: object
+                minProperties: 1
+                maxProperties: 1
+                additionalProperties:
+                  $ref: '#/$defs/task'
               description: A list of the tasks to perform concurrently.
             compete:
               type: boolean
@@ -297,7 +306,11 @@ $defs:
               type: array
               minItems: 2
               items:
-                $ref: '#/$defs/task'
+                type: object
+                minProperties: 1
+                maxProperties: 1
+                additionalProperties:
+                  $ref: '#/$defs/task'
               description: A list of the tasks to perform sequentially.
           required: [ sequentially ]
         description: Configures the task execution strategy to use
@@ -506,16 +519,20 @@ $defs:
         minItems: 1
         items:
           type: object
-          properties:
-            name:
-              type: string
-              description: The case's name.
-            when:
-              type: string
-              description: A runtime expression used to determine whether or not the case matches.
-            then:
-              $ref: '#/$defs/flowDirective'
-              description: The flow directive to execute when the case matches.
+          minProperties: 1
+          maxProperties: 1
+          additionalProperties:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The case's name.
+              when:
+                type: string
+                description: A runtime expression used to determine whether or not the case matches.
+              then:
+                $ref: '#/$defs/flowDirective'
+                description: The flow directive to execute when the case matches.
     required: [ switch ]
     description: Enables conditional branching within workflows, allowing them to dynamically select different paths based on specified conditions or criteria
   tryTask:
@@ -758,9 +775,6 @@ $defs:
   extension:
     type: object
     properties:
-      name:
-        type: string
-        description: The extension's name.
       extend:
         type: string
         enum: [ call, composite, emit, for, listen, raise, run, set, switch, try, wait, all ]
