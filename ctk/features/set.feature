@@ -12,11 +12,11 @@ Feature: Set Task
       namespace: default
       name: set
     do:
-      initialize:
-        set:
-          shape: circle
-          size: ${ .configuration.size }
-          fill: ${ .configuration.fill }
+      - initialize:
+          set:
+            shape: circle
+            size: ${ .configuration.size }
+            fill: ${ .configuration.fill }
     """
     And given the workflow input is:
     """yaml

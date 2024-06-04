@@ -15,14 +15,14 @@ Feature: Call Task
       namespace: default
       name: http-call-with-content-output
     do:
-      getFirstAvailablePet:
-        call: http
-        with:
-          method: get
-          endpoint:
-            uri: https://petstore.swagger.io/v2/pet/findByStatus?status={status}
-        output:
-          from: .[0]
+      - getFirstAvailablePet:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://petstore.swagger.io/v2/pet/findByStatus?status={status}
+          output:
+            from: .[0]
     """
     And given the workflow input is:
     """yaml
@@ -43,13 +43,13 @@ Feature: Call Task
       namespace: default
       name: http-call-with-response-output
     do:
-      getPetById:
-        call: http
-        with:
-          method: get
-          endpoint:
-            uri: https://petstore.swagger.io/v2/pet/{petId}
-          output: response
+      - getPetById:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://petstore.swagger.io/v2/pet/{petId}
+            output: response
     """
     And given the workflow input is:
     """yaml
@@ -70,16 +70,16 @@ Feature: Call Task
       namespace: default
       name: http-call-with-basic-auth
     do:
-      getSecuredEndpoint:
-        call: http
-        with:
-          method: get
-          endpoint:
-            uri: https://httpbin.org/basic-auth/{username}/{password}
-            authentication:
-              basic:
-                username: ${ .username }
-                password: ${ .password }
+      - getSecuredEndpoint:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://httpbin.org/basic-auth/{username}/{password}
+              authentication:
+                basic:
+                  username: ${ .username }
+                  password: ${ .password }
     """
     And given the workflow input is:
     """yaml
@@ -99,16 +99,16 @@ Feature: Call Task
       namespace: default
       name: openapi-call-with-content-output
     do:
-      getPetsByStatus:
-        call: openapi
-        with:
-          document:
-            uri: https://petstore.swagger.io/v2/swagger.json
-          operation: findPetsByStatus
-          parameters:
-            status: ${ .status }
-        output:
-          from: . | length
+      - getPetsByStatus:
+          call: openapi
+          with:
+            document:
+              uri: https://petstore.swagger.io/v2/swagger.json
+            operation: findPetsByStatus
+            parameters:
+              status: ${ .status }
+          output:
+            from: . | length
     """
     And given the workflow input is:
     """yaml
@@ -127,15 +127,15 @@ Feature: Call Task
       namespace: default
       name: openapi-call-with-response-output
     do:
-      getPetById:
-        call: openapi
-        with:
-          document:
-            uri: https://petstore.swagger.io/v2/swagger.json
-          operation: getPetById
-          parameters:
-            petId: ${ .petId }
-          output: response
+      - getPetById:
+          call: openapi
+          with:
+            document:
+              uri: https://petstore.swagger.io/v2/swagger.json
+            operation: getPetById
+            parameters:
+              petId: ${ .petId }
+            output: response
     """
     And given the workflow input is:
     """yaml

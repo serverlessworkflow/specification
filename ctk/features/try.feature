@@ -15,22 +15,22 @@ Feature: Try Task
       namespace: default
       name: try-catch-404
     do:
-      tryGetPet:
-        try:
-          call: http
-          with:
-            method: get
-            endpoint:
-              uri: https://petstore.swagger.io/v2/pet/getPetByName/{petName}
-        catch:
-          errors:
+      - tryGetPet:
+          try:
+            call: http
             with:
-              type: https://serverlessworkflow.io/dsl/errors/types/communication
-              status: 404
-          as: err
-          do:
-            set:
-              error: ${ $err }
+              method: get
+              endpoint:
+                uri: https://petstore.swagger.io/v2/pet/getPetByName/{petName}
+          catch:
+            errors:
+              with:
+                type: https://serverlessworkflow.io/dsl/errors/types/communication
+                status: 404
+            as: err
+            do:
+              set:
+                error: ${ $err }
     """
     And given the workflow input is:
     """yaml
@@ -56,22 +56,22 @@ Feature: Try Task
       namespace: default
       name: try-catch-503
     do:
-      tryGetPet:
-        try:
-          call: http
-          with:
-            method: get
-            endpoint:
-              uri: https://petstore.swagger.io/v2/pet/getPetByName/{petName}
-        catch:
-          errors:
+      - tryGetPet:
+          try:
+            call: http
             with:
-              type: https://serverlessworkflow.io/dsl/errors/types/communication
-              status: 503
-          as: err
-          do:
-            set:
-              error: ${ $err }
+              method: get
+              endpoint:
+                uri: https://petstore.swagger.io/v2/pet/getPetByName/{petName}
+          catch:
+            errors:
+              with:
+                type: https://serverlessworkflow.io/dsl/errors/types/communication
+                status: 503
+            as: err
+            do:
+              set:
+                error: ${ $err }
     """
     And given the workflow input is:
     """yaml

@@ -12,11 +12,11 @@ Feature: Data Flow
       namespace: default
       name: output-filtering
     do:
-      setUsername:
-        input:
-          from: .user.claims.subject #filters the input of the task, using only the user's subject
-        set:
-          playerId: ${ . }
+      - setUsername:
+          input:
+            from: .user.claims.subject #filters the input of the task, using only the user's subject
+          set:
+            playerId: ${ . }
     """
     And given the workflow input is:
     """yaml
@@ -39,14 +39,14 @@ Feature: Data Flow
       namespace: default
       name: output-filtering
     do:
-      getPetById:
-        call: http
-        with:
-          method: get
-          endpoint:
-            uri: https://petstore.swagger.io/v2/pet/{petId} #simple interpolation, only possible with top level variables
-        output:
-          from: .id #filters the output of the http call, using only the id of the returned object
+      - getPetById:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://petstore.swagger.io/v2/pet/{petId} #simple interpolation, only possible with top level variables
+          output:
+            from: .id #filters the output of the http call, using only the id of the returned object
     """
     And given the workflow input is:
     """yaml
@@ -67,22 +67,22 @@ Feature: Data Flow
       namespace: default
       name: non-object-output
     do:
-      getPetById1:
-        call: http
-        with:
-          method: get
-          endpoint:
-            uri: https://petstore.swagger.io/v2/pet/{petId} #simple interpolation, only possible with top level variables
-        output:
-          from: .id
-      getPetById2:
-        call: http
-        with:
-          method: get
-          endpoint:
-            uri: https://petstore.swagger.io/v2/pet/2
-        output:
-          from: '{ ids: [ $input, .id ] }'
+      - getPetById1:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://petstore.swagger.io/v2/pet/{petId} #simple interpolation, only possible with top level variables
+          output:
+            from: .id
+      - getPetById2:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://petstore.swagger.io/v2/pet/2
+          output:
+            from: '{ ids: [ $input, .id ] }'
     """
     When the workflow is executed
     Then the workflow should complete with output:

@@ -12,18 +12,18 @@ Feature: Composite Task
       namespace: default
       name: composite-sequential
     do:
-      setRGB:
-        execute:
-          sequentially:
-            setRed:
-              set:
-                colors: ${ .colors + ["red"] }
-            setGreen:
-              set:
-                colors: ${ .colors + ["green"] }
-            setBlue:
-              set:
-                colors: ${ .colors + ["blue"] }
+      - setRGB:
+          execute:
+            sequentially:
+              - setRed:
+                  set:
+                    colors: ${ .colors + ["red"] }
+              - setGreen:
+                  set:
+                    colors: ${ .colors + ["green"] }
+              - setBlue:
+                  set:
+                    colors: ${ .colors + ["blue"] }
     """
     When the workflow is executed
     Then the workflow should complete with output:
@@ -40,19 +40,19 @@ Feature: Composite Task
       namespace: default
       name: composite-sequential
     do:
-      setRGB:
-        execute:
-          concurrently:
-            setRed:
-              set:
-                colors: ${ .colors + ["red"] }
-            setGreen:
-              set:
-                colors: ${ .colors + ["green"] }
-            setBlue:
-              set:
-                colors: ${ .colors + ["blue"] }
-          compete: true
+      - setRGB:
+          execute:
+            concurrently:
+              - setRed:
+                  set:
+                    colors: ${ .colors + ["red"] }
+              - setGreen:
+                  set:
+                    colors: ${ .colors + ["green"] }
+              - setBlue:
+                  set:
+                    colors: ${ .colors + ["blue"] }
+            compete: true
     """
     When the workflow is executed
     Then the workflow should complete
