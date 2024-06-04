@@ -14,7 +14,9 @@
         + [gRPC](#grpc-call)
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
-    - [Composite](#composite)
+    - [Sequential](#sequential)
+    - [Concurrent](#concurrent)
+    - [Compete](#compete)
     - [Emit](#emit)
     - [For](#for)
     - [Listen](#listen)
@@ -66,7 +68,7 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | document | [`document`](#document) | `yes` | Documents the defined workflow. |
 | input | [`input`](#input) | `no` | Configures the workflow's input. |
 | use | [`use`](#use) | `no` | Defines the workflow's reusable components, if any. |
-| do | [`map[string, task][]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
+| do | [`task`](#task) | `yes` | The [task](#task) that must be performed by the [workflow](#workflow). |
 | timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
 | output | [`output`](#output) | `no` | Configures the workflow's output. |
 | schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
@@ -171,35 +173,36 @@ use:
   secrets:
     - my-oauth2-secret
 do:
-  - getAvailablePets:
-      call: getAvailablePets
-      output:
-        from: "$input + { availablePets: [.[] | select(.category.name == "dog" and (.tags[] | .breed == $input.order.breed))] }"
-  - submitMatchesByMail:
-      call: http
-      with:
-        method: post
-        endpoint:
-          uri: https://fake.smtp.service.com/email/send
-          authentication: petStoreOAuth2
-        body:
-          from: noreply@fake.petstore.com
-          to: ${ .order.client.email }
-          subject: Candidates for Adoption
-          body: >
-          Hello ${ .order.client.preferredDisplayName }!
+  sequentially:
+    - getAvailablePets:
+        call: getAvailablePets
+        output:
+          from: "$input + { availablePets: [.[] | select(.category.name == "dog" and (.tags[] | .breed == $input.order.breed))] }"
+    - submitMatchesByMail:
+        call: http
+        with:
+          method: post
+          endpoint:
+            uri: https://fake.smtp.service.com/email/send
+            authentication: petStoreOAuth2
+          body:
+            from: noreply@fake.petstore.com
+            to: ${ .order.client.email }
+            subject: Candidates for Adoption
+            body: >
+            Hello ${ .order.client.preferredDisplayName }!
 
-          Following your interest to adopt a dog, here is a list of candidates that you might be interested in:
+            Following your interest to adopt a dog, here is a list of candidates that you might be interested in:
 
-          ${ .pets | map("-\(.name)") | join("\n") }
+            ${ .pets | map("-\(.name)") | join("\n") }
 
-          Please do not hesistate to contact us at info@fake.petstore.com if your have questions.
+            Please do not hesistate to contact us at info@fake.petstore.com if your have questions.
 
-          Hope to hear from you soon!
+            Hope to hear from you soon!
 
-          ----------------------------------------------------------------------------------------------
-          DO NOT REPLY
-          ----------------------------------------------------------------------------------------------
+            ----------------------------------------------------------------------------------------------
+            DO NOT REPLY
+            ----------------------------------------------------------------------------------------------
 ```
 
 ### Task
@@ -215,7 +218,9 @@ By breaking down the [workflow](#workflow) into manageable [tasks](#task), organ
 The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** supported by all runtimes:
 
 - [Call](#call), used to call services and/or functions.
-- [Composite](#composite), used to define a minimum of two subtasks to perform.
+- [Sequential](#sequential), used to define a minimum of two subtasks to perform sequentially.
+- [Concurrent](#concurrent), used to define a minimum of two subtasks to perform concurrently.
+- [Compete](#compete), used to define a minimum of two subtasks to perform concurrently, with a single possible winner.
 - [Emit](#emit), used to emit [events](#event).
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](#listen), used to listen for an [event](#event) or more.
@@ -256,11 +261,10 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - getPetById:
-      call: http
-      with:
-        method: get
-        endpoint: https://petstore.swagger.io/v2/pet/{petId}
+  call: http
+  with:
+    method: get
+    endpoint: https://petstore.swagger.io/v2/pet/{petId}
 ```
 
 Serverless Workflow defines several default functions that **MUST** be supported by all implementations and runtimes:
@@ -295,16 +299,15 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - greetUser:
-      call: asyncapi
-      with:
-        document: https://fake.com/docs/asyncapi.json
-        operation: findPetsByStatus
-        server: staging
-        message: getPetByStatusQuery
-        binding: http
-        payload:
-          petId: ${ .pet.id }
+  call: asyncapi
+  with:
+    document: https://fake.com/docs/asyncapi.json
+    operation: findPetsByStatus
+    server: staging
+    message: getPetByStatusQuery
+    binding: http
+    payload:
+      petId: ${ .pet.id }
 ```
 
 ##### gRPC Call
@@ -332,17 +335,16 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - greetUser:
-      call: grpc
-      with:
-        proto: file://app/greet.proto
-        service:
-          name: GreeterApi.Greeter
-          host: localhost
-          port: 5011
-        method: SayHello
-        arguments:
-          name: ${ .user.preferredDisplayName }
+  call: grpc
+  with:
+    proto: file://app/greet.proto
+    service:
+      name: GreeterApi.Greeter
+      host: localhost
+      port: 5011
+    method: SayHello
+    arguments:
+      name: ${ .user.preferredDisplayName }
 ```
 
 ##### HTTP Call
@@ -368,11 +370,10 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - getPetById:
-      call: http
-      with:
-        method: get
-        endpoint: https://petstore.swagger.io/v2/pet/{petId}
+  call: http
+  with:
+    method: get
+    endpoint: https://petstore.swagger.io/v2/pet/{petId}
 ```
 
 ##### OpenAPI Call
@@ -398,30 +399,26 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - getPets:
-      call: openapi
-      with:
-        document: https://petstore.swagger.io/v2/swagger.json
-        operation: findPetsByStatus
-        parameters:
-          status: available
+  call: openapi
+  with:
+    document: https://petstore.swagger.io/v2/swagger.json
+    operation: findPetsByStatus
+    parameters:
+      status: available
 ```
 
-#### Composite
+#### Sequential
 
- Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
+ Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks one after the other to accomplish complex operations. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
 
 ##### Properties
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| execute.sequentially | [`task[]`](#task) | `no` | The tasks to perform sequentially.<br>*Required if `execute.concurrently` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
-| execute.concurrently | [`task[]`](#task) | `no` | The tasks to perform concurrently.<br>*Required if `execute.sequentially` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
-| execute.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*Ignored if `execute.sequentially` has been set. Defaults to `false`.*<br>*Must **not** be set if the [`tasks`](#task) are executed sequentially.* |
+| sequentially | [`map[string, task][]`](#task) | `yes` | The tasks to perform sequentially.*Must contain **at least** two [`tasks`](#task).* | 
 
 ##### Examples
 
-*Executing tasks sequentially:*
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
@@ -429,45 +426,54 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - bookTrip:
-      execute:
-        sequentially:
-          - bookHotel:
-              call: http
-              with:
-                method: post
-                endpoint: 
-                  uri: https://fake-booking-agency.com/hotels/book
-                  authentication: fake-booking-agency-oauth2
-                body:
-                  name: Four Seasons
-                  city: Antwerp
-                  country: Belgium
-          - bookFlight:
-              call: http
-              with:
-                method: post
-                endpoint: 
-                  uri: https://fake-booking-agency.com/flights/book
-                  authentication: fake-booking-agency-oauth2
-                body:
-                  departure:
-                    date: '01/01/26'
-                    time: '07:25:00'
-                    from:
-                      airport: BRU
-                      city: Zaventem
-                      country: Belgium
-                  arrival:
-                    date: '01/01/26'
-                    time: '11:12:00'
-                    to:
-                      airport: LIS
-                      city: Lisbon
-                      country: Portugal
+  sequentially:
+    - bookHotel:
+        call: http
+        with:
+          method: post
+          endpoint: 
+            uri: https://fake-booking-agency.com/hotels/book
+            authentication: fake-booking-agency-oauth2
+          body:
+            name: Four Seasons
+            city: Antwerp
+            country: Belgium
+    - bookFlight:
+        call: http
+        with:
+          method: post
+          endpoint: 
+            uri: https://fake-booking-agency.com/flights/book
+            authentication: fake-booking-agency-oauth2
+          body:
+            departure:
+              date: '01/01/26'
+              time: '07:25:00'
+              from:
+                airport: BRU
+                city: Zaventem
+                country: Belgium
+            arrival:
+              date: '01/01/26'
+              time: '11:12:00'
+              to:
+                airport: LIS
+                city: Lisbon
+                country: Portugal
 ```
 
-*Executing tasks concurrently:*
+#### Concurrent
+
+ Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and parallel execution of multiple subtasks to accomplish complex operations and increase performace. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
+
+##### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| concurrently | [`map[string, task][]`](#task) | `yes` | The tasks to perform concurrently. *Must contain **at least** two [`tasks`](#task).* | 
+
+##### Examples
+
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
@@ -475,25 +481,61 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - raiseAlarm:
-      execute:
-        concurrently:
-          - callNurse:
-              call: http
-              with:
-                method: put
-                endpoint: https://fake-hospital.com/api/v3/alert/nurses
-                body:
-                  patientId: ${ .patient.fullName }
-                  room: ${ .room.number }
-          - callDoctor:
-              call: http
-              with:
-                method: put
-                endpoint: https://fake-hospital.com/api/v3/alert/doctor
-                body:
-                  patientId: ${ .patient.fullName }
-                  room: ${ .room.number }
+  concurrently:
+    - callNurse:
+        call: http
+        with:
+          method: put
+          endpoint: https://fake-hospital.com/api/v3/alert/nurses
+          body:
+            patientId: ${ .patient.fullName }
+            room: ${ .room.number }
+    - callDoctor:
+        call: http
+        with:
+          method: put
+          endpoint: https://fake-hospital.com/api/v3/alert/doctor
+          body:
+            patientId: ${ .patient.fullName }
+            room: ${ .room.number }
+```
+
+#### Compete
+
+Races multiple tasks against each other, with a single possible winner, which sets the task's output. This task type is instrumental in handling scenarios where multiple tasks are competing to achieve a common goal, and only one task is needed to succeed.
+
+##### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| compete | [`map[string, task][]`](#task) | `yes` | The tasks to perform concurrently. *Must contain **at least** two [`tasks`](#task).* | 
+
+##### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: sample-workflow
+  version: '0.1.0'
+do:
+  compete:
+    - callNurse:
+        call: http
+        with:
+          method: put
+          endpoint: https://fake-hospital.com/api/v3/alert/nurses
+          body:
+            patientId: ${ .patient.fullName }
+            room: ${ .room.number }
+    - callDoctor:
+        call: http
+        with:
+          method: put
+          endpoint: https://fake-hospital.com/api/v3/alert/doctor
+          body:
+            patientId: ${ .patient.fullName }
+            room: ${ .room.number }
 ```
 
 #### Emit
@@ -515,19 +557,18 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - placeOrder:
-      emit:
-        event:
-          with:
-            source: https://petstore.com
-            type: com.petstore.order.placed.v1
-            data:
-              client:
-                firstName: Cruella
-                lastName: de Vil
-              items:
-              - breed: dalmatian
-                quantity: 101
+  emit:
+    event:
+      with:
+        source: https://petstore.com
+        type: com.petstore.order.placed.v1
+        data:
+          client:
+            firstName: Cruella
+            lastName: de Vil
+          items:
+          - breed: dalmatian
+            quantity: 101
 ```
 
 #### For
@@ -553,20 +594,19 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - checkup:
-      for:
-        each: pet
-        in: .pets
-        at: index
-      while: .vet != null
-      do:
-        listen:
-          to:
-            one:
-              with:
-                type: com.fake.petclinic.pets.checkup.completed.v2
-          output:
-            to: '.pets + [{ "id": $pet.id }]'        
+  for:
+    each: pet
+    in: .pets
+    at: index
+  while: .vet != null
+  do:
+    listen:
+      to:
+        one:
+          with:
+            type: com.fake.petclinic.pets.checkup.completed.v2
+      output:
+        to: '.pets + [{ "id": $pet.id }]'        
 ```
 
 #### Listen
@@ -588,18 +628,17 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - callDoctor:
-      listen:
-        to:
-          any:
-          - with:
-              type: com.fake-hospital.vitals.measurements.temperature
-              data:
-                temperature: ${ .temperature > 38 }
-          - with:
-              type: com.fake-hospital.vitals.measurements.bpm
-              data:
-                temperature: ${ .bpm < 60 or .bpm > 100 }
+  listen:
+    to:
+      any:
+      - with:
+          type: com.fake-hospital.vitals.measurements.temperature
+          data:
+            temperature: ${ .temperature > 38 }
+      - with:
+          type: com.fake-hospital.vitals.measurements.bpm
+          data:
+            temperature: ${ .bpm < 60 or .bpm > 100 }
 ```
 
 #### Raise
@@ -621,28 +660,29 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - processTicket:
-      switch:
-        - highPriority:
-            when: .ticket.priority == "high"
-            then: escalateToManager
-        - mediumPriority:
-            when: .ticket.priority == "medium"
-            then: assignToSpecialist
-        - lowPriority:
-            when: .ticket.priority == "low"
-            then: resolveTicket
-        - default:
-            then: raiseUndefinedPriorityError
-  - raiseUndefinedPriorityError:
-      raise:
-        error:
-          type: https://fake.com/errors/tickets/undefined-priority
-          status: 400
-          title: Undefined Priority
-  - escalateToManager: {}
-  - assignToSpecialist: {}
-  - resolveTicket: {}
+  sequentially:
+    - processTicket:
+        switch:
+          - highPriority:
+              when: .ticket.priority == "high"
+              then: escalateToManager
+          - mediumPriority:
+              when: .ticket.priority == "medium"
+              then: assignToSpecialist
+          - lowPriority:
+              when: .ticket.priority == "low"
+              then: resolveTicket
+          - default:
+              then: raiseUndefinedPriorityError
+    - raiseUndefinedPriorityError:
+        raise:
+          error:
+            type: https://fake.com/errors/tickets/undefined-priority
+            status: 400
+            title: Undefined Priority
+    - escalateToManager: {}
+    - assignToSpecialist: {}
+    - resolveTicket: {}
 ```
 
 #### Run
@@ -667,29 +707,29 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
+  sequentially:
+    - runContainer:
+        run:
+          container:
+            image: fake-image
 
-  - runContainer:
-      run:
-        container:
-          image: fake-image
+    - runScript:
+        run:
+          script:
+            language: js
+            code: >
+              Some cool multiline script
 
-  - runScript:
-      run:
-        script:
-          language: js
-          code: >
-            Some cool multiline script
+    - runShell:
+        run:
+          shell:
+            command: 'echo "Hello, ${ .user.name }"'
 
-  - runShell:
-      run:
-        shell:
-          command: 'echo "Hello, ${ .user.name }"'
-
-  - runWorkflow:
-      run:
-        workflow:
-          reference: another-one:0.1.0
-          input: {}
+    - runWorkflow:
+        run:
+          workflow:
+            reference: another-one:0.1.0
+            input: {}
 ```
 
 ##### Container Process
@@ -715,10 +755,9 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - runContainer:
-      run:
-        container:
-          image: fake-image
+  run:
+    container:
+      image: fake-image
 ```
 
 ##### Script Process
@@ -743,12 +782,11 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - runScript:
-      run:
-        script:
-          language: js
-          code: >
-            Some cool multiline script
+  run:
+    script:
+      language: js
+      code: >
+        Some cool multiline script
 ```
 
 ##### Shell Process
@@ -772,10 +810,9 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - runShell:
-      run:
-        shell:
-          command: 'echo "Hello, ${ .user.name }"'
+  run:
+    shell:
+      command: 'echo "Hello, ${ .user.name }"'
 ```
 
 ##### Workflow Process
@@ -799,12 +836,11 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - runShell:
-      run:
-        workflow:
-          reference: another-one:0.1.0
-          input:
-            foo: bar
+  run:
+    workflow:
+      reference: another-one:0.1.0
+      input:
+        foo: bar
 ```
 
 #### Set
@@ -826,11 +862,10 @@ document:
   name: set
   version: '0.1.0'
 do:
-  - initialize:
-      set:
-        shape: circle
-        size: ${ .configuration.size }
-        fill: ${ .configuration.fill }
+  set:
+    shape: circle
+    size: ${ .configuration.size }
+    fill: ${ .configuration.fill }
 ```
 
 #### Switch
@@ -852,34 +887,35 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - processOrder:
-      switch:
-        - case1:
-            when: .orderType == "electronic"
-            then: processElectronicOrder
-        - case2:
-            when: .orderType == "physical"
-            then: processPhysicalOrder
-        - default:
-            then: handleUnknownOrderType
-  - processElectronicOrder:
-    execute:
-      sequentially:
-        - validatePayment: {}
-        - fulfillOrder: {}
-    then: exit
-  - processPhysicalOrder:
+  sequentially:
+    - processOrder:
+        switch:
+          - case1:
+              when: .orderType == "electronic"
+              then: processElectronicOrder
+          - case2:
+              when: .orderType == "physical"
+              then: processPhysicalOrder
+          - default:
+              then: handleUnknownOrderType
+    - processElectronicOrder:
       execute:
         sequentially:
-          - checkInventory: {}
-          - packItems: {}
-          - scheduleShipping: {}
-    then: exit
-  - handleUnknownOrderType:
-    execute:
-      sequentially:
-        - logWarning: {}
-        - notifyAdmin: {}
+          - validatePayment: {}
+          - fulfillOrder: {}
+      then: exit
+    - processPhysicalOrder:
+        execute:
+          sequentially:
+            - checkInventory: {}
+            - packItems: {}
+            - scheduleShipping: {}
+      then: exit
+    - handleUnknownOrderType:
+      execute:
+        sequentially:
+          - logWarning: {}
+          - notifyAdmin: {}
 ```
 
 ##### Switch Case
@@ -912,26 +948,25 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - processOrder:
-      try:
-        call: http
-        with:
-          method: get
-          endpoint: https://
-      catch:
-        errors:
-          with:
-            type: https://serverlessworkflow.io.io/dsl/errors/types/communication
-            status: 503
-        as: error
-        retry:
-          delay:
-            seconds: 3
-          backoff:
-            exponential: {}
-          limit:
-            attempt:
-              count: 5
+  try:
+    call: http
+    with:
+      method: get
+      endpoint: https://
+  catch:
+    errors:
+      with:
+        type: https://serverlessworkflow.io.io/dsl/errors/types/communication
+        status: 503
+    as: error
+    retry:
+      delay:
+        seconds: 3
+      backoff:
+        exponential: {}
+      limit:
+        attempt:
+          count: 5
 ```
 
 ##### Catch
@@ -968,9 +1003,8 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - delay10Seconds:
-      wait:
-        seconds: 10
+  wait:
+    seconds: 10
 ```
 
 ### Flow Directive
@@ -1036,13 +1070,12 @@ use:
     sampleBasicFromSecret:
       basic: usernamePasswordSecret
 do:
-  - getMessages:
-      call: http
-      with:
-        method: get
-        endpoint: 
-          uri: https://secured.fake.com/sample
-          authentication: sampleBasicFromSecret
+  call: http
+  with:
+    method: get
+    endpoint: 
+      uri: https://secured.fake.com/sample
+      authentication: sampleBasicFromSecret
 ```
 
 #### Basic Authentication
@@ -1071,13 +1104,12 @@ use:
         username: admin
         password: 123
 do:
-  - getMessages:
-      call: http
-      with:
-        method: get
-        endpoint: 
-          uri: https://secured.fake.com/sample
-          authentication: sampleBasic
+  call: http
+  with:
+    method: get
+    endpoint: 
+      uri: https://secured.fake.com/sample
+      authentication: sampleBasic
 ```
 
 #### Bearer Authentication
@@ -1099,15 +1131,14 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - getMessages:
-      call: http
-      with:
-        method: get
-        endpoint: 
-          uri: https://secured.fake.com/sample
-          authentication:
-            bearer:
-              token: ${ .user.token }
+  call: http
+  with:
+    method: get
+    endpoint: 
+      uri: https://secured.fake.com/sample
+      authentication:
+        bearer:
+          token: ${ .user.token }
 ```
 
 #### Certificate Authentication
@@ -1144,21 +1175,20 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - getMessages:
-      call: http
-      with:
-        method: get
-        endpoint: 
-          uri: https://secured.fake.com/sample
-          authentication:
-            oauth2:
-              authority: http://keycloak/realms/fake-authority/.well-known/openid-configuration
-              grant: client-credentials
-              client:
-                id: workflow-runtime
-                secret: **********
-              scopes: [ api ]
-              audiences: [ runtime ]
+  call: http
+  with:
+    method: get
+    endpoint: 
+      uri: https://secured.fake.com/sample
+      authentication:
+        oauth2:
+          authority: http://keycloak/realms/fake-authority/.well-known/openid-configuration
+          grant: client-credentials
+          client:
+            id: workflow-runtime
+            secret: **********
+          scopes: [ api ]
+          audiences: [ runtime ]
 ```
 
 ##### OAUTH2 Token
@@ -1215,11 +1245,10 @@ use:
             body:
               message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
-  - get:
-      call: http
-      with:
-        method: get
-        endpoint: https://fake.com/sample
+  call: http
+  with:
+    method: get
+    endpoint: https://fake.com/sample
 ```
 
 *Intercept HTTP calls to 'https://mocked.service.com' and mock its response:*
@@ -1244,11 +1273,10 @@ use:
                 bar: baz
           then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
 do:
-  - get:
-      call: http
-      with:
-        method: get
-        endpoint: https://fake.com/sample
+  call: http
+  with:
+    method: get
+    endpoint: https://fake.com/sample
 ```
 
 ### Error
@@ -1489,9 +1517,8 @@ document:
   name: sample
   version: '0.1.0'
 do:
-  - waitFor60Seconds:
-      wait:
-        seconds: 60
+  wait:
+    seconds: 60
 timeout:
   after:
     seconds: 30
