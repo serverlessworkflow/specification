@@ -23,7 +23,7 @@ do:
           - fulfillOrder:
               set:
                 status: fulfilled
-      then: exit
+        then: exit
     - processPhysicalOrder:
         sequentially:
           - checkInventory:
@@ -35,7 +35,7 @@ do:
           - scheduleShipping:
               set:
                 address: Elmer St
-      then: exit
+        then: exit
     - handleUnknownOrderType:
         sequentially:
           - logWarning:
