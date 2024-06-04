@@ -4,18 +4,18 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  - processOrder:
-      switch:
-        - case1:
-            when: .orderType == "electronic"
-            then: processElectronicOrder
-        - case2:
-            when: .orderType == "physical"
-            then: processPhysicalOrder
-        - default:
-            then: handleUnknownOrderType
-  - processElectronicOrder:
-      execute:
+  sequentially:
+    - processOrder:
+        switch:
+          - case1:
+              when: .orderType == "electronic"
+              then: processElectronicOrder
+          - case2:
+              when: .orderType == "physical"
+              then: processPhysicalOrder
+          - default:
+              then: handleUnknownOrderType
+    - processElectronicOrder:
         sequentially:
           - validatePayment:
               set:
@@ -24,8 +24,7 @@ do:
               set:
                 status: fulfilled
       then: exit
-  - processPhysicalOrder:
-      execute:
+    - processPhysicalOrder:
         sequentially:
           - checkInventory:
               set:
@@ -37,8 +36,7 @@ do:
               set:
                 address: Elmer St
       then: exit
-  - handleUnknownOrderType:
-      execute:
+    - handleUnknownOrderType:
         sequentially:
           - logWarning:
               set:

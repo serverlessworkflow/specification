@@ -18,9 +18,8 @@ use:
                 bar: baz
           then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
 do:
-  - get:
-      call: http
-      with:
-        method: get
-        endpoint: 
-          uri: https://fake.com/sample
+  call: http
+  with:
+    method: get
+    endpoint: 
+      uri: https://fake.com/sample
