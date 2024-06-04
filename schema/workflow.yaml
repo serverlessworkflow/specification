@@ -76,14 +76,7 @@ properties:
         description: The workflow's secrets.
     description: Defines the workflow's reusable components.
   do:
-    type: array
-    minItems: 1
-    items:
-      type: object
-      minProperties: 1
-      maxProperties: 1
-      additionalProperties:
-        $ref: '#/$defs/task'
+    $ref: '#/$defs/do'
     description: Defines the tasks the workflow must perform
   timeout:
     $ref: '#/$defs/timeout'
@@ -108,6 +101,15 @@ properties:
         description: Specifies the events that trigger the workflow execution.
     description: Schedules the workflow
 $defs:
+  do:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      minProperties: 1
+      maxProperties: 1
+      additionalProperties:
+        $ref: '#/$defs/task'
   task:
     type: object
     properties:
@@ -380,7 +382,7 @@ $defs:
         type: string
         description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
       do:
-        $ref: '#/$defs/task'
+        $ref: '#/$defs/do'
     description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
     required: [ for, do ]
   listenTask:

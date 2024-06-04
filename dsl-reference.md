@@ -560,13 +560,14 @@ do:
         at: index
       while: .vet != null
       do:
-        listen:
-          to:
-            one:
-              with:
-                type: com.fake.petclinic.pets.checkup.completed.v2
-          output:
-            to: '.pets + [{ "id": $pet.id }]'        
+        - checkFleas:
+            listen:
+              to:
+                one:
+                  with:
+                    type: com.fake.petclinic.pets.checkup.completed.v2
+              output:
+                to: '.pets + [{ "id": $pet.id }]'        
 ```
 
 #### Listen
