@@ -52,7 +52,12 @@ jobs:
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINTER_RULES_PATH: ${{ github.workspace }}
+
+          # relative to $DEFAULT_WORKSPACE=$GITHUB_WORKSPACE
+          LINTER_RULES_PATH: "."
+
+          # check all files (including unmodified) in the repository
+          VALIDATE_ALL_CODEBASE: true
 
           VALIDATE_MARKDOWN: true
           MARKDOWN_CONFIG_FILE: .markdownlint.yaml
