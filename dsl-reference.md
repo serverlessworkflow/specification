@@ -14,9 +14,9 @@
         + [gRPC](#grpc-call)
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
-    - [Sequential](#sequential)
-    - [Concurrent](#concurrent)
-    - [Compete](#compete)
+    - [Sequentially](#sequentially)
+    - [Concurrently](#concurrently)
+    - [Competitively](#competitively)
     - [Emit](#emit)
     - [For](#for)
     - [Listen](#listen)
@@ -218,9 +218,9 @@ By breaking down the [workflow](#workflow) into manageable [tasks](#task), organ
 The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** supported by all runtimes:
 
 - [Call](#call), used to call services and/or functions.
-- [Sequential](#sequential), used to define a minimum of two subtasks to perform sequentially.
-- [Concurrent](#concurrent), used to define a minimum of two subtasks to perform concurrently.
-- [Compete](#compete), used to define a minimum of two subtasks to perform concurrently, with a single possible winner.
+- [Sequentially](#sequentially), used to define a minimum of two subtasks to perform sequentially.
+- [Concurrently](#concurrently), used to define a minimum of two subtasks to perform concurrently.
+- [competitively](#competitively), used to define a minimum of two subtasks to perform concurrently, with a single possible winner.
 - [Emit](#emit), used to emit [events](#event).
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](#listen), used to listen for an [event](#event) or more.
@@ -407,7 +407,7 @@ do:
       status: available
 ```
 
-#### Sequential
+#### Sequentially
 
  Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks one after the other to accomplish complex operations. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
 
@@ -462,7 +462,7 @@ do:
                 country: Portugal
 ```
 
-#### Concurrent
+#### Concurrently
 
  Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and parallel execution of multiple subtasks to accomplish complex operations and increase performace. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
 
@@ -500,7 +500,7 @@ do:
             room: ${ .room.number }
 ```
 
-#### Compete
+#### Competitively
 
 Races multiple tasks against each other, with a single possible winner, which sets the task's output. This task type is instrumental in handling scenarios where multiple tasks are competing to achieve a common goal, and only one task is needed to succeed.
 
@@ -508,7 +508,7 @@ Races multiple tasks against each other, with a single possible winner, which se
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| compete | [`map[string, task][]`](#task) | `yes` | The tasks to perform concurrently. *Must contain **at least** two [`tasks`](#task).* | 
+| competitively | [`map[string, task][]`](#task) | `yes` | The tasks to perform concurrently. *Must contain **at least** two [`tasks`](#task).* | 
 
 ##### Examples
 
@@ -519,7 +519,7 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  compete:
+  competitively:
     - callNurse:
         call: http
         with:
@@ -1212,7 +1212,7 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| extend |  `string` | `yes` | The type of task to extend<br>Supported values are: `call`, `sequentially`, `concurrently`, `compete`, `emit`, `extension`, `for`, `listen`, `raise`, `run`, `set`, `switch`, `try`, `wait` and `all` |
+| extend |  `string` | `yes` | The type of task to extend<br>Supported values are: `call`, `sequentially`, `concurrently`, `competitively`, `emit`, `extension`, `for`, `listen`, `raise`, `run`, `set`, `switch`, `try`, `wait` and `all` |
 | when | `string` | `no` | A runtime expression used to determine whether or not the extension should apply in the specified context |
 | before | [`task`](#task) | `no` | The task to execute, if any, before the extended task |
 | after | [`task`](#task) | `no` | The task to execute, if any, after the extended task |
