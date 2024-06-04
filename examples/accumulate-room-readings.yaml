@@ -30,12 +30,11 @@ do:
         each: reading
         in: .readings
       do:
-        - callLogReading:
-            call: openapi
-            with:
-              document:
-                uri: http://myorg.io/ordersservices.json
-              operationId: logreading
+        call: openapi
+        with:
+          document:
+            uri: http://myorg.io/ordersservices.json
+          operationId: logreading
   - generateReport:
       call: openapi
       with:
