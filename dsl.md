@@ -236,11 +236,11 @@ Errors are critical for both authors and runtimes as they provide a means to com
 *Retrying 5 times when an error with 503 is caught:*
 ```yaml
 try:
-  - call: http
-    with:
-      method: get
-      endpoint:
-        uri: https://example-service.com/healthz
+  call: http
+  with:
+    method: get
+    endpoint:
+      uri: https://example-service.com/healthz
 catch:
   errors:
     with:
@@ -342,10 +342,10 @@ document:
   version: '0.1.0'
 
 do:
-  - name: validateEmail
-    call: https://github.com/myorg/functions/validateEmailAddress@v1
-    with:
-      emailAddress: ${ .userEmail }
+  - validateEmail:
+      call: https://github.com/myorg/functions/validateEmailAddress@v1
+      with:
+        emailAddress: ${ .userEmail }
 ```
 
 ##### Publishing a Custom Function
@@ -426,11 +426,11 @@ use:
           body:
             message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
-  - name: get
-    call: http
-    with:
-      method: get
-      uri: https://fake.com/sample
+  - get:
+      call: http
+      with:
+        method: get
+        uri: https://fake.com/sample
 ```
 
 ### External Resources
