@@ -18,20 +18,20 @@
 # To use this workflow, you will need to set up a .github/labeler.yml
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler/blob/master/README.md
-
+---
 name: Verify Specification Examples
 
-on:
+on: # yamllint disable-line rule:truthy
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
-      - 'schema/**'
-      - 'examples/**'
+      - "schema/**"
+      - "examples/**"
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
-      - 'schema/**'
-      - 'examples/**'
+      - "schema/**"
+      - "examples/**"
 
 jobs:
   build:
@@ -44,12 +44,12 @@ jobs:
         node-version: [21.x]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: .ci/validation/package-lock.json
-    - run: npm install
-    - run: npm test
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: .ci/validation/package-lock.json
+      - run: npm install
+      - run: npm test

@@ -7,5 +7,6 @@ We follow the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/mai
     If your project isn't prepared to handle reports, remove the project email address and just have
     reporters send to conduct@cncf.io.
 -->
+
 Please contact the [CNCF Code of Conduct Committee](mailto:conduct@cncf.io)
 in order to report violations of the Code of Conduct.
