@@ -65,23 +65,24 @@ Feature: Data Flow
       namespace: default
       name: non-object-output
     do:
-      sequentially:
-        - getPetById1:
-            call: http
-            with:
-              method: get
-              endpoint:
-                uri: https://petstore.swagger.io/v2/pet/{petId} #simple interpolation, only possible with top level variables
-            output:
-              from: .id
-        - getPetById2:
-            call: http
-            with:
-              method: get
-              endpoint:
-                uri: https://petstore.swagger.io/v2/pet/2
-            output:
-              from: '{ ids: [ $input, .id ] }'
+      execute:
+        sequentially:
+          - getPetById1:
+              call: http
+              with:
+                method: get
+                endpoint:
+                  uri: https://petstore.swagger.io/v2/pet/{petId} #simple interpolation, only possible with top level variables
+              output:
+                from: .id
+          - getPetById2:
+              call: http
+              with:
+                method: get
+                endpoint:
+                  uri: https://petstore.swagger.io/v2/pet/2
+              output:
+                from: '{ ids: [ $input, .id ] }'
     """
     When the workflow is executed
     Then the workflow should complete with output:

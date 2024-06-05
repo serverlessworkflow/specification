@@ -11,29 +11,31 @@ Feature: Switch Task
       namespace: default
       name: switch-match
     do:
-      - switchColor:
-          switch:
-            - red:
-                when: '.color == "red"'
-                then: setRed
-            - green:
-                when: '.color == "green"'
-                then: setGreen
-            - blue:
-                when: '.color == "blue"'
-                then: setBlue
-      - setRed:
-          set:
-            colors: '${ .colors + [ "red" ] }'
-          then: end
-      - setGreen:
-          set:
-            colors: '${ .colors + [ "green" ] }'
-          then: end
-      - setBlue:
-          set:
-            colors: '${ .colors + [ "blue" ] }'
-          then: end
+      execute:
+        sequentially;
+          - switchColor:
+              switch:
+                - red:
+                    when: '.color == "red"'
+                    then: setRed
+                - green:
+                    when: '.color == "green"'
+                    then: setGreen
+                - blue:
+                    when: '.color == "blue"'
+                    then: setBlue
+          - setRed:
+              set:
+                colors: '${ .colors + [ "red" ] }'
+              then: end
+          - setGreen:
+              set:
+                colors: '${ .colors + [ "green" ] }'
+              then: end
+          - setBlue:
+              set:
+                colors: '${ .colors + [ "blue" ] }'
+              then: end
     """
     And given the workflow input is:
     """yaml
@@ -55,27 +57,29 @@ Feature: Switch Task
       namespace: default
       name: switch-default-implicit
     do:
-      - switchColor:
-          switch:
-            - red:
-                when: '.color == "red"'
-                then: setRed
-            - green:
-                when: '.color == "green"'
-                then: setGreen
-            - blue:
-                when: '.color == "blue"'
-                then: setBlue
-          then: end
-      - setRed:
-          set:
-            colors: '${ .colors + [ "red" ] }'
-      - setGreen:
-          set:
-            colors: '${ .colors + [ "green" ] }'
-      - setBlue:
-          set:
-            colors: '${ .colors + [ "blue" ] }'
+      execute:
+        sequentially:
+          - switchColor:
+              switch:
+                - red:
+                    when: '.color == "red"'
+                    then: setRed
+                - green:
+                    when: '.color == "green"'
+                    then: setGreen
+                - blue:
+                    when: '.color == "blue"'
+                    then: setBlue
+              then: end
+          - setRed:
+              set:
+                colors: '${ .colors + [ "red" ] }'
+          - setGreen:
+              set:
+                colors: '${ .colors + [ "green" ] }'
+          - setBlue:
+              set:
+                colors: '${ .colors + [ "blue" ] }'
     """
     And given the workflow input is:
     """yaml
@@ -97,32 +101,33 @@ Feature: Switch Task
       namespace: default
       name: switch-default-implicit
     do:
-      sequentially:
-        - switchColor:
-            switch:
-              - red:
-                  when: '.color == "red"'
-                  then: setRed
-              - green:
-                  when: '.color == "green"'
-                  then: setGreen
-              - blue:
-                  when: '.color == "blue"'
-                  then: setBlue
-              - anyOtherColor:
-                  then: setCustomColor
-        - setRed:
-            set:
-              colors: '${ .colors + [ "red" ] }'
-        - setGreen:
-            set:
-              colors: '${ .colors + [ "green" ] }'
-        - setBlue:
-            set:
-              colors: '${ .colors + [ "blue" ] }'
-        - setCustomColor:
-            set:
-              colors: '${ .colors + [ $input.color ] }'
+      execute:
+        sequentially:
+          - switchColor:
+              switch:
+                - red:
+                    when: '.color == "red"'
+                    then: setRed
+                - green:
+                    when: '.color == "green"'
+                    then: setGreen
+                - blue:
+                    when: '.color == "blue"'
+                    then: setBlue
+                - anyOtherColor:
+                    then: setCustomColor
+          - setRed:
+              set:
+                colors: '${ .colors + [ "red" ] }'
+          - setGreen:
+              set:
+                colors: '${ .colors + [ "green" ] }'
+          - setBlue:
+              set:
+                colors: '${ .colors + [ "blue" ] }'
+          - setCustomColor:
+              set:
+                colors: '${ .colors + [ $input.color ] }'
     """
     And given the workflow input is:
     """yaml
