@@ -14,9 +14,7 @@
         + [gRPC](#grpc-call)
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
-    - [Sequential](#sequential)
-    - [Concurrent](#concurrent)
-    - [Compete](#compete)
+    - [Composite](#composite)
     - [Emit](#emit)
     - [For](#for)
     - [Listen](#listen)
@@ -173,36 +171,37 @@ use:
   secrets:
     - my-oauth2-secret
 do:
-  sequentially:
-    - getAvailablePets:
-        call: getAvailablePets
-        output:
-          from: "$input + { availablePets: [.[] | select(.category.name == "dog" and (.tags[] | .breed == $input.order.breed))] }"
-    - submitMatchesByMail:
-        call: http
-        with:
-          method: post
-          endpoint:
-            uri: https://fake.smtp.service.com/email/send
-            authentication: petStoreOAuth2
-          body:
-            from: noreply@fake.petstore.com
-            to: ${ .order.client.email }
-            subject: Candidates for Adoption
-            body: >
-            Hello ${ .order.client.preferredDisplayName }!
+  execute:
+    sequentially:
+      - getAvailablePets:
+          call: getAvailablePets
+          output:
+            from: "$input + { availablePets: [.[] | select(.category.name == "dog" and (.tags[] | .breed == $input.order.breed))] }"
+      - submitMatchesByMail:
+          call: http
+          with:
+            method: post
+            endpoint:
+              uri: https://fake.smtp.service.com/email/send
+              authentication: petStoreOAuth2
+            body:
+              from: noreply@fake.petstore.com
+              to: ${ .order.client.email }
+              subject: Candidates for Adoption
+              body: >
+              Hello ${ .order.client.preferredDisplayName }!
 
-            Following your interest to adopt a dog, here is a list of candidates that you might be interested in:
+              Following your interest to adopt a dog, here is a list of candidates that you might be interested in:
 
-            ${ .pets | map("-\(.name)") | join("\n") }
+              ${ .pets | map("-\(.name)") | join("\n") }
 
-            Please do not hesistate to contact us at info@fake.petstore.com if your have questions.
+              Please do not hesistate to contact us at info@fake.petstore.com if your have questions.
 
-            Hope to hear from you soon!
+              Hope to hear from you soon!
 
-            ----------------------------------------------------------------------------------------------
-            DO NOT REPLY
-            ----------------------------------------------------------------------------------------------
+              ----------------------------------------------------------------------------------------------
+              DO NOT REPLY
+              ----------------------------------------------------------------------------------------------
 ```
 
 ### Task
@@ -218,9 +217,7 @@ By breaking down the [workflow](#workflow) into manageable [tasks](#task), organ
 The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** supported by all runtimes:
 
 - [Call](#call), used to call services and/or functions.
-- [Sequential](#sequential), used to define a minimum of two subtasks to perform sequentially.
-- [Concurrent](#concurrent), used to define a minimum of two subtasks to perform concurrently.
-- [Compete](#compete), used to define a minimum of two subtasks to perform concurrently, with a single possible winner.
+- [Composite](#composite), used to define a minimum of two subtasks to perform.
 - [Emit](#emit), used to emit [events](#event).
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](#listen), used to listen for an [event](#event) or more.
@@ -407,18 +404,21 @@ do:
       status: available
 ```
 
-#### Sequential
+#### Composite
 
- Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks one after the other to accomplish complex operations. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
+ Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
 
 ##### Properties
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| sequentially | [`map[string, task][]`](#task) | `yes` | The tasks to perform sequentially.*Must contain **at least** two [`tasks`](#task).* | 
+| execute.sequentially | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially.<br>*Required if `execute.concurrently` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
+| execute.concurrently | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently.<br>*Required if `execute.sequentially` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
+| execute.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*Ignored if `execute.sequentially` has been set. Defaults to `false`.*<br>*Must **not** be set if the [`tasks`](#task) are executed sequentially.* |
 
 ##### Examples
 
+*Executing tasks sequentially:*
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
@@ -426,54 +426,44 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  sequentially:
-    - bookHotel:
-        call: http
-        with:
-          method: post
-          endpoint: 
-            uri: https://fake-booking-agency.com/hotels/book
-            authentication: fake-booking-agency-oauth2
-          body:
-            name: Four Seasons
-            city: Antwerp
-            country: Belgium
-    - bookFlight:
-        call: http
-        with:
-          method: post
-          endpoint: 
-            uri: https://fake-booking-agency.com/flights/book
-            authentication: fake-booking-agency-oauth2
-          body:
-            departure:
-              date: '01/01/26'
-              time: '07:25:00'
-              from:
-                airport: BRU
-                city: Zaventem
-                country: Belgium
-            arrival:
-              date: '01/01/26'
-              time: '11:12:00'
-              to:
-                airport: LIS
-                city: Lisbon
-                country: Portugal
+  execute:
+    sequentially:
+      - bookHotel:
+          call: http
+          with:
+            method: post
+            endpoint: 
+              uri: https://fake-booking-agency.com/hotels/book
+              authentication: fake-booking-agency-oauth2
+            body:
+              name: Four Seasons
+              city: Antwerp
+              country: Belgium
+      - bookFlight:
+          call: http
+          with:
+            method: post
+            endpoint: 
+              uri: https://fake-booking-agency.com/flights/book
+              authentication: fake-booking-agency-oauth2
+            body:
+              departure:
+                date: '01/01/26'
+                time: '07:25:00'
+                from:
+                  airport: BRU
+                  city: Zaventem
+                  country: Belgium
+              arrival:
+                date: '01/01/26'
+                time: '11:12:00'
+                to:
+                  airport: LIS
+                  city: Lisbon
+                  country: Portugal
 ```
 
-#### Concurrent
-
- Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and parallel execution of multiple subtasks to accomplish complex operations and increase performace. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
-
-##### Properties
-
-| Name | Type | Required | Description|
-|:--|:---:|:---:|:---|
-| concurrently | [`map[string, task][]`](#task) | `yes` | The tasks to perform concurrently. *Must contain **at least** two [`tasks`](#task).* | 
-
-##### Examples
-
+*Executing tasks concurrently:*
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
@@ -481,61 +471,24 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  concurrently:
-    - callNurse:
-        call: http
-        with:
-          method: put
-          endpoint: https://fake-hospital.com/api/v3/alert/nurses
-          body:
-            patientId: ${ .patient.fullName }
-            room: ${ .room.number }
-    - callDoctor:
-        call: http
-        with:
-          method: put
-          endpoint: https://fake-hospital.com/api/v3/alert/doctor
-          body:
-            patientId: ${ .patient.fullName }
-            room: ${ .room.number }
-```
-
-#### Compete
-
-Races multiple tasks against each other, with a single possible winner, which sets the task's output. This task type is instrumental in handling scenarios where multiple tasks are competing to achieve a common goal, and only one task is needed to succeed.
-
-##### Properties
-
-| Name | Type | Required | Description|
-|:--|:---:|:---:|:---|
-| compete | [`map[string, task][]`](#task) | `yes` | The tasks to perform concurrently. *Must contain **at least** two [`tasks`](#task).* | 
-
-##### Examples
-
-```yaml
-document:
-  dsl: '1.0.0-alpha1'
-  namespace: test
-  name: sample-workflow
-  version: '0.1.0'
-do:
-  compete:
-    - callNurse:
-        call: http
-        with:
-          method: put
-          endpoint: https://fake-hospital.com/api/v3/alert/nurses
-          body:
-            patientId: ${ .patient.fullName }
-            room: ${ .room.number }
-    - callDoctor:
-        call: http
-        with:
-          method: put
-          endpoint: https://fake-hospital.com/api/v3/alert/doctor
-          body:
-            patientId: ${ .patient.fullName }
-            room: ${ .room.number }
+  execute:
+    concurrently:
+      - callNurse:
+          call: http
+          with:
+            method: put
+            endpoint: https://fake-hospital.com/api/v3/alert/nurses
+            body:
+              patientId: ${ .patient.fullName }
+              room: ${ .room.number }
+      - callDoctor:
+          call: http
+          with:
+            method: put
+            endpoint: https://fake-hospital.com/api/v3/alert/doctor
+            body:
+              patientId: ${ .patient.fullName }
+              room: ${ .room.number }
 ```
 
 #### Emit
@@ -660,29 +613,30 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  sequentially:
-    - processTicket:
-        switch:
-          - highPriority:
-              when: .ticket.priority == "high"
-              then: escalateToManager
-          - mediumPriority:
-              when: .ticket.priority == "medium"
-              then: assignToSpecialist
-          - lowPriority:
-              when: .ticket.priority == "low"
-              then: resolveTicket
-          - default:
-              then: raiseUndefinedPriorityError
-    - raiseUndefinedPriorityError:
-        raise:
-          error:
-            type: https://fake.com/errors/tickets/undefined-priority
-            status: 400
-            title: Undefined Priority
-    - escalateToManager: {}
-    - assignToSpecialist: {}
-    - resolveTicket: {}
+  execute:
+    sequentially:
+      - processTicket:
+          switch:
+            - highPriority:
+                when: .ticket.priority == "high"
+                then: escalateToManager
+            - mediumPriority:
+                when: .ticket.priority == "medium"
+                then: assignToSpecialist
+            - lowPriority:
+                when: .ticket.priority == "low"
+                then: resolveTicket
+            - default:
+                then: raiseUndefinedPriorityError
+      - raiseUndefinedPriorityError:
+          raise:
+            error:
+              type: https://fake.com/errors/tickets/undefined-priority
+              status: 400
+              title: Undefined Priority
+      - escalateToManager: {}
+      - assignToSpecialist: {}
+      - resolveTicket: {}
 ```
 
 #### Run
@@ -707,29 +661,30 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  sequentially:
-    - runContainer:
-        run:
-          container:
-            image: fake-image
+  execute:
+    sequentially:
+      - runContainer:
+          run:
+            container:
+              image: fake-image
 
-    - runScript:
-        run:
-          script:
-            language: js
-            code: >
-              Some cool multiline script
+      - runScript:
+          run:
+            script:
+              language: js
+              code: >
+                Some cool multiline script
 
-    - runShell:
-        run:
-          shell:
-            command: 'echo "Hello, ${ .user.name }"'
+      - runShell:
+          run:
+            shell:
+              command: 'echo "Hello, ${ .user.name }"'
 
-    - runWorkflow:
-        run:
-          workflow:
-            reference: another-one:0.1.0
-            input: {}
+      - runWorkflow:
+          run:
+            workflow:
+              reference: another-one:0.1.0
+              input: {}
 ```
 
 ##### Container Process
@@ -887,35 +842,36 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  sequentially:
-    - processOrder:
-        switch:
-          - case1:
-              when: .orderType == "electronic"
-              then: processElectronicOrder
-          - case2:
-              when: .orderType == "physical"
-              then: processPhysicalOrder
-          - default:
-              then: handleUnknownOrderType
-    - processElectronicOrder:
-      execute:
-        sequentially:
-          - validatePayment: {}
-          - fulfillOrder: {}
-      then: exit
-    - processPhysicalOrder:
-        execute:
-          sequentially:
-            - checkInventory: {}
-            - packItems: {}
-            - scheduleShipping: {}
-      then: exit
-    - handleUnknownOrderType:
-      execute:
-        sequentially:
-          - logWarning: {}
-          - notifyAdmin: {}
+  execute:
+    sequentially:
+      - processOrder:
+          switch:
+            - case1:
+                when: .orderType == "electronic"
+                then: processElectronicOrder
+            - case2:
+                when: .orderType == "physical"
+                then: processPhysicalOrder
+            - default:
+                then: handleUnknownOrderType
+      - processElectronicOrder:
+          execute:
+            sequentially:
+              - validatePayment: {}
+              - fulfillOrder: {}
+        then: exit
+      - processPhysicalOrder:
+          execute:
+            sequentially:
+              - checkInventory: {}
+              - packItems: {}
+              - scheduleShipping: {}
+        then: exit
+      - handleUnknownOrderType:
+          execute:
+            sequentially:
+              - logWarning: {}
+              - notifyAdmin: {}
 ```
 
 ##### Switch Case
