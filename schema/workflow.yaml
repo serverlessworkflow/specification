@@ -306,7 +306,7 @@ $defs:
   competingTask:
     type: object
     properties:
-      competitively:
+      compete:
         type: array
         minItems: 2
         items:
@@ -318,7 +318,7 @@ $defs:
         description: |
           A list of the tasks to perform concurrently and race against each 
           other, with a single possible winner, which sets the task's output.
-    required: [ competitively ]
+    required: [ compete ]
   emitTask:
     type: object
     properties:
@@ -780,7 +780,7 @@ $defs:
     properties:
       extend:
         type: string
-        enum: [ call, competitively, sequentially, concurrently, emit, for, listen, raise, run, set, switch, try, wait, all ]
+        enum: [ call, compete, sequentially, concurrently, emit, for, listen, raise, run, set, switch, try, wait, all ]
         description: The type of task to extend.
       when:
         type: string

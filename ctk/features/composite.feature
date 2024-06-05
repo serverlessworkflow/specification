@@ -38,7 +38,7 @@ Feature: Composite Task
       namespace: default
       name: composite-sequential
     do:
-      competitively:
+      compete:
         - setRed:
             set:
               colors: ${ .colors + ["red"] }
