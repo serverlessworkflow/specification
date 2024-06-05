@@ -232,7 +232,6 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| name | `string` | `no` | The name of the task, if any. **SHOULD** be unique within an array. Required if you want to reference the task in [`then`](#flow-directive) |
 | input | [`input`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
 | output | [`output`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
 | timeout | [`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any. |
@@ -880,7 +879,6 @@ Defines a switch case, encompassing of a condition for matching and an associate
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| name | `string` | `no` | The name of the case, if any. |
 | when | `string` | `no` | A runtime expression used to determine whether or not the case matches.<br>*If not set, the case will be matched by default if no other case match.*<br>*Note that there can be only one default case, all others **MUST** set a condition.*
 | then | [`flowDirective`](#flow-directive) | `yes` | The flow directive to execute when the case matches. |
 
