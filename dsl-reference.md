@@ -1212,7 +1212,7 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| extend |  `string` | `yes` | The type of task to extend<br>Supported values are: `call`, `sequentially`, `concurrently`, `compete`, `emit`, `extension`, `for`, `listen`, `raise`, `run`, `set`, `switch`, `try`, `wait` and `all` |
+| extend |  `string` | `yes` | The type of task to extend<br>Supported values are: `call`, `composite`, `emit`, `extension`, `for`, `listen`, `raise`, `run`, `set`, `switch`, `try`, `wait` and `all` |
 | when | `string` | `no` | A runtime expression used to determine whether or not the extension should apply in the specified context |
 | before | [`task`](#task) | `no` | The task to execute, if any, before the extended task |
 | after | [`task`](#task) | `no` | The task to execute, if any, after the extended task |

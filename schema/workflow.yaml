@@ -780,7 +780,7 @@ $defs:
     properties:
       extend:
         type: string
-        enum: [ call, compete, sequentially, concurrently, emit, for, listen, raise, run, set, switch, try, wait, all ]
+        enum: [ call, composite, emit, for, listen, raise, run, set, switch, try, wait, all ]
         description: The type of task to extend.
       when:
         type: string
