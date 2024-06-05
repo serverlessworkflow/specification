@@ -76,8 +76,8 @@ properties:
         description: The workflow's secrets.
     description: Defines the workflow's reusable components.
   do:
+    description: Defines the task the workflow must perform
     $ref: '#/$defs/task'
-    description: Defines the tasks the workflow must perform
   timeout:
     $ref: '#/$defs/timeout'
     description: The workflow's timeout configuration, if any.
@@ -118,9 +118,7 @@ $defs:
         description: The flow directive to be performed upon completion of the task.
     oneOf:
       - $ref: '#/$defs/callTask'
-      - $ref: '#/$defs/sequentialTask'
-      - $ref: '#/$defs/concurrentTask'
-      - $ref: '#/$defs/competingTask'
+      - $ref: '#/$defs/compositeTask'
       - $ref: '#/$defs/emitTask'
       - $ref: '#/$defs/forTask'
       - $ref: '#/$defs/listenTask'
@@ -275,50 +273,43 @@ $defs:
             additionalProperties: true
             description: A name/value mapping of the parameters, if any, to call the function with.
         required: [ call ]
-  sequentialTask:
-    type: object
+  compositeTask:
+    type: object    
+    required: [ execute ]
+    description: Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations
     properties:
-      sequentially:
-        type: array
-        minItems: 2
-        items:
-          type: object
-          minProperties: 1
-          maxProperties: 1
-          additionalProperties:
-            $ref: '#/$defs/task'
-        description: A list of the tasks to perform sequentially.
-    required: [ sequentially ]
-  concurrentTask:
-    type: object
-    properties:
-      concurrently:
-        description: A list of the tasks to perform concurrently.
-        type: array
-        minItems: 2
-        items:
-          type: object
-          minProperties: 1
-          maxProperties: 1
-          additionalProperties:
-            $ref: '#/$defs/task'
-    required: [ concurrently ]
-  competingTask:
-    type: object
-    properties:
-      compete:
-        type: array
-        minItems: 2
-        items:
-          type: object
-          minProperties: 1
-          maxProperties: 1
-          additionalProperties:
-            $ref: '#/$defs/task'
-        description: |
-          A list of the tasks to perform concurrently and race against each 
-          other, with a single possible winner, which sets the task's output.
-    required: [ compete ]
+      execute:
+        type: object
+        description: Configures the task execution strategy to use
+        oneOf:
+          - required: [ concurrently ]
+            properties:
+              concurrently:
+                description: A list of the tasks to perform concurrently.
+                type: array
+                minItems: 2
+                items:
+                  type: object
+                  minProperties: 1
+                  maxProperties: 1
+                  additionalProperties:
+                    $ref: '#/$defs/task'
+              compete:
+                description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
+                type: boolean
+                default: false
+          - required: [ sequentially ]
+            properties:  
+              sequentially:
+                description: A list of the tasks to perform sequentially.        
+                type: array
+                minItems: 2
+                items:
+                  type: object
+                  minProperties: 1
+                  maxProperties: 1
+                  additionalProperties:
+                    $ref: '#/$defs/task'
   emitTask:
     type: object
     properties:
