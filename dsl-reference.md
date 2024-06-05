@@ -860,14 +860,14 @@ do:
             sequentially:
               - validatePayment: {}
               - fulfillOrder: {}
-        then: exit
+          then: exit
       - processPhysicalOrder:
           execute:
             sequentially:
               - checkInventory: {}
               - packItems: {}
               - scheduleShipping: {}
-        then: exit
+          then: exit
       - handleUnknownOrderType:
           execute:
             sequentially:
