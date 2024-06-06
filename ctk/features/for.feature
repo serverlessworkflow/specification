@@ -14,13 +14,12 @@ Feature: For Task
       namespace: default
       name: for
     do:
-      forEachColor:
-        for:
-          each: color
-          in: '.colors'
-        do:
-          set:
-            processed: '${ { colors: (.processed.colors + [ $color ]), indexes: (.processed.indexes + [ $index ])} }'
+      for:
+        each: color
+        in: '.colors'
+      do:
+        set:
+          processed: '${ { colors: (.processed.colors + [ $color ]), indexes: (.processed.indexes + [ $index ])} }'
     """
     And given the workflow input is:
     """yaml

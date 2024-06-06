@@ -4,17 +4,16 @@ document:
   name: bearer-auth
   version: 1.0.0-alpha1
 do:
-  greetUser:
-    call: asyncapi
-    with:
-      document:
-        uri: https://fake.com/docs/asyncapi.json
-      operationRef: findPetsByStatus
-      server: staging
-      message: getPetByStatusQuery
-      binding: http
-      payload:
-        petId: ${ .pet.id }
-      authentication:
-        bearer:
-          token: ${ .token }
+  call: asyncapi
+  with:
+    document:
+      uri: https://fake.com/docs/asyncapi.json
+    operationRef: findPetsByStatus
+    server: staging
+    message: getPetByStatusQuery
+    binding: http
+    payload:
+      petId: ${ .pet.id }
+    authentication:
+      bearer:
+        token: ${ .token }

@@ -4,45 +4,47 @@ document:
   name: sample-workflow
   version: '0.1.0'
 do:
-  processOrder:
-    switch:
-      case1:
-        when: .orderType == "electronic"
-        then: processElectronicOrder
-      case2:
-        when: .orderType == "physical"
-        then: processPhysicalOrder
-      default:
-        then: handleUnknownOrderType
-  processElectronicOrder:
-    execute:
-      sequentially:
-        validatePayment:
-          set:
-            validate: true
-        fulfillOrder:
-          set:
-            status: fulfilled
-    then: exit
-  processPhysicalOrder:
-    execute:
-      sequentially:
-        checkInventory:
-          set:
-            inventory: clear
-        packItems:
-          set:
-            items: 1
-        scheduleShipping:
-          set:
-            address: Elmer St
-    then: exit
-  handleUnknownOrderType:
-    execute:
-      sequentially:
-        logWarning:
-          set:
-            log: warn
-        notifyAdmin:
-          set:
-            message: something's wrong
+  execute:
+    sequentially:
+      - processOrder:
+          switch:
+            - case1:
+                when: .orderType == "electronic"
+                then: processElectronicOrder
+            - case2:
+                when: .orderType == "physical"
+                then: processPhysicalOrder
+            - default:
+                then: handleUnknownOrderType
+      - processElectronicOrder:
+          execute:
+            sequentially:
+              - validatePayment:
+                  set:
+                    validate: true
+              - fulfillOrder:
+                  set:
+                    status: fulfilled
+          then: exit
+      - processPhysicalOrder:
+          execute:
+            sequentially:
+              - checkInventory:
+                  set:
+                    inventory: clear
+              - packItems:
+                  set:
+                    items: 1
+              - scheduleShipping:
+                  set:
+                    address: Elmer St
+          then: exit
+      - handleUnknownOrderType:
+          execute:
+            sequentially:
+              - logWarning:
+                  set:
+                    log: warn
+              - notifyAdmin:
+                  set:
+                    message: something's wrong

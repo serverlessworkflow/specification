@@ -342,10 +342,9 @@ document:
   version: '0.1.0'
 
 do:
-  validateEmail:
-    call: https://github.com/myorg/functions/validateEmailAddress@v1
-    with:
-      emailAddress: ${ .userEmail }
+  call: https://github.com/myorg/functions/validateEmailAddress@v1
+  with:
+    emailAddress: ${ .userEmail }
 ```
 
 ##### Publishing a Custom Function
@@ -426,11 +425,10 @@ use:
           body:
             message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
-  get:
-    call: http
-    with:
-      method: get
-      uri: https://fake.com/sample
+  call: http
+  with:
+    method: get
+    uri: https://fake.com/sample
 ```
 
 ### External Resources
