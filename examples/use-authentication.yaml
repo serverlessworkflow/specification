@@ -9,10 +9,9 @@ use:
       bearer:
         token: ${ .token }
 do:
-  getPetById:
-    call: http
-    with:
-      method: get
-      endpoint:
-        uri: https://petstore.swagger.io/v2/pet/{petId}
-        authentication: petStoreAuth
+  call: http
+  with:
+    method: get
+    endpoint:
+      uri: https://petstore.swagger.io/v2/pet/{petId}
+      authentication: petStoreAuth

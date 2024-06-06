@@ -11,15 +11,17 @@ Feature: Flow Directive
       namespace: default
       name: implicit-sequence
     do:
-      setRed:
-        set:
-          colors: '${ .colors + [ "red" ] }'
-      setGreen:
-        set:
-          colors: '${ .colors + [ "green" ] }'
-      setBlue:
-        set:
-          colors: '${ .colors + [ "blue" ] }'
+      execute:
+        sequentially:
+          - setRed:
+              set:
+                colors: '${ .colors + [ "red" ] }'
+          - setGreen:
+              set:
+                colors: '${ .colors + [ "green" ] }'
+          - setBlue:
+              set:
+                colors: '${ .colors + [ "blue" ] }'
     """
     When the workflow is executed
     Then the workflow should complete with output:
@@ -38,18 +40,20 @@ Feature: Flow Directive
       namespace: default
       name: explicit-sequence
     do:
-      setRed:
-        set:
-          colors: '${ .colors + [ "red" ] }'
-        then: setGreen
-      setBlue:
-        set:
-          colors: '${ .colors + [ "blue" ] }'
-        then: end
-      setGreen:
-        set:
-          colors: '${ .colors + [ "green" ] }'
-        then: setBlue
+      execute:
+        sequentially:
+          - setRed:
+              set:
+                colors: '${ .colors + [ "red" ] }'
+              then: setGreen
+          - setBlue:
+              set:
+                colors: '${ .colors + [ "blue" ] }'
+              then: end
+          - setGreen:
+              set:
+                colors: '${ .colors + [ "green" ] }'
+              then: setBlue
     """
     When the workflow is executed
     Then the workflow should complete with output:

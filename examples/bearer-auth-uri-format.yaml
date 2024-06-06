@@ -4,12 +4,11 @@ document:
   name: bearer-auth-uri-format
   version: 1.0.0-alpha1
 do:
-  getPetById:
-    call: http
-    with:
-      method: get
-      endpoint:
-        uri: https://petstore.swagger.io/v2/pet/1
-        authentication:
-          bearer:
-            token: ${ .token }
+  call: http
+  with:
+    method: get
+    endpoint:
+      uri: https://petstore.swagger.io/v2/pet/1
+      authentication:
+        bearer:
+          token: ${ .token }
