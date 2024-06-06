@@ -1,8 +1,10 @@
 # Serverless Workflow Org Maintainers
 
-* [Antonio Mendoza Pérez](https://github.com/antmendoza)
 * [Charles d'Avernas](https://github.com/cdavernas)
 * [Ricardo Zanini](https://github.com/ricardozanini)
+
+# Serverless Workflow Org Emeritus Maintainers
+* [Antonio Mendoza Pérez](https://github.com/antmendoza)
 * [Tihomir Surdilovic](https://github.com/tsurdilo)
 
 # Maintainers Mailing list
