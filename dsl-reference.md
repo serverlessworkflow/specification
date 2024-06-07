@@ -44,6 +44,7 @@
   + [Retry](#retry)
   + [Input](#input)
   + [Output](#output)
+  + [Export] (#export)
   + [Timeout](#timeout)
   + [Duration](#duration)
   + [HTTP Response](#http-response)
@@ -1419,33 +1420,30 @@ to: '.petList += [ . ]'
 
 ### Export
 
-Certain task needs to set the context of the workflow using the task output for later usage. User set the content of the context through a runtime expression. The result of the expression is the new value of the context. If user want to merge the new data into the current context, he might do that using `$context` variable. 
+Certain task needs to set the workflow context to save the task output for later usage. Users set the content of the context through a runtime expression. The result of the expression is the new value of the context. The expression is evaluated against the existing context. 
 
-Optionally, the context can have a predefined schema. 
-
+Optionally, the context might have an associated schema. 
 
 #### Properties
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate context.<br>*Included to handle the non frequent case in which the context has a known format.* |
-| as | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to set the context value. |
+| as | `string`<br>`object` | `no` | A runtime expression, if any, used to export the output data to the context. |
 
 #### Examples
 
-Assuming the output of the task is a json object (not primitive, not array)
-Merge into the current context the output of the task. 
+Merge the task output into the current context. 
 
 ```yaml
-as: '$context+=.'
+as: '.+$output'
 ```
 
-Replace the context with the output of the task. 
+Replace the context with the task output. 
 
 ```yaml
-as: .
+as: $output
 ```
-
 
 ### Schema
 

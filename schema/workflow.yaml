@@ -828,7 +828,7 @@ $defs:
         description: The schema used to describe and validate the workflow context.
       as:
         type: string
-        description: A runtime expression, if any, used to set the context with output data.
+        description: A runtime expression, if any, used to export the output data to the context.
     description: Set the content of the context. 
   retryPolicy:
     type: object
