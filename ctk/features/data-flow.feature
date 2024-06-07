@@ -44,7 +44,7 @@ Feature: Data Flow
         endpoint:
           uri: https://petstore.swagger.io/v2/pet/{petId} #simple interpolation, only possible with top level variables
       output:
-        from: .id #filters the output of the http call, using only the id of the returned object
+        as: .id #filters the output of the http call, using only the id of the returned object
     """
     And given the workflow input is:
     """yaml
@@ -74,7 +74,7 @@ Feature: Data Flow
                 endpoint:
                   uri: https://petstore.swagger.io/v2/pet/{petId} #simple interpolation, only possible with top level variables
               output:
-                from: .id
+                as: .id
           - getPetById2:
               call: http
               with:
@@ -82,7 +82,7 @@ Feature: Data Flow
                 endpoint:
                   uri: https://petstore.swagger.io/v2/pet/2
               output:
-                from: '{ ids: [ $input, .id ] }'
+                as: '{ ids: [ $input, .id ] }'
     """
     When the workflow is executed
     Then the workflow should complete with output:

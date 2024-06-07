@@ -176,7 +176,7 @@ do:
       - getAvailablePets:
           call: getAvailablePets
           output:
-            from: "$input + { availablePets: [.[] | select(.category.name == "dog" and (.tags[] | .breed == $input.order.breed))] }"
+            as: "$input + { availablePets: [.[] | select(.category.name == "dog" and (.tags[] | .breed == $input.order.breed))] }"
       - submitMatchesByMail:
           call: http
           with:
@@ -234,6 +234,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 |:--|:---:|:---:|:---|
 | input | [`input`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
 | output | [`output`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
+| export | [`export`](#export) | `no` | An object used to customize the content of the workflow context. | 
 | timeout | [`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any. |
 | then | [`flowDirective`](#flow-directive) | `no` | The flow directive to execute next.<br>*If not set, defaults to `continue`.* |
 
@@ -558,7 +559,7 @@ do:
           with:
             type: com.fake.petclinic.pets.checkup.completed.v2
       output:
-        to: '.pets + [{ "id": $pet.id }]'        
+        as: '.pets + [{ "id": $pet.id }]'        
 ```
 
 #### Listen
@@ -1415,6 +1416,36 @@ from:
   petId: '${ .pet.id }'
 to: '.petList += [ . ]'
 ```
+
+### Export
+
+Certain task needs to set the context of the workflow using the task output for later usage. User set the content of the context through a runtime expression. The result of the expression is the new value of the context. If user want to merge the new data into the current context, he might do that using `$context` variable. 
+
+Optionally, the context can have a predefined schema. 
+
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate context.<br>*Included to handle the non frequent case in which the context has a known format.* |
+| as | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to set the context value. |
+
+#### Examples
+
+Assuming the output of the task is a json object (not primitive, not array)
+Merge into the current context the output of the task. 
+
+```yaml
+as: '$context+=.'
+```
+
+Replace the context with the output of the task. 
+
+```yaml
+as: .
+```
+
 
 ### Schema
 

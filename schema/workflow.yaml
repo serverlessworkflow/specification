@@ -816,13 +816,20 @@ $defs:
       schema:
         $ref: '#/$defs/schema'
         description: The schema used to describe and validate the output of the workflow or task.
-      from:
+      as:
         type: string
         description: A runtime expression, if any, used to mutate and/or filter the output of the workflow or task.
-      to:
-        type: string
-        description: A runtime expression, if any, used to output data to the current context.
     description: Configures the output of a workflow or task.
+  export:
+    type: object
+    properties:
+      schema:
+        $ref: '#/$defs/schema'
+        description: The schema used to describe and validate the workflow context.
+      as:
+        type: string
+        description: A runtime expression, if any, used to set the context with output data.
+    description: Set the content of the context. 
   retryPolicy:
     type: object
     properties:
