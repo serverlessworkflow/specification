@@ -76,8 +76,8 @@ properties:
         description: The workflow's secrets.
     description: Defines the workflow's reusable components.
   do:
-    description: Defines the task the workflow must perform
-    $ref: '#/$defs/task'
+    description: Defines the task(s) the workflow must perform
+    $ref: '#/$defs/taskList'
   timeout:
     $ref: '#/$defs/timeout'
     description: The workflow's timeout configuration, if any.
@@ -101,6 +101,14 @@ properties:
         description: Specifies the events that trigger the workflow execution.
     description: Schedules the workflow
 $defs:
+  taskList:
+    type: array
+    items:
+      type: object
+      minProperties: 1
+      maxProperties: 1
+      additionalProperties:
+        $ref: '#/$defs/task'
   task:
     type: object
     properties:
@@ -118,7 +126,8 @@ $defs:
         description: The flow directive to be performed upon completion of the task.
     oneOf:
       - $ref: '#/$defs/callTask'
-      - $ref: '#/$defs/compositeTask'
+      - $ref: '#/$defs/doTask'
+      - $ref: '#/$defs/branchTask'
       - $ref: '#/$defs/emitTask'
       - $ref: '#/$defs/forTask'
       - $ref: '#/$defs/listenTask'
@@ -273,43 +282,28 @@ $defs:
             additionalProperties: true
             description: A name/value mapping of the parameters, if any, to call the function with.
         required: [ call ]
-  compositeTask:
+  branchTask:
     type: object    
-    required: [ execute ]
-    description: Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations
+    required: [ branch ]
+    description: Allows to execute multiple tasks concurrently.
     properties:
-      execute:
+      branch:
         type: object
-        description: Configures the task execution strategy to use
-        oneOf:
-          - required: [ concurrently ]
-            properties:
-              concurrently:
-                description: A list of the tasks to perform concurrently.
-                type: array
-                minItems: 2
-                items:
-                  type: object
-                  minProperties: 1
-                  maxProperties: 1
-                  additionalProperties:
-                    $ref: '#/$defs/task'
-              compete:
-                description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
-                type: boolean
-                default: false
-          - required: [ sequentially ]
-            properties:  
-              sequentially:
-                description: A list of the tasks to perform sequentially.        
-                type: array
-                minItems: 2
-                items:
-                  type: object
-                  minProperties: 1
-                  maxProperties: 1
-                  additionalProperties:
-                    $ref: '#/$defs/task'
+        required: [ "on" ]
+        properties:
+          on:
+            $ref: '#/$defs/taskList'
+          compete:
+            description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
+            type: boolean
+            default: false
+  doTask:
+    type: object
+    required: [ do ]
+    description: Allows to execute multiple tasks sequentially.
+    properties:
+      do:
+        $ref: '#/$defs/taskList'
   emitTask:
     type: object
     properties:
@@ -374,7 +368,7 @@ $defs:
         type: string
         description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
       do:
-        $ref: '#/$defs/task'
+        $ref: '#/$defs/taskList'
     description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
     required: [ for, do ]
   listenTask:
@@ -533,8 +527,8 @@ $defs:
     type: object
     properties:
       try:
-        description: The task to perform.
-        $ref: '#/$defs/task'
+        description: The task(s) to perform.
+        $ref: '#/$defs/taskList'
       catch:
         type: object
         properties:
@@ -553,8 +547,8 @@ $defs:
             $ref: '#/$defs/retryPolicy'
             description: The retry policy to use, if any, when catching errors.
           do:
-            description: The definition of the task to run when catching an error.
-            $ref: '#/$defs/task'
+            description: The definition of the task(s) to run when catching an error.
+            $ref: '#/$defs/taskList'
     required: [ try, catch ]
     description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
   waitTask:
@@ -777,11 +771,11 @@ $defs:
         type: string
         description: A runtime expression, if any, used to determine whether or not the extension should apply in the specified context.
       before:
-        description: The task to execute before the extended task, if any.
-        $ref: '#/$defs/task'
+        description: The task(s) to execute before the extended task, if any.
+        $ref: '#/$defs/taskList'
       after:
-        description: The task to execute after the extended task, if any.
-        $ref: '#/$defs/task'
+        description: The task(s) to execute after the extended task, if any.
+        $ref: '#/$defs/taskList'
     required: [ extend ]
     description: The definition of a an extension.
   externalResource:
