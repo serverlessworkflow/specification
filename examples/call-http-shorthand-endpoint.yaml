@@ -4,7 +4,8 @@ document:
   name: call-http-shorthand-endpoint
   version: 1.0.0-alpha1
 do:
-  call: http
-  with:
-    method: get
-    endpoint: https://petstore.swagger.io/v2/pet/{petId}
+  - getPet:
+      call: http
+      with:
+        method: get
+        endpoint: https://petstore.swagger.io/v2/pet/{petId}
