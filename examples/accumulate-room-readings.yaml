@@ -17,7 +17,7 @@ do:
                     roomId:
                       from: .roomid
                   output:
-                    from: .data.reading
+                    as: .data.reading
                 - with:
                     source: https://my.home.com/sensor
                     type: my.home.sensors.humidity
@@ -25,7 +25,7 @@ do:
                     roomId:
                       from: .roomid
                   output:
-                    from: .data.reading
+                    as: .data.reading
           as: readings
       - logReading:
           for:
