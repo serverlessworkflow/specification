@@ -14,7 +14,7 @@ Feature: For Task
       namespace: default
       name: for
     do:
-      - loopClors:
+      - loopColors:
           for:
             each: color
             in: '.colors'
