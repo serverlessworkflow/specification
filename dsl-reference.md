@@ -226,8 +226,8 @@ By breaking down the [workflow](#workflow) into manageable [tasks](#task), organ
 The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** supported by all runtimes:
 
 - [Call](#call), used to call services and/or functions.
-- [Do](#do), used to define a minimum of two subtasks to perform in sequence.
-- [Fork](#fork), used to define a minimum of two subtasks to perform concurrently.
+- [Do](#do), used to define one or more subtasks to perform in sequence.
+- [Fork](#fork), used to define one or more subtasks to perform concurrently.
 - [Emit](#emit), used to emit [events](#event).
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](#listen), used to listen for an [event](#event) or more.
@@ -427,7 +427,7 @@ Serves as a fundamental building block within workflows, enabling the sequential
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| do | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially.<br>*If set, must contains **at least** two [`tasks`](#task).* |
+| do | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially. |
 
 ##### Examples
 
@@ -481,7 +481,7 @@ Allows workflows to execute multiple subtasks concurrently, enabling parallel pr
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently.<br>*If set, must contains **at least** two [`tasks`](#task).* | 
+| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently. | 
 | fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output. Defaults to `false`. |
 
 ##### Examples

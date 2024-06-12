@@ -101,8 +101,8 @@ Serverless Workflow DSL allows for defining reusable components that can be refe
 The Serverless Workflow DSL defines several default [task](dsl-reference.md#tasks) types that runtimes **must** implement:
 
 - [Call](dsl-reference.md#call), used to call services and/or functions.
-- [Do](dsl-reference.md#do), used to define a minimum of two subtasks to perform in sequence.
-- [Fork](dsl-reference.md#fork), used to define a minimum of two subtasks to perform in parallel.
+- [Do](dsl-reference.md#do), used to define one or more subtasks to perform in sequence.
+- [Fork](dsl-reference.md#fork), used to define one or more two subtasks to perform in parallel.
 - [Emit](dsl-reference.md#emit), used to emit [events](dsl-reference.md#event).
 - [For](dsl-reference.md#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](dsl-reference.md#listen), used to listen for an [event](dsl-reference.md#event) or more.
