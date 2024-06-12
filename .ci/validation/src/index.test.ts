@@ -16,14 +16,14 @@
 
 import { SWSchemaValidator } from "./index";
 import fs from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 
 SWSchemaValidator.prepareSchemas();
 
 const examplePath = "../../../examples";
 
 describe(`Verify every example in the repository`, () => {
-  fs.readdirSync(join(__dirname, examplePath), {
+  fs.readdirSync(path.join(__dirname, examplePath), {
     encoding: SWSchemaValidator.defaultEncoding,
     recursive: false,
     withFileTypes: true,
@@ -31,7 +31,7 @@ describe(`Verify every example in the repository`, () => {
     if (file.isFile() && file.name.endsWith(".yaml")) {
       test(`Example ${file.name}`, () => {
         const workflow = SWSchemaValidator.toJSON(
-          join(__dirname, `${examplePath}/${file.name}`)
+          path.join(__dirname, `${examplePath}/${file.name}`)
         );
         const results = SWSchemaValidator.validateSchema(workflow);
         if (results?.errors != null) {

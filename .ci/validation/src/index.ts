@@ -17,7 +17,7 @@
 import fs from "node:fs";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { join } from "node:path";
+import path from "node:path";
 import yaml = require("js-yaml");
 
 export module SWSchemaValidator {
@@ -30,7 +30,7 @@ export module SWSchemaValidator {
   export const defaultEncoding = "utf-8";
 
   export function prepareSchemas() {
-    fs.readdirSync(join(__dirname, schemaPath), {
+    fs.readdirSync(path.join(__dirname, schemaPath), {
       encoding: defaultEncoding,
       recursive: false,
       withFileTypes: true,
@@ -41,20 +41,20 @@ export module SWSchemaValidator {
     });
   }
 
-  function syncReadSchema(filename: string) {
-    return toJSON(join(__dirname, `${schemaPath}/${filename}`));
+  function syncReadSchema(filename: string): any {
+    return toJSON(path.join(__dirname, `${schemaPath}/${filename}`));
   }
 
-  export function toJSON(filename: string) {
+  export function toJSON(filename: string): any {
     const yamlObj = yaml.load(fs.readFileSync(filename, defaultEncoding), {
       json: true,
     });
-    return JSON.parse(JSON.stringify(yamlObj, null, 2));
+    return structuredClone(yamlObj);
   }
 
-  export function validateSchema(workflow: JSON) {
+  export function validateSchema(workflow: Record<string, unknown>) {
     const validate = ajv.getSchema(workflowSchemaId);
-    if (validate != undefined) {
+    if (validate) {
       const isValid = validate(workflow);
       return {
         valid: isValid,
