@@ -44,11 +44,15 @@ export module SWSchemaValidator {
   }
 
   function syncReadSchema(filename: string): any {
-    return toJSON(path.join(__dirname, `${schemaPath}/${filename}`));
+    return loadAsJSON(path.join(__dirname, `${schemaPath}/${filename}`));
   }
 
-  export function toJSON(filename: string): any {
-    const yamlObj = yaml.load(fs.readFileSync(filename, defaultEncoding), {
+  export function loadAsJSON(filename: string): any {
+    return yamlToJSON(fs.readFileSync(filename, defaultEncoding));
+  }
+
+  export function yamlToJSON(yamlStr: string): any {
+    const yamlObj = yaml.load(yamlStr, {
       json: true,
     });
     return structuredClone(yamlObj);

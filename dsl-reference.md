@@ -129,19 +129,26 @@ document:
   version: '1.0.0'
   title: Order Pet - 1.0.0
   summary: >
-  # Order Pet - 1.0.0
-  ## Table of Contents
-  - [Description](#description)
-  - [Requirements](#requirements)
-  ## Description
-  A sample workflow used to process an hypothetic pet order using the [PetStore API](https://petstore.swagger.io/)
-  ## Requirements
-  ### Secrets
-  - my-oauth2-secret
+    # Order Pet - 1.0.0
+    ## Table of Contents
+    - [Description](#description)
+    - [Requirements](#requirements)
+    ## Description
+    A sample workflow used to process an hypothetic pet order using the [PetStore API](https://petstore.swagger.io/)
+    ## Requirements
+    ### Secrets
+    - my-oauth2-secret
 use:
   authentications:
     petStoreOAuth2:
-      oauth2: my-oauth2-secret
+      oauth2: 
+        authority: https://petstore.swagger.io/.well-known/openid-configuration
+        grant: client-credentials
+        client:
+          id: workflow-runtime
+          secret: "**********"
+        scopes: [ api ]
+        audiences: [ runtime ]
   extensions:
     - externalLogging:
         extend: all
@@ -152,7 +159,7 @@ use:
                 method: post
                 endpoint: https://fake.log.collector.com
                 body:
-                  message: "${ \"Executing task '\($task.reference)'...\" }"
+                  message: ${ "Executing task '\($task.reference)'..." }
         after:
           - sendLog:
               call: http
@@ -160,14 +167,14 @@ use:
                 method: post
                 endpoint: https://fake.log.collector.com
                 body:
-                  message: "${ \"Executed task '\($task.reference)'...\" }"
+                  message: ${ "Executed task '\($task.reference)'..." }
   functions:
     getAvailablePets:
       call: openapi
       with:
         document:
           uri: https://petstore.swagger.io/v2/swagger.json
-        operation: findByStatus
+        operationId: findByStatus
         parameters:
           status: available
   secrets:
@@ -176,7 +183,7 @@ do:
   - getAvailablePets:
       call: getAvailablePets
       output:
-        from: "$input + { availablePets: [.[] | select(.category.name == "dog" and (.tags[] | .breed == $input.order.breed))] }"
+        from: "$input + { availablePets: [.[] | select(.category.name == \"dog\" and (.tags[] | .breed == $input.order.breed))] }"
   - submitMatchesByMail:
       call: http
       with:
@@ -189,19 +196,19 @@ do:
           to: ${ .order.client.email }
           subject: Candidates for Adoption
           body: >
-          Hello ${ .order.client.preferredDisplayName }!
+            Hello ${ .order.client.preferredDisplayName }!
 
-          Following your interest to adopt a dog, here is a list of candidates that you might be interested in:
+            Following your interest to adopt a dog, here is a list of candidates that you might be interested in:
 
-          ${ .pets | map("-\(.name)") | join("\n") }
+            ${ .pets | map("-\(.name)") | join("\n") }
 
-          Please do not hesistate to contact us at info@fake.petstore.com if your have questions.
+            Please do not hesistate to contact us at info@fake.petstore.com if your have questions.
 
-          Hope to hear from you soon!
+            Hope to hear from you soon!
 
-          ----------------------------------------------------------------------------------------------
-          DO NOT REPLY
-          ----------------------------------------------------------------------------------------------
+            ----------------------------------------------------------------------------------------------
+            DO NOT REPLY
+            ----------------------------------------------------------------------------------------------
 ```
 
 ### Task
@@ -254,7 +261,7 @@ Enables the execution of a specified function within a workflow, allowing seamle
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: call-example
   version: '0.1.0'
 do:
   - getPet:
@@ -293,14 +300,14 @@ The [AsyncAPI Call](#asyncapi-call) enables workflows to interact with external 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: asyncapi-example
   version: '0.1.0'
 do:
   - findPet:
       call: asyncapi
       with:
         document: https://fake.com/docs/asyncapi.json
-        operation: findPetsByStatus
+        operationRef: findPetsByStatus
         server: staging
         message: getPetByStatusQuery
         binding: http
@@ -330,7 +337,7 @@ The [gRPC Call](#grpc-call) enables communication with external systems via the 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: grpc-example
   version: '0.1.0'
 do:
   - greet:
@@ -366,7 +373,7 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: http-example
   version: '0.1.0'
 do:
   - getPet:
@@ -396,14 +403,14 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: openapi-example
   version: '0.1.0'
 do:
   - findPet:
       call: openapi
       with:
         document: https://petstore.swagger.io/v2/swagger.json
-        operation: findPetsByStatus
+        operationId: findPetsByStatus
         parameters:
           status: available
 ```
@@ -427,7 +434,7 @@ do:
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: do-example
   version: '0.1.0'
 do:
   - bookHotel:
@@ -470,7 +477,7 @@ do:
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: fork-example
   version: '0.1.0'
 do:
   - raiseAlarm:
@@ -511,20 +518,19 @@ Allows workflows to publish events to event brokers or messaging systems, facili
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: emit-example
   version: '0.1.0'
 do:
   - emitEvent:
       emit:
         event:
-          with:
-            source: https://petstore.com
-            type: com.petstore.order.placed.v1
-            data:
-              client:
-                firstName: Cruella
-                lastName: de Vil
-              items:
+          source: https://petstore.com
+          type: com.petstore.order.placed.v1
+          data:
+            client:
+              firstName: Cruella
+              lastName: de Vil
+            items:
               - breed: dalmatian
                 quantity: 101
 ```
@@ -549,7 +555,7 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: for-example
   version: '0.1.0'
 do:
   - checkup:
@@ -585,7 +591,7 @@ Provides a mechanism for workflows to await and react to external events, enabli
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: listen-example
   version: '0.1.0'
 do:
   - callDoctor:
@@ -618,7 +624,7 @@ Intentionally triggers and propagates errors. By employing the "Raise" task, wor
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: raise-example
   version: '0.1.0'
 do:
   - processTicket:
@@ -639,10 +645,29 @@ do:
         error:
           type: https://fake.com/errors/tickets/undefined-priority
           status: 400
+          instance: /raiseUndefinedPriorityError
           title: Undefined Priority
-  - escalateToManager: {}
-  - assignToSpecialist: {}
-  - resolveTicket: {}
+  - escalateToManager:
+      call: http
+      with:
+        method: post
+        endpoint: https://fake-ticketing-system.com/tickets/escalate
+        body:
+          ticketId: ${ .ticket.id }
+  - assignToSpecialist:
+      call: http
+      with:
+        method: post
+        endpoint: https://fake-ticketing-system.com/tickets/assign
+        body:
+          ticketId: ${ .ticket.id }
+  - resolveTicket:
+      call: http
+      with:
+        method: post
+        endpoint: https://fake-ticketing-system.com/tickets/resolve
+        body:
+          ticketId: ${ .ticket.id }
 ```
 
 #### Run
@@ -664,7 +689,7 @@ Provides the capability to execute external [containers](#container-process), [s
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-example
   version: '0.1.0'
 do:
   - runContainer:
@@ -687,7 +712,9 @@ do:
   - runWorkflow:
       run:
         workflow:
-          reference: another-one:0.1.0
+          namespace: another-one
+          name: do-stuff
+          version: '0.1.0'
           input: {}
 ```
 
@@ -711,7 +738,7 @@ Enables the execution of external processes encapsulated within a containerized 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-container-example
   version: '0.1.0'
 do:
   - runContainer:
@@ -739,7 +766,7 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-script-example
   version: '0.1.0'
 do:
   - runScript:
@@ -768,7 +795,7 @@ Enables the execution of shell commands within a workflow, enabling workflows to
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-shell-example
   version: '0.1.0'
 do:
   - runShell:
@@ -795,13 +822,15 @@ Enables the invocation and execution of nested workflows within a parent workflo
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-workflow-example
   version: '0.1.0'
 do:
   - startWorkflow:
       run:
         workflow:
-          reference: another-one:0.1.0
+          namespace: another-one
+          name: do-stuff
+          version: '0.1.0'
           input:
             foo: bar
 ```
@@ -822,7 +851,7 @@ A task used to set data.
 document:
   dsl: 1.0.0-alpha1
   namespace: default
-  name: set
+  name: set-example
   version: '0.1.0'
 do:
   - setShape:
@@ -848,7 +877,7 @@ Enables conditional branching within workflows, allowing them to dynamically sel
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: switch-example
   version: '0.1.0'
 do:
   - processOrder:
@@ -863,19 +892,47 @@ do:
             then: handleUnknownOrderType
   - processElectronicOrder:
       do:
-        - validatePayment: {}
-        - fulfillOrder: {}
+        - validatePayment:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-payment-service.com/validate
+        - fulfillOrder:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-fulfillment-service.com/fulfill
       then: exit
   - processPhysicalOrder:
       do:
-        - checkInventory: {}
-        - packItems: {}
-        - scheduleShipping: {}
+        - checkInventory:
+            call: http
+            with:
+              method: get
+              endpoint: https://fake-inventory-service.com/inventory
+        - packItems:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-packaging-service.com/pack
+        - scheduleShipping:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-shipping-service.com/schedule
       then: exit
   - handleUnknownOrderType:
       do:
-        - logWarning: {}
-        - notifyAdmin: {}
+        - logWarning:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-logging-service.com/warn
+        - notifyAdmin:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-notification-service.com/notify
 ```
 
 ##### Switch Case
@@ -904,7 +961,7 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: try-example
   version: '0.1.0'
 do:
   - trySomething:
@@ -961,7 +1018,7 @@ Allows workflows to pause or delay their execution for a specified period of tim
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: wait-example
   version: '0.1.0'
 do:
   - waitAWhile:
@@ -1023,11 +1080,11 @@ Defines the mechanism used to authenticate users and workflows attempting to acc
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: authentication-example
   version: '0.1.0'
 use:
   secrets:
-    usernamePasswordSecret: {}
+    - usernamePasswordSecret
   authentication:
     sampleBasicFromSecret:
       basic: usernamePasswordSecret
@@ -1058,7 +1115,7 @@ Defines the fundamentals of a 'basic' authentication.
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: basic-authentication-example
   version: '0.1.0'
 use:
   authentication:
@@ -1092,7 +1149,7 @@ Defines the fundamentals of a 'bearer' authentication
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: bearer-authentication-example
   version: '0.1.0'
 do:
   - sampleTask:
@@ -1137,7 +1194,7 @@ Defines the fundamentals of an 'oauth2' authentication
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: oauth2-authentication-example
   version: '0.1.0'
 do:
   - sampleTask:
@@ -1152,7 +1209,7 @@ do:
               grant: client-credentials
               client:
                 id: workflow-runtime
-                secret: **********
+                secret: "**********"
               scopes: [ api ]
               audiences: [ runtime ]
 ```
@@ -1190,7 +1247,7 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: logging-extension-example
   version: '0.1.0'
 use:
   extensions:
@@ -1203,7 +1260,7 @@ use:
                 method: post
                 endpoint: https://fake.log.collector.com
                 body:
-                  message: "${ \"Executing task '\($task.reference)'...\" }"
+                  message: ${ "Executing task '\($task.reference)'..." }
         after:
           - sendLog:
               call: http
@@ -1211,7 +1268,7 @@ use:
                 method: post
                 endpoint: https://fake.log.collector.com
                 body:
-                  message: "${ \"Executed task '\($task.reference)'...\" }"
+                  message: ${ "Executed task '\($task.reference)'..." }
 do:
   - sampleTask:
       call: http
@@ -1225,13 +1282,13 @@ do:
 document:  
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: intercept-extension-example
   version: '0.1.0'
 use:
   extensions:
     - mockService:
-        extend: http
-        when: ($task.with.uri != null and ($task.with.uri | startswith("https://mocked.service.com"))) or ($task.with.endpoint.uri != null and ($task.with.endpoint.uri | startswith("https://mocked.service.com")))
+        extend: call
+        when: $task.call == "http" and ($task.with.uri != null and ($task.with.uri | startswith("https://mocked.service.com"))) or ($task.with.endpoint.uri != null and ($task.with.endpoint.uri | startswith("https://mocked.service.com")))
         before:
           - intercept:
               set:
@@ -1241,7 +1298,7 @@ use:
                 content:
                   foo:
                     bar: baz
-            then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
+              then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
 do:
   - sampleTask:
       call: http
@@ -1485,7 +1542,7 @@ Defines a workflow or task timeout.
 document:
   dsl: '1.0.0-alpha1'
   namespace: default
-  name: sample
+  name: timeout-example
   version: '0.1.0'
 do:
   - waitAMinute:

@@ -17,30 +17,34 @@
 import { SWSchemaValidator } from "./index";
 import fs from "node:fs";
 import path from "node:path";
+import marked from "marked";
 
 SWSchemaValidator.prepareSchemas();
 
-const examplePath = "../../../examples";
+const dslReferencePath = path.join(
+  __dirname,
+  "..",
+  "..",
+  "..",
+  "dsl-reference.md"
+);
 
-describe(`Verify every example in the repository`, () => {
-  const examples = fs
-    .readdirSync(path.join(__dirname, examplePath), {
-      encoding: SWSchemaValidator.defaultEncoding,
-      recursive: false,
-      withFileTypes: true,
-    })
-    .filter((file) => file.isFile())
-    .filter((file) => file.name.endsWith(".yaml"))
-    .map((file) => file.name);
+describe(`Verify every example in the dsl docs`, () => {
+  const workflows = marked
+    .lexer(fs.readFileSync(dslReferencePath, SWSchemaValidator.defaultEncoding))
+    .filter((item): item is marked.Tokens.Code => item.type === "code")
+    .filter((item) => item.lang === "yaml")
+    .map((item) => item.text)
+    .map((text) => SWSchemaValidator.yamlToJSON(text))
+    .filter((workflow) => typeof workflow === "object")
+    .filter((workflow) => "document" in workflow)
+    .filter((workflow) => "dsl" in workflow.document);
 
-  test.each(examples)("Example %s", (file) => {
-    const workflow = SWSchemaValidator.loadAsJSON(
-      path.join(__dirname, `${examplePath}/${file}`)
-    );
+  test.each(workflows)("$document.name", (workflow) => {
     const results = SWSchemaValidator.validateSchema(workflow);
     if (results?.errors) {
       console.warn(
-        `Schema validation on ${file} failed with: `,
+        `Schema validation on workflow ${workflow.document.name} failed with: `,
         JSON.stringify(results.errors, null, 2)
       );
     }

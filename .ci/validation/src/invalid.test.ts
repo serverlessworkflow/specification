@@ -34,7 +34,7 @@ describe(`Check that invalid workflows are rejected`, () => {
     .map((file) => file.name);
 
   test.each(examples)("Example %s", (file) => {
-    const workflow = SWSchemaValidator.toJSON(
+    const workflow = SWSchemaValidator.loadAsJSON(
       path.join(__dirname, `${invalidPath}/${file}`)
     );
     const results = SWSchemaValidator.validateSchema(workflow);
