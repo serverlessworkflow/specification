@@ -1,5 +1,5 @@
 $id: https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.json
-$schema: http://json-schema.org/draft-07/schema
+$schema: https://json-schema.org/draft/2020-12/schema
 description: Serverless Workflow DSL - Workflow Schema
 type: object
 properties:
@@ -109,9 +109,8 @@ $defs:
       maxProperties: 1
       additionalProperties:
         $ref: '#/$defs/task'
-  task:
+  taskBase:
     type: object
-    unevaluatedProperties: false
     properties:
       input:
         $ref: '#/$defs/input'
@@ -125,6 +124,8 @@ $defs:
       then:
         $ref: '#/$defs/flowDirective'
         description: The flow directive to be performed upon completion of the task.
+  task:
+    unevaluatedProperties: false
     oneOf:
       - $ref: '#/$defs/callTask'
       - $ref: '#/$defs/doTask'
@@ -139,7 +140,9 @@ $defs:
       - $ref: '#/$defs/tryTask'
       - $ref: '#/$defs/waitTask'
   callTask:
+    $ref: '#/$defs/taskBase'
     type: object
+    unevaluatedProperties: false
     oneOf:
       - properties:
           call:
@@ -284,9 +287,11 @@ $defs:
             description: A name/value mapping of the parameters, if any, to call the function with.
         required: [ call ]
   branchTask:
+    description: Allows to execute multiple tasks concurrently.
+    $ref: '#/$defs/taskBase'
     type: object    
     required: [ branch ]
-    description: Allows to execute multiple tasks concurrently.
+    unevaluatedProperties: false
     properties:
       branch:
         type: object
@@ -299,14 +304,20 @@ $defs:
             type: boolean
             default: false
   doTask:
+    $ref: '#/$defs/taskBase'
     type: object
     required: [ do ]
+    unevaluatedProperties: false
     description: Allows to execute multiple tasks sequentially.
     properties:
       do:
         $ref: '#/$defs/taskList'
   emitTask:
+    description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ emit ]
+    unevaluatedProperties: false
     properties:
       emit:
         type: object
@@ -338,17 +349,12 @@ $defs:
             required: [ source, type ]
             additionalProperties: true
         required: [ event ]
-    required: [ emit ]
-    description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
-  flowDirective:
-    additionalProperties: false
-    anyOf:
-      - type: string
-        enum: [ continue, exit, end ]
-        default: continue
-      - type: string
   forTask:
+    description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ for, do ]
+    unevaluatedProperties: false
     properties:
       for:
         type: object
@@ -370,10 +376,12 @@ $defs:
         description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
       do:
         $ref: '#/$defs/taskList'
-    description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
-    required: [ for, do ]
   listenTask:
+    description: Provides a mechanism for workflows to await and react to external events, enabling event-driven behavior within workflow systems.
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ listen ]
+    unevaluatedProperties: false
     properties:
       listen:
         type: object
@@ -382,10 +390,12 @@ $defs:
             $ref: '#/$defs/eventConsumptionStrategy'
             description: Defines the event(s) to listen to.
         required: [ to ]
-    required: [ listen ]
-    description: Provides a mechanism for workflows to await and react to external events, enabling event-driven behavior within workflow systems.
   raiseTask:
+    description: Intentionally triggers and propagates errors.
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ raise ]
+    unevaluatedProperties: false
     properties:
       raise:
         type: object
@@ -394,10 +404,12 @@ $defs:
             $ref: '#/$defs/error'
             description: Defines the error to raise.
         required: [ error ]
-    required: [ raise ]
-    description: Intentionally triggers and propagates errors.
   runTask:
+    description: Provides the capability to execute external containers, shell commands, scripts, or workflows.
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ run ]
+    unevaluatedProperties: false
     properties:
       run:
         type: object
@@ -488,20 +500,24 @@ $defs:
                 required: [ namespace, name, version ]
             required: [ workflow ]
             description: Enables the invocation and execution of nested workflows within a parent workflow, facilitating modularization, reusability, and abstraction of complex logic or business processes by encapsulating them into standalone workflow units.
-    required: [ run ]
-    description: Provides the capability to execute external containers, shell commands, scripts, or workflows.
   setTask:
+    description: A task used to set data
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ set ]
+    unevaluatedProperties: false
     properties:
       set:
         type: object
         minProperties: 1
         additionalProperties: true
         description: The data to set
-    required: [ set ]
-    description: A task used to set data
   switchTask:
+    description: Enables conditional branching within workflows, allowing them to dynamically select different paths based on specified conditions or criteria
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ switch ]
+    unevaluatedProperties: false
     properties:
       switch:
         type: array
@@ -522,10 +538,12 @@ $defs:
               then:
                 $ref: '#/$defs/flowDirective'
                 description: The flow directive to execute when the case matches.
-    required: [ switch ]
-    description: Enables conditional branching within workflows, allowing them to dynamically select different paths based on specified conditions or criteria
   tryTask:
+    description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ try, catch ]
+    unevaluatedProperties: false
     properties:
       try:
         description: The task(s) to perform.
@@ -550,16 +568,23 @@ $defs:
           do:
             description: The definition of the task(s) to run when catching an error.
             $ref: '#/$defs/taskList'
-    required: [ try, catch ]
-    description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
   waitTask:
+    description: Allows workflows to pause or delay their execution for a specified period of time.
+    $ref: '#/$defs/taskBase'
     type: object
+    required: [ wait ]
+    unevaluatedProperties: false
     properties:
       wait:
-        $ref: '#/$defs/duration'
         description: The amount of time to wait.
-    required: [ wait ]
-    description: Allows workflows to pause or delay their execution for a specified period of time.
+        $ref: '#/$defs/duration'
+  flowDirective:
+    additionalProperties: false
+    anyOf:
+      - type: string
+        enum: [ continue, exit, end ]
+        default: continue
+      - type: string
   authenticationPolicy:
     type: object
     oneOf:

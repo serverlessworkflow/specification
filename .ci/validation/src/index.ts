@@ -15,7 +15,7 @@
  */
 
 import fs from "node:fs";
-import Ajv from "ajv";
+import Ajv from "ajv/dist/2020";
 import addFormats from "ajv-formats";
 import path from "node:path";
 import yaml = require("js-yaml");

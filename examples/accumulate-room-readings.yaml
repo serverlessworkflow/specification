@@ -24,7 +24,6 @@ do:
                   from: .roomid
               output:
                 from: .data.reading
-      as: readings
   - logReading:
       for:
         each: reading
