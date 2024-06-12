@@ -111,6 +111,7 @@ $defs:
         $ref: '#/$defs/task'
   task:
     type: object
+    unevaluatedProperties: false
     properties:
       input:
         $ref: '#/$defs/input'
