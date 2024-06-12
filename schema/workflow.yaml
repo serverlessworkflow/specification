@@ -128,8 +128,7 @@ $defs:
     unevaluatedProperties: false
     oneOf:
       - $ref: '#/$defs/callTask'
-      - $ref: '#/$defs/doTask'
-      - $ref: '#/$defs/branchTask'
+      - $ref: '#/$defs/compositeTask'
       - $ref: '#/$defs/emitTask'
       - $ref: '#/$defs/forTask'
       - $ref: '#/$defs/listenTask'
@@ -286,32 +285,31 @@ $defs:
             additionalProperties: true
             description: A name/value mapping of the parameters, if any, to call the function with.
         required: [ call ]
-  branchTask:
-    description: Allows to execute multiple tasks concurrently.
-    $ref: '#/$defs/taskBase'
-    type: object    
-    required: [ branch ]
-    unevaluatedProperties: false
-    properties:
-      branch:
+  compositeTask:
+    description: Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations
+    oneOf:
+      - $ref: '#/$defs/taskBase'
         type: object
-        required: [ "on" ]
+        unevaluatedProperties: false
+        required: [ branch ]
         properties:
-          on:
-            $ref: '#/$defs/taskList'
-          compete:
-            description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
-            type: boolean
-            default: false
-  doTask:
-    $ref: '#/$defs/taskBase'
-    type: object
-    required: [ do ]
-    unevaluatedProperties: false
-    description: Allows to execute multiple tasks sequentially.
-    properties:
-      do:
-        $ref: '#/$defs/taskList'
+          branch:
+            type: object
+            required: [ 'on' ]
+            properties:
+              on:
+                $ref: '#/$defs/taskList'
+              compete:
+                description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
+                type: boolean
+                default: false
+      - $ref: '#/$defs/taskBase'
+        type: object
+        unevaluatedProperties: false
+        required: [ do ]
+        properties:
+          do:
+            $ref: '#/$defs/taskList'    
   emitTask:
     description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
     $ref: '#/$defs/taskBase'
