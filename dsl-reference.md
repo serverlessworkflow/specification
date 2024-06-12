@@ -44,7 +44,7 @@
   + [Retry](#retry)
   + [Input](#input)
   + [Output](#output)
-  + [Export] (#export)
+  + [Export](#export)
   + [Timeout](#timeout)
   + [Duration](#duration)
   + [HTTP Response](#http-response)
