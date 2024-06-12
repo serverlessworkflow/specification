@@ -416,9 +416,9 @@ do:
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| do | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially.<br>*Required if `branch` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
-| branch.on | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently.<br>*Required if `do` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
-| branch.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*Ignored if `do` has been set. Defaults to `false`.*<br>*Must **not** be set if the [`tasks`](#task) are executed sequentially.* |
+| do | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially.<br>*Required if `fork` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
+| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently.<br>*Required if `do` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
+| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*Ignored if `do` has been set. Defaults to `false`.*<br>*Must **not** be set if the [`tasks`](#task) are executed sequentially.* |
 
 ##### Examples
 
@@ -474,9 +474,9 @@ document:
   version: '0.1.0'
 do:
   - raiseAlarm:
-      branch:
+      fork:
         compete: true
-        on:
+        branches:
           - callNurse:
               call: http
               with:

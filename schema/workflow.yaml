@@ -291,13 +291,13 @@ $defs:
       - $ref: '#/$defs/taskBase'
         type: object
         unevaluatedProperties: false
-        required: [ branch ]
+        required: [ fork ]
         properties:
-          branch:
+          fork:
             type: object
-            required: [ 'on' ]
+            required: [ branches ]
             properties:
-              on:
+              branches:
                 $ref: '#/$defs/taskList'
               compete:
                 description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.

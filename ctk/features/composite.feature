@@ -40,9 +40,9 @@ Feature: Composite Task
       name: composite-sequential
     do:
       - branchWithCompete:
-          branch:
+          fork:
             compete: true
-            on:
+            branches:
               - setRed:
                   set:
                     colors: ${ .colors + ["red"] }
