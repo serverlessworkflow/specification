@@ -342,9 +342,10 @@ document:
   version: '0.1.0'
 
 do:
-  call: https://github.com/myorg/functions/validateEmailAddress@v1
-  with:
-    emailAddress: ${ .userEmail }
+  - validateEmail:
+      call: https://github.com/myorg/functions/validateEmailAddress@v1
+      with:
+        emailAddress: ${ .userEmail }
 ```
 
 ##### Publishing a Custom Function
@@ -411,24 +412,27 @@ use:
     logging:
       extend: all
       before:
-        call: http
-        with:
-          method: post
-          uri: https://fake.log.collector.com
-          body:
-            message: "${ \"Executing task '\($task.reference)'...\" }"
+        - sendLog:
+            call: http
+            with:
+              method: post
+              uri: https://fake.log.collector.com
+              body:
+                message: "${ \"Executing task '\($task.reference)'...\" }"
       after:
-        call: http
-        with:
-          method: post
-          uri: https://fake.log.collector.com
-          body:
-            message: "${ \"Executed task '\($task.reference)'...\" }"
+        - sendLog:
+            call: http
+            with:
+              method: post
+              uri: https://fake.log.collector.com
+              body:
+                message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
-  call: http
-  with:
-    method: get
-    uri: https://fake.com/sample
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        uri: https://fake.com/sample
 ```
 
 ### External Resources
