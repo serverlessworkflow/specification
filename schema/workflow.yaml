@@ -128,7 +128,8 @@ $defs:
     unevaluatedProperties: false
     oneOf:
       - $ref: '#/$defs/callTask'
-      - $ref: '#/$defs/compositeTask'
+      - $ref: '#/$defs/doTask'
+      - $ref: '#/$defs/forkTask'
       - $ref: '#/$defs/emitTask'
       - $ref: '#/$defs/forTask'
       - $ref: '#/$defs/listenTask'
@@ -306,31 +307,32 @@ $defs:
             type: object
             additionalProperties: true
             description: A name/value mapping of the parameters, if any, to call the function with.
-  compositeTask:
-    description: Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations
-    oneOf:
-      - $ref: '#/$defs/taskBase'
+  forkTask:
+    description: Allows workflows to execute multiple tasks concurrently and optionally race them against each other, with a single possible winner, which sets the task's output.
+    $ref: '#/$defs/taskBase'
+    type: object
+    unevaluatedProperties: false
+    required: [ fork ]
+    properties:
+      fork:
         type: object
-        unevaluatedProperties: false
-        required: [ fork ]
+        required: [ branches ]
         properties:
-          fork:
-            type: object
-            required: [ branches ]
-            properties:
-              branches:
-                $ref: '#/$defs/taskList'
-              compete:
-                description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
-                type: boolean
-                default: false
-      - $ref: '#/$defs/taskBase'
-        type: object
-        unevaluatedProperties: false
-        required: [ do ]
-        properties:
-          do:
-            $ref: '#/$defs/taskList'    
+          branches:
+            $ref: '#/$defs/taskList'
+          compete:
+            description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
+            type: boolean
+            default: false  
+  doTask:
+    description: Allows to execute a list of tasks in sequence
+    $ref: '#/$defs/taskBase'
+    type: object
+    unevaluatedProperties: false
+    required: [ do ]
+    properties:
+      do:
+        $ref: '#/$defs/taskList'
   emitTask:
     description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
     $ref: '#/$defs/taskBase'
