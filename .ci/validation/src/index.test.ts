@@ -15,8 +15,8 @@
  */
 
 import { SWSchemaValidator } from "./index";
-import fs from "fs";
-import { join } from "path";
+import fs from "node:fs";
+import { join } from "node:path";
 
 SWSchemaValidator.prepareSchemas();
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import fs from "fs";
+import fs from "node:fs";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { join } from "path";
+import { join } from "node:path";
 import yaml = require("js-yaml");
 
 export module SWSchemaValidator {
