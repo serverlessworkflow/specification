@@ -1,0 +1,12 @@
+document:
+  dsl: 1.0.0-alpha1
+  namespace: examples
+  name: two-tasks-in-one-item
+  version: 1.0.0-alpha1
+do:
+  - getPet:
+      call: http
+      with:
+        method: get
+        endpoint: https://petstore.swagger.io/v2/pet/{petId}
+      foo: bar

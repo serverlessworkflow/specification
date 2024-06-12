@@ -20,11 +20,11 @@ import path from "node:path";
 
 SWSchemaValidator.prepareSchemas();
 
-const examplePath = "../../../examples";
+const invalidPath = "../test/fixtures/invalid";
 
-describe(`Verify every example in the repository`, () => {
+describe(`Check that invalid workflows are rejected`, () => {
   const examples = fs
-    .readdirSync(path.join(__dirname, examplePath), {
+    .readdirSync(path.join(__dirname, invalidPath), {
       encoding: SWSchemaValidator.defaultEncoding,
       recursive: false,
       withFileTypes: true,
@@ -35,15 +35,9 @@ describe(`Verify every example in the repository`, () => {
 
   test.each(examples)("Example %s", (file) => {
     const workflow = SWSchemaValidator.toJSON(
-      path.join(__dirname, `${examplePath}/${file}`)
+      path.join(__dirname, `${invalidPath}/${file}`)
     );
     const results = SWSchemaValidator.validateSchema(workflow);
-    if (results?.errors) {
-      console.warn(
-        `Schema validation on ${file} failed with: `,
-        JSON.stringify(results.errors, null, 2)
-      );
-    }
-    expect(results?.valid).toBeTruthy();
+    expect(results?.valid).toBeFalsy();
   });
 });
