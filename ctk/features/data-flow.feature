@@ -66,7 +66,7 @@ Feature: Data Flow
       dsl: 1.0.0-alpha1
       namespace: default
       name: non-object-output
-    do:+
+    do:
       - getPetById1:
           call: http
           with:
