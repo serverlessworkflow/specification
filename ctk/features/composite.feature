@@ -10,7 +10,7 @@ Feature: Composite Task
     document:
       dsl: 1.0.0-alpha1
       namespace: default
-      name: composite-sequential
+      name: composite-do
     do:
       - compositeExample:
           do:
@@ -37,7 +37,7 @@ Feature: Composite Task
     document:
       dsl: 1.0.0-alpha1
       namespace: default
-      name: composite-sequential
+      name: composite-fork
     do:
       - branchWithCompete:
           fork:
