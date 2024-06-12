@@ -30,15 +30,17 @@ export module SWSchemaValidator {
   export const defaultEncoding = "utf-8";
 
   export function prepareSchemas() {
-    fs.readdirSync(path.join(__dirname, schemaPath), {
+    const files = fs.readdirSync(path.join(__dirname, schemaPath), {
       encoding: defaultEncoding,
       recursive: false,
       withFileTypes: true,
-    }).forEach((file) => {
-      if (file.isFile()) {
-        ajv.addSchema(syncReadSchema(file.name));
-      }
     });
+
+    files
+      .filter((file) => file.isFile())
+      .forEach((file) => {
+        ajv.addSchema(syncReadSchema(file.name));
+      });
   }
 
   function syncReadSchema(filename: string): any {
@@ -54,14 +56,16 @@ export module SWSchemaValidator {
 
   export function validateSchema(workflow: Record<string, unknown>) {
     const validate = ajv.getSchema(workflowSchemaId);
-    if (validate) {
-      const isValid = validate(workflow);
-      return {
-        valid: isValid,
-        errors: validate.errors,
-      };
+
+    if (!validate) {
+      throw new Error(`Failed to validate schema on workflow`);
     }
-    throw new Error(`Failed to validate schema on workflow`);
+
+    const isValid = validate(workflow);
+    return {
+      valid: isValid,
+      errors: validate.errors,
+    };
   }
 }
 

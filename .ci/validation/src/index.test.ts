@@ -23,25 +23,27 @@ SWSchemaValidator.prepareSchemas();
 const examplePath = "../../../examples";
 
 describe(`Verify every example in the repository`, () => {
-  fs.readdirSync(path.join(__dirname, examplePath), {
-    encoding: SWSchemaValidator.defaultEncoding,
-    recursive: false,
-    withFileTypes: true,
-  }).forEach((file) => {
-    if (file.isFile() && file.name.endsWith(".yaml")) {
-      test(`Example ${file.name}`, () => {
-        const workflow = SWSchemaValidator.toJSON(
-          path.join(__dirname, `${examplePath}/${file.name}`)
-        );
-        const results = SWSchemaValidator.validateSchema(workflow);
-        if (results?.errors != null) {
-          console.warn(
-            `Schema validation on ${file.name} failed with: `,
-            JSON.stringify(results.errors, null, 2)
-          );
-        }
-        expect(results?.valid).toBeTruthy();
-      });
+  const examples = fs
+    .readdirSync(path.join(__dirname, examplePath), {
+      encoding: SWSchemaValidator.defaultEncoding,
+      recursive: false,
+      withFileTypes: true,
+    })
+    .filter((file) => file.isFile())
+    .filter((file) => file.name.endsWith(".yaml"))
+    .map((file) => file.name);
+
+  test.each(examples)("Example %s", (file) => {
+    const workflow = SWSchemaValidator.toJSON(
+      path.join(__dirname, `${examplePath}/${file}`)
+    );
+    const results = SWSchemaValidator.validateSchema(workflow);
+    if (results?.errors != null) {
+      console.warn(
+        `Schema validation on ${file} failed with: `,
+        JSON.stringify(results.errors, null, 2)
+      );
     }
+    expect(results?.valid).toBeTruthy();
   });
 });
