@@ -14,7 +14,8 @@
         + [gRPC](#grpc-call)
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
-    - [Composite](#composite)
+    - [Do](#do)
+    - [Fork](#fork)
     - [Emit](#emit)
     - [For](#for)
     - [Listen](#listen)
@@ -225,7 +226,8 @@ By breaking down the [workflow](#workflow) into manageable [tasks](#task), organ
 The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** supported by all runtimes:
 
 - [Call](#call), used to call services and/or functions.
-- [Composite](#composite), used to define a minimum of two subtasks to perform.
+- [Do](#do), used to define a minimum of two subtasks to perform in sequence.
+- [Fork](#fork), used to define a minimum of two subtasks to perform concurrently.
 - [Emit](#emit), used to emit [events](#event).
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](#listen), used to listen for an [event](#event) or more.
@@ -417,21 +419,18 @@ do:
           status: available
 ```
 
-#### Composite
+#### Do
 
- Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
+Serves as a fundamental building block within workflows, enabling the sequential execution of multiple subtasks. By defining a series of subtasks to perform in sequence, the Do task facilitates the efficient execution of complex operations, ensuring that each subtask is completed before the next one begins.
 
 ##### Properties
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| do | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially.<br>*Required if `fork` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
-| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently.<br>*Required if `do` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
-| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*Ignored if `do` has been set. Defaults to `false`.*<br>*Must **not** be set if the [`tasks`](#task) are executed sequentially.* |
+| do | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially.<br>*If set, must contains **at least** two [`tasks`](#task).* |
 
 ##### Examples
 
-*Executing tasks sequentially:*
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
@@ -474,7 +473,19 @@ do:
               country: Portugal
 ```
 
-*Executing tasks concurrently:*
+#### Fork
+
+Allows workflows to execute multiple subtasks concurrently, enabling parallel processing and improving the overall efficiency of the workflow. By defining a set of subtasks to perform concurrently, the Fork task facilitates the execution of complex operations in parallel, ensuring that multiple tasks can be executed simultaneously.
+
+##### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently.<br>*If set, must contains **at least** two [`tasks`](#task).* | 
+| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output. Defaults to `false`. |
+
+##### Examples
+
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
