@@ -1,25 +1,27 @@
-document:  
-  dsl: '1.0.0-alpha1'
+document:
+  dsl: 1.0.0-alpha1
   namespace: test
   name: sample-workflow
-  version: '0.1.0'
+  version: 0.1.0
 use:
   extensions:
     - mockService:
         extend: call
         when: ($task.with.endpoint != null and ($task.with.endpoint | startswith("https://mocked.service.com"))) or ($task.with.endpoint.uri != null and ($task.with.endpoint.uri | startswith("https://mocked.service.com")))
         before:
-          set:
-            statusCode: 200
-            headers:
-              Content-Type: application/json
-            content:
-              foo:
-                bar: baz
-          then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
+          - mockResponse:
+              set:
+                statusCode: 200
+                headers:
+                  Content-Type: application/json
+                content:
+                  foo:
+                    bar: baz
+              then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
 do:
-  call: http
-  with:
-    method: get
-    endpoint: 
-      uri: https://fake.com/sample
+  - callHttp:
+      call: http
+      with:
+        method: get
+        endpoint:
+          uri: https://fake.com/sample

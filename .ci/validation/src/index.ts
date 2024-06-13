@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import fs from "fs";
-import Ajv from "ajv";
+import fs from "node:fs";
+import Ajv from "ajv/dist/2020";
 import addFormats from "ajv-formats";
-import { join } from "path";
+import path from "node:path";
 import yaml = require("js-yaml");
 
 export module SWSchemaValidator {
@@ -25,43 +25,51 @@ export module SWSchemaValidator {
   addFormats(ajv);
 
   const workflowSchemaId =
-    "https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.json";
+    "https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.yaml";
   const schemaPath = "../../../schema";
   export const defaultEncoding = "utf-8";
 
   export function prepareSchemas() {
-    fs.readdirSync(join(__dirname, schemaPath), {
+    const files = fs.readdirSync(path.join(__dirname, schemaPath), {
       encoding: defaultEncoding,
       recursive: false,
       withFileTypes: true,
-    }).forEach((file) => {
-      if (file.isFile()) {
-        ajv.addSchema(syncReadSchema(file.name));
-      }
     });
+
+    files
+      .filter((file) => file.isFile())
+      .forEach((file) => {
+        ajv.addSchema(syncReadSchema(file.name));
+      });
   }
 
-  function syncReadSchema(filename: string) {
-    return toJSON(join(__dirname, `${schemaPath}/${filename}`));
+  function syncReadSchema(filename: string): any {
+    return loadAsJSON(path.join(__dirname, `${schemaPath}/${filename}`));
   }
 
-  export function toJSON(filename: string) {
-    const yamlObj = yaml.load(fs.readFileSync(filename, defaultEncoding), {
+  export function loadAsJSON(filename: string): any {
+    return yamlToJSON(fs.readFileSync(filename, defaultEncoding));
+  }
+
+  export function yamlToJSON(yamlStr: string): any {
+    const yamlObj = yaml.load(yamlStr, {
       json: true,
     });
-    return JSON.parse(JSON.stringify(yamlObj, null, 2));
+    return structuredClone(yamlObj);
   }
 
-  export function validateSchema(workflow: JSON) {
+  export function validateSchema(workflow: Record<string, unknown>) {
     const validate = ajv.getSchema(workflowSchemaId);
-    if (validate != undefined) {
-      const isValid = validate(workflow);
-      return {
-        valid: isValid,
-        errors: validate.errors,
-      };
+
+    if (!validate) {
+      throw new Error(`Failed to validate schema on workflow`);
     }
-    throw new Error(`Failed to validate schema on workflow`);
+
+    const isValid = validate(workflow);
+    return {
+      valid: isValid,
+      errors: validate.errors,
+    };
   }
 }
 

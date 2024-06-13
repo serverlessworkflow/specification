@@ -12,13 +12,14 @@ Feature: Emit Task
       namespace: default
       name: emit
     do:
-      emit:
-        event:
-          with:
-            source: https://fake-source.com
-            type: com.fake-source.user.greeted.v1
-            data:
-              greetings: ${ "Hello \(.user.firstName) \(.user.lastName)!" }
+      - emitEvent:
+          emit:
+            event:
+              with:
+                source: https://fake-source.com
+                type: com.fake-source.user.greeted.v1
+                data:
+                  greetings: ${ "Hello \(.user.firstName) \(.user.lastName)!" }
     """
     And given the workflow input is:
     """yaml

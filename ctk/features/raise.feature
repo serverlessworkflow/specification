@@ -11,11 +11,12 @@ Feature: Raise Task
       namespace: default
       name: raise-custom-error
     do:
-      raise:
-        error:
-          status: 400
-          type: https://serverlessworkflow.io/errors/types/compliance
-          title: Compliance Error
+      - raiseError:
+          raise:
+            error:
+              status: 400
+              type: https://serverlessworkflow.io/errors/types/compliance
+              title: Compliance Error
     """
     When the workflow is executed
     Then the workflow should fault with error:

@@ -4,45 +4,43 @@ document:
   name: accumulate-room-readings
   version: 1.0.0-alpha1
 do:
-  execute:
-    sequentially:
-      - consumeReading:
-          listen:
-            to:
-              all:
-                - with:
-                    source: https://my.home.com/sensor
-                    type: my.home.sensors.temperature
-                  correlate:
-                    roomId:
-                      from: .roomid
-                  output:
-                    as: .data.reading
-                - with:
-                    source: https://my.home.com/sensor
-                    type: my.home.sensors.humidity
-                  correlate:
-                    roomId:
-                      from: .roomid
-                  output:
-                    as: .data.reading
-          as: readings
-      - logReading:
-          for:
-            each: reading
-            in: .readings
-          do:
+  - consumeReading:
+      listen:
+        to:
+          all:
+            - with:
+                source: https://my.home.com/sensor
+                type: my.home.sensors.temperature
+              correlate:
+                roomId:
+                  from: .roomid
+              output:
+                as: .data.reading
+            - with:
+                source: https://my.home.com/sensor
+                type: my.home.sensors.humidity
+              correlate:
+                roomId:
+                  from: .roomid
+              output:
+                as: .data.reading
+  - logReading:
+      for:
+        each: reading
+        in: .readings
+      do:
+        - callOrderService:
             call: openapi
             with:
               document:
                 uri: http://myorg.io/ordersservices.json
               operationId: logreading
-      - generateReport:
-          call: openapi
-          with:
-            document:
-              uri: http://myorg.io/ordersservices.json
-            operationId: produceReport
+  - generateReport:
+      call: openapi
+      with:
+        document:
+          uri: http://myorg.io/ordersservices.json
+        operationId: produceReport
 timeout:
   after:
     hours: 1

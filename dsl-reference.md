@@ -14,7 +14,8 @@
         + [gRPC](#grpc-call)
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
-    - [Composite](#composite)
+    - [Do](#do)
+    - [Fork](#fork)
     - [Emit](#emit)
     - [For](#for)
     - [Listen](#listen)
@@ -44,7 +45,7 @@
   + [Retry](#retry)
   + [Input](#input)
   + [Output](#output)
-  + [Export] (#export)
+  + [Export](#export)
   + [Timeout](#timeout)
   + [Duration](#duration)
   + [HTTP Response](#http-response)
@@ -67,7 +68,7 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | document | [`document`](#document) | `yes` | Documents the defined workflow. |
 | input | [`input`](#input) | `no` | Configures the workflow's input. |
 | use | [`use`](#use) | `no` | Defines the workflow's reusable components, if any. |
-| do | [`task`](#task) | `yes` | The [task](#task) that must be performed by the [workflow](#workflow). |
+| do | [`map[string, task][]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
 | timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
 | output | [`output`](#output) | `no` | Configures the workflow's output. |
 | schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
@@ -130,79 +131,86 @@ document:
   version: '1.0.0'
   title: Order Pet - 1.0.0
   summary: >
-  # Order Pet - 1.0.0
-  ## Table of Contents
-  - [Description](#description)
-  - [Requirements](#requirements)
-  ## Description
-  A sample workflow used to process an hypothetic pet order using the [PetStore API](https://petstore.swagger.io/)
-  ## Requirements
-  ### Secrets
-  - my-oauth2-secret
+    # Order Pet - 1.0.0
+    ## Table of Contents
+    - [Description](#description)
+    - [Requirements](#requirements)
+    ## Description
+    A sample workflow used to process an hypothetic pet order using the [PetStore API](https://petstore.swagger.io/)
+    ## Requirements
+    ### Secrets
+    - my-oauth2-secret
 use:
   authentications:
     petStoreOAuth2:
-      oauth2: my-oauth2-secret
+      oauth2: 
+        authority: https://petstore.swagger.io/.well-known/openid-configuration
+        grant: client-credentials
+        client:
+          id: workflow-runtime
+          secret: "**********"
+        scopes: [ api ]
+        audiences: [ runtime ]
   extensions:
     - externalLogging:
         extend: all
         before:
-          call: http
-          with:
-            method: post
-            endpoint: https://fake.log.collector.com
-            body:
-              message: "${ \"Executing task '\($task.reference)'...\" }"
+          - sendLog:
+              call: http
+              with:
+                method: post
+                endpoint: https://fake.log.collector.com
+                body:
+                  message: ${ "Executing task '\($task.reference)'..." }
         after:
-          call: http
-          with:
-            method: post
-            endpoint: https://fake.log.collector.com
-            body:
-              message: "${ \"Executed task '\($task.reference)'...\" }"
+          - sendLog:
+              call: http
+              with:
+                method: post
+                endpoint: https://fake.log.collector.com
+                body:
+                  message: ${ "Executed task '\($task.reference)'..." }
   functions:
     getAvailablePets:
       call: openapi
       with:
         document:
           uri: https://petstore.swagger.io/v2/swagger.json
-        operation: findByStatus
+        operationId: findByStatus
         parameters:
           status: available
   secrets:
     - my-oauth2-secret
 do:
-  execute:
-    sequentially:
-      - getAvailablePets:
-          call: getAvailablePets
-          output:
-            as: "$input + { availablePets: [.[] | select(.category.name == "dog" and (.tags[] | .breed == $input.order.breed))] }"
-      - submitMatchesByMail:
-          call: http
-          with:
-            method: post
-            endpoint:
-              uri: https://fake.smtp.service.com/email/send
-              authentication: petStoreOAuth2
-            body:
-              from: noreply@fake.petstore.com
-              to: ${ .order.client.email }
-              subject: Candidates for Adoption
-              body: >
-              Hello ${ .order.client.preferredDisplayName }!
+  - getAvailablePets:
+      call: getAvailablePets
+      output:
+        as: "$input + { availablePets: [.[] | select(.category.name == \"dog\" and (.tags[] | .breed == $input.order.breed))] }"
+  - submitMatchesByMail:
+      call: http
+      with:
+        method: post
+        endpoint:
+          uri: https://fake.smtp.service.com/email/send
+          authentication: petStoreOAuth2
+        body:
+          from: noreply@fake.petstore.com
+          to: ${ .order.client.email }
+          subject: Candidates for Adoption
+          body: >
+            Hello ${ .order.client.preferredDisplayName }!
 
-              Following your interest to adopt a dog, here is a list of candidates that you might be interested in:
+            Following your interest to adopt a dog, here is a list of candidates that you might be interested in:
 
-              ${ .pets | map("-\(.name)") | join("\n") }
+            ${ .pets | map("-\(.name)") | join("\n") }
 
-              Please do not hesistate to contact us at info@fake.petstore.com if your have questions.
+            Please do not hesistate to contact us at info@fake.petstore.com if your have questions.
 
-              Hope to hear from you soon!
+            Hope to hear from you soon!
 
-              ----------------------------------------------------------------------------------------------
-              DO NOT REPLY
-              ----------------------------------------------------------------------------------------------
+            ----------------------------------------------------------------------------------------------
+            DO NOT REPLY
+            ----------------------------------------------------------------------------------------------
 ```
 
 ### Task
@@ -218,7 +226,8 @@ By breaking down the [workflow](#workflow) into manageable [tasks](#task), organ
 The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** supported by all runtimes:
 
 - [Call](#call), used to call services and/or functions.
-- [Composite](#composite), used to define a minimum of two subtasks to perform.
+- [Do](#do), used to define one or more subtasks to perform in sequence.
+- [Fork](#fork), used to define one or more subtasks to perform concurrently.
 - [Emit](#emit), used to emit [events](#event).
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](#listen), used to listen for an [event](#event) or more.
@@ -256,13 +265,14 @@ Enables the execution of a specified function within a workflow, allowing seamle
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: call-example
   version: '0.1.0'
 do:
-  call: http
-  with:
-    method: get
-    endpoint: https://petstore.swagger.io/v2/pet/{petId}
+  - getPet:
+      call: http
+      with:
+        method: get
+        endpoint: https://petstore.swagger.io/v2/pet/{petId}
 ```
 
 Serverless Workflow defines several default functions that **MUST** be supported by all implementations and runtimes:
@@ -294,18 +304,19 @@ The [AsyncAPI Call](#asyncapi-call) enables workflows to interact with external 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: asyncapi-example
   version: '0.1.0'
 do:
-  call: asyncapi
-  with:
-    document: https://fake.com/docs/asyncapi.json
-    operation: findPetsByStatus
-    server: staging
-    message: getPetByStatusQuery
-    binding: http
-    payload:
-      petId: ${ .pet.id }
+  - findPet:
+      call: asyncapi
+      with:
+        document: https://fake.com/docs/asyncapi.json
+        operationRef: findPetsByStatus
+        server: staging
+        message: getPetByStatusQuery
+        binding: http
+        payload:
+          petId: ${ .pet.id }
 ```
 
 ##### gRPC Call
@@ -330,19 +341,20 @@ The [gRPC Call](#grpc-call) enables communication with external systems via the 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: grpc-example
   version: '0.1.0'
 do:
-  call: grpc
-  with:
-    proto: file://app/greet.proto
-    service:
-      name: GreeterApi.Greeter
-      host: localhost
-      port: 5011
-    method: SayHello
-    arguments:
-      name: ${ .user.preferredDisplayName }
+  - greet:
+      call: grpc
+      with:
+        proto: file://app/greet.proto
+        service:
+          name: GreeterApi.Greeter
+          host: localhost
+          port: 5011
+        method: SayHello
+        arguments:
+          name: ${ .user.preferredDisplayName }
 ```
 
 ##### HTTP Call
@@ -365,13 +377,14 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: http-example
   version: '0.1.0'
 do:
-  call: http
-  with:
-    method: get
-    endpoint: https://petstore.swagger.io/v2/pet/{petId}
+  - getPet:
+      call: http
+      with:
+        method: get
+        endpoint: https://petstore.swagger.io/v2/pet/{petId}
 ```
 
 ##### OpenAPI Call
@@ -394,102 +407,112 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: openapi-example
   version: '0.1.0'
 do:
-  call: openapi
-  with:
-    document: https://petstore.swagger.io/v2/swagger.json
-    operation: findPetsByStatus
-    parameters:
-      status: available
+  - findPet:
+      call: openapi
+      with:
+        document: https://petstore.swagger.io/v2/swagger.json
+        operationId: findPetsByStatus
+        parameters:
+          status: available
 ```
 
-#### Composite
+#### Do
 
- Serves as a pivotal orchestrator within workflow systems, enabling the seamless integration and execution of multiple subtasks to accomplish complex operations. By encapsulating and coordinating various subtasks, this task type facilitates the efficient execution of intricate workflows.
+Serves as a fundamental building block within workflows, enabling the sequential execution of multiple subtasks. By defining a series of subtasks to perform in sequence, the Do task facilitates the efficient execution of complex operations, ensuring that each subtask is completed before the next one begins.
 
 ##### Properties
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| execute.sequentially | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially.<br>*Required if `execute.concurrently` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
-| execute.concurrently | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently.<br>*Required if `execute.sequentially` has not been set, otherwise ignored.*<br>*If set, must contains **at least** two [`tasks`](#task).* | 
-| execute.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*Ignored if `execute.sequentially` has been set. Defaults to `false`.*<br>*Must **not** be set if the [`tasks`](#task) are executed sequentially.* |
+| do | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially. |
 
 ##### Examples
 
-*Executing tasks sequentially:*
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: do-example
   version: '0.1.0'
 do:
-  execute:
-    sequentially:
-      - bookHotel:
-          call: http
-          with:
-            method: post
-            endpoint: 
-              uri: https://fake-booking-agency.com/hotels/book
-              authentication: fake-booking-agency-oauth2
-            body:
-              name: Four Seasons
-              city: Antwerp
+  - bookHotel:
+      call: http
+      with:
+        method: post
+        endpoint: 
+          uri: https://fake-booking-agency.com/hotels/book
+          authentication: fake-booking-agency-oauth2
+        body:
+          name: Four Seasons
+          city: Antwerp
+          country: Belgium
+  - bookFlight:
+      call: http
+      with:
+        method: post
+        endpoint: 
+          uri: https://fake-booking-agency.com/flights/book
+          authentication: fake-booking-agency-oauth2
+        body:
+          departure:
+            date: '01/01/26'
+            time: '07:25:00'
+            from:
+              airport: BRU
+              city: Zaventem
               country: Belgium
-      - bookFlight:
-          call: http
-          with:
-            method: post
-            endpoint: 
-              uri: https://fake-booking-agency.com/flights/book
-              authentication: fake-booking-agency-oauth2
-            body:
-              departure:
-                date: '01/01/26'
-                time: '07:25:00'
-                from:
-                  airport: BRU
-                  city: Zaventem
-                  country: Belgium
-              arrival:
-                date: '01/01/26'
-                time: '11:12:00'
-                to:
-                  airport: LIS
-                  city: Lisbon
-                  country: Portugal
+          arrival:
+            date: '01/01/26'
+            time: '11:12:00'
+            to:
+              airport: LIS
+              city: Lisbon
+              country: Portugal
 ```
 
-*Executing tasks concurrently:*
+#### Fork
+
+Allows workflows to execute multiple subtasks concurrently, enabling parallel processing and improving the overall efficiency of the workflow. By defining a set of subtasks to perform concurrently, the Fork task facilitates the execution of complex operations in parallel, ensuring that multiple tasks can be executed simultaneously.
+
+##### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently. | 
+| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output. Defaults to `false`. |
+
+##### Examples
+
 ```yaml
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: fork-example
   version: '0.1.0'
 do:
-  execute:
-    concurrently:
-      - callNurse:
-          call: http
-          with:
-            method: put
-            endpoint: https://fake-hospital.com/api/v3/alert/nurses
-            body:
-              patientId: ${ .patient.fullName }
-              room: ${ .room.number }
-      - callDoctor:
-          call: http
-          with:
-            method: put
-            endpoint: https://fake-hospital.com/api/v3/alert/doctor
-            body:
-              patientId: ${ .patient.fullName }
-              room: ${ .room.number }
+  - raiseAlarm:
+      fork:
+        compete: true
+        branches:
+          - callNurse:
+              call: http
+              with:
+                method: put
+                endpoint: https://fake-hospital.com/api/v3/alert/nurses
+                body:
+                  patientId: ${ .patient.fullName }
+                  room: ${ .room.number }
+          - callDoctor:
+              call: http
+              with:
+                method: put
+                endpoint: https://fake-hospital.com/api/v3/alert/doctor
+                body:
+                  patientId: ${ .patient.fullName }
+                  room: ${ .room.number }
 ```
 
 #### Emit
@@ -508,21 +531,21 @@ Allows workflows to publish events to event brokers or messaging systems, facili
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: emit-example
   version: '0.1.0'
 do:
-  emit:
-    event:
-      with:
-        source: https://petstore.com
-        type: com.petstore.order.placed.v1
-        data:
-          client:
-            firstName: Cruella
-            lastName: de Vil
-          items:
-          - breed: dalmatian
-            quantity: 101
+  - emitEvent:
+      emit:
+        event:
+          source: https://petstore.com
+          type: com.petstore.order.placed.v1
+          data:
+            client:
+              firstName: Cruella
+              lastName: de Vil
+            items:
+              - breed: dalmatian
+                quantity: 101
 ```
 
 #### For
@@ -545,22 +568,24 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: for-example
   version: '0.1.0'
 do:
-  for:
-    each: pet
-    in: .pets
-    at: index
-  while: .vet != null
-  do:
-    listen:
-      to:
-        one:
-          with:
-            type: com.fake.petclinic.pets.checkup.completed.v2
-      output:
-        as: '.pets + [{ "id": $pet.id }]'        
+  - checkup:
+      for:
+        each: pet
+        in: .pets
+        at: index
+      while: .vet != null
+      do:
+        - waitForCheckup:
+            listen:
+              to:
+                one:
+                  with:
+                    type: com.fake.petclinic.pets.checkup.completed.v2
+              output:
+                as: '.pets + [{ "id": $pet.id }]'        
 ```
 
 #### Listen
@@ -579,20 +604,21 @@ Provides a mechanism for workflows to await and react to external events, enabli
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: listen-example
   version: '0.1.0'
 do:
-  listen:
-    to:
-      any:
-      - with:
-          type: com.fake-hospital.vitals.measurements.temperature
-          data:
-            temperature: ${ .temperature > 38 }
-      - with:
-          type: com.fake-hospital.vitals.measurements.bpm
-          data:
-            temperature: ${ .bpm < 60 or .bpm > 100 }
+  - callDoctor:
+      listen:
+        to:
+          any:
+          - with:
+              type: com.fake-hospital.vitals.measurements.temperature
+              data:
+                temperature: ${ .temperature > 38 }
+          - with:
+              type: com.fake-hospital.vitals.measurements.bpm
+              data:
+                temperature: ${ .bpm < 60 or .bpm > 100 }
 ```
 
 #### Raise
@@ -611,33 +637,50 @@ Intentionally triggers and propagates errors. By employing the "Raise" task, wor
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: raise-example
   version: '0.1.0'
 do:
-  execute:
-    sequentially:
-      - processTicket:
-          switch:
-            - highPriority:
-                when: .ticket.priority == "high"
-                then: escalateToManager
-            - mediumPriority:
-                when: .ticket.priority == "medium"
-                then: assignToSpecialist
-            - lowPriority:
-                when: .ticket.priority == "low"
-                then: resolveTicket
-            - default:
-                then: raiseUndefinedPriorityError
-      - raiseUndefinedPriorityError:
-          raise:
-            error:
-              type: https://fake.com/errors/tickets/undefined-priority
-              status: 400
-              title: Undefined Priority
-      - escalateToManager: {}
-      - assignToSpecialist: {}
-      - resolveTicket: {}
+  - processTicket:
+      switch:
+        - highPriority:
+            when: .ticket.priority == "high"
+            then: escalateToManager
+        - mediumPriority:
+            when: .ticket.priority == "medium"
+            then: assignToSpecialist
+        - lowPriority:
+            when: .ticket.priority == "low"
+            then: resolveTicket
+        - default:
+            then: raiseUndefinedPriorityError
+  - raiseUndefinedPriorityError:
+      raise:
+        error:
+          type: https://fake.com/errors/tickets/undefined-priority
+          status: 400
+          instance: /raiseUndefinedPriorityError
+          title: Undefined Priority
+  - escalateToManager:
+      call: http
+      with:
+        method: post
+        endpoint: https://fake-ticketing-system.com/tickets/escalate
+        body:
+          ticketId: ${ .ticket.id }
+  - assignToSpecialist:
+      call: http
+      with:
+        method: post
+        endpoint: https://fake-ticketing-system.com/tickets/assign
+        body:
+          ticketId: ${ .ticket.id }
+  - resolveTicket:
+      call: http
+      with:
+        method: post
+        endpoint: https://fake-ticketing-system.com/tickets/resolve
+        body:
+          ticketId: ${ .ticket.id }
 ```
 
 #### Run
@@ -659,33 +702,33 @@ Provides the capability to execute external [containers](#container-process), [s
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-example
   version: '0.1.0'
 do:
-  execute:
-    sequentially:
-      - runContainer:
-          run:
-            container:
-              image: fake-image
+  - runContainer:
+      run:
+        container:
+          image: fake-image
 
-      - runScript:
-          run:
-            script:
-              language: js
-              code: >
-                Some cool multiline script
+  - runScript:
+      run:
+        script:
+          language: js
+          code: >
+            Some cool multiline script
 
-      - runShell:
-          run:
-            shell:
-              command: 'echo "Hello, ${ .user.name }"'
+  - runShell:
+      run:
+        shell:
+          command: 'echo "Hello, ${ .user.name }"'
 
-      - runWorkflow:
-          run:
-            workflow:
-              reference: another-one:0.1.0
-              input: {}
+  - runWorkflow:
+      run:
+        workflow:
+          namespace: another-one
+          name: do-stuff
+          version: '0.1.0'
+          input: {}
 ```
 
 ##### Container Process
@@ -708,12 +751,13 @@ Enables the execution of external processes encapsulated within a containerized 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-container-example
   version: '0.1.0'
 do:
-  run:
-    container:
-      image: fake-image
+  - runContainer:
+      run:
+        container:
+          image: fake-image
 ```
 
 ##### Script Process
@@ -735,14 +779,15 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-script-example
   version: '0.1.0'
 do:
-  run:
-    script:
-      language: js
-      code: >
-        Some cool multiline script
+  - runScript:
+      run:
+        script:
+          language: js
+          code: >
+            Some cool multiline script
 ```
 
 ##### Shell Process
@@ -763,12 +808,13 @@ Enables the execution of shell commands within a workflow, enabling workflows to
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-shell-example
   version: '0.1.0'
 do:
-  run:
-    shell:
-      command: 'echo "Hello, ${ .user.name }"'
+  - runShell:
+      run:
+        shell:
+          command: 'echo "Hello, ${ .user.name }"'
 ```
 
 ##### Workflow Process
@@ -789,14 +835,17 @@ Enables the invocation and execution of nested workflows within a parent workflo
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: run-workflow-example
   version: '0.1.0'
 do:
-  run:
-    workflow:
-      reference: another-one:0.1.0
-      input:
-        foo: bar
+  - startWorkflow:
+      run:
+        workflow:
+          namespace: another-one
+          name: do-stuff
+          version: '0.1.0'
+          input:
+            foo: bar
 ```
 
 #### Set
@@ -815,13 +864,14 @@ A task used to set data.
 document:
   dsl: 1.0.0-alpha1
   namespace: default
-  name: set
+  name: set-example
   version: '0.1.0'
 do:
-  set:
-    shape: circle
-    size: ${ .configuration.size }
-    fill: ${ .configuration.fill }
+  - setShape:
+      set:
+        shape: circle
+        size: ${ .configuration.size }
+        fill: ${ .configuration.fill }
 ```
 
 #### Switch
@@ -840,39 +890,62 @@ Enables conditional branching within workflows, allowing them to dynamically sel
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: switch-example
   version: '0.1.0'
 do:
-  execute:
-    sequentially:
-      - processOrder:
-          switch:
-            - case1:
-                when: .orderType == "electronic"
-                then: processElectronicOrder
-            - case2:
-                when: .orderType == "physical"
-                then: processPhysicalOrder
-            - default:
-                then: handleUnknownOrderType
-      - processElectronicOrder:
-          execute:
-            sequentially:
-              - validatePayment: {}
-              - fulfillOrder: {}
-          then: exit
-      - processPhysicalOrder:
-          execute:
-            sequentially:
-              - checkInventory: {}
-              - packItems: {}
-              - scheduleShipping: {}
-          then: exit
-      - handleUnknownOrderType:
-          execute:
-            sequentially:
-              - logWarning: {}
-              - notifyAdmin: {}
+  - processOrder:
+      switch:
+        - case1:
+            when: .orderType == "electronic"
+            then: processElectronicOrder
+        - case2:
+            when: .orderType == "physical"
+            then: processPhysicalOrder
+        - default:
+            then: handleUnknownOrderType
+  - processElectronicOrder:
+      do:
+        - validatePayment:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-payment-service.com/validate
+        - fulfillOrder:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-fulfillment-service.com/fulfill
+      then: exit
+  - processPhysicalOrder:
+      do:
+        - checkInventory:
+            call: http
+            with:
+              method: get
+              endpoint: https://fake-inventory-service.com/inventory
+        - packItems:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-packaging-service.com/pack
+        - scheduleShipping:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-shipping-service.com/schedule
+      then: exit
+  - handleUnknownOrderType:
+      do:
+        - logWarning:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-logging-service.com/warn
+        - notifyAdmin:
+            call: http
+            with:
+              method: post
+              endpoint: https://fake-notification-service.com/notify
 ```
 
 ##### Switch Case
@@ -892,7 +965,7 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| try | [`task`](#task) | `yes` | The task(s) to perform. |
+| try | [`map[string, task][]`](#task) | `yes` | The task(s) to perform. |
 | catch | [`catch`](#catch) | `yes` | Configures the errors to catch and how to handle them. |
 
 ##### Examples
@@ -901,28 +974,30 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: try-example
   version: '0.1.0'
 do:
-  try:
-    call: http
-    with:
-      method: get
-      endpoint: https://
-  catch:
-    errors:
-      with:
-        type: https://serverlessworkflow.io.io/dsl/errors/types/communication
-        status: 503
-    as: error
-    retry:
-      delay:
-        seconds: 3
-      backoff:
-        exponential: {}
-      limit:
-        attempt:
-          count: 5
+  - trySomething:
+      try:
+        - invalidHttpCall:
+            call: http
+            with:
+              method: get
+              endpoint: https://
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io.io/dsl/errors/types/communication
+            status: 503
+        as: error
+        retry:
+          delay:
+            seconds: 3
+          backoff:
+            exponential: {}
+          limit:
+            attempt:
+              count: 5
 ```
 
 ##### Catch
@@ -938,7 +1013,7 @@ Defines the configuration of a catch clause, which a concept used to catch error
 | when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error |
 | exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error |
 | retry | [`retryPolicy`](#retry) | `no` | The retry policy to use, if any, when catching errors |
-| do | [`task`](#task) | `no` | The definition of the task to run when catching an error |
+| do | [`map[string, task][]`](#task) | `no` | The definition of the task(s) to run when catching an error |
 
 #### Wait
 
@@ -956,11 +1031,12 @@ Allows workflows to pause or delay their execution for a specified period of tim
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: wait-example
   version: '0.1.0'
 do:
-  wait:
-    seconds: 10
+  - waitAWhile:
+      wait:
+        seconds: 10
 ```
 
 ### Flow Directive
@@ -1017,21 +1093,22 @@ Defines the mechanism used to authenticate users and workflows attempting to acc
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: authentication-example
   version: '0.1.0'
 use:
   secrets:
-    usernamePasswordSecret: {}
+    - usernamePasswordSecret
   authentication:
     sampleBasicFromSecret:
       basic: usernamePasswordSecret
 do:
-  call: http
-  with:
-    method: get
-    endpoint: 
-      uri: https://secured.fake.com/sample
-      authentication: sampleBasicFromSecret
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        endpoint: 
+          uri: https://secured.fake.com/sample
+          authentication: sampleBasicFromSecret
 ```
 
 #### Basic Authentication
@@ -1051,7 +1128,7 @@ Defines the fundamentals of a 'basic' authentication.
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: basic-authentication-example
   version: '0.1.0'
 use:
   authentication:
@@ -1060,12 +1137,13 @@ use:
         username: admin
         password: 123
 do:
-  call: http
-  with:
-    method: get
-    endpoint: 
-      uri: https://secured.fake.com/sample
-      authentication: sampleBasic
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        endpoint: 
+          uri: https://secured.fake.com/sample
+          authentication: sampleBasic
 ```
 
 #### Bearer Authentication
@@ -1084,17 +1162,18 @@ Defines the fundamentals of a 'bearer' authentication
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: bearer-authentication-example
   version: '0.1.0'
 do:
-  call: http
-  with:
-    method: get
-    endpoint: 
-      uri: https://secured.fake.com/sample
-      authentication:
-        bearer:
-          token: ${ .user.token }
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        endpoint: 
+          uri: https://secured.fake.com/sample
+          authentication:
+            bearer:
+              token: ${ .user.token }
 ```
 
 #### Certificate Authentication
@@ -1128,23 +1207,24 @@ Defines the fundamentals of an 'oauth2' authentication
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: oauth2-authentication-example
   version: '0.1.0'
 do:
-  call: http
-  with:
-    method: get
-    endpoint: 
-      uri: https://secured.fake.com/sample
-      authentication:
-        oauth2:
-          authority: http://keycloak/realms/fake-authority/.well-known/openid-configuration
-          grant: client-credentials
-          client:
-            id: workflow-runtime
-            secret: **********
-          scopes: [ api ]
-          audiences: [ runtime ]
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        endpoint: 
+          uri: https://secured.fake.com/sample
+          authentication:
+            oauth2:
+              authority: http://keycloak/realms/fake-authority/.well-known/openid-configuration
+              grant: client-credentials
+              client:
+                id: workflow-runtime
+                secret: "**********"
+              scopes: [ api ]
+              audiences: [ runtime ]
 ```
 
 ##### OAUTH2 Token
@@ -1170,8 +1250,8 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 |----------|:----:|:--------:|-------------|
 | extend |  `string` | `yes` | The type of task to extend<br>Supported values are: `call`, `composite`, `emit`, `extension`, `for`, `listen`, `raise`, `run`, `set`, `switch`, `try`, `wait` and `all` |
 | when | `string` | `no` | A runtime expression used to determine whether or not the extension should apply in the specified context |
-| before | [`task`](#task) | `no` | The task to execute, if any, before the extended task |
-| after | [`task`](#task) | `no` | The task to execute, if any, after the extended task |
+| before | [`map[string, task][]`](#task) | `no` | The task to execute, if any, before the extended task |
+| after | [`map[string, task][]`](#task) | `no` | The task to execute, if any, after the extended task |
 
 #### Examples
 
@@ -1180,31 +1260,34 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 document:
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: logging-extension-example
   version: '0.1.0'
 use:
   extensions:
     - logging:
         extend: all
         before:
-          call: http
-          with:
-            method: post
-            endpoint: https://fake.log.collector.com
-            body:
-              message: "${ \"Executing task '\($task.reference)'...\" }"
+          - sendLog:
+              call: http
+              with:
+                method: post
+                endpoint: https://fake.log.collector.com
+                body:
+                  message: ${ "Executing task '\($task.reference)'..." }
         after:
-          call: http
-          with:
-            method: post
-            endpoint: https://fake.log.collector.com
-            body:
-              message: "${ \"Executed task '\($task.reference)'...\" }"
+          - sendLog:
+              call: http
+              with:
+                method: post
+                endpoint: https://fake.log.collector.com
+                body:
+                  message: ${ "Executed task '\($task.reference)'..." }
 do:
-  call: http
-  with:
-    method: get
-    endpoint: https://fake.com/sample
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        endpoint: https://fake.com/sample
 ```
 
 *Intercept HTTP calls to 'https://mocked.service.com' and mock its response:*
@@ -1212,27 +1295,29 @@ do:
 document:  
   dsl: '1.0.0-alpha1'
   namespace: test
-  name: sample-workflow
+  name: intercept-extension-example
   version: '0.1.0'
 use:
   extensions:
     - mockService:
-        extend: http
-        when: ($task.with.uri != null and ($task.with.uri | startswith("https://mocked.service.com"))) or ($task.with.endpoint.uri != null and ($task.with.endpoint.uri | startswith("https://mocked.service.com")))
+        extend: call
+        when: $task.call == "http" and ($task.with.uri != null and ($task.with.uri | startswith("https://mocked.service.com"))) or ($task.with.endpoint.uri != null and ($task.with.endpoint.uri | startswith("https://mocked.service.com")))
         before:
-          set:
-            statusCode: 200
-            headers:
-              Content-Type: application/json
-            content:
-              foo:
-                bar: baz
-          then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
+          - intercept:
+              set:
+                statusCode: 200
+                headers:
+                  Content-Type: application/json
+                content:
+                  foo:
+                    bar: baz
+              then: exit #using this, we indicate to the workflow we want to exit the extended task, thus just returning what we injected
 do:
-  call: http
-  with:
-    method: get
-    endpoint: https://fake.com/sample
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        endpoint: https://fake.com/sample
 ```
 
 ### Error
@@ -1497,11 +1582,12 @@ Defines a workflow or task timeout.
 document:
   dsl: '1.0.0-alpha1'
   namespace: default
-  name: sample
+  name: timeout-example
   version: '0.1.0'
 do:
-  wait:
-    seconds: 60
+  - waitAMinute:
+      wait:
+        seconds: 60
 timeout:
   after:
     seconds: 30
