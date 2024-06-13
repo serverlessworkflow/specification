@@ -112,6 +112,9 @@ $defs:
   taskBase:
     type: object
     properties:
+      if:
+        type: string
+        description: A runtime expression, if any, used to determine whether or not the task should be run.
       input:
         $ref: '#/$defs/input'
         description: Configure the task's input.
