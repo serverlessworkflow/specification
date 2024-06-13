@@ -118,6 +118,9 @@ $defs:
       output:
         $ref: '#/$defs/output'
         description: Configure the task's output.
+      export:
+        $ref: '#/$defs/export'
+        description: Export task output to context.
       timeout:
         $ref: '#/$defs/timeout'
         description: The task's timeout configuration, if any.
