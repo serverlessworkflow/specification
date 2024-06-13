@@ -15,9 +15,9 @@
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
     - [Do](#do)
-    - [Fork](#fork)
     - [Emit](#emit)
     - [For](#for)
+    - [Fork](#fork)
     - [Listen](#listen)
     - [Raise](#raise)
     - [Run](#run)
@@ -242,6 +242,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
+| if | `string` | `no` | A [`runtime expression`](dsl.md#runtime-expressions), if any, used to determine whether or not the task should be run.<br>The task is considered skipped if not run. |
 | input | [`input`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
 | output | [`output`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
 | export | [`export`](#export) | `no` | An object used to customize the content of the workflow context. | 
@@ -473,48 +474,6 @@ do:
               country: Portugal
 ```
 
-#### Fork
-
-Allows workflows to execute multiple subtasks concurrently, enabling parallel processing and improving the overall efficiency of the workflow. By defining a set of subtasks to perform concurrently, the Fork task facilitates the execution of complex operations in parallel, ensuring that multiple tasks can be executed simultaneously.
-
-##### Properties
-
-| Name | Type | Required | Description|
-|:--|:---:|:---:|:---|
-| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently. | 
-| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output. Defaults to `false`. |
-
-##### Examples
-
-```yaml
-document:
-  dsl: '1.0.0-alpha1'
-  namespace: test
-  name: fork-example
-  version: '0.1.0'
-do:
-  - raiseAlarm:
-      fork:
-        compete: true
-        branches:
-          - callNurse:
-              call: http
-              with:
-                method: put
-                endpoint: https://fake-hospital.com/api/v3/alert/nurses
-                body:
-                  patientId: ${ .patient.fullName }
-                  room: ${ .room.number }
-          - callDoctor:
-              call: http
-              with:
-                method: put
-                endpoint: https://fake-hospital.com/api/v3/alert/doctor
-                body:
-                  patientId: ${ .patient.fullName }
-                  room: ${ .room.number }
-```
-
 #### Emit
 
 Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services. With the Emit task, workflows can seamlessly integrate with event-driven architectures, enabling real-time processing, event-driven decision-making, and reactive behavior based on incoming events.
@@ -587,6 +546,49 @@ do:
               output:
                 as: '.pets + [{ "id": $pet.id }]'        
 ```
+
+#### Fork
+
+Allows workflows to execute multiple subtasks concurrently, enabling parallel processing and improving the overall efficiency of the workflow. By defining a set of subtasks to perform concurrently, the Fork task facilitates the execution of complex operations in parallel, ensuring that multiple tasks can be executed simultaneously.
+
+##### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently. | 
+| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output. Defaults to `false`. |
+
+##### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: fork-example
+  version: '0.1.0'
+do:
+  - raiseAlarm:
+      fork:
+        compete: true
+        branches:
+          - callNurse:
+              call: http
+              with:
+                method: put
+                endpoint: https://fake-hospital.com/api/v3/alert/nurses
+                body:
+                  patientId: ${ .patient.fullName }
+                  room: ${ .room.number }
+          - callDoctor:
+              call: http
+              with:
+                method: put
+                endpoint: https://fake-hospital.com/api/v3/alert/doctor
+                body:
+                  patientId: ${ .patient.fullName }
+                  room: ${ .room.number }
+```
+
 
 #### Listen
 
