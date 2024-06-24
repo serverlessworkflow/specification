@@ -54,6 +54,7 @@ properties:
         type: array
         items:
           type: object
+          title: ExtensionItem
           minProperties: 1
           maxProperties: 1
           additionalProperties:
@@ -105,6 +106,7 @@ $defs:
     type: array
     items:
       type: object
+      title: TaskItem
       minProperties: 1
       maxProperties: 1
       additionalProperties:
@@ -157,6 +159,7 @@ $defs:
             type: string
             const: asyncapi
           with:
+            title: WithAsyncAPI
             type: object
             properties:
               document:
@@ -195,6 +198,7 @@ $defs:
             type: string
             const: grpc
           with:
+            title: WithGRPC
             type: object
             properties:
               proto:
@@ -241,6 +245,7 @@ $defs:
             type: string
             const: http
           with:
+            title: WithHTTP
             type: object
             properties:
               method:
@@ -274,6 +279,7 @@ $defs:
             type: string
             const: openapi
           with:
+            title: WithOpenAPI
             type: object
             properties:
               document:
@@ -441,7 +447,8 @@ $defs:
       run:
         type: object
         oneOf:
-          - properties:
+          - title: RunContainer
+            properties:
               container:
                 type: object
                 properties:
@@ -458,12 +465,14 @@ $defs:
                     type: object
                     description: The container's volume mappings, if any.
                   environment:
+                    title: ContainerEnvironment
                     type: object
                     description: A key/value mapping of the environment variables, if any, to use when running the configured process.
                 required: [ image ]
             required: [ container ]
             description: Enables the execution of external processes encapsulated within a containerized environment.
-          - properties:
+          - title: RunScript
+            properties:
               script:
                 type: object
                 properties:
@@ -471,16 +480,19 @@ $defs:
                     type: string
                     description: The language of the script to run.
                   environment:
+                    title: ScriptEnvironment
                     type: object
                     additionalProperties: true
                     description: A key/value mapping of the environment variables, if any, to use when running the configured process.
                 oneOf:
-                  - properties:
+                  - title: ScriptInline
+                    properties:
                       code:
                         type: string
                     required: [ code ]
                     description: The script's code.
-                  - properties:
+                  - title: ScriptExternal
+                    properties:
                       source:
                         $ref: '#/$defs/externalResource'
                     description: The script's resource.
@@ -488,7 +500,8 @@ $defs:
                 required: [ language ]
             required: [ script ]
             description: Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
-          - properties:
+          - title: RunShell
+            properties:
               shell:
                 type: object
                 properties:
@@ -496,18 +509,22 @@ $defs:
                     type: string
                     description: The shell command to run.
                   arguments:
+                    title: ShellArguments
                     type: object
                     additionalProperties: true
                     description: A list of the arguments of the shell command to run.
                   environment:
+                    title: ShellEnvironment
                     type: object
                     additionalProperties: true
                     description: A key/value mapping of the environment variables, if any, to use when running the configured process.
                 required: [ command ]
             required: [ shell ]
             description: Enables the execution of shell commands within a workflow, enabling workflows to interact with the underlying operating system and perform system-level operations, such as file manipulation, environment configuration, or system administration tasks.
-          - properties:
+          - title: RunWokflow
+            properties:
               workflow:
+                title: RunWorkflowDescriptor
                 type: object
                 properties:
                   namespace:
@@ -521,6 +538,7 @@ $defs:
                     default: latest
                     description: The version of the workflow to run. Defaults to latest
                   input:
+                    title: WorkflowInput
                     type: object
                     additionalProperties: true
                     description: The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified.
@@ -579,6 +597,7 @@ $defs:
         type: object
         properties:
           errors:
+            title: CatchErrors
             type: object
           as:
             type: string
@@ -615,7 +634,8 @@ $defs:
   authenticationPolicy:
     type: object
     oneOf:
-    - properties:
+    - title: BasicAuthenticationPolicy 
+      properties:
         basic:
           type: object
           properties:
@@ -628,7 +648,8 @@ $defs:
           required: [ username, password ]
       required: [ basic ]
       description: Use basic authentication.
-    - properties:
+    - title: BearerAuthenticationPolicy
+      properties:
         bearer:
           type: object
           properties:
@@ -638,7 +659,8 @@ $defs:
           required: [ token ]
       required: [ bearer ]
       description: Use bearer authentication.
-    - properties:
+    - title: OAuth2AuthenticationPolicy
+      properties:
         oauth2:
           type: object
           properties:
@@ -752,21 +774,24 @@ $defs:
   eventConsumptionStrategy:
     type: object
     oneOf:
-      - properties:
+      - title: AllEventConsumptionStrategy
+        properties:
           all:
             type: array
             items:
               $ref: '#/$defs/eventFilter'
             description: A list containing all the events that must be consumed.
         required: [ all ]
-      - properties:
+      - title: AnyEventConsumptionStrategy
+        properties:
           any:
             type: array
             items:
               $ref: '#/$defs/eventFilter'
             description: A list containing any of the events to consume.
         required: [ any ]
-      - properties:
+      - title: OneEventConsumptionStrategy
+        properties:
           one:
             $ref: '#/$defs/eventFilter'
             description: The single event to consume.
@@ -775,6 +800,7 @@ $defs:
     type: object
     properties:
       with:
+        title: WithEvent
         type: object
         minProperties: 1
         properties:
@@ -835,7 +861,8 @@ $defs:
     oneOf:
       - type: string
         format: uri
-      - type: object
+      - title: ExternalResourceURI
+        type: object
         properties:
           uri:
             type: string
@@ -895,17 +922,20 @@ $defs:
       backoff:
         type: object
         oneOf:
-        - properties:
+        - title: ConstantBackoff
+          properties:
             constant:
               type: object
               description: The definition of the constant backoff to use, if any.
           required: [ constant ]
-        - properties:
+        - title: ExponentialBackOff
+          properties:
             exponential:
               type: object
               description: The definition of the exponential backoff to use, if any.
           required: [ exponential ]
-        - properties:
+        - title: LinearBackoff
+          properties:
             linear:
               type: object
               description: The definition of the linear backoff to use, if any.
@@ -947,11 +977,13 @@ $defs:
         default: json
         description: The schema's format. Defaults to 'json'. The (optional) version of the format can be set using `{format}:{version}`.
     oneOf:
-      - properties:
+      - title: SchemaInline 
+        properties:
           document:
             description: The schema's inline definition.
         required: [ document ]
-      - properties:
+      - title: SchemaExternal
+        properties:
           resource:
             $ref: '#/$defs/externalResource'
             description: The schema's external resource.
