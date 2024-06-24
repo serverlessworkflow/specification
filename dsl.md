@@ -60,7 +60,7 @@ Moreover, the DSL eschews strong-typed enumerations wherever feasible, fostering
 
 ### Workflow
 
-A Serverless Workflow is a sequence of specific [tasks](#tasks) that are executed in a defined order. By default, this order follows the declaration sequence within the workflow definition. Workflows are designed to automate processes and orchestrate various serverless functions and services. 
+A Serverless Workflow is a sequence of specific [tasks](dsl-reference.md#tasks) that are executed in a defined order. By default, this order follows the declaration sequence within the workflow definition. Workflows are designed to automate processes and orchestrate various serverless functions and services. 
 
 Workflows can be triggered in different ways: upon request, scheduled using CRON expressions, or initiated upon correlation with specific events. 
 
@@ -79,7 +79,7 @@ Workflows in the Serverless Workflow DSL can exist in several phases, each indic
 | `faulted` |	The workflow execution has encountered an error. |
 | `completed` |	The workflow execution has successfully finished all tasks. |
 
-Additionally, the flow of execution within a workflow can be controlled using [directives*](#flow-directives), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
+Additionally, the flow of execution within a workflow can be controlled using [directives*](dsl-reference.md#flow-directive), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
 
 **To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
 
@@ -113,7 +113,7 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 - [Try](dsl-reference.md#try), used to attempt executing a specified [task](dsl-reference.md#task), and to handle any resulting [errors](dsl-reference.md#error) gracefully, allowing the [workflow](dsl-reference.md#workflow) to continue without interruption.
 - [Wait](dsl-reference.md#wait), used to pause or wait for a specified duration before proceeding to the next task.
 
-To ensure they conform to the DSL, runtimes **should** pass all the feature conformance test scenarii defined in the [ctk](ctk/README.md).
+To ensure they conform to the DSL, runtimes **should** pass all the feature conformance test scenarios defined in the [ctk](ctk/README.md).
 
 ##### Secret
 
