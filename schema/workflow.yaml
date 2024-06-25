@@ -110,6 +110,7 @@ $defs:
       additionalProperties:
         $ref: '#/$defs/task'
   taskBase:
+    unevaluatedProperties: false
     type: object
     properties:
       if:
