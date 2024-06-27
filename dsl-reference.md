@@ -447,7 +447,7 @@ use:
         grant: client_credentials
         client:
           id: serverless-workflow-runtime
-          secret: 0123456789
+          secret: secret0123456789
 do:
   - bookHotel:
       call: http
@@ -1152,7 +1152,7 @@ use:
     sampleBasic:
       basic:
         username: admin
-        password: 123
+        password: password123
 do:
   - sampleTask:
       call: http
