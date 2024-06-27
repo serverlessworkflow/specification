@@ -571,8 +571,10 @@ $defs:
           type: object
           minProperties: 1
           maxProperties: 1
+          title: SwitchItem
           additionalProperties:
             type: object
+            title: SwitchCase
             properties:
               name:
                 type: string
