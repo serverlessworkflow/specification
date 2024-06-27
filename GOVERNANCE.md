@@ -5,17 +5,17 @@ As a CNCF member project, we abide by the [CNCF Code of Conduct](https://github.
 For specific guidance on practical contribution steps for any Serverless Workflow sub-project please
 see our [contributing guide](contributing.md).
 
-You can contact the project maintainers at any time by sending an email to the 
+You can contact the project maintainers at any time by sending an email to the
 [Serverless Workflow Specification Maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
- mailing list.
+mailing list.
 
 ## Maintainership
 
 Main responsibilities of maintainers include:
 
-1) Sharing responsibility for the project's success.
-2) Making a long-term, recurring time investment to improve the project.
-3) Performing necessary tasks, even if they are not the most interesting or fun.
+1. Sharing responsibility for the project's success.
+2. Making a long-term, recurring time investment to improve the project.
+3. Performing necessary tasks, even if they are not the most interesting or fun.
 
 ## Reviewers
 
@@ -26,9 +26,9 @@ Their pull request approvals are needed to merge code changes into the project.
 
 Emeritus maintainers are retired maintainers who have provided valuable contributions to the project in the past but are not able to dedicate the time necessary to be fully active maintainers going forward. While their efforts will be focused elsewhere, it is hoped that they will try to find the time to continue to be active participants in the community by:
 
-1) Providing guidance and mentorship to current maintainers and contributors.
-2) Offering historical context and insights based on their past experiences.
-3) Participating in discussions and reviews on an advisory basis, without the obligations of active maintainers.
+1. Providing guidance and mentorship to current maintainers and contributors.
+2. Offering historical context and insights based on their past experiences.
+3. Participating in discussions and reviews on an advisory basis, without the obligations of active maintainers.
 
 ## Adding maintainers
 
@@ -100,8 +100,8 @@ by a pull request removing them.
 
 Serverless Workflow is an open-source project with an open design philosophy. This means
 that the repository is the source of truth for EVERY aspect of the project,
-including its philosophy, design, road map, and APIs. *If it's part of the
-project, it's in the repository. If it's in the repository, it's part of the project.*
+including its philosophy, design, road map, and APIs. _If it's part of the
+project, it's in the repository. If it's in the repository, it's part of the project._
 
 As a result, all decisions can be expressed as changes to the repository. An
 implementation change is a change to the source code. An API change is a change
@@ -115,12 +115,12 @@ the [discussion](discussions) tool.
 
 All decisions affecting Serverless Workflow, big and small, follow the same 3 steps:
 
-* Step 1: Open a pull request. Anyone can do this.
+- Step 1: Open a pull request. Anyone can do this.
 
-* Step 2: Discuss the pull request. Anyone can do this.
+- Step 2: Discuss the pull request. Anyone can do this.
 
-* Step 3: Merge or refuse the pull request. Who does this depends on the nature
-of the pull request and which areas of the project it affects.
+- Step 3: Merge or refuse the pull request. Who does this depends on the nature
+  of the pull request and which areas of the project it affects.
 
 ## I'm a maintainer. Should I make pull requests too?
 
