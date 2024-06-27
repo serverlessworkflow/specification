@@ -4,30 +4,30 @@
 
 - [Introduction](#introduction)
 - [Using the CTK](#using-the-ctk)
-  + [Conformance testing](#conformance-testing)
-  + [Behavior Driven Development](#behavior-driven-development-bdd)
+  - [Conformance testing](#conformance-testing)
+  - [Behavior Driven Development](#behavior-driven-development-bdd)
 - [Writing Features and Scenarios](#writing-features-and-scenarios)
-    + [Feature File Structure](#feature-file-structure)
-    + [Steps](#steps)
-      - [Arrange](#arrange)
-        + [Define workflow](#define-workflow)
-        + [Set workflow input](#set-workflow-input)
-      - [Act](#act)
-        + [Execute Workflow](#execute-workflow)
-      - [Assert](#assert)
-        - [Workflow has been cancelled](#workflow-has-been-cancelled)
-        - [Workflow ran to completion](#workflow-ran-to-completion)
-        - [Workflow has faulted](#workflow-has-faulted)
-        - [Workflow output should have properties](#workflow-output-should-have-properties)
-        - [Workflow output should have property with value](#workflow-output-should-have-property-with-value)
-        - [Workflow output should have property with item count](#workflow-output-should-have-property-with-item-count)
-        - [Task ran first](#task-ran-first)
-        - [Task ran last](#task-ran-last)
-        - [Task ran before](#task-ran-before)
-        - [Task ran after](#task-ran-after)
-        - [Task has been cancelled](#task-has-been-cancelled)
-        - [Task ran to completion](#task-ran-to-completion)
-        - [Task has faulted](#task-has-faulted)
+  - [Feature File Structure](#feature-file-structure)
+  - [Steps](#steps)
+    - [Arrange](#arrange)
+      - [Define workflow](#define-workflow)
+      - [Set workflow input](#set-workflow-input)
+    - [Act](#act)
+      - [Execute Workflow](#execute-workflow)
+    - [Assert](#assert)
+      - [Workflow has been cancelled](#workflow-has-been-cancelled)
+      - [Workflow ran to completion](#workflow-ran-to-completion)
+      - [Workflow has faulted](#workflow-has-faulted)
+      - [Workflow output should have properties](#workflow-output-should-have-properties)
+      - [Workflow output should have property with value](#workflow-output-should-have-property-with-value)
+      - [Workflow output should have property with item count](#workflow-output-should-have-property-with-item-count)
+      - [Task ran first](#task-ran-first)
+      - [Task ran last](#task-ran-last)
+      - [Task ran before](#task-ran-before)
+      - [Task ran after](#task-ran-after)
+      - [Task has been cancelled](#task-has-been-cancelled)
+      - [Task ran to completion](#task-ran-to-completion)
+      - [Task has faulted](#task-has-faulted)
 
 ## Introduction
 
@@ -44,14 +44,14 @@ The Serverless Workflow CTK serves two primary purposes: conformance testing and
 Conformance testing is the process of verifying that an implementation adheres to a given specification. By running the CTK, developers can ensure that their implementations of the Serverless Workflow DSL behave as expected and meet the defined standards. This is crucial for maintaining interoperability and consistency across different implementations of the Serverless Workflow specification.
 
 1. **Clone the Repository**: Start by cloning the Serverless Workflow CTK repository to your local machine.
-   
+
 ```sh
 git clone https://github.com/serverlessworkflow/specification.git
 ```
 
 2. **Install Dependencies**: Ensure that you have all the necessary dependencies installed. This typically involves setting up a testing framework that can execute Gherkin tests.
 
-3. **Run the Tests**: Execute the Gherkin features using your preferred test runner. 
+3. **Run the Tests**: Execute the Gherkin features using your preferred test runner.
 
 4. **Review Results**: After running the tests, review the results to ensure that your implementation passes all the scenarios. Any failures indicate deviations from the Serverless Workflow specification.
 
@@ -98,17 +98,17 @@ Feature: <Feature Name>
 
 ### Steps
 
-For clarity, we've categorized the Gherkin steps used in the Serverless Workflow CTK into three main groups: Arrange, Act, and Assert. 
+For clarity, we've categorized the Gherkin steps used in the Serverless Workflow CTK into three main groups: Arrange, Act, and Assert.
 
-These divisions help clarify the purpose of each step and streamline scenario comprehension. 
+These divisions help clarify the purpose of each step and streamline scenario comprehension.
 
 The Arrange section sets up the initial state or context, the Act section describes the action, and the Assert section verifies the outcome. This structure enhances readability, aiding stakeholders in understanding the scenario flow and step intent.
 
 #### Arrange
 
-Sets up the initial conditions for the test scenario. 
+Sets up the initial conditions for the test scenario.
 
-It includes steps to define the workflow, set the input data for the workflow, and prepare any necessary resources or configurations required for executing the workflow. 
+It includes steps to define the workflow, set the input data for the workflow, and prepare any necessary resources or configurations required for executing the workflow.
 
 The arrange section of the test ensures that the environment is properly configured before the workflow execution begins.
 
@@ -150,9 +150,9 @@ When the workflow is executed
 
 #### Assert
 
-Contains assertions that verify the outcome of the workflow execution. 
+Contains assertions that verify the outcome of the workflow execution.
 
-It includes steps to check various conditions such as whether the workflow was canceled, completed successfully, or encountered any faults or errors during execution. 
+It includes steps to check various conditions such as whether the workflow was canceled, completed successfully, or encountered any faults or errors during execution.
 
 The assert section ensures that the workflow behaves as expected and meets the specified criteria for correctness and reliability.
 
@@ -222,7 +222,6 @@ And the workflow output should have a '<PROPERTY_PATH>' property with value:
 ```gherkin
 And the workflow output should have a '<PROPERTY_PATH>' property containing <ITEMS_COUNT> items
 ```
-
 
 ##### Task ran first
 

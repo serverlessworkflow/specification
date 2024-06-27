@@ -1,34 +1,35 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-green.svg?style=flat)](https://github.com/serverlessworkflow/specification/issues)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/serverlessworkflow/specification/blob/master/LICENSE)
-[<img src="http://img.shields.io/badge/slack-@serverless--workflow-red?style=social&logo=slack">](https://cloud-native.slack.com/messages/serverless-workflow) 
-[<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://serverlessworkflow.io/) 
+[<img src="http://img.shields.io/badge/slack-@serverless--workflow-red?style=social&logo=slack">](https://cloud-native.slack.com/messages/serverless-workflow)
+[<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://serverlessworkflow.io/)
 [<img src="https://img.shields.io/twitter/follow/CNCFWorkflow?style=social">](https://twitter.com/CNCFWorkflow)
 
 ## Table of Contents
 
 - [About](#about)
 - [Ecosystem](#ecosystem)
-  + [DSL](dsl.md)
-  + [CTK](/ctk/readme.md)
-  + [SDKs](#sdks)
-  + [Runtimes](#runtimes)
-  + [Tooling](#Tooling)
-  + [Landscape](#cncf-landscape)
+  - [DSL](dsl.md)
+  - [CTK](/ctk/readme.md)
+  - [SDKs](#sdks)
+  - [Runtimes](#runtimes)
+  - [Tooling](#Tooling)
+  - [Landscape](#cncf-landscape)
 - [Documentation](#documentation)
 - [Community](#community)
-  + [Communication](#communication)
-  + [Governance](#governance)
-  + [Code of Conduct](#code-of-conduct)
-  + [Weekly Meetings](#weekly-meetings)
-+ [Support](#support)
+  - [Communication](#communication)
+  - [Governance](#governance)
+  - [Code of Conduct](#code-of-conduct)
+  - [Weekly Meetings](#weekly-meetings)
+
+* [Support](#support)
   - [Adoption](#adoption)
   - [Sponsoring](#sponsoring)
 
 ## About
 
-Serverless Workflow presents a vendor-neutral, open-source, and entirely community-driven ecosystem tailored for defining and executing DSL-based workflows in the realm of Serverless technology. 
+Serverless Workflow presents a vendor-neutral, open-source, and entirely community-driven ecosystem tailored for defining and executing DSL-based workflows in the realm of Serverless technology.
 
-The Serverless Workflow DSL is a high-level language that reshapes the terrain of workflow creation, boasting a design that is ubiquitous, intuitive, imperative, and fluent. 
+The Serverless Workflow DSL is a high-level language that reshapes the terrain of workflow creation, boasting a design that is ubiquitous, intuitive, imperative, and fluent.
 
 Bid farewell to convoluted coding and platform dependencies—now, crafting powerful workflows is effortlessly within reach for everyone!
 
@@ -50,7 +51,7 @@ Key features:
 Serverless Workflow ecosystem is hosted by the [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/) and was approved as a
 Cloud Native Sandbox level project on July 14, 2020.
 
-It encompasses a comprehensive suite of components and tools designed to facilitate the creation, management, and execution of serverless workflows. 
+It encompasses a comprehensive suite of components and tools designed to facilitate the creation, management, and execution of serverless workflows.
 
 1. **[DSL](dsl.md) (Domain Specific Language)**: The core of the ecosystem, defining the fundamental syntax and semantics of Serverless Workflow specifications.
 
@@ -82,10 +83,10 @@ No matter your preferred language, our SDKs provide the tools you need to levera
 
 ### Runtimes
 
-| Name | About |
-| --- | --- |
-| [Apache KIE SonataFlow](https://sonataflow.org) | Apache KIE SonataFlow is a tool for building cloud-native workflow applications. You can use it to do the services and events orchestration and choreography. |
-| [Synapse](https://github.com/serverlessworkflow/synapse) | Synapse is a scalable, cross-platform, fully customizable platform for managing and running Serverless Workflows. |
+| Name                                                     | About                                                                                                                                                         |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Apache KIE SonataFlow](https://sonataflow.org)          | Apache KIE SonataFlow is a tool for building cloud-native workflow applications. You can use it to do the services and events orchestration and choreography. |
+| [Synapse](https://github.com/serverlessworkflow/synapse) | Synapse is a scalable, cross-platform, fully customizable platform for managing and running Serverless Workflows.                                             |
 
 ### Tooling
 
@@ -106,6 +107,7 @@ It is a member project of the [CNCF Serverless Working Group](https://github.com
 ## Documentation
 
 The documentation for Serverless Workflow includes:
+
 - [**DSL**](dsl.md): Documents the fundamentals aspects and concepts of the Serverless Workflow DSL
 - [**DSL Reference**](dsl-reference.md): References all the definitions used by the Serverless Workflow DSL
 
@@ -120,10 +122,10 @@ To learn how to contribute to the specification please refer to ['how to contrib
 
 If you have any copyright questions when contributing to a CNCF project like this one,
 reference the [Ownership of Copyrights in CNCF Project Contributions](https://github.com/cncf/foundation/blob/master/copyright-notices.md).
-  
+
 ### Communication
 
-- Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) -  #serverless-workflow
+- Community Slack Channel: [https://slack.cncf.io/](https://slack.cncf.io/) - #serverless-workflow
 - [Weekly project meetings](#weekly-meetings)
 - Project Maintainers Email: [cncf-serverlessws-maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
 - Serverless WG Email: [cncf-wg-serverless](mailto:cncf-wg-serverless@lists.cncf.io)
@@ -131,11 +133,11 @@ reference the [Ownership of Copyrights in CNCF Project Contributions](https://gi
 
 ### Governance
 
-The Serverless Workflow Project Governance [document](governance.md) delineates the roles, procedures, and principles guiding the collaborative development and maintenance of the project. 
+The Serverless Workflow Project Governance [document](governance.md) delineates the roles, procedures, and principles guiding the collaborative development and maintenance of the project.
 
 It emphasizes adherence to the CNCF Code of Conduct, defines the responsibilities of maintainers, reviewers, and emeritus maintainers, outlines procedures for their addition and removal, and establishes guidelines for subprojects' inclusion and compliance.
 
-Decision-making processes are consensus-driven, facilitated through structured proposal and discussion mechanisms, with conflict resolution procedures prioritizing amicable resolution. 
+Decision-making processes are consensus-driven, facilitated through structured proposal and discussion mechanisms, with conflict resolution procedures prioritizing amicable resolution.
 
 Overall, the document reflects the project's commitment to transparency, accountability, and inclusive collaboration, fostering an environment conducive to sustained growth and innovation.
 
@@ -171,9 +173,9 @@ If you're using Serverless Workflow in your projects and would like to showcase 
 
 ### Sponsoring
 
-As an open-source project, Serverless Workflow relies on the support of sponsors to sustain its development and growth. 
+As an open-source project, Serverless Workflow relies on the support of sponsors to sustain its development and growth.
 
-By becoming a sponsor, you'll not only demonstrate your commitment to advancing serverless technologies but also gain visibility within our vibrant community. 
+By becoming a sponsor, you'll not only demonstrate your commitment to advancing serverless technologies but also gain visibility within our vibrant community.
 
 Sponsorship opportunities range from financial contributions to in-kind support, and every sponsorship makes a meaningful impact on the project's success and sustainability.
 

@@ -1,85 +1,102 @@
 # Community Contributors
 
-This list acknowledges community contributors to the Serverless Workflow 
-project. 
+This list acknowledges community contributors to the Serverless Workflow
+project.
 
-We welcome everyone to join our community and contribute. 
+We welcome everyone to join our community and contribute.
 For more information on how, please reference the ['how to contribute'](../contributing.md) doc.
 
-We try to add every contributor here, but if for some reason we missed 
-adding your name, feel free to add it via pull request to this document or let 
+We try to add every contributor here, but if for some reason we missed
+adding your name, feel free to add it via pull request to this document or let
 us know in chat or team meeting.
 
-* **Independent**
-  * Louis Fourie
-  * Achilleas Tzenetopoulos
-  * Richard Gibson
-  * Lucas Stocksmeier
-  
-* **Accenture**
-  * Mona Borham
+- **Independent**
+  - Louis Fourie
+  - Achilleas Tzenetopoulos
+  - Richard Gibson
+  - Lucas Stocksmeier
+- **Accenture**
 
-* **Camunda**
-  * Mauricio Salatino
-  * Falko Menge
+  - Mona Borham
 
-* **Chargebee**
-  * Manickavasagam Sundaram
+- **Camunda**
 
-* **Fujitsu**
-  * Naohiro Tamura
+  - Mauricio Salatino
+  - Falko Menge
 
-* **Google**
-  * Evan Anderson
-  * Rachael Myers
+- **Chargebee**
 
-* **Huawei**
-  * Cathy Hong Zhang
-  * Farhad Sunavala
+  - Manickavasagam Sundaram
 
-* **IBM**
-  * Doug Davis
+- **Fujitsu**
 
-* **Microsoft**
-  * Josh Lane
-  * Chris Gillum
+  - Naohiro Tamura
 
-* **Neuroglia**
-  * Charles d'Avernas
-  * Jean-Baptiste Bianchi
+- **Google**
 
-* **Nokia**
-  * Manuel Stein
-  * Istemi Ekin Akkus
+  - Evan Anderson
+  - Rachael Myers
 
-* **OpenEnterprise**
-  * Maciek Swiderski
+- **Huawei**
 
-* **Oracle**
-  * Varun Madan
+  - Cathy Hong Zhang
+  - Farhad Sunavala
 
-* **Oracle Cloud Infrastructure**
-  * Kay Singh
-  * Jorgen Johnson
+- **IBM**
 
-* **Red Hat**
-  * Ruben Romero Montes
-  * Ricardo Zanini 
-  * Lucas Caparelli
-  * Paul Morie
+  - Doug Davis
 
-* **SecureDocs, Inc**
-  * Stephen Crosby
+- **Microsoft**
 
-* **Serverless**
-  * Brian Neisler
+  - Josh Lane
+  - Chris Gillum
 
-* **Sophos**
-  * Matt Nicholls
+- **Neuroglia**
 
-* **Temporal Technologies**
-  * Antonio Mendoza Pérez
-  * Tihomir Surdilovic
+  - Charles d'Avernas
+  - Jean-Baptiste Bianchi
 
-* **WSO2**
-  * Chathura Ekanayake
+- **Nokia**
+
+  - Manuel Stein
+  - Istemi Ekin Akkus
+
+- **OpenEnterprise**
+
+  - Maciek Swiderski
+
+- **Oracle**
+
+  - Varun Madan
+
+- **Oracle Cloud Infrastructure**
+
+  - Kay Singh
+  - Jorgen Johnson
+
+- **Red Hat**
+
+  - Ruben Romero Montes
+  - Ricardo Zanini
+  - Lucas Caparelli
+  - Paul Morie
+
+- **SecureDocs, Inc**
+
+  - Stephen Crosby
+
+- **Serverless**
+
+  - Brian Neisler
+
+- **Sophos**
+
+  - Matt Nicholls
+
+- **Temporal Technologies**
+
+  - Antonio Mendoza Pérez
+  - Tihomir Surdilovic
+
+- **WSO2**
+  - Chathura Ekanayake
