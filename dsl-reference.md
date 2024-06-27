@@ -192,7 +192,8 @@ do:
         method: post
         endpoint:
           uri: https://fake.smtp.service.com/email/send
-          authentication: petStoreOAuth2
+          authentication: 
+            use: petStoreOAuth2
         body:
           from: noreply@fake.petstore.com
           to: ${ .order.client.email }
@@ -438,6 +439,15 @@ document:
   namespace: test
   name: do-example
   version: '0.1.0'
+use:
+  authentications:
+    fake-booking-agency-oauth2:
+      oauth2:
+        authority: https://fake-booking-agency.com
+        grant: client_credentials
+        client:
+          id: serverless-workflow-runtime
+          secret: 0123456789
 do:
   - bookHotel:
       call: http
@@ -445,7 +455,8 @@ do:
         method: post
         endpoint: 
           uri: https://fake-booking-agency.com/hotels/book
-          authentication: fake-booking-agency-oauth2
+          authentication: 
+            use: fake-booking-agency-oauth2
         body:
           name: Four Seasons
           city: Antwerp
@@ -456,7 +467,8 @@ do:
         method: post
         endpoint: 
           uri: https://fake-booking-agency.com/flights/book
-          authentication: fake-booking-agency-oauth2
+          authentication: 
+            use: fake-booking-agency-oauth2
         body:
           departure:
             date: '01/01/26'
@@ -1136,7 +1148,7 @@ document:
   name: basic-authentication-example
   version: '0.1.0'
 use:
-  authentication:
+  authentications:
     sampleBasic:
       basic:
         username: admin
@@ -1148,7 +1160,8 @@ do:
         method: get
         endpoint: 
           uri: https://secured.fake.com/sample
-          authentication: sampleBasic
+          authentication: 
+            use: sampleBasic
 ```
 
 #### Bearer Authentication
