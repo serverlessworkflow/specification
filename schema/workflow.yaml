@@ -181,10 +181,8 @@ $defs:
                 type: object
                 description: The payload to call the AsyncAPI operation with, if any.
               authentication:
+                $ref: '#/$defs/referenceableAuthenticationPolicy'
                 description: The authentication policy, if any, to use when calling the AsyncAPI operation.
-                oneOf:
-                  - $ref: '#/$defs/authenticationPolicy'
-                  - type: string
             required: [ document, operationRef ]
             additionalProperties: false
             description: Defines the AsyncAPI call to perform.
@@ -220,10 +218,8 @@ $defs:
                     max: 65535
                     description: The port number of the GRPC service to call.
                   authentication:
+                    $ref: '#/$defs/referenceableAuthenticationPolicy'
                     description: The endpoint's authentication policy, if any.
-                    oneOf:
-                      - $ref: '#/$defs/authenticationPolicy'
-                      - type: string
                 required: [ name, host ]
               method:
                 type: string
@@ -293,10 +289,8 @@ $defs:
                 additionalProperties: true
                 description: A name/value mapping of the parameters of the OpenAPI operation to call.
               authentication:
+                $ref: '#/$defs/referenceableAuthenticationPolicy'
                 description: The authentication policy, if any, to use when calling the OpenAPI operation.
-                oneOf:
-                  - $ref: '#/$defs/authenticationPolicy'
-                  - type: string
               output:
                 type: string
                 enum: [ raw, content, response ]
@@ -631,6 +625,25 @@ $defs:
         enum: [ continue, exit, end ]
         default: continue
       - type: string
+  referenceableAuthenticationPolicy:
+    type: object
+    oneOf:
+      - title: AuthenticationPolicyReference
+        properties:
+          use:
+            type: string
+            minLength: 1
+            description: The name of the authentication policy to use
+        required: [use]
+      - $ref: '#/$defs/authenticationPolicy'
+  secretBasedAuthenticationPolicy:
+    type: object
+    properties:
+      use:
+        type: string
+        minLength: 1
+        description: The name of the authentication policy to use
+    required: [use]
   authenticationPolicy:
     type: object
     oneOf:
@@ -638,72 +651,78 @@ $defs:
       properties:
         basic:
           type: object
-          properties:
-            username:
-              type: string
-              description: The username to use.
-            password:
-              type: string
-              description: The password to use.
-          required: [ username, password ]
+          oneOf:
+            - properties:
+                username:
+                  type: string
+                  description: The username to use.
+                password:
+                  type: string
+                  description: The password to use.
+              required: [ username, password ]
+            - $ref: '#/$defs/secretBasedAuthenticationPolicy'
       required: [ basic ]
       description: Use basic authentication.
     - title: BearerAuthenticationPolicy
       properties:
         bearer:
           type: object
-          properties:
-            token:
-              type: string
-              description: The bearer token to use.
-          required: [ token ]
+          oneOf:
+            - properties:
+                token:
+                  type: string
+                  description: The bearer token to use.
+              required: [ token ]
+            - $ref: '#/$defs/secretBasedAuthenticationPolicy'
       required: [ bearer ]
       description: Use bearer authentication.
     - title: OAuth2AuthenticationPolicy
       properties:
         oauth2:
           type: object
-          properties:
-            authority:
-              type: string
-              format: uri
-              description: The URI that references the OAuth2 authority to use.
-            grant:
-              type: string
-              description: The grant type to use.
-            client:
-              type: object
-              properties:
-                id:
+          oneOf:
+            - properties:
+                authority:
                   type: string
-                  description: The client id to use.
-                secret:
+                  format: uri
+                  description: The URI that references the OAuth2 authority to use.
+                grant:
                   type: string
-                  description: The client secret to use, if any.
-              required: [ id ]
-            scopes:
-              type: array
-              items:
-                type: string
-              description: The scopes, if any, to request the token for.
-            audiences:
-              type: array
-              items:
-                type: string
-              description: The audiences, if any, to request the token for.
-            username:
-              type: string
-              description: The username to use. Used only if the grant type is Password.
-            password:
-              type: string
-              description: The password to use. Used only if the grant type is Password.
-            subject:
-              $ref: '#/$defs/oauth2Token'
-              description: The security token that represents the identity of the party on behalf of whom the request is being made.
-            actor:
-              $ref: '#/$defs/oauth2Token'
-              description: The security token that represents the identity of the acting party.
-          required: [ authority, grant, client ]
+                  description: The grant type to use.
+                client:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: The client id to use.
+                    secret:
+                      type: string
+                      description: The client secret to use, if any.
+                  required: [ id ]
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                  description: The scopes, if any, to request the token for.
+                audiences:
+                  type: array
+                  items:
+                    type: string
+                  description: The audiences, if any, to request the token for.
+                username:
+                  type: string
+                  description: The username to use. Used only if the grant type is Password.
+                password:
+                  type: string
+                  description: The password to use. Used only if the grant type is Password.
+                subject:
+                  $ref: '#/$defs/oauth2Token'
+                  description: The security token that represents the identity of the party on behalf of whom the request is being made.
+                actor:
+                  $ref: '#/$defs/oauth2Token'
+                  description: The security token that represents the identity of the acting party.
+              required: [ authority, grant, client ]
+            - $ref: '#/$defs/secretBasedAuthenticationPolicy'
       required: [ oauth2 ]
       description: Use OAUTH2 authentication.
     description: Defines an authentication policy.
@@ -766,10 +785,8 @@ $defs:
         format: uri-template
         description: The endpoint's URI.
       authentication:
+        $ref: '#/$defs/referenceableAuthenticationPolicy'
         description: The authentication policy to use.
-        oneOf:
-          - $ref: '#/$defs/authenticationPolicy'
-          - type: string
     required: [ uri ]
   eventConsumptionStrategy:
     type: object
@@ -869,10 +886,8 @@ $defs:
             format: uri
             description: The endpoint's URI.
           authentication:
+            $ref: '#/$defs/referenceableAuthenticationPolicy'
             description: The authentication policy to use.
-            oneOf:
-              - $ref: '#/$defs/authenticationPolicy'
-              - type: string
           name:
             type: string
             description: The external resource's name, if any.

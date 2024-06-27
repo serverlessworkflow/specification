@@ -1083,6 +1083,7 @@ Defines the mechanism used to authenticate users and workflows attempting to acc
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
+| use | `string` | `no` | The name of the top-level authentication definition to use. Cannot be used by authentication definitions defined at top level. |
 | basic | [`basicAuthentication`](#basic-authentication) | `no` | The `basic` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
 | bearer | [`bearerAuthentication`](#bearer-authentication) | `no` | The `bearer` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
 | certificate | [`certificateAuthentication`](#certificate-authentication) | `no` | The `certificate` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
@@ -1102,7 +1103,8 @@ use:
     - usernamePasswordSecret
   authentication:
     sampleBasicFromSecret:
-      basic: usernamePasswordSecret
+      basic:
+        use: usernamePasswordSecret
 do:
   - sampleTask:
       call: http
@@ -1110,7 +1112,8 @@ do:
         method: get
         endpoint: 
           uri: https://secured.fake.com/sample
-          authentication: sampleBasicFromSecret
+          authentication:
+            use: sampleBasicFromSecret
 ```
 
 #### Basic Authentication
