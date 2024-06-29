@@ -204,6 +204,7 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 |:-----|:----:|:------------|
 | context | `map` | The task's context data. |
 | input | `any` | The task's filtered input. |
+| secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
 | workflow | [`workflowDescritor`](#workflow-descriptor) | Describes the current workflow. |
 

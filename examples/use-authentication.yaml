@@ -15,4 +15,5 @@ do:
         method: get
         endpoint:
           uri: https://petstore.swagger.io/v2/pet/{petId}
-          authentication: petStoreAuth
+          authentication: 
+            use: petStoreAuth
