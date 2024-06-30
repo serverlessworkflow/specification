@@ -1502,8 +1502,7 @@ When set, runtimes must validate output data against the defined schema, unless 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate output data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
-| from | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to filter and/or mutate the workflow/task output. |
-| to | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to update the context, using both output and context data. |
+| as | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to filter and/or mutate the workflow/task output. |
 
 #### Examples
 
