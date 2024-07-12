@@ -79,7 +79,6 @@ us know in chat or team meeting.
 
 * **Temporal Technologies**
   * Antonio Mendoza Pérez
-  * Tihomir Surdilovic
 
 * **WSO2**
   * Chathura Ekanayake
