@@ -5,7 +5,6 @@
 
 # Serverless Workflow Org Emeritus Maintainers
 * [Antonio Mendoza Pérez](https://github.com/antmendoza)
-* [Tihomir Surdilovic](https://github.com/tsurdilo)
 
 # Maintainers Mailing list
 [cncf-serverlessws-maintainers](mailto:cncf-serverlessws-maintainers@lists.cncf.io)
