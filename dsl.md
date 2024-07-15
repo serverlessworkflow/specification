@@ -107,7 +107,7 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 - [For](dsl-reference.md#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](dsl-reference.md#listen), used to listen for an [event](dsl-reference.md#event) or more.
 - [Raise](dsl-reference.md#raise), used to raise an [error](dsl-reference.md#error) and potentially fault the [workflow](dsl-reference.md#workflow).
-- [Run](dsl-reference.md#run), used to run a [container](dsl-reference.md#container), a [script](dsl-reference.md#script) or event a [shell](dsl-reference.md#shell) command. 
+- [Run](dsl-reference.md#run), used to run a [container](dsl-reference.md#container-process), a [script](dsl-reference.md#script-process), a [shell](dsl-reference.md#shell-process) command or even another [workflow](#workflow-process). 
 - [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Set](dsl-reference.md#set), used to dynamically set or update the [workflow](dsl-reference.md#workflow)'s data during the its execution. 
 - [Try](dsl-reference.md#try), used to attempt executing a specified [task](dsl-reference.md#task), and to handle any resulting [errors](dsl-reference.md#error) gracefully, allowing the [workflow](dsl-reference.md#workflow) to continue without interruption.
