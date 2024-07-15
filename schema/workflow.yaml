@@ -103,6 +103,7 @@ properties:
     description: Schedules the workflow
 $defs:
   taskList:
+    title: TaskList
     type: array
     items:
       type: object
@@ -314,6 +315,7 @@ $defs:
             additionalProperties: true
             description: A name/value mapping of the parameters, if any, to call the function with.
   forkTask:
+    title: ForkTask
     description: Allows workflows to execute multiple tasks concurrently and optionally race them against each other, with a single possible winner, which sets the task's output.
     $ref: '#/$defs/taskBase'
     type: object
@@ -331,6 +333,7 @@ $defs:
             type: boolean
             default: false  
   doTask:
+    title: DoTask
     description: Allows to execute a list of tasks in sequence
     $ref: '#/$defs/taskBase'
     type: object
@@ -340,6 +343,7 @@ $defs:
       do:
         $ref: '#/$defs/taskList'
   emitTask:
+    title: EmitTask
     description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
     $ref: '#/$defs/taskBase'
     type: object
@@ -377,6 +381,7 @@ $defs:
             additionalProperties: true
         required: [ event ]
   forTask:
+    title: ForTask
     description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
     $ref: '#/$defs/taskBase'
     type: object
@@ -404,6 +409,7 @@ $defs:
       do:
         $ref: '#/$defs/taskList'
   listenTask:
+    title: ListenTask
     description: Provides a mechanism for workflows to await and react to external events, enabling event-driven behavior within workflow systems.
     $ref: '#/$defs/taskBase'
     type: object
@@ -418,6 +424,7 @@ $defs:
             description: Defines the event(s) to listen to.
         required: [ to ]
   raiseTask:
+    title: RaiseTask
     description: Intentionally triggers and propagates errors.
     $ref: '#/$defs/taskBase'
     type: object
@@ -432,6 +439,7 @@ $defs:
             description: Defines the error to raise.
         required: [ error ]
   runTask:
+    title: RunTask
     description: Provides the capability to execute external containers, shell commands, scripts, or workflows.
     $ref: '#/$defs/taskBase'
     type: object
@@ -540,6 +548,7 @@ $defs:
             required: [ workflow ]
             description: Enables the invocation and execution of nested workflows within a parent workflow, facilitating modularization, reusability, and abstraction of complex logic or business processes by encapsulating them into standalone workflow units.
   setTask:
+    title: SetTask
     description: A task used to set data
     $ref: '#/$defs/taskBase'
     type: object
@@ -552,6 +561,7 @@ $defs:
         additionalProperties: true
         description: The data to set
   switchTask:
+    title: SwitchTask
     description: Enables conditional branching within workflows, allowing them to dynamically select different paths based on specified conditions or criteria
     $ref: '#/$defs/taskBase'
     type: object
@@ -580,6 +590,7 @@ $defs:
                 $ref: '#/$defs/flowDirective'
                 description: The flow directive to execute when the case matches.
   tryTask:
+    title: TryTask
     description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
     $ref: '#/$defs/taskBase'
     type: object
@@ -611,6 +622,7 @@ $defs:
             description: The definition of the task(s) to run when catching an error.
             $ref: '#/$defs/taskList'
   waitTask:
+    title: WaitTask
     description: Allows workflows to pause or delay their execution for a specified period of time.
     $ref: '#/$defs/taskBase'
     type: object
