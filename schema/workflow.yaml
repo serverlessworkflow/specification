@@ -214,8 +214,8 @@ $defs:
                     description: The hostname of the GRPC service to call.
                   port:
                     type: integer
-                    min: 0
-                    max: 65535
+                    minimum: 0
+                    maximum: 65535
                     description: The port number of the GRPC service to call.
                   authentication:
                     $ref: '#/$defs/referenceableAuthenticationPolicy'
@@ -621,7 +621,6 @@ $defs:
         description: The amount of time to wait.
         $ref: '#/$defs/duration'
   flowDirective:
-    additionalProperties: false
     anyOf:
       - type: string
         enum: [ continue, exit, end ]
