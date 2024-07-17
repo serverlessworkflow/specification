@@ -569,10 +569,9 @@ $defs:
           additionalProperties:
             type: object
             title: SwitchCase
+            required:
+              - then
             properties:
-              name:
-                type: string
-                description: The case's name.
               when:
                 type: string
                 description: A runtime expression used to determine whether or not the case matches.
