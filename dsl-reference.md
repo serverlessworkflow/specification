@@ -233,7 +233,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
 - [Listen](#listen), used to listen for an [event](#event) or more.
 - [Raise](#raise), used to raise an [error](#error) and potentially fault the [workflow](#workflow).
-- [Run](#run), used to run a [container](#container), a [script](#script) or event a [shell](#shell) command. 
+- [Run](#run), used to run a [container](#container-process), a [script](#script-process) , a [shell](#shell-process) command or even another [workflow](#workflow-process). 
 - [Switch](#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Set](#set), used to dynamically set or update the [workflow](#workflow)'s data during the its execution. 
 - [Try](#try), used to attempt executing a specified [task](#task), and to handle any resulting [errors](#error) gracefully, allowing the [workflow](#workflow) to continue without interruption.
