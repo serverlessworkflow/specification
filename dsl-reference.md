@@ -555,8 +555,8 @@ do:
                 one:
                   with:
                     type: com.fake.petclinic.pets.checkup.completed.v2
-          output:
-            as: '.pets + [{ "id": $pet.id }]'        
+            output:
+              as: '.pets + [{ "id": $pet.id }]'        
 ```
 
 #### Fork

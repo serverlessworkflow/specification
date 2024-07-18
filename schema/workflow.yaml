@@ -188,7 +188,7 @@ $defs:
                 $ref: '#/$defs/referenceableAuthenticationPolicy'
                 description: The authentication policy, if any, to use when calling the AsyncAPI operation.
             required: [ document, operationRef ]
-            additionalProperties: false
+            unevaluatedProperties: false
             description: Defines the AsyncAPI call to perform.
       - title: CallGRPC
         $ref: '#/$defs/taskBase'
@@ -208,6 +208,7 @@ $defs:
                 description: The proto resource that describes the GRPC service to call.
               service:
                 type: object
+                unevaluatedProperties: false
                 properties:
                   name:
                     type: string
@@ -233,7 +234,7 @@ $defs:
                 additionalProperties: true
                 description: The arguments, if any, to call the method with.
             required: [ proto, service, method ]
-            additionalProperties: false
+            unevaluatedProperties: false
             description: Defines the GRPC call to perform.
       - title: CallHTTP
         $ref: '#/$defs/taskBase'
@@ -267,7 +268,7 @@ $defs:
                 enum: [ raw, content, response ]
                 description: The http call output format. Defaults to 'content'.
             required: [ method, endpoint ]
-            additionalProperties: false
+            unevaluatedProperties: false
             description: Defines the HTTP call to perform.
       - title: CallOpenAPI
         $ref: '#/$defs/taskBase'
@@ -300,7 +301,7 @@ $defs:
                 enum: [ raw, content, response ]
                 description: The http call output format. Defaults to 'content'.
             required: [ document, operationId ]
-            additionalProperties: false
+            unevaluatedProperties: false
             description: Defines the OpenAPI call to perform.
       - title: CallFunction
         $ref: '#/$defs/taskBase'
