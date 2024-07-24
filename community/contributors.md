@@ -36,6 +36,7 @@ us know in chat or team meeting.
 * **Huawei**
   * Cathy Hong Zhang
   * Farhad Sunavala
+  * Yuri Zhao
 
 * **IBM**
   * Doug Davis
