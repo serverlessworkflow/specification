@@ -22,7 +22,7 @@ Feature: Call Task
             endpoint:
               uri: https://petstore.swagger.io/v2/pet/findByStatus?status={status}
           output:
-            from: .[0]
+            as: .[0]
     """
     And given the workflow input is:
     """yaml
@@ -108,7 +108,7 @@ Feature: Call Task
             parameters:
               status: ${ .status }
           output:
-            from: . | length
+            as: . | length
     """
     And given the workflow input is:
     """yaml

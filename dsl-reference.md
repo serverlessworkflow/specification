@@ -1515,9 +1515,7 @@ schema:
       petId:
         type: string
     required: [ petId ]
-from:
-  petId: '${ .pet.id }'
-to: '.petList += [ . ]'
+as: '.petList += [ . ]'
 ```
 
 ### Export
