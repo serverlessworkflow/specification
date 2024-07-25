@@ -36,6 +36,7 @@ us know in chat or team meeting.
 * **Huawei**
   * Cathy Hong Zhang
   * Farhad Sunavala
+  * Yuri Zhao
 
 * **IBM**
   * Doug Davis
@@ -67,6 +68,7 @@ us know in chat or team meeting.
   * Ricardo Zanini 
   * Lucas Caparelli
   * Paul Morie
+  * Francisco Javier Tirado Sarti
 
 * **SecureDocs, Inc**
   * Stephen Crosby
