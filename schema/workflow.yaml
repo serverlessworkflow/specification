@@ -2,6 +2,7 @@ $id: https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
 description: Serverless Workflow DSL - Workflow Schema
 type: object
+required: [ document, do ]
 properties:
   document:
     type: object
@@ -1030,4 +1031,3 @@ $defs:
         description: The duration after which to timeout.
     required: [ after ]
     description: The definition of a timeout.
-required: [ document, do ]
