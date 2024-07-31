@@ -9,7 +9,7 @@
 - [About](#about)
 - [Ecosystem](#ecosystem)
   + [DSL](dsl.md)
-  + [CTK](/ctk/readme.md)
+  + [CTK](/ctk/README.md)
   + [SDKs](#sdks)
   + [Runtimes](#runtimes)
   + [Tooling](#Tooling)
