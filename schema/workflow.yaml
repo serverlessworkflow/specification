@@ -523,7 +523,7 @@ $defs:
                 required: [ command ]
             required: [ shell ]
             description: Enables the execution of shell commands within a workflow, enabling workflows to interact with the underlying operating system and perform system-level operations, such as file manipulation, environment configuration, or system administration tasks.
-          - title: RunWokflow
+          - title: RunWorkflow
             properties:
               workflow:
                 title: RunWorkflowDescriptor
