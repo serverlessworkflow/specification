@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://serverlessworkflow.io/schemas/1.0.0-alpha2/workflow.yaml
+document:
+  dsl: 1.0.0-alpha2
+  namespace: examples
+  name: star-wars-homeplanet
+  version: 1.0.0-alpha2
+input:
+  schema:
+    format: json
+    document:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: The id of the star wars character to get
+          minimum: 1
+do:
+  - getStarWarsCharacter:
+      call: http
+      with:
+        method: get
+        endpoint: https://swapi.dev/api/people/{id}
+        output: response
+      export:
+        as:
+          homeworld: ${ .content.homeworld }
+  - getStarWarsHomeworld:
+      call: http
+      with:
+        method: get
+        endpoint: ${ $context.homeworld }
