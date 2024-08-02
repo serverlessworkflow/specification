@@ -1,3 +1,4 @@
+
 $id: https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
 description: Serverless Workflow DSL - Workflow Schema
@@ -369,37 +370,9 @@ $defs:
           event:
             type: object
             properties:
-              id:
-                type: string
-                description: The event's unique identifier
-              source:
-                description: Identifies the context in which an event happened
-                oneOf:
-                  - title: LiteralSource
-                    type: string
-                    format: uri-template
-                  - $ref: '#/$defs/runtimeExpression'
-              type:
-                type: string
-                description: This attribute contains a value describing the type of event related to the originating occurrence.
-              time:
-                oneOf:
-                  - title: LiteralTime
-                    type: string
-                    format: date-time
-                  - $ref: '#/$defs/runtimeExpression'
-              subject:
-                type: string
-              datacontenttype:
-                type: string
-                description: Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format.
-              dataschema:
-                oneOf:
-                  - title: LiteralDataSchema
-                    type: string
-                    format: uri-template
-                  - $ref: '#/$defs/runtimeExpression'
-            required: [ source, type ]
+              with:
+                $ref: '#/$defs/eventProperties'
+                required: [ source, type ]
             additionalProperties: true
         required: [ event ]
   forTask:
@@ -852,6 +825,40 @@ $defs:
         $ref: '#/$defs/referenceableAuthenticationPolicy'
         description: The authentication policy to use.
     required: [ uri ]
+  eventProperties:
+    type: object
+    properties:
+      id:
+        type: string
+        description: The event's unique identifier
+      source:
+        description: Identifies the context in which an event happened
+        oneOf:
+          - title: LiteralSource
+            type: string
+            format: uri-template
+          - $ref: '#/$defs/runtimeExpression'
+      type:
+        type: string
+        description: This attribute contains a value describing the type of event related to the originating occurrence.
+      time:
+        oneOf:
+          - title: LiteralTime
+            type: string
+            format: date-time
+          - $ref: '#/$defs/runtimeExpression'
+      subject:
+        type: string
+      datacontenttype:
+        type: string
+        description: Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format.
+      dataschema:
+        oneOf:
+          - title: LiteralDataSchema
+            type: string
+            format: uri-template
+          - $ref: '#/$defs/runtimeExpression'
+    additionalProperties: true
   eventConsumptionStrategy:
     type: object
     unevaluatedProperties: false
@@ -884,28 +891,8 @@ $defs:
     properties:
       with:
         title: WithEvent
-        type: object
+        $ref: '#/$defs/eventProperties'
         minProperties: 1
-        properties:
-          id:
-            type: string
-            description: The event's unique identifier
-          source:
-            type: string
-            description: Identifies the context in which an event happened
-          type:
-            type: string
-            description: This attribute contains a value describing the type of event related to the originating occurrence.
-          time:
-            type: string
-          subject:
-            type: string
-          datacontenttype:
-            type: string
-            description: Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format.
-          dataschema:
-            type: string
-        additionalProperties: true
         description: An event filter is a mechanism used to selectively process or handle events based on predefined criteria, such as event type, source, or specific attributes.
       correlate:
         type: object

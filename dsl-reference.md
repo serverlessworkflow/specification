@@ -25,8 +25,8 @@
         + [Shell](#shell-process)
         + [Script](#script-process)
         + [Workflow](#workflow-process)
-    - [Switch](#switch)
     - [Set](#set)
+    - [Switch](#switch)
     - [Try](#try)
     - [Wait](#wait)
   + [Flow Directive](#flow-directive)
@@ -42,6 +42,7 @@
     - [Standard Error Types](#standard-error-types)
   + [Event Consumption Strategy](#event-consumption-strategy)
   + [Event Filter](#event-filter)
+  + [Event Properties](#event-properties)
   + [Retry](#retry)
   + [Input](#input)
   + [Output](#output)
@@ -230,9 +231,9 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 - [Call](#call), used to call services and/or functions.
 - [Do](#do), used to define one or more subtasks to perform in sequence.
 - [Fork](#fork), used to define one or more subtasks to perform concurrently.
-- [Emit](#emit), used to emit [events](#event).
+- [Emit](#emit), used to emit [events](#event-properties).
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
-- [Listen](#listen), used to listen for an [event](#event) or more.
+- [Listen](#listen), used to listen for an [event](#event-properties) or more.
 - [Raise](#raise), used to raise an [error](#error) and potentially fault the [workflow](#workflow).
 - [Run](#run), used to run a [container](#container-process), a [script](#script-process) , a [shell](#shell-process) command or even another [workflow](#workflow-process). 
 - [Switch](#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
@@ -369,7 +370,7 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | method | `string` | `yes` | The HTTP request method. |
-| endpoint | [`endpoint`](#endpoint) | `yes` | An URI or an object that describes the HTTP endpoint to call. |
+| endpoint | `string`\|[`endpoint`](#endpoint) | `yes` | An URI or an object that describes the HTTP endpoint to call. |
 | headers | `map` | `no` | A name/value mapping of the HTTP headers to use, if any. |
 | body | `any` | `no` | The HTTP request body, if any. |
 | query | `map[string, any]` | `no` | A name/value mapping of the query parameters to use, if any. |
@@ -496,7 +497,7 @@ Allows workflows to publish events to event brokers or messaging systems, facili
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| emit.event | [`event`](#event) | `yes` | Defines the event to emit. |
+| emit.event | [`eventProperties`](#event-properties) | `yes` | Defines the event to emit. |
 
 ##### Examples
 
@@ -510,15 +511,16 @@ do:
   - emitEvent:
       emit:
         event:
-          source: https://petstore.com
-          type: com.petstore.order.placed.v1
-          data:
-            client:
-              firstName: Cruella
-              lastName: de Vil
-            items:
-              - breed: dalmatian
-                quantity: 101
+          with:
+            source: https://petstore.com
+            type: com.petstore.order.placed.v1
+            data:
+              client:
+                firstName: Cruella
+                lastName: de Vil
+              items:
+                - breed: dalmatian
+                  quantity: 101
 ```
 
 #### For
@@ -530,9 +532,9 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | for.each | `string` | `no` | The name of the variable used to store the current item being enumerated.<br>Defaults to `item`. |
-| for.in | `string` | `yes` | A [runtime expression](./dsl.md/#runtime-expressions) used to get the collection to enumerate. |
+| for.in | `string` | `yes` | A [runtime expression](dsl.md#runtime-expressions) used to get the collection to enumerate. |
 | for.at | `string` | `no` | The name of the variable used to store the index of the current item being enumerated.<br>Defaults to `index`. |
-| while | `string` | `no` | A [runtime expression](./dsl.md/#runtime-expressions) that represents the condition, if any, that must be met for the iteration to continue. |
+| while | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions) that represents the condition, if any, that must be met for the iteration to continue. |
 | do | [`task`](#task) | `yes` | The task to perform for each item in the collection. |
 
 ##### Examples
@@ -965,7 +967,7 @@ do:
 
 ##### Switch Case
 
-Defines a switch case, encompassing of a condition for matching and an associated action to execute upon a match.
+Defines a switch case, encompassing a condition for matching and an associated action to execute upon a match.
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
@@ -1390,6 +1392,28 @@ Represents the configuration of an event consumption strategy.
 | any | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for any of the defined events before resuming execution.<br>*Required if `all` and `one` have not been set.* |
 | one | [`eventFilter`](#event-filter) | `no` | Configures the workflow to wait for the defined event before resuming execution.<br>*Required if `all` and `any` have not been set.* |
 
+### Event Properties
+
+An event object typically includes details such as the event type, source, timestamp, and unique identifier along with any relevant data payload. The [Cloud Events specification](https://cloudevents.io/), favored by Serverless Workflow, standardizes this structure to ensure interoperability across different systems and services.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| id | `string` | `no` | Identifies the event. `source` + `id` is unique for each distinct event.<br>*Required when emitting an event using `emit.event.with`.* |
+| source | `string` | `no` | An URI formatted string, or [runtime expression](dsl.md#runtime-expressions), that identifies the context in which an event happened. `source` + `id` is unique for each distinct event.<br>*Required when emitting an event using `emit.event.with`.* |
+| type | `string` | `no` | Describes the type of event related to the originating occurrence.<br>*Required when emitting an event using `emit.event.with`.* |
+| time | `string` | `no` | A string, or [runtime expression](dsl.md#runtime-expressions), representing the timestamp of when the occurrence happened. |
+| subject | `string` | `no` | Describes the subject of the event in the context of the event producer. |
+| datacontenttype | `string` | `no` | Content type of `data` value. If omitted, it implies the `data` is a JSON value conforming to the "application/json" media type. |
+| dataschema | `string` | `no` | An URI formatted string, or [runtime expression](dsl.md#runtime-expressions), that identifies the schema that `data` adheres to. |
+| data | `object` | `no` | The event payload. |
+
+*Additional properties can be supplied, see the Cloud Events specification [documentation](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes) for more info.*
+
+*When used in an [`eventFilter`](#event-filter), at least one property must be supplied.*
+
+
 ### Event Filter
 
 An event filter is a mechanism used to selectively process or handle events based on predefined criteria, such as event type, source, or specific attributes.
@@ -1398,7 +1422,7 @@ An event filter is a mechanism used to selectively process or handle events base
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| with | `object` | `yes` | A name/value mapping of the attributes filtered events must define. Supports both regular expressions and runtime expressions.  |
+| with | [`eventProperties`](#event-properties) | `yes` | A name/value mapping of the attributes filtered events must define. Supports both regular expressions and runtime expressions.  |
 | correlate | [`map[string, correlation]`](#correlation) | `no` | A name/definition mapping of the correlations to attempt when filtering events. |
 
 ### Correlation
@@ -1474,7 +1498,7 @@ When set, runtimes must validate input data against the defined schema, unless d
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate input data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
-| from | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to filter and/or mutate the workflow/task input.  |
+| from | `string`<br>`object` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter and/or mutate the workflow/task input.  |
 
 #### Examples
 
@@ -1503,7 +1527,7 @@ When set, runtimes must validate output data against the defined schema, unless 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate output data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
-| as | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to filter and/or mutate the workflow/task output. |
+| as | `string`<br>`object` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter and/or mutate the workflow/task output. |
 
 #### Examples
 
@@ -1636,6 +1660,17 @@ hours: 2
 minutes: 15
 seconds: 30
 ```
+
+### Endpoint
+
+Describes an enpoint.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| uri | `string` | `yes` | The endpoint's URI. |
+| authentication | `[authentication](#authentication)` | `no` | The authentication policy to use. |
 
 ### HTTP Response
 
