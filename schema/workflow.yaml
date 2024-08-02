@@ -676,7 +676,8 @@ $defs:
         basic:
           type: object
           oneOf:
-            - properties:
+            - title: BasicAuthenticationData
+              properties:
                 username:
                   type: string
                   description: The username to use.
@@ -692,7 +693,8 @@ $defs:
         bearer:
           type: object
           oneOf:
-            - properties:
+            - title: BearerAuthenticationData
+              properties:
                 token:
                   type: string
                   description: The bearer token to use.
@@ -705,7 +707,8 @@ $defs:
         oauth2:
           type: object
           oneOf:
-            - properties:
+            - title: OAuth2AutenthicationData
+              properties:
                 authority:
                   type: string
                   format: uri
