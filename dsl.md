@@ -81,7 +81,7 @@ Workflows in the Serverless Workflow DSL can exist in several phases, each indic
 
 Additionally, the flow of execution within a workflow can be controlled using [directives*](dsl-reference.md#flow-directive), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
 
-**To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
+\**To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
 
 #### Components
 
@@ -102,14 +102,14 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 
 - [Call](dsl-reference.md#call), used to call services and/or functions.
 - [Do](dsl-reference.md#do), used to define one or more subtasks to perform in sequence.
-- [Fork](dsl-reference.md#fork), used to define one or more two subtasks to perform in parallel.
 - [Emit](dsl-reference.md#emit), used to emit [events](dsl-reference.md#event).
 - [For](dsl-reference.md#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
+- [Fork](dsl-reference.md#fork), used to define one or more two subtasks to perform in parallel.
 - [Listen](dsl-reference.md#listen), used to listen for an [event](dsl-reference.md#event) or more.
 - [Raise](dsl-reference.md#raise), used to raise an [error](dsl-reference.md#error) and potentially fault the [workflow](dsl-reference.md#workflow).
 - [Run](dsl-reference.md#run), used to run a [container](dsl-reference.md#container-process), a [script](dsl-reference.md#script-process), a [shell](dsl-reference.md#shell-process) command or even another [workflow](dsl-reference.md#workflow-process). 
-- [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Set](dsl-reference.md#set), used to dynamically set or update the [workflow](dsl-reference.md#workflow)'s data during the its execution. 
+- [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Try](dsl-reference.md#try), used to attempt executing a specified [task](dsl-reference.md#task), and to handle any resulting [errors](dsl-reference.md#error) gracefully, allowing the [workflow](dsl-reference.md#workflow) to continue without interruption.
 - [Wait](dsl-reference.md#wait), used to pause or wait for a specified duration before proceeding to the next task.
 
@@ -138,7 +138,7 @@ A workflow begins with the first task defined.
 
 Once the task has been executed, different things can happen:
 
-- `continue`: the task ran to completion, and the next task, if any, should be executed. The task to run next is implictly the next in declaration order, or explicitly defined by the `then` property of the executed task. If the executed task is the last task, then the workflow's execution gracefully ends.
+- `continue`: the task ran to completion, and the next task, if any, should be executed. The task to run next is implicitly the next in declaration order, or explicitly defined by the `then` property of the executed task. If the executed task is the last task, then the workflow's execution gracefully ends.
 - `fault`: the task raised an uncaught error, which abruptly halts the workflow's execution and makes it transition to `faulted` [status phase](#status-phases).
 - `end`: the task explicitly and gracefully ends the workflow's execution. 
 
@@ -196,7 +196,7 @@ Runtimes **may** optionally support other runtime expression languages, which au
 
 CloudFlows defines [several arguments](#runtime-expression-arguments) that runtimes **must** provide during the evaluation of runtime expressions.
 
-When the evaluation of an expression fails, runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
+When the evaluation of an expression fails, runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
 
 #### Runtime expression arguments
 
@@ -220,7 +220,7 @@ Errors in Serverless Workflow are described using the [Problem Details RFC](http
 
 *Example error:*
 ```yaml
-type: https://https://serverlessworkflow.io/spec/1.0.0/errors/communication
+type: https://serverlessworkflow.io/spec/1.0.0/errors/communication
 title: Service Unavailable
 status: 503
 detail: The service is currently unavailable. Please try again later.
@@ -263,7 +263,7 @@ Workflows and tasks alike can be configured to timeout after a defined amount of
 
 When a timeout occur, runtimes **must** abruptly interrupt the execution of the workflow/task, and **must** raise an error that, if uncaught, force the workflow/task to transition to the [`faulted` status phase](#status-phases).
 
-A timeout error **must** have its `type` set to `https://https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
+A timeout error **must** have its `type` set to `https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
 
 ### Interoperability
 
@@ -275,7 +275,7 @@ Serverless Workflow DSL is designed to seamlessly interact with a variety of ser
 - [**AsyncAPI**](dsl-reference.md#asyncapi-call): Facilitates interaction with asynchronous messaging protocols. AsyncAPI is designed for event-driven architectures, allowing workflows to publish and subscribe to events.
 - [**OpenAPI**](dsl-reference.md#openapi-call): Enables communication with services that provide OpenAPI specifications, which is useful for defining and consuming RESTful APIs.
 
-Runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
+Runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
 
 #### Custom and Non-Standard Interactions
 
