@@ -1507,17 +1507,20 @@ When set, runtimes must validate output data against the defined schema, unless 
 #### Examples
 
 ```yaml
-schema:
-  format: json
-  document:
-    type: object
-    properties:
-      petId:
-        type: string
-    required: [ petId ]
-from:
-  petId: '${ .pet.id }'
-to: '.petList += [ . ]'
+output:
+  schema:
+    format: json
+    document:
+      type: object
+      properties:
+        petId:
+          type: string
+      required: [ petId ]
+  as:                        
+    petId: '${ .pet.id }'   
+export:
+  as: 
+   '.petList += [ . ]'  
 ```
 
 ### Export
