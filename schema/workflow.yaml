@@ -6,6 +6,7 @@ required: [ document, do ]
 properties:
   document:
     type: object
+    unevaluatedProperties: false
     properties:
       dsl:
         type: string
@@ -40,6 +41,7 @@ properties:
     description: Configures the workflow's input.
   use:
     type: object
+    unevaluatedProperties: false
     properties:
       authentications:
         type: object
@@ -88,6 +90,7 @@ properties:
     description: Configures the workflow's output.
   schedule:
     type: object
+    unevaluatedProperties: false
     properties:
       every:
         $ref: '#/$defs/duration'
@@ -186,7 +189,7 @@ $defs:
                 $ref: '#/$defs/referenceableAuthenticationPolicy'
                 description: The authentication policy, if any, to use when calling the AsyncAPI operation.
             required: [ document, operationRef ]
-            additionalProperties: false
+            unevaluatedProperties: false
             description: Defines the AsyncAPI call to perform.
       - title: CallGRPC
         $ref: '#/$defs/taskBase'
@@ -206,6 +209,7 @@ $defs:
                 description: The proto resource that describes the GRPC service to call.
               service:
                 type: object
+                unevaluatedProperties: false
                 properties:
                   name:
                     type: string
@@ -231,7 +235,7 @@ $defs:
                 additionalProperties: true
                 description: The arguments, if any, to call the method with.
             required: [ proto, service, method ]
-            additionalProperties: false
+            unevaluatedProperties: false
             description: Defines the GRPC call to perform.
       - title: CallHTTP
         $ref: '#/$defs/taskBase'
@@ -267,7 +271,7 @@ $defs:
                 enum: [ raw, content, response ]
                 description: The http call output format. Defaults to 'content'.
             required: [ method, endpoint ]
-            additionalProperties: false
+            unevaluatedProperties: false
             description: Defines the HTTP call to perform.
       - title: CallOpenAPI
         $ref: '#/$defs/taskBase'
@@ -300,7 +304,7 @@ $defs:
                 enum: [ raw, content, response ]
                 description: The http call output format. Defaults to 'content'.
             required: [ document, operationId ]
-            additionalProperties: false
+            unevaluatedProperties: false
             description: Defines the OpenAPI call to perform.
       - title: CallFunction
         $ref: '#/$defs/taskBase'
@@ -327,6 +331,7 @@ $defs:
     properties:
       fork:
         type: object
+        unevaluatedProperties: false
         required: [ branches ]
         properties:
           branches:
@@ -355,6 +360,7 @@ $defs:
     properties:
       emit:
         type: object
+        unevaluatedProperties: false
         properties:
           event:
             type: object
@@ -402,6 +408,7 @@ $defs:
     properties:
       for:
         type: object
+        unevaluatedProperties: false
         properties:
           each:
             type: string
@@ -430,6 +437,7 @@ $defs:
     properties:
       listen:
         type: object
+        unevaluatedProperties: false
         properties:
           to:
             $ref: '#/$defs/eventConsumptionStrategy'
@@ -445,6 +453,7 @@ $defs:
     properties:
       raise:
         type: object
+        unevaluatedProperties: false
         properties:
           error:
             $ref: '#/$defs/error'
@@ -465,6 +474,7 @@ $defs:
             properties:
               container:
                 type: object
+                unevaluatedProperties: false
                 properties:
                   image:
                     type: string
@@ -489,6 +499,7 @@ $defs:
             properties:
               script:
                 type: object
+                unevaluatedProperties: false
                 properties:
                   language:
                     type: string
@@ -518,6 +529,7 @@ $defs:
             properties:
               shell:
                 type: object
+                unevaluatedProperties: false
                 properties:
                   command:
                     type: string
@@ -540,6 +552,7 @@ $defs:
               workflow:
                 title: RunWorkflowDescriptor
                 type: object
+                unevaluatedProperties: false
                 properties:
                   namespace:
                     type: string
@@ -591,8 +604,8 @@ $defs:
           additionalProperties:
             type: object
             title: SwitchCase
-            required:
-              - then
+            unevaluatedProperties: false
+            required: [ then ]
             properties:
               when:
                 type: string
@@ -613,6 +626,7 @@ $defs:
         $ref: '#/$defs/taskList'
       catch:
         type: object
+        unevaluatedProperties: false
         properties:
           errors:
             title: CatchErrors
@@ -659,6 +673,7 @@ $defs:
     required: [use]
   referenceableAuthenticationPolicy:
     type: object
+    unevaluatedProperties: false
     oneOf:
       - title: AuthenticationPolicyReference
         properties:
@@ -675,6 +690,7 @@ $defs:
       properties:
         basic:
           type: object
+          unevaluatedProperties: false
           oneOf:
             - title: BasicAuthenticationData
               properties:
@@ -698,6 +714,7 @@ $defs:
       properties:
         bearer:
           type: object
+          unevaluatedProperties: false
           oneOf:
             - title: BearerAuthenticationData
               properties:
@@ -715,6 +732,7 @@ $defs:
       properties:
         oauth2:
           type: object
+          unevaluatedProperties: false
           oneOf:
             - title: OAuth2AutenthicationData
               properties:
@@ -729,6 +747,7 @@ $defs:
                   oneOf:
                     - title: OAuth2ClientData
                       type: object
+                      unevaluatedProperties: false
                       properties:
                         id:
                           oneOf:
@@ -779,6 +798,7 @@ $defs:
     description: Defines an authentication policy.
   oauth2Token:
     type: object
+    unevaluatedProperties: false
     properties:
       token:
         oneOf:
@@ -793,6 +813,7 @@ $defs:
   duration:
     type: object
     minProperties: 1
+    unevaluatedProperties: false
     properties:
       days:
         type: integer
@@ -812,6 +833,7 @@ $defs:
     description: The definition of a duration.
   error:
     type: object
+    unevaluatedProperties: false
     properties:
       type:
         description: A URI reference that identifies the error type.
@@ -839,6 +861,7 @@ $defs:
     required: [ type, status, instance ]
   endpoint:
     type: object
+    unevaluatedProperties: false
     properties:
       uri:
         description: The endpoint's URI.
@@ -853,6 +876,7 @@ $defs:
     required: [ uri ]
   eventConsumptionStrategy:
     type: object
+    unevaluatedProperties: false
     oneOf:
       - title: AllEventConsumptionStrategy
         properties:
@@ -878,6 +902,7 @@ $defs:
         required: [ one ]
   eventFilter:
     type: object
+    unevaluatedProperties: false
     properties:
       with:
         title: WithEvent
@@ -921,6 +946,7 @@ $defs:
     description: An event filter is a mechanism used to selectively process or handle events based on predefined criteria, such as event type, source, or specific attributes.
   extension:
     type: object
+    unevaluatedProperties: false
     properties:
       extend:
         type: string
@@ -943,6 +969,7 @@ $defs:
         format: uri
       - title: ExternalResourceURI
         type: object
+        unevaluatedProperties: false
         properties:
           uri:
             type: string
@@ -957,6 +984,7 @@ $defs:
         required: [ uri ]
   input:
     type: object
+    unevaluatedProperties: false
     properties:
       schema:
         $ref: '#/$defs/schema'
@@ -969,6 +997,7 @@ $defs:
     description: Configures the input of a workflow or task.
   output:
     type: object
+    unevaluatedProperties: false
     properties:
       schema:
         $ref: '#/$defs/schema'
@@ -981,6 +1010,7 @@ $defs:
     description: Configures the output of a workflow or task.
   export:
     type: object
+    unevaluatedProperties: false
     properties:
       schema:
         $ref: '#/$defs/schema'
@@ -993,6 +1023,7 @@ $defs:
     description: Set the content of the context. 
   retryPolicy:
     type: object
+    unevaluatedProperties: false
     properties:
       when:
         type: string
@@ -1005,6 +1036,7 @@ $defs:
         description: The duration to wait between retry attempts.
       backoff:
         type: object
+        unevaluatedProperties: false
         oneOf:
         - title: ConstantBackoff
           properties:
@@ -1027,9 +1059,11 @@ $defs:
         description: The retry duration backoff.
       limit:
         type: object
+        unevaluatedProperties: false
         properties:
           attempt:
             type: object
+            unevaluatedProperties: false
             properties:
               count:
                 type: integer
@@ -1043,6 +1077,7 @@ $defs:
         description: The retry limit, if any
       jitter:
         type: object
+        unevaluatedProperties: false
         properties:
           from:
             $ref: '#/$defs/duration'
@@ -1055,6 +1090,7 @@ $defs:
     description: Defines a retry policy.
   schema:
     type: object
+    unevaluatedProperties: false
     properties:
       format:
         type: string
@@ -1075,6 +1111,7 @@ $defs:
     description: Represents the definition of a schema.
   timeout:
     type: object
+    unevaluatedProperties: false
     properties:
       after:
         $ref: '#/$defs/duration'

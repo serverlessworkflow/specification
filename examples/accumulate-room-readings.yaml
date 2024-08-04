@@ -14,16 +14,14 @@ do:
               correlate:
                 roomId:
                   from: .roomid
-              output:
-                as: .data.reading
             - with:
                 source: https://my.home.com/sensor
                 type: my.home.sensors.humidity
               correlate:
                 roomId:
                   from: .roomid
-              output:
-                as: .data.reading
+      output:
+        as: .data.reading
   - logReading:
       for:
         each: reading
