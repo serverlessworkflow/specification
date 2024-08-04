@@ -202,11 +202,22 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 
 | Name | Type | Description |
 |:-----|:----:|:------------|
-| context | `map` | The task's context data. |
+| context | `any` | The task's context data. |
 | input | `any` | The task's filtered input. |
 | secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
-| workflow | [`workflowDescritor`](#workflow-descriptor) | Describes the current workflow. |
+| workflow | [`workflowDescriptor`](#workflow-descriptor) | Describes the current workflow. |
+| runtime | [`runtimeDescriptor`](#runtime-descriptor) | Describes the runtime. |
+
+##### Runtime Descriptor
+
+This argument contains information about the runtime executing the workflow.
+
+| Name | Type | Description | Example |
+|:-----|:----:|:------------| ------- |
+| name | `string` | A human friendly name for the runtime. | `Synapse`, `Sonata` |
+| version | `string` | The version of the runtime. This can be an arbitrary string | a incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
+| metadata | `map` | An object/map of implementation specific key-value pairs. This can be chosen by runtime implementors and usage of this argument signals that a given workflow definition might not be runtime agnostic | A Software as a Service (SaaS) provider might choose to expose information about the tenant the workflow is executed for e.g. `{ "organization": { "id": "org-ff51cff2-fc83-4d70-9af1-8dacdbbce0be", "name": "example-corp" }, "featureFlags": ["fastZip", "arm64"] }`.  |
 
 ### Fault Tolerance
 
