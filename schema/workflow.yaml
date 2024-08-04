@@ -649,6 +649,14 @@ $defs:
         enum: [ continue, exit, end ]
         default: continue
       - type: string
+  secretReference:
+    type: object
+    properties:
+      use:
+        type: string
+        minLength: 1
+        description: The name of secret to use
+    required: [use]
   referenceableAuthenticationPolicy:
     type: object
     oneOf:
@@ -660,14 +668,6 @@ $defs:
             description: The name of the authentication policy to use
         required: [use]
       - $ref: '#/$defs/authenticationPolicy'
-  secretBasedAuthenticationPolicy:
-    type: object
-    properties:
-      use:
-        type: string
-        minLength: 1
-        description: The name of the authentication policy to use
-    required: [use]
   authenticationPolicy:
     type: object
     oneOf:
@@ -679,13 +679,19 @@ $defs:
             - title: BasicAuthenticationData
               properties:
                 username:
-                  type: string
-                  description: The username to use.
+                  oneOf:
+                    - title: LiteralUsername
+                      type: string
+                      description: The username to use.
+                    - $ref: '#/$defs/secretReference'
                 password:
-                  type: string
-                  description: The password to use.
+                  oneOf:
+                    - title: LiteralPassword
+                      type: string
+                      description: The password to use.
+                    - $ref: '#/$defs/secretReference'
               required: [ username, password ]
-            - $ref: '#/$defs/secretBasedAuthenticationPolicy'
+            - $ref: '#/$defs/secretReference'
       required: [ basic ]
       description: Use basic authentication.
     - title: BearerAuthenticationPolicy
@@ -696,10 +702,13 @@ $defs:
             - title: BearerAuthenticationData
               properties:
                 token:
-                  type: string
-                  description: The bearer token to use.
+                  oneOf:
+                    - title: LiteralBearerToken
+                      type: string
+                      description: The bearer token to use.
+                    - $ref: '#/$defs/secretReference'
               required: [ token ]
-            - $ref: '#/$defs/secretBasedAuthenticationPolicy'
+            - $ref: '#/$defs/secretReference'
       required: [ bearer ]
       description: Use bearer authentication.
     - title: OAuth2AuthenticationPolicy
@@ -717,15 +726,24 @@ $defs:
                   type: string
                   description: The grant type to use.
                 client:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      description: The client id to use.
-                    secret:
-                      type: string
-                      description: The client secret to use, if any.
-                  required: [ id ]
+                  oneOf:
+                    - title: OAuth2ClientData
+                      type: object
+                      properties:
+                        id:
+                          oneOf:
+                            - title: LiteralClientId
+                              type: string
+                              description: The client id to use.
+                            - $ref: '#/$defs/secretReference'
+                        secret:
+                          oneOf:
+                            - title: LiteralClientSecret
+                              type: string
+                              description: The client secret to use, if any.
+                            - $ref: '#/$defs/secretReference'
+                      required: [ id ]
+                    - $ref: '#/$defs/secretReference'
                 scopes:
                   type: array
                   items:
@@ -737,11 +755,17 @@ $defs:
                     type: string
                   description: The audiences, if any, to request the token for.
                 username:
-                  type: string
-                  description: The username to use. Used only if the grant type is Password.
+                  oneOf:
+                    - title: LiteralUsername
+                      type: string
+                      description: The username to use. Used only if the grant type is Password.
+                    - $ref: '#/$defs/secretReference'
                 password:
-                  type: string
-                  description: The password to use. Used only if the grant type is Password.
+                  oneOf:
+                    - title: LiteralPassword
+                      type: string
+                      description: The password to use. Used only if the grant type is Password.
+                    - $ref: '#/$defs/secretReference'
                 subject:
                   $ref: '#/$defs/oauth2Token'
                   description: The security token that represents the identity of the party on behalf of whom the request is being made.
@@ -749,7 +773,7 @@ $defs:
                   $ref: '#/$defs/oauth2Token'
                   description: The security token that represents the identity of the acting party.
               required: [ authority, grant, client ]
-            - $ref: '#/$defs/secretBasedAuthenticationPolicy'
+            - $ref: '#/$defs/secretReference'
       required: [ oauth2 ]
       description: Use OAUTH2 authentication.
     description: Defines an authentication policy.
@@ -757,8 +781,11 @@ $defs:
     type: object
     properties:
       token:
-        type: string
-        description: The security token to use to use.
+        oneOf:
+          - title: LiteralToken
+            type: string
+            description: The security token to use to use.
+          - $ref: '#/$defs/secretReference'
       type:
         type: string
         description: The type of the security token to use to use.
