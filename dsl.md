@@ -146,39 +146,39 @@ Once the task has been executed, different things can happen:
 
 In Serverless Workflow DSL, data flow management is crucial to ensure that the right data is passed between tasks and to the workflow itself. 
 
-Here's how data flows through a workflow based on various filtering stages:
+Here's how data flows through a workflow based on various transformation stages:
 
-1. **Filter Workflow Input**
-Before the workflow starts, the input data provided to the workflow can be filtered to ensure only relevant data is passed into the workflow context. This can be done using the top level `input.from` expression. It evaluates on the raw workflow input and defaults to the identity expression which leaves the input unchanged. This step allows the workflow to start with a clean and focused dataset, reducing potential overhead and complexity in subsequent tasks. The result of this expression will set as the initial value for the `$context` runtime expression argument and be passed to the first task.
+1. **Transform Workflow Input**
+Before the workflow starts, the input data provided to the workflow can be transformed to ensure only relevant data in the expected format is passed into the workflow context. This can be done using the top level `input.from` expression. It evaluates on the raw workflow input and defaults to the identity expression which leaves the input unchanged. This step allows the workflow to start with a clean and focused dataset, reducing potential overhead and complexity in subsequent tasks. The result of this expression will set as the initial value for the `$context` runtime expression argument and be passed to the first task.
 
-*Example: If the workflow receives a JSON object as input, a filter can be applied to remove unnecessary fields and retain only those that are required for the workflow's execution.*
+*Example: If the workflow receives a JSON object as input, a transformation can be applied to remove unnecessary fields and retain only those that are required for the workflow's execution.*
 
-2. **Filter First Task Input**
-The input data for the first task can be filtered to match the specific requirements of that task. This ensures that the first task receives only the necessary data it needs to perform its operations. This can be done using the task's `input.from` expression. It evaluates on the filtered workflow input and defaults to the identity expression which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. Any runtime expressions used within the task definition will be evaluated using this filtered input.
+2. **Transform First Task Input**
+The input data for the first task can be transformed to match the specific requirements of that task. This ensures that the first task receives only the necessary data it needs to perform its operations. This can be done using the task's `input.from` expression. It evaluates on the transformed workflow input and defaults to the identity expression which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. Any runtime expressions used within the task definition will be evaluated using this transformed input.
 
-*Example: If the first task is a function call that only needs a subset of the workflow input, a filter can be applied to provide only those fields needed for the function to execute.*
+*Example: If the first task is a function call that only needs a subset of the workflow input, a transformation can be applied to provide only those fields needed for the function to execute.*
 
-3. **Filter First Task Output**
-After the first task completes, its output can be filtered before passing it to the next task or storing it in the workflow context. Filtering is performed using the `output.as` runtime expression. It evaluates on the raw task output and defaults to the identity expression which leaves the output unchanged. Its result will be the input to the next task. To update the context one uses the `export.as` runtime expression. It evaluates on the raw output and defaults to the expression that returns the existing context. The result of this runtime expression replaces the workflows current context and the content of the `$context`runtime expression argument. This helps in managing the data flow and keeping the context clean by removing any unnecessary data produced by the task.
+3. **Transform First Task Output**
+After the first task completes, its output can be transformed before passing it to the next task or storing it in the workflow context. Transformations are applied using the `output.as` runtime expression. It evaluates on the raw task output and defaults to the identity expression which leaves the output unchanged. Its result will be the input to the next task. To update the context one uses the `export.as` runtime expression. It evaluates on the raw output and defaults to the expression that returns the existing context. The result of this runtime expression replaces the workflows current context and the content of the `$context`runtime expression argument. This helps in managing the data flow and keeping the context clean by removing any unnecessary data produced by the task.
 
-*Example: If the first task returns a large dataset, a filter can be applied to retain only the relevant results needed for subsequent tasks.*
+*Example: If the first task returns a large dataset, a transformation can be applied to retain only the relevant results needed for subsequent tasks.*
 
-4. **Filter Last Task Input**
-Before the last task in the workflow executes, its input data can be filtered to ensure it receives only the necessary information. This can be done using the task's `input.from` expression. It evaluates on the filtered workflow input and defaults to the identity expression which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. Any runtime expressions used within the task definition will be evaluated using this filtered input. This step is crucial for ensuring that the final task has all the required data to complete the workflow successfully.
+4. **Transform Last Task Input**
+Before the last task in the workflow executes, its input data can be transformed to ensure it receives only the necessary information. This can be done using the task's `input.from` expression. It evaluates on the transformed workflow input and defaults to the identity expression which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. Any runtime expressions used within the task definition will be evaluated using this transformed input. This step is crucial for ensuring that the final task has all the required data to complete the workflow successfully.
 
-*Example: If the last task involves generating a report, the input filter can ensure that only the data required for the report generation is passed to the task.*
+*Example: If the last task involves generating a report, the input transformation can ensure that only the data required for the report generation is passed to the task.*
 
-5. **Filter Last Task Output**
-After the last task completes, its output can be filtered before it is considered as the workflow output. Filtering is performed using the `output.as` runtime expression. It evaluates on the raw task output and defaults to the identity expression which leaves the output unchanged. Its result will be passes to the workflow `output.as` runtime expression. This ensures that the workflow produces a clean and relevant output, free from any extraneous data that might have been generated during the task execution.
+5. **Transform Last Task Output**
+After the last task completes, its output can be transformed before it is considered as the workflow output. Transformations are applied using the `output.as` runtime expression. It evaluates on the raw task output and defaults to the identity expression which leaves the output unchanged. Its result will be passes to the workflow `output.as` runtime expression. This ensures that the workflow produces a clean and relevant output, free from any extraneous data that might have been generated during the task execution.
 
-*Example: If the last task outputs various statistics, a filter can be applied to retain only the key metrics that are relevant to the stakeholders.*
+*Example: If the last task outputs various statistics, a transformation can be applied to retain only the key metrics that are relevant to the stakeholders.*
 
-6. **Filter Workflow Output**
-Finally, the overall workflow output can be filtered before it is returned to the caller or stored. Filtering is performed using the `output.as` runtime expression. It evaluates on the last task's output and defaults to the identity expression which leaves the output unchanged. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
+6. **Transform Workflow Output**
+Finally, the overall workflow output can be transformed before it is returned to the caller or stored. Transformations are applied using the `output.as` runtime expression. It evaluates on the last task's output and defaults to the identity expression which leaves the output unchanged. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
 
-*Example: If the workflow's final output is a summary report, a filter can ensure that the report contains only the most important summaries and conclusions, excluding any intermediate data.*
+*Example: If the workflow's final output is a summary report, a transformation can ensure that the report contains only the most important summaries and conclusions, excluding any intermediate data.*
 
-By applying filters at these strategic points, Serverless Workflow DSL ensures that data flows through the workflow in a controlled and efficient manner, maintaining clarity and relevance at each stage of execution. This approach helps in managing complex workflows and ensures that each task operates with the precise data it requires, leading to more predictable and reliable workflow outcomes.
+By applying transformations at these strategic points, Serverless Workflow DSL ensures that data flows through the workflow in a controlled and efficient manner, maintaining clarity and relevance at each stage of execution. This approach helps in managing complex workflows and ensures that each task operates with the precise data it requires, leading to more predictable and reliable workflow outcomes.
 
 Visually this can be represented as follows:
 
@@ -191,49 +191,49 @@ flowchart TD
 
   workflow_raw_input{{Raw Workflow Input}}
   workflow_input_from[Workflow: <code>input.from</code>]
-  workflow_filtered_input{{Filtered Workflow Input}}
+  workflow_transformed_input{{Transformed Workflow Input}}
 
   task_raw_input{{Raw Task Input}}
   task_input_from[Task: <code>input.from</code>]
-  task_filtered_input{{Filtered Task Input}}
+  task_transformed_input{{Transformed Task Input}}
   task_definition[Task definition]
   task_raw_output{{Raw Task output}}
   task_output_as[Task: <code>output.as</code>]
-  task_filtered_output{{Filtered Task output}}
+  task_transformed_output{{Transformed Task output}}
   task_export_as[Task: <code>export.as</code>]
   
   workflow_raw_output{{Raw Workflow Output}}
   workflow_output_as[Workflow: <code>output.as</code>]
-  workflow_filtered_output{{Filtered Workflow Output}}
+  workflow_transformed_output{{Transformed Workflow Output}}
 
   workflow_raw_input --> workflow_input_from
-  workflow_input_from -- Produces --> workflow_filtered_input
-  workflow_filtered_input -- Set as --> initial_context_arg
-  workflow_filtered_input -- Passed to --> task_raw_input
+  workflow_input_from -- Produces --> workflow_transformed_input
+  workflow_transformed_input -- Set as --> initial_context_arg
+  workflow_transformed_input -- Passed to --> task_raw_input
 
   subgraph Task
 
     task_raw_input -- Passed to --> task_input_from
-    task_input_from -- Produces --> task_filtered_input
-    task_filtered_input -- Set as --> input_arg
-    task_filtered_input -- Passed to --> task_definition
+    task_input_from -- Produces --> task_transformed_input
+    task_transformed_input -- Set as --> input_arg
+    task_transformed_input -- Passed to --> task_definition
 
     task_definition -- Execution produces --> task_raw_output
     task_raw_output -- Passed to --> task_output_as
-    task_output_as -- Produces --> task_filtered_output
-    task_filtered_output -- Passed to --> task_export_as
+    task_output_as -- Produces --> task_transformed_output
+    task_transformed_output -- Passed to --> task_export_as
   end
 
-  task_filtered_output -- Passed as raw input to --> next_task
+  task_transformed_output -- Passed as raw input to --> next_task
 
   subgraph next_task [Next Task]
   end
 
   task_export_as -- Result set as --> context_arg
 
-  next_task -- Filtered output becomes --> workflow_raw_output
+  next_task -- Transformed output becomes --> workflow_raw_output
   workflow_raw_output -- Passed to --> workflow_output_as
-  workflow_output_as -- Produces --> workflow_filtered_output
+  workflow_output_as -- Produces --> workflow_transformed_output
 ```
 
 ### Runtime Expressions
@@ -259,7 +259,7 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 | Name | Type | Description |
 |:-----|:----:|:------------|
 | context | `map` | The task's context data. |
-| input | `any` | The task's filtered input. |
+| input | `any` | The task's transformed input. |
 | secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
 | workflow | [`workflowDescritor`](#workflow-descriptor) | Describes the current workflow. |
@@ -268,13 +268,13 @@ The following table shows which arguments are available for each runtime express
 
 | Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$secrets` | `$task` | `$workflow` |
 |:-------------------|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|
-| Workflow `input.from` | Raw workflow input | Filtered workflow input | | | ✔ | | ✔ |
-| Task `input.from` | Raw task input (i.e. filtered workflow input for first task, filtered output from previous task otherwise) | Filtered task input | ✔ | | ✔ | ✔ | ✔ |
-| Task `if` | Filtered task input | | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Task definition | Filtered task input | | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Task `output.as` | Raw task output | Filtered task output | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Task `export.as` | Filtered task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Workflow `output.as` | Last task's filtered output | Filtered workflow output | ✔ | | ✔ | | ✔ |
+| Workflow `input.from` | Raw workflow input | Transformed workflow input | | | ✔ | | ✔ |
+| Task `input.from` | Raw task input (i.e. transformed workflow input for first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | ✔ | ✔ | ✔ |
+| Task `if` | Transformed task input | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task definition | Transformed task input | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | ✔ | | ✔ |
 
 ### Fault Tolerance
 

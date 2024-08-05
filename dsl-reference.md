@@ -1491,7 +1491,7 @@ from: .order.pet
 
 ### Output
 
-Documents the structure - and optionally configures the filtering of - workflow/task output data.
+Documents the structure - and optionally configures the transformations of - workflow/task output data.
 
 It's crucial for authors to document the schema of output data whenever feasible. This documentation empowers consuming applications to provide contextual auto-suggestions when handling runtime expressions.
 
