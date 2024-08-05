@@ -14,7 +14,6 @@
   + [Task Flow](#task-flow)
   + [Data Flow](#data-flow)
   + [Runtime Expressions](#runtime-expressions)
-    - [String Substitution](#string-substitution)
     - [Arguments](#runtime-expression-arguments)
   + [Fault Tolerance](#fault-tolerance)
   + [Timeouts](#timeouts)
@@ -198,18 +197,6 @@ Runtimes **may** optionally support other runtime expression languages, which au
 CloudFlows defines [several arguments](#runtime-expression-arguments) that runtimes **must** provide during the evaluation of runtime expressions.
 
 When the evaluation of an expression fails, runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
-
-#### String Substitution
-
-Simple substitution of top level properties within strings is supported in Serverless Workflow DSL. This feature allows authors to embed variables within strings, making it easier to construct dynamic messages or data structures.
-
-To substitute a variable within a string, use the `{}` syntax. The identifier inside the curly braces will be replaced with its value during runtime evaluation. If no value is found for the identifier, an empty string will be used.
-
-String substitution has the following limitations compared to runtime expressions:
-
-- Only top-level properties can be interpolated within strings, thus identifiers are treated verbatim. This means that `{pet.id}` will be replaced with the value of the `"pet.id"` property, not the value of the `id` property of the `pet` property.
-- The referenced variable must be of type `string`, `number`, `boolean`, or `null`. If the variable is of a different type an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400` will be raised.
-- [Runtime expression arguments](#runtime-expression-arguments) are not available for string substitution.
 
 #### Runtime expression arguments
 
