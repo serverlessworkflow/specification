@@ -264,6 +264,18 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
 | workflow | [`workflowDescritor`](#workflow-descriptor) | Describes the current workflow. |
 
+The following table shows which arguments are available for each runtime expression:
+
+| Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$secrets` | `$task` | `$workflow` |
+|:-------------------|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|
+| Workflow `input.from` | Raw workflow input | Filtered workflow input | | | ✔ | | ✔ |
+| Task `input.from` | Raw task input (i.e. filtered workflow input for first task, filtered output from previous task otherwise) | Filtered task input | ✔ | | ✔ | ✔ | ✔ |
+| Task `if` | Filtered task input | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task definition | Filtered task input | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `output.as` | Raw task output | Filtered task output | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `export.as` | Filtered task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Workflow `output.as` | Last task's filtered output | Filtered workflow output | ✔ | | ✔ | | ✔ |
+
 ### Fault Tolerance
 
 Serverless Workflow is designed with resilience in mind, acknowledging that errors are an inevitable part of any system. The DSL provides robust mechanisms to identify, describe, and handle errors effectively, ensuring the workflow can recover gracefully from failures.
