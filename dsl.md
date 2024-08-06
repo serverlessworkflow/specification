@@ -196,7 +196,7 @@ Runtimes **may** optionally support other runtime expression languages, which au
 
 CloudFlows defines [several arguments](#runtime-expression-arguments) that runtimes **must** provide during the evaluation of runtime expressions.
 
-When the evaluation of an expression fails, runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
+When the evaluation of an expression fails, runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
 
 #### Runtime expression arguments
 
@@ -220,7 +220,7 @@ Errors in Serverless Workflow are described using the [Problem Details RFC](http
 
 *Example error:*
 ```yaml
-type: https://https://serverlessworkflow.io/spec/1.0.0/errors/communication
+type: https://serverlessworkflow.io/spec/1.0.0/errors/communication
 title: Service Unavailable
 status: 503
 detail: The service is currently unavailable. Please try again later.
@@ -263,7 +263,7 @@ Workflows and tasks alike can be configured to timeout after a defined amount of
 
 When a timeout occur, runtimes **must** abruptly interrupt the execution of the workflow/task, and **must** raise an error that, if uncaught, force the workflow/task to transition to the [`faulted` status phase](#status-phases).
 
-A timeout error **must** have its `type` set to `https://https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
+A timeout error **must** have its `type` set to `https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
 
 ### Interoperability
 
@@ -275,7 +275,7 @@ Serverless Workflow DSL is designed to seamlessly interact with a variety of ser
 - [**AsyncAPI**](dsl-reference.md#asyncapi-call): Facilitates interaction with asynchronous messaging protocols. AsyncAPI is designed for event-driven architectures, allowing workflows to publish and subscribe to events.
 - [**OpenAPI**](dsl-reference.md#openapi-call): Enables communication with services that provide OpenAPI specifications, which is useful for defining and consuming RESTful APIs.
 
-Runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
+Runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
 
 #### Custom and Non-Standard Interactions
 
