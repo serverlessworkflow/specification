@@ -1355,7 +1355,7 @@ Defines the [Problem Details RFC](https://datatracker.ietf.org/doc/html/rfc7807)
 #### Examples
 
 ```yaml
-type: https://https://serverlessworkflow.io/spec/1.0.0/errors/communication
+type: https://serverlessworkflow.io/spec/1.0.0/errors/communication
 title: Service Not Available
 status: 503
 ```
@@ -1366,14 +1366,14 @@ Standard error types serve the purpose of categorizing errors consistently acros
 
 | Type | Status¹ | Description |
 |------|:-------:|-------------|
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/configuration](#) | `400` | Errors resulting from incorrect or invalid configuration settings, such as missing or misconfigured environment variables, incorrect parameter values, or configuration file errors. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/validation](#) | `400` | Errors arising from validation processes, such as validation of input data, schema validation failures, or validation constraints not being met. These errors indicate that the provided data or configuration does not adhere to the expected format or requirements specified by the workflow. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/expression](#) | `400` | Errors occurring during the evaluation of runtime expressions, such as invalid syntax or unsupported operations. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/authentication](#) | `401` | Errors related to authentication failures. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/authorization](#) | `403` | Errors related to unauthorized access attempts or insufficient permissions to perform certain actions within the workflow. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/timeout](#) | `408` | Errors caused by timeouts during the execution of tasks or during interactions with external services. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/communication](#) | `500` | Errors  encountered while communicating with external services, including network errors, service unavailable, or invalid responses. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/runtime](#) | `500` | Errors occurring during the runtime execution of a workflow, including unexpected exceptions, errors related to resource allocation, or failures in handling workflow tasks. These errors typically occur during the actual execution of workflow components and may require runtime-specific handling and resolution strategies. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/configuration](#) | `400` | Errors resulting from incorrect or invalid configuration settings, such as missing or misconfigured environment variables, incorrect parameter values, or configuration file errors. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/validation](#) | `400` | Errors arising from validation processes, such as validation of input data, schema validation failures, or validation constraints not being met. These errors indicate that the provided data or configuration does not adhere to the expected format or requirements specified by the workflow. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/expression](#) | `400` | Errors occurring during the evaluation of runtime expressions, such as invalid syntax or unsupported operations. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/authentication](#) | `401` | Errors related to authentication failures. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/authorization](#) | `403` | Errors related to unauthorized access attempts or insufficient permissions to perform certain actions within the workflow. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/timeout](#) | `408` | Errors caused by timeouts during the execution of tasks or during interactions with external services. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/communication](#) | `500` | Errors  encountered while communicating with external services, including network errors, service unavailable, or invalid responses. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/runtime](#) | `500` | Errors occurring during the runtime execution of a workflow, including unexpected exceptions, errors related to resource allocation, or failures in handling workflow tasks. These errors typically occur during the actual execution of workflow components and may require runtime-specific handling and resolution strategies. |
 
 ¹ *Default value. The `status code` that best describe the error should always be used.*
 
