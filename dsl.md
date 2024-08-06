@@ -207,6 +207,17 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 | secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
 | workflow | [`workflowDescriptor`](#workflow-descriptor) | Describes the current workflow. |
+| runtime | [`runtimeDescriptor`](#runtime-descriptor) | Describes the runtime. |
+
+##### Runtime Descriptor
+
+This argument contains information about the runtime executing the workflow.
+
+| Name | Type | Description | Example |
+|:-----|:----:|:------------| ------- |
+| name | `string` | A human friendly name for the runtime. | `Synapse`, `Sonata` |
+| version | `string` | The version of the runtime. This can be an arbitrary string | a incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
+| metadata | `map` | An object/map of implementation specific key-value pairs. This can be chosen by runtime implementors and usage of this argument signals that a given workflow definition might not be runtime agnostic | A Software as a Service (SaaS) provider might choose to expose information about the tenant the workflow is executed for e.g. `{ "organization": { "id": "org-ff51cff2-fc83-4d70-9af1-8dacdbbce0be", "name": "example-corp" }, "featureFlags": ["fastZip", "arm64"] }`.  |
 
 ##### Task Descriptor
 
@@ -220,7 +231,6 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 | startedAt.epochNanos | `integer` | The start time of the task as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
 
 ##### Workflow Descriptor
-
 
 | Name | Type | Description | Example |
 |:-----|:----:|:------------|:--------|
