@@ -372,6 +372,7 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 | endpoint | [`endpoint`](#endpoint) | `yes` | An URI or an object that describes the HTTP endpoint to call. |
 | headers | `map` | `no` | A name/value mapping of the HTTP headers to use, if any. |
 | body | `any` | `no` | The HTTP request body, if any. |
+| query | `map[string, any]` | `no` | A name/value mapping of the query parameters to use, if any. |
 | output | `string` | `no` | The http call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
 
 ###### Examples
