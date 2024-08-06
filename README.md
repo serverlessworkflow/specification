@@ -1,7 +1,10 @@
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-green.svg?style=flat)](https://github.com/serverlessworkflow/specification/issues)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/serverlessworkflow/specification/blob/master/LICENSE)
-[<img src="http://img.shields.io/badge/slack-@serverless--workflow-red?style=social&logo=slack">](https://cloud-native.slack.com/messages/serverless-workflow) 
-[<img src="http://img.shields.io/badge/web-serverlessworkflow.io-red?style=social&logo=google-chrome">](https://serverlessworkflow.io/) 
+[![contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-green.svg?style=flat)](https://github.com/serverlessworkflow/specification/issues)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/serverlessworkflow/specification/blob/master/LICENSE)
+[<img alt="GitHub Release" src="https://img.shields.io/github/v/release/serverlessworkflow/specification?label=Release">](https://github.com/serverlessworkflow/specification/releases/latest)
+<br>
+[<img src="http://img.shields.io/badge/Website-blue?style=flat&logo=google-chrome&logoColor=white">](https://serverlessworkflow.io/) 
+[<img src="http://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white">](https://cloud-native.slack.com/messages/serverless-workflow) 
+[<img src="https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white">](https://www.linkedin.com/company/serverless-workflow/)
 [<img src="https://img.shields.io/twitter/follow/CNCFWorkflow?style=social">](https://twitter.com/CNCFWorkflow)
 
 ## Table of Contents
