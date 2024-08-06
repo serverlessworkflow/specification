@@ -196,7 +196,7 @@ Runtimes **may** optionally support other runtime expression languages, which au
 
 CloudFlows defines [several arguments](#runtime-expression-arguments) that runtimes **must** provide during the evaluation of runtime expressions.
 
-When the evaluation of an expression fails, runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
+When the evaluation of an expression fails, runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
 
 #### Runtime expression arguments
 
@@ -219,6 +219,28 @@ This argument contains information about the runtime executing the workflow.
 | version | `string` | The version of the runtime. This can be an arbitrary string | a incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
 | metadata | `map` | An object/map of implementation specific key-value pairs. This can be chosen by runtime implementors and usage of this argument signals that a given workflow definition might not be runtime agnostic | A Software as a Service (SaaS) provider might choose to expose information about the tenant the workflow is executed for e.g. `{ "organization": { "id": "org-ff51cff2-fc83-4d70-9af1-8dacdbbce0be", "name": "example-corp" }, "featureFlags": ["fastZip", "arm64"] }`.  |
 
+##### Task Descriptor
+
+| Name | Type | Description | Example |
+|:-----|:----:|:------------|:--------|
+| name | `string` | The task's name. | `getPet` |
+| definition | `map` | The tasks definition (specified under the name) as a parsed object | `{ "call": "http", "with": { ... } }` |
+| input | `any` | The task's input *BEFORE* the `input.from` expression. For the result of `input.from` expression use the context of the runtime expression (for jq `.`) | - |
+| startedAt.iso8601 | `string` | The start time of the task as a ISO 8601 date time string. It uses `T` as the date-time delimiter, either UTC (`Z`) or a time zone offset (`+01:00`). The precision can be either seconds, milliseconds or nanoseconds | `2022-01-01T12:00:00Z`, `2022-01-01T12:00:00.123456Z`, `2022-01-01T12:00:00.123+01:00` |
+| startedAt.epochMillis | `integer` | The start time of the task as a integer value of milliseconds since midnight of 1970-01-01 UTC | `1641024000123` (="2022-01-01T08:00:00.123Z") |
+| startedAt.epochNanos | `integer` | The start time of the task as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
+
+##### Workflow Descriptor
+
+| Name | Type | Description | Example |
+|:-----|:----:|:------------|:--------|
+| id | `string` | A unique id of the workflow execution. Now specific format is imposed | UUIDv4: `4a5c8422-5868-4e12-8dd9-220810d2b9ee`, ULID: `0000004JFGDSW1H037G7J7SFB9` |
+| definition | `map` | The workflow's definition as a parsed object | `{ "document": { ... }, "do": [...] }` |
+| input | `any` | The workflow's input *BEFORE* the `input.from` expression. For the result of `input.from` expression use the `$input` argument | - |
+| startedAt.iso8601 | `string` | The start time of the execution as a ISO 8601 date time string. It uses `T` as the date-time delimiter, either UTC (`Z`) or a time zone offset (`+01:00`). The precision can be either seconds, milliseconds or nanoseconds | `2022-01-01T12:00:00Z`, `2022-01-01T12:00:00.123456Z`, `2022-01-01T12:00:00.123+01:00` |
+| startedAt.epochMillis | `integer` | The start time of the execution as a integer value of milliseconds since midnight of 1970-01-01 UTC | `1641024000123` (="2022-01-01T08:00:00.123Z") |
+| startedAt.epochNanos | `integer` | The start time of the execution as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
+
 ### Fault Tolerance
 
 Serverless Workflow is designed with resilience in mind, acknowledging that errors are an inevitable part of any system. The DSL provides robust mechanisms to identify, describe, and handle errors effectively, ensuring the workflow can recover gracefully from failures.
@@ -231,7 +253,7 @@ Errors in Serverless Workflow are described using the [Problem Details RFC](http
 
 *Example error:*
 ```yaml
-type: https://https://serverlessworkflow.io/spec/1.0.0/errors/communication
+type: https://serverlessworkflow.io/spec/1.0.0/errors/communication
 title: Service Unavailable
 status: 503
 detail: The service is currently unavailable. Please try again later.
@@ -274,7 +296,7 @@ Workflows and tasks alike can be configured to timeout after a defined amount of
 
 When a timeout occur, runtimes **must** abruptly interrupt the execution of the workflow/task, and **must** raise an error that, if uncaught, force the workflow/task to transition to the [`faulted` status phase](#status-phases).
 
-A timeout error **must** have its `type` set to `https://https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
+A timeout error **must** have its `type` set to `https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
 
 ### Interoperability
 
@@ -286,7 +308,7 @@ Serverless Workflow DSL is designed to seamlessly interact with a variety of ser
 - [**AsyncAPI**](dsl-reference.md#asyncapi-call): Facilitates interaction with asynchronous messaging protocols. AsyncAPI is designed for event-driven architectures, allowing workflows to publish and subscribe to events.
 - [**OpenAPI**](dsl-reference.md#openapi-call): Enables communication with services that provide OpenAPI specifications, which is useful for defining and consuming RESTful APIs.
 
-Runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
+Runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
 
 #### Custom and Non-Standard Interactions
 
