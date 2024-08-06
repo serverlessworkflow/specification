@@ -734,7 +734,7 @@ $defs:
               properties:
                 authority:
                   type: string
-                  format: uri
+                  format: uri-template
                   description: The URI that references the OAuth2 authority to use.
                 grant:
                   type: string
@@ -944,14 +944,14 @@ $defs:
   externalResource:
     oneOf:
       - type: string
-        format: uri
+        format: uri-template
       - title: ExternalResourceURI
         type: object
         unevaluatedProperties: false
         properties:
           uri:
             type: string
-            format: uri
+            format: uri-template
             description: The endpoint's URI.
           authentication:
             $ref: '#/$defs/referenceableAuthenticationPolicy'
