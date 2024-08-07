@@ -50,13 +50,13 @@ Inspired by the [Priority of Constituencies](https://www.w3.org/TR/2024/NOTE-des
 - Implementors: people implementing a specification compliant runtime
 - Specifications writers: people working on the specifications of Serverless Workflow
 
-If a trade-off needs to be made, always put author needs above all.
+If a trade-off needs to be made, always put author's needs above all.
 
-Similarly, when beginning to design an API, be sure to understand and document the user need that the API aims to address.
+Similarly, when beginning to design an API, be sure to understand and document the user needs that the API aims to address.
 
 Author needs come before the needs of operators, which come before the needs of runtime implementors, which come before the needs of specification writers, which come before theoretical purity.
 
-Like all principles, this isn’t absolute. Ease of operations affects perceived reliability of authors workflows. Implementors have to prioritize finite engineering resources, which affects how features reach authors. Specification writers also have finite resources, and theoretical concerns reflect underlying needs of all of these groups.
+Like all principles, this isn’t absolute. Ease of operations affects the perceived reliability of authors' workflows. Implementors have to prioritize finite engineering resources, which affects how features reach authors. Specification writers also have finite resources, and theoretical concerns reflect the underlying needs of all of these groups.
 
 ## Design
 
