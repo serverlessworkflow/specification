@@ -188,6 +188,7 @@ flowchart TD
   initial_context_arg([<code>$context</code>])
   context_arg([<code>$context</code>])
   input_arg([<code>$input</code>])
+  output_arg([<code>$output</code>])
 
   workflow_raw_input{{Raw Workflow Input}}
   workflow_input_from[Workflow: <code>input.from</code>]
@@ -221,7 +222,8 @@ flowchart TD
     task_definition -- Execution produces --> task_raw_output
     task_raw_output -- Passed to --> task_output_as
     task_output_as -- Produces --> task_transformed_output
-    task_transformed_output -- Passed to --> task_export_as
+    task_output_as -- Set as --> output_arg
+    task_raw_output -- Passed to --> task_export_as
   end
 
   task_transformed_output -- Passed as raw input to --> next_task
@@ -260,21 +262,22 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 |:-----|:----:|:------------|
 | context | `map` | The task's context data. |
 | input | `any` | The task's transformed input. |
+| output | `any` | The task's transformed output. |
 | secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
 | workflow | [`workflowDescritor`](#workflow-descriptor) | Describes the current workflow. |
 
 The following table shows which arguments are available for each runtime expression:
 
-| Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$secrets` | `$task` | `$workflow` |
-|:-------------------|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|
-| Workflow `input.from` | Raw workflow input | Transformed workflow input | | | ✔ | | ✔ |
-| Task `input.from` | Raw task input (i.e. transformed workflow input for first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | ✔ | ✔ | ✔ |
-| Task `if` | Transformed task input | | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Task definition | Transformed task input | | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | ✔ | | ✔ |
+| Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$output` | `$secrets` | `$task` | `$workflow` |
+|:-------------------|:---------:|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|
+| Workflow `input.from` | Raw workflow input | Transformed workflow input | | | | ✔ | | ✔ |
+| Task `input.from` | Raw task input (i.e. transformed workflow input for first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | | ✔ | ✔ | ✔ |
+| Task `if` | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
+| Task definition | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
+| Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ |
+| Task `export.as` | Raw task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | | ✔ | | ✔ |
 
 ### Fault Tolerance
 
