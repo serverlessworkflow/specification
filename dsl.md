@@ -81,7 +81,7 @@ Workflows in the Serverless Workflow DSL can exist in several phases, each indic
 
 Additionally, the flow of execution within a workflow can be controlled using [directives*](dsl-reference.md#flow-directive), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
 
-**To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
+\**To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
 
 #### Components
 
@@ -102,14 +102,14 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 
 - [Call](dsl-reference.md#call), used to call services and/or functions.
 - [Do](dsl-reference.md#do), used to define one or more subtasks to perform in sequence.
-- [Fork](dsl-reference.md#fork), used to define one or more two subtasks to perform in parallel.
 - [Emit](dsl-reference.md#emit), used to emit [events](dsl-reference.md#event).
 - [For](dsl-reference.md#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
+- [Fork](dsl-reference.md#fork), used to define one or more two subtasks to perform in parallel.
 - [Listen](dsl-reference.md#listen), used to listen for an [event](dsl-reference.md#event) or more.
 - [Raise](dsl-reference.md#raise), used to raise an [error](dsl-reference.md#error) and potentially fault the [workflow](dsl-reference.md#workflow).
 - [Run](dsl-reference.md#run), used to run a [container](dsl-reference.md#container-process), a [script](dsl-reference.md#script-process), a [shell](dsl-reference.md#shell-process) command or even another [workflow](dsl-reference.md#workflow-process). 
-- [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Set](dsl-reference.md#set), used to dynamically set or update the [workflow](dsl-reference.md#workflow)'s data during the its execution. 
+- [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Try](dsl-reference.md#try), used to attempt executing a specified [task](dsl-reference.md#task), and to handle any resulting [errors](dsl-reference.md#error) gracefully, allowing the [workflow](dsl-reference.md#workflow) to continue without interruption.
 - [Wait](dsl-reference.md#wait), used to pause or wait for a specified duration before proceeding to the next task.
 
@@ -138,7 +138,7 @@ A workflow begins with the first task defined.
 
 Once the task has been executed, different things can happen:
 
-- `continue`: the task ran to completion, and the next task, if any, should be executed. The task to run next is implictly the next in declaration order, or explicitly defined by the `then` property of the executed task. If the executed task is the last task, then the workflow's execution gracefully ends.
+- `continue`: the task ran to completion, and the next task, if any, should be executed. The task to run next is implicitly the next in declaration order, or explicitly defined by the `then` property of the executed task. If the executed task is the last task, then the workflow's execution gracefully ends.
 - `fault`: the task raised an uncaught error, which abruptly halts the workflow's execution and makes it transition to `faulted` [status phase](#status-phases).
 - `end`: the task explicitly and gracefully ends the workflow's execution. 
 
