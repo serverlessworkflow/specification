@@ -786,7 +786,7 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 | language | `string` | `yes` | The language of the script to run |
 | code | `string` | `no` | The script's code.<br>*Required if `source` has not been set.* |
 | source | [externalResource](#external-resource) | `no` | The script's resource.<br>*Required if `code` has not been set.* |
-| arguments | `map` | `no` | A list of the arguments of the script to run |
+| arguments | `map` | `no` | A list of the arguments, if any, of the script to run |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured script process |
 
 ###### Examples
