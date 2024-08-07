@@ -1544,11 +1544,11 @@ output:
         petId:
           type: string
       required: [ petId ]
-  as:                        
-    petId: '${ .pet.id }'   
+  as:
+    petId: '${ .pet.id }'
 export:
   as: 
-   '.petList += [ . ]'  
+   '.petList += [ $task.output ]'  
 ```
 
 ### Export
@@ -1566,13 +1566,13 @@ Optionally, the context might have an associated schema.
 
 #### Examples
 
-Merge the task output into the current context. 
+Merge the task output into the current context.
 
 ```yaml
 as: '.+$output'
 ```
 
-Replace the context with the task output. 
+Replace the context with the task output.
 
 ```yaml
 as: $output
