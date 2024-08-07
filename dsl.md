@@ -154,33 +154,33 @@ Before the workflow starts, the input data provided to the workflow can be trans
 *Example: If the workflow receives a JSON object as input, a transformation can be applied to remove unnecessary fields and retain only those that are required for the workflow's execution.*
 
 2. **Transform First Task Input**
-The input data for the first task can be transformed to match the specific requirements of that task. This ensures that the first task receives only the necessary data it needs to perform its operations. This can be done using the task's `input.from` expression. It evaluates on the transformed workflow input and defaults to the identity expression which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. Any runtime expressions used within the task definition will be evaluated using this transformed input.
+The input data for the first task can be transformed to match the specific requirements of that task. This ensures that the first task receives only the data required to perform its operations. This can be done using the task's `input.from` expression. It evaluates the transformed workflow input and defaults to the identity expression, which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. This transformed input will be evaluated against any runtime expressions used within the task definition.
 
 *Example: If the first task is a function call that only needs a subset of the workflow input, a transformation can be applied to provide only those fields needed for the function to execute.*
 
 3. **Transform First Task Output**
-After the first task completes, its output can be transformed before passing it to the next task or storing it in the workflow context. Transformations are applied using the `output.as` runtime expression. It evaluates on the raw task output and defaults to the identity expression which leaves the output unchanged. Its result will be the input to the next task. To update the context one uses the `export.as` runtime expression. It evaluates on the raw output and defaults to the expression that returns the existing context. The result of this runtime expression replaces the workflows current context and the content of the `$context`runtime expression argument. This helps in managing the data flow and keeping the context clean by removing any unnecessary data produced by the task.
+After completing the first task, its output can be transformed before passing it to the next task or storing it in the workflow context. Transformations are applied using the `output.as` runtime expression. It evaluates the raw task output and defaults to the identity expression, which leaves the output unchanged. Its result will be input for the next task. To update the context, one uses the `export.as` runtime expression. It evaluates the raw output and defaults to the expression that returns the existing context. The result of this runtime expression replaces the workflow's current context and the content of the `$context` runtime expression argument. This helps manage the data flow and keep the context clean by removing any unnecessary data produced by the task.
 
 *Example: If the first task returns a large dataset, a transformation can be applied to retain only the relevant results needed for subsequent tasks.*
 
 4. **Transform Last Task Input**
-Before the last task in the workflow executes, its input data can be transformed to ensure it receives only the necessary information. This can be done using the task's `input.from` expression. It evaluates on the transformed workflow input and defaults to the identity expression which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. Any runtime expressions used within the task definition will be evaluated using this transformed input. This step is crucial for ensuring that the final task has all the required data to complete the workflow successfully.
+Before the last task in the workflow executes, its input data can be transformed to ensure it receives only the necessary information. This can be done using the task's `input.from` expression. It evaluates the transformed workflow input and defaults to the identity expression, which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. This transformed input will be evaluated against any runtime expressions used within the task definition. This step is crucial for ensuring the final task has all the required data to complete the workflow successfully.
 
 *Example: If the last task involves generating a report, the input transformation can ensure that only the data required for the report generation is passed to the task.*
 
 5. **Transform Last Task Output**
-After the last task completes, its output can be transformed before it is considered as the workflow output. Transformations are applied using the `output.as` runtime expression. It evaluates on the raw task output and defaults to the identity expression which leaves the output unchanged. Its result will be passes to the workflow `output.as` runtime expression. This ensures that the workflow produces a clean and relevant output, free from any extraneous data that might have been generated during the task execution.
+After the last task completes, its output can be transformed before it is considered the workflow output. Transformations are applied using the `output.as` runtime expression. It evaluates the raw task output and defaults to the identity expression, which leaves the output unchanged. Its result will be passed to the workflow `output.as` runtime expression. This ensures that the workflow produces a clean and relevant output, free from any extraneous data that might have been generated during the task execution.
 
 *Example: If the last task outputs various statistics, a transformation can be applied to retain only the key metrics that are relevant to the stakeholders.*
 
 6. **Transform Workflow Output**
-Finally, the overall workflow output can be transformed before it is returned to the caller or stored. Transformations are applied using the `output.as` runtime expression. It evaluates on the last task's output and defaults to the identity expression which leaves the output unchanged. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
+Finally, the overall workflow output can be transformed before it is returned to the caller or stored. Transformations are applied using the `output.as` runtime expression. It evaluates the last task's output and defaults to the identity expression, which leaves the output unchanged. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
 
 *Example: If the workflow's final output is a summary report, a transformation can ensure that the report contains only the most important summaries and conclusions, excluding any intermediate data.*
 
-By applying transformations at these strategic points, Serverless Workflow DSL ensures that data flows through the workflow in a controlled and efficient manner, maintaining clarity and relevance at each stage of execution. This approach helps in managing complex workflows and ensures that each task operates with the precise data it requires, leading to more predictable and reliable workflow outcomes.
+By applying transformations at these strategic points, Serverless Workflow DSL ensures that data flows through the workflow in a controlled and efficient manner, maintaining clarity and relevance at each execution stage. This approach helps manage complex workflows and ensures that each task operates with the precise data required, leading to more predictable and reliable workflow outcomes.
 
-Visually this can be represented as follows:
+Visually, this can be represented as follows:
 
 ```mermaid
 flowchart TD
@@ -306,7 +306,7 @@ The following table shows which arguments are available for each runtime express
 | Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$output` | `$secrets` | `$task` | `$workflow` |
 |:-------------------|:---------:|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|
 | Workflow `input.from` | Raw workflow input | Transformed workflow input | | | | ✔ | | ✔ |
-| Task `input.from` | Raw task input (i.e. transformed workflow input for first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | | ✔ | ✔ | ✔ |
+| Task `input.from` | Raw task input (i.e. transformed workflow input for the first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | | ✔ | ✔ | ✔ |
 | Task `if` | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
 | Task definition | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
 | Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ |
