@@ -508,11 +508,16 @@ $defs:
                   language:
                     type: string
                     description: The language of the script to run.
+                  arguments:
+                    title: ScriptArguments
+                    type: object
+                    additionalProperties: true
+                    description: A key/value mapping of the arguments, if any, to use when running the configured script.
                   environment:
                     title: ScriptEnvironment
                     type: object
                     additionalProperties: true
-                    description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                    description: A key/value mapping of the environment variables, if any, to use when running the configured script process.
                 oneOf:
                   - title: ScriptInline
                     properties:
