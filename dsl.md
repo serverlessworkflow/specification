@@ -223,7 +223,7 @@ flowchart TD
     task_raw_output -- Passed to --> task_output_as
     task_output_as -- Produces --> task_transformed_output
     task_output_as -- Set as --> output_arg
-    task_raw_output -- Passed to --> task_export_as
+    task_transformed_output -- Passed to --> task_export_as
   end
 
   task_transformed_output -- Passed as raw input to --> next_task
@@ -284,7 +284,8 @@ This argument contains information about the runtime executing the workflow.
 |:-----|:----:|:------------|:--------|
 | name | `string` | The task's name. | `getPet` |
 | definition | `map` | The tasks definition (specified under the name) as a parsed object | `{ "call": "http", "with": { ... } }` |
-| input | `any` | The task's input *BEFORE* the `input.from` expression. For the result of `input.from` expression use the context of the runtime expression (for jq `.`) | - |
+| input | `any` | The task's *raw* input (i.e. *BEFORE* the `input.from` expression). For the result of `input.from` expression use the context of the runtime expression (for jq `.`) | - |
+| output | `any` | The task's *raw* output (i.e. *BEFORE* the `output.as` expression). | - |
 | startedAt.iso8601 | `string` | The start time of the task as a ISO 8601 date time string. It uses `T` as the date-time delimiter, either UTC (`Z`) or a time zone offset (`+01:00`). The precision can be either seconds, milliseconds or nanoseconds | `2022-01-01T12:00:00Z`, `2022-01-01T12:00:00.123456Z`, `2022-01-01T12:00:00.123+01:00` |
 | startedAt.epochMillis | `integer` | The start time of the task as a integer value of milliseconds since midnight of 1970-01-01 UTC | `1641024000123` (="2022-01-01T08:00:00.123Z") |
 | startedAt.epochNanos | `integer` | The start time of the task as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
@@ -295,7 +296,7 @@ This argument contains information about the runtime executing the workflow.
 |:-----|:----:|:------------|:--------|
 | id | `string` | A unique id of the workflow execution. Now specific format is imposed | UUIDv4: `4a5c8422-5868-4e12-8dd9-220810d2b9ee`, ULID: `0000004JFGDSW1H037G7J7SFB9` |
 | definition | `map` | The workflow's definition as a parsed object | `{ "document": { ... }, "do": [...] }` |
-| input | `any` | The workflow's input *BEFORE* the `input.from` expression. For the result of `input.from` expression use the `$input` argument | - |
+| input | `any` | The workflow's *raw* input (i.e *BEFORE* the `input.from` expression). For the result of `input.from` expression use the `$input` argument | - |
 | startedAt.iso8601 | `string` | The start time of the execution as a ISO 8601 date time string. It uses `T` as the date-time delimiter, either UTC (`Z`) or a time zone offset (`+01:00`). The precision can be either seconds, milliseconds or nanoseconds | `2022-01-01T12:00:00Z`, `2022-01-01T12:00:00.123456Z`, `2022-01-01T12:00:00.123+01:00` |
 | startedAt.epochMillis | `integer` | The start time of the execution as a integer value of milliseconds since midnight of 1970-01-01 UTC | `1641024000123` (="2022-01-01T08:00:00.123Z") |
 | startedAt.epochNanos | `integer` | The start time of the execution as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
@@ -309,7 +310,7 @@ The following table shows which arguments are available for each runtime express
 | Task `if` | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
 | Task definition | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
 | Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ |
-| Task `export.as` | Raw task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
 | Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | | ✔ | | ✔ |
 
 ### Fault Tolerance
