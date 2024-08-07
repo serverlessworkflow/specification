@@ -99,7 +99,7 @@ Workflows in the Serverless Workflow DSL can exist in several phases, each indic
 
 Additionally, the flow of execution within a workflow can be controlled using [directives*](dsl-reference.md#flow-directive), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
 
-**To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
+\**To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
 
 #### Components
 
@@ -120,14 +120,14 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 
 - [Call](dsl-reference.md#call), used to call services and/or functions.
 - [Do](dsl-reference.md#do), used to define one or more subtasks to perform in sequence.
-- [Fork](dsl-reference.md#fork), used to define one or more two subtasks to perform in parallel.
 - [Emit](dsl-reference.md#emit), used to emit [events](dsl-reference.md#event).
 - [For](dsl-reference.md#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
+- [Fork](dsl-reference.md#fork), used to define one or more two subtasks to perform in parallel.
 - [Listen](dsl-reference.md#listen), used to listen for an [event](dsl-reference.md#event) or more.
 - [Raise](dsl-reference.md#raise), used to raise an [error](dsl-reference.md#error) and potentially fault the [workflow](dsl-reference.md#workflow).
 - [Run](dsl-reference.md#run), used to run a [container](dsl-reference.md#container-process), a [script](dsl-reference.md#script-process), a [shell](dsl-reference.md#shell-process) command or even another [workflow](dsl-reference.md#workflow-process). 
-- [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Set](dsl-reference.md#set), used to dynamically set or update the [workflow](dsl-reference.md#workflow)'s data during the its execution. 
+- [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Try](dsl-reference.md#try), used to attempt executing a specified [task](dsl-reference.md#task), and to handle any resulting [errors](dsl-reference.md#error) gracefully, allowing the [workflow](dsl-reference.md#workflow) to continue without interruption.
 - [Wait](dsl-reference.md#wait), used to pause or wait for a specified duration before proceeding to the next task.
 
@@ -156,7 +156,7 @@ A workflow begins with the first task defined.
 
 Once the task has been executed, different things can happen:
 
-- `continue`: the task ran to completion, and the next task, if any, should be executed. The task to run next is implictly the next in declaration order, or explicitly defined by the `then` property of the executed task. If the executed task is the last task, then the workflow's execution gracefully ends.
+- `continue`: the task ran to completion, and the next task, if any, should be executed. The task to run next is implicitly the next in declaration order, or explicitly defined by the `then` property of the executed task. If the executed task is the last task, then the workflow's execution gracefully ends.
 - `fault`: the task raised an uncaught error, which abruptly halts the workflow's execution and makes it transition to `faulted` [status phase](#status-phases).
 - `end`: the task explicitly and gracefully ends the workflow's execution. 
 
@@ -214,17 +214,50 @@ Runtimes **may** optionally support other runtime expression languages, which au
 
 CloudFlows defines [several arguments](#runtime-expression-arguments) that runtimes **must** provide during the evaluation of runtime expressions.
 
-When the evaluation of an expression fails, runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
+When the evaluation of an expression fails, runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400`.
 
 #### Runtime expression arguments
 
 | Name | Type | Description |
 |:-----|:----:|:------------|
-| context | `map` | The task's context data. |
+| context | `any` | The task's context data. |
 | input | `any` | The task's filtered input. |
 | secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
-| workflow | [`workflowDescritor`](#workflow-descriptor) | Describes the current workflow. |
+| workflow | [`workflowDescriptor`](#workflow-descriptor) | Describes the current workflow. |
+| runtime | [`runtimeDescriptor`](#runtime-descriptor) | Describes the runtime. |
+
+##### Runtime Descriptor
+
+This argument contains information about the runtime executing the workflow.
+
+| Name | Type | Description | Example |
+|:-----|:----:|:------------| ------- |
+| name | `string` | A human friendly name for the runtime. | `Synapse`, `Sonata` |
+| version | `string` | The version of the runtime. This can be an arbitrary string | a incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
+| metadata | `map` | An object/map of implementation specific key-value pairs. This can be chosen by runtime implementors and usage of this argument signals that a given workflow definition might not be runtime agnostic | A Software as a Service (SaaS) provider might choose to expose information about the tenant the workflow is executed for e.g. `{ "organization": { "id": "org-ff51cff2-fc83-4d70-9af1-8dacdbbce0be", "name": "example-corp" }, "featureFlags": ["fastZip", "arm64"] }`.  |
+
+##### Task Descriptor
+
+| Name | Type | Description | Example |
+|:-----|:----:|:------------|:--------|
+| name | `string` | The task's name. | `getPet` |
+| definition | `map` | The tasks definition (specified under the name) as a parsed object | `{ "call": "http", "with": { ... } }` |
+| input | `any` | The task's input *BEFORE* the `input.from` expression. For the result of `input.from` expression use the context of the runtime expression (for jq `.`) | - |
+| startedAt.iso8601 | `string` | The start time of the task as a ISO 8601 date time string. It uses `T` as the date-time delimiter, either UTC (`Z`) or a time zone offset (`+01:00`). The precision can be either seconds, milliseconds or nanoseconds | `2022-01-01T12:00:00Z`, `2022-01-01T12:00:00.123456Z`, `2022-01-01T12:00:00.123+01:00` |
+| startedAt.epochMillis | `integer` | The start time of the task as a integer value of milliseconds since midnight of 1970-01-01 UTC | `1641024000123` (="2022-01-01T08:00:00.123Z") |
+| startedAt.epochNanos | `integer` | The start time of the task as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
+
+##### Workflow Descriptor
+
+| Name | Type | Description | Example |
+|:-----|:----:|:------------|:--------|
+| id | `string` | A unique id of the workflow execution. Now specific format is imposed | UUIDv4: `4a5c8422-5868-4e12-8dd9-220810d2b9ee`, ULID: `0000004JFGDSW1H037G7J7SFB9` |
+| definition | `map` | The workflow's definition as a parsed object | `{ "document": { ... }, "do": [...] }` |
+| input | `any` | The workflow's input *BEFORE* the `input.from` expression. For the result of `input.from` expression use the `$input` argument | - |
+| startedAt.iso8601 | `string` | The start time of the execution as a ISO 8601 date time string. It uses `T` as the date-time delimiter, either UTC (`Z`) or a time zone offset (`+01:00`). The precision can be either seconds, milliseconds or nanoseconds | `2022-01-01T12:00:00Z`, `2022-01-01T12:00:00.123456Z`, `2022-01-01T12:00:00.123+01:00` |
+| startedAt.epochMillis | `integer` | The start time of the execution as a integer value of milliseconds since midnight of 1970-01-01 UTC | `1641024000123` (="2022-01-01T08:00:00.123Z") |
+| startedAt.epochNanos | `integer` | The start time of the execution as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
 
 ### Fault Tolerance
 
@@ -238,7 +271,7 @@ Errors in Serverless Workflow are described using the [Problem Details RFC](http
 
 *Example error:*
 ```yaml
-type: https://https://serverlessworkflow.io/spec/1.0.0/errors/communication
+type: https://serverlessworkflow.io/spec/1.0.0/errors/communication
 title: Service Unavailable
 status: 503
 detail: The service is currently unavailable. Please try again later.
@@ -281,7 +314,7 @@ Workflows and tasks alike can be configured to timeout after a defined amount of
 
 When a timeout occur, runtimes **must** abruptly interrupt the execution of the workflow/task, and **must** raise an error that, if uncaught, force the workflow/task to transition to the [`faulted` status phase](#status-phases).
 
-A timeout error **must** have its `type` set to `https://https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
+A timeout error **must** have its `type` set to `https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
 
 ### Interoperability
 
@@ -293,7 +326,7 @@ Serverless Workflow DSL is designed to seamlessly interact with a variety of ser
 - [**AsyncAPI**](dsl-reference.md#asyncapi-call): Facilitates interaction with asynchronous messaging protocols. AsyncAPI is designed for event-driven architectures, allowing workflows to publish and subscribe to events.
 - [**OpenAPI**](dsl-reference.md#openapi-call): Enables communication with services that provide OpenAPI specifications, which is useful for defining and consuming RESTful APIs.
 
-Runtimes **must** raise an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
+Runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
 
 #### Custom and Non-Standard Interactions
 

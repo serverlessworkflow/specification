@@ -25,8 +25,8 @@
         + [Shell](#shell-process)
         + [Script](#script-process)
         + [Workflow](#workflow-process)
-    - [Switch](#switch)
     - [Set](#set)
+    - [Switch](#switch)
     - [Try](#try)
     - [Wait](#wait)
   + [Flow Directive](#flow-directive)
@@ -42,6 +42,7 @@
     - [Standard Error Types](#standard-error-types)
   + [Event Consumption Strategy](#event-consumption-strategy)
   + [Event Filter](#event-filter)
+  + [Event Properties](#event-properties)
   + [Retry](#retry)
   + [Input](#input)
   + [Output](#output)
@@ -50,6 +51,7 @@
   + [Duration](#duration)
   + [HTTP Response](#http-response)
   + [HTTP Request](#http-request)
+  + [URI Template](#uri-template)
 
 ## Abstract
 
@@ -83,7 +85,7 @@ Documents the workflow definition.
 | dsl | `string` | `yes` | The version of the DSL used to define the workflow. |
 | namespace | `string` | `yes` | The workflow's namespace.<br> |
 | name | `string` | `yes` | The workflow's name.<br> |
-| version | `string` | `yes` | The workflow's [semantic version]
+| version | `string` | `yes` | The workflow's [semantic version](https://semver.org/) |
 | title | `string` | `no` | The workflow's title. |
 | summary | `string` | `no` | The workflow's Markdown summary. |
 | tags | `map[string, string]` | `no` | A key/value mapping of the workflow's tags, if any. |
@@ -229,9 +231,9 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 - [Call](#call), used to call services and/or functions.
 - [Do](#do), used to define one or more subtasks to perform in sequence.
 - [Fork](#fork), used to define one or more subtasks to perform concurrently.
-- [Emit](#emit), used to emit [events](#event).
+- [Emit](#emit), used to emit [events](#event-properties).
 - [For](#for), used to iterate over a collection of items, and conditionally perform a task for each of them.
-- [Listen](#listen), used to listen for an [event](#event) or more.
+- [Listen](#listen), used to listen for an [event](#event-properties) or more.
 - [Raise](#raise), used to raise an [error](#error) and potentially fault the [workflow](#workflow).
 - [Run](#run), used to run a [container](#container-process), a [script](#script-process) , a [shell](#shell-process) command or even another [workflow](#workflow-process). 
 - [Switch](#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
@@ -279,7 +281,7 @@ do:
 
 Serverless Workflow defines several default functions that **MUST** be supported by all implementations and runtimes:
 
-- [AsyncAPI](#asyncapi)
+- [AsyncAPI](#asyncapi-call)
 - [gRPC](#grpc-call)
 - [HTTP](#http-call)
 - [OpenAPI](#openapi-call)
@@ -368,9 +370,10 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | method | `string` | `yes` | The HTTP request method. |
-| endpoint | [`endpoint`](#endpoint) | `yes` | An URI or an object that describes the HTTP endpoint to call. |
+| endpoint | `string`\|[`endpoint`](#endpoint) | `yes` | An URI or an object that describes the HTTP endpoint to call. |
 | headers | `map` | `no` | A name/value mapping of the HTTP headers to use, if any. |
 | body | `any` | `no` | The HTTP request body, if any. |
+| query | `map[string, any]` | `no` | A name/value mapping of the query parameters to use, if any. |
 | output | `string` | `no` | The http call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
 
 ###### Examples
@@ -494,7 +497,7 @@ Allows workflows to publish events to event brokers or messaging systems, facili
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| emit.event | [`event`](#event) | `yes` | Defines the event to emit. |
+| emit.event | [`eventProperties`](#event-properties) | `yes` | Defines the event to emit. |
 
 ##### Examples
 
@@ -508,15 +511,16 @@ do:
   - emitEvent:
       emit:
         event:
-          source: https://petstore.com
-          type: com.petstore.order.placed.v1
-          data:
-            client:
-              firstName: Cruella
-              lastName: de Vil
-            items:
-              - breed: dalmatian
-                quantity: 101
+          with:
+            source: https://petstore.com
+            type: com.petstore.order.placed.v1
+            data:
+              client:
+                firstName: Cruella
+                lastName: de Vil
+              items:
+                - breed: dalmatian
+                  quantity: 101
 ```
 
 #### For
@@ -528,9 +532,9 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | for.each | `string` | `no` | The name of the variable used to store the current item being enumerated.<br>Defaults to `item`. |
-| for.in | `string` | `yes` | A [runtime expression](#runtime-expressions) used to get the collection to enumerate. |
+| for.in | `string` | `yes` | A [runtime expression](dsl.md#runtime-expressions) used to get the collection to enumerate. |
 | for.at | `string` | `no` | The name of the variable used to store the index of the current item being enumerated.<br>Defaults to `index`. |
-| while | `string` | `no` | A [runtime expression](#runtime-expressions) that represents the condition, if any, that must be met for the iteration to continue. |
+| while | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions) that represents the condition, if any, that must be met for the iteration to continue. |
 | do | [`task`](#task) | `yes` | The task to perform for each item in the collection. |
 
 ##### Examples
@@ -600,7 +604,6 @@ do:
                   patientId: ${ .patient.fullName }
                   room: ${ .room.number }
 ```
-
 
 #### Listen
 
@@ -785,7 +788,8 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 | language | `string` | `yes` | The language of the script to run |
 | code | `string` | `no` | The script's code.<br>*Required if `source` has not been set.* |
 | source | [externalResource](#external-resource) | `no` | The script's resource.<br>*Required if `code` has not been set.* |
-| environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured process |
+| arguments | `map` | `no` | A list of the arguments, if any, of the script to run |
+| environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured script process |
 
 ###### Examples
 
@@ -800,8 +804,10 @@ do:
       run:
         script:
           language: js
+          arguments:
+            greetings: Hello, world!
           code: >
-            Some cool multiline script
+            console.log(greetings)
 ```
 
 ##### Shell Process
@@ -964,7 +970,7 @@ do:
 
 ##### Switch Case
 
-Defines a switch case, encompassing of a condition for matching and an associated action to execute upon a match.
+Defines a switch case, encompassing a condition for matching and an associated action to execute upon a match.
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
@@ -1073,7 +1079,7 @@ Defines an external resource.
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | name | `string` | `no` | The name, if any, of the defined resource. |
-| uri | `string` | `yes` | The URI at which to get the defined resource. |
+| uri | [`uri-template`](#uri-template) | `yes` | The URI at which to get the defined resource. |
 | authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when fecthing the resource. |
 
 ##### Examples
@@ -1208,8 +1214,8 @@ Defines the fundamentals of an 'oauth2' authentication
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| authority | `string` | `yes` | The URI that references the OAuth2 authority to use. |
-| grant | `string` | `yes` | The grant type to use.      
+| authority | [`uri-template`](#uri-template) | `yes` | The URI that references the OAuth2 authority to use. |
+| grant | `string` | `yes` | The grant type to use. |
 | client.id | `string` | `yes` | The client id to use. |
 | client.secret | `string` | `no` | The client secret to use, if any. |
 | scopes | `string[]` | `no` | The scopes, if any, to request the token for. |
@@ -1346,7 +1352,7 @@ Defines the [Problem Details RFC](https://datatracker.ietf.org/doc/html/rfc7807)
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| type | `string` | `yes` | A URI reference that identifies the [`error`](#error) type. <br><u>For cross-compatibility concerns, it is strongly recommended to use [Standard Error Types](#standard-error-types) whenever possible.<u><br><u>Runtimes **MUST** ensure that the property has been set when raising or escalating the [`error`](#error).<u> |
+| type | [`uri-template`](#uri-template) | `yes` | A URI reference that identifies the [`error`](#error) type. <br><u>For cross-compatibility concerns, it is strongly recommended to use [Standard Error Types](#standard-error-types) whenever possible.<u><br><u>Runtimes **MUST** ensure that the property has been set when raising or escalating the [`error`](#error).<u> |
 | status | `integer` | `yes` | The status code generated by the origin for this occurrence of the [`error`](#error).<br><u>For cross-compatibility concerns, it is strongly recommended to use [HTTP Status Codes](https://datatracker.ietf.org/doc/html/rfc7231#section-6) whenever possible.<u><br><u>Runtimes **MUST** ensure that the property has been set when raising or escalating the [`error`](#error).<u> |
 | instance | `string` | `yes` | A [JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901) used to reference the component the [`error`](#error) originates from.<br><u>Runtimes **MUST** set the property when raising or escalating the [`error`](#error). Otherwise ignore.<u> |
 | title | `string` | `no` | A short, human-readable summary of the [`error`](#error). |
@@ -1355,7 +1361,7 @@ Defines the [Problem Details RFC](https://datatracker.ietf.org/doc/html/rfc7807)
 #### Examples
 
 ```yaml
-type: https://https://serverlessworkflow.io/spec/1.0.0/errors/communication
+type: https://serverlessworkflow.io/spec/1.0.0/errors/communication
 title: Service Not Available
 status: 503
 ```
@@ -1366,14 +1372,14 @@ Standard error types serve the purpose of categorizing errors consistently acros
 
 | Type | Status¹ | Description |
 |------|:-------:|-------------|
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/configuration](#) | `400` | Errors resulting from incorrect or invalid configuration settings, such as missing or misconfigured environment variables, incorrect parameter values, or configuration file errors. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/validation](#) | `400` | Errors arising from validation processes, such as validation of input data, schema validation failures, or validation constraints not being met. These errors indicate that the provided data or configuration does not adhere to the expected format or requirements specified by the workflow. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/expression](#) | `400` | Errors occurring during the evaluation of runtime expressions, such as invalid syntax or unsupported operations. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/authentication](#) | `401` | Errors related to authentication failures. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/authorization](#) | `403` | Errors related to unauthorized access attempts or insufficient permissions to perform certain actions within the workflow. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/timeout](#) | `408` | Errors caused by timeouts during the execution of tasks or during interactions with external services. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/communication](#) | `500` | Errors  encountered while communicating with external services, including network errors, service unavailable, or invalid responses. |
-| [https://https://serverlessworkflow.io/spec/1.0.0/errors/runtime](#) | `500` | Errors occurring during the runtime execution of a workflow, including unexpected exceptions, errors related to resource allocation, or failures in handling workflow tasks. These errors typically occur during the actual execution of workflow components and may require runtime-specific handling and resolution strategies. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/configuration](#) | `400` | Errors resulting from incorrect or invalid configuration settings, such as missing or misconfigured environment variables, incorrect parameter values, or configuration file errors. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/validation](#) | `400` | Errors arising from validation processes, such as validation of input data, schema validation failures, or validation constraints not being met. These errors indicate that the provided data or configuration does not adhere to the expected format or requirements specified by the workflow. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/expression](#) | `400` | Errors occurring during the evaluation of runtime expressions, such as invalid syntax or unsupported operations. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/authentication](#) | `401` | Errors related to authentication failures. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/authorization](#) | `403` | Errors related to unauthorized access attempts or insufficient permissions to perform certain actions within the workflow. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/timeout](#) | `408` | Errors caused by timeouts during the execution of tasks or during interactions with external services. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/communication](#) | `500` | Errors  encountered while communicating with external services, including network errors, service unavailable, or invalid responses. |
+| [https://serverlessworkflow.io/spec/1.0.0/errors/runtime](#) | `500` | Errors occurring during the runtime execution of a workflow, including unexpected exceptions, errors related to resource allocation, or failures in handling workflow tasks. These errors typically occur during the actual execution of workflow components and may require runtime-specific handling and resolution strategies. |
 
 ¹ *Default value. The `status code` that best describe the error should always be used.*
 
@@ -1389,6 +1395,28 @@ Represents the configuration of an event consumption strategy.
 | any | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for any of the defined events before resuming execution.<br>*Required if `all` and `one` have not been set.* |
 | one | [`eventFilter`](#event-filter) | `no` | Configures the workflow to wait for the defined event before resuming execution.<br>*Required if `all` and `any` have not been set.* |
 
+### Event Properties
+
+An event object typically includes details such as the event type, source, timestamp, and unique identifier along with any relevant data payload. The [Cloud Events specification](https://cloudevents.io/), favored by Serverless Workflow, standardizes this structure to ensure interoperability across different systems and services.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| id | `string` | `no` | Identifies the event. `source` + `id` is unique for each distinct event.<br>*Required when emitting an event using `emit.event.with`.* |
+| source | `string` | `no` | An URI formatted string, or [runtime expression](dsl.md#runtime-expressions), that identifies the context in which an event happened. `source` + `id` is unique for each distinct event.<br>*Required when emitting an event using `emit.event.with`.* |
+| type | `string` | `no` | Describes the type of event related to the originating occurrence.<br>*Required when emitting an event using `emit.event.with`.* |
+| time | `string` | `no` | A string, or [runtime expression](dsl.md#runtime-expressions), representing the timestamp of when the occurrence happened. |
+| subject | `string` | `no` | Describes the subject of the event in the context of the event producer. |
+| datacontenttype | `string` | `no` | Content type of `data` value. If omitted, it implies the `data` is a JSON value conforming to the "application/json" media type. |
+| dataschema | `string` | `no` | An URI formatted string, or [runtime expression](dsl.md#runtime-expressions), that identifies the schema that `data` adheres to. |
+| data | `object` | `no` | The event payload. |
+
+*Additional properties can be supplied, see the Cloud Events specification [documentation](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes) for more info.*
+
+*When used in an [`eventFilter`](#event-filter), at least one property must be supplied.*
+
+
 ### Event Filter
 
 An event filter is a mechanism used to selectively process or handle events based on predefined criteria, such as event type, source, or specific attributes.
@@ -1397,7 +1425,7 @@ An event filter is a mechanism used to selectively process or handle events base
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| with | `object` | `yes` | A name/value mapping of the attributes filtered events must define. Supports both regular expressions and runtime expressions.  |
+| with | [`eventProperties`](#event-properties) | `yes` | A name/value mapping of the attributes filtered events must define. Supports both regular expressions and runtime expressions.  |
 | correlate | [`map[string, correlation]`](#correlation) | `no` | A name/definition mapping of the correlations to attempt when filtering events. |
 
 ### Correlation
@@ -1473,7 +1501,7 @@ When set, runtimes must validate input data against the defined schema, unless d
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate input data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
-| from | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to filter and/or mutate the workflow/task input.  |
+| from | `string`<br>`object` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter and/or mutate the workflow/task input.  |
 
 #### Examples
 
@@ -1502,7 +1530,7 @@ When set, runtimes must validate output data against the defined schema, unless 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate output data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
-| as | `string`<br>`object` | `no` | A [runtime expression](#runtime-expressions), if any, used to filter and/or mutate the workflow/task output. |
+| as | `string`<br>`object` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter and/or mutate the workflow/task output. |
 
 #### Examples
 
@@ -1636,6 +1664,17 @@ minutes: 15
 seconds: 30
 ```
 
+### Endpoint
+
+Describes an enpoint.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| uri | `string` | `yes` | The endpoint's URI. |
+| authentication | `[authentication](#authentication)` | `no` | The authentication policy to use. |
+
 ### HTTP Response
 
 Describes an HTTP response.
@@ -1685,4 +1724,22 @@ method: get
 uri: https://petstore.swagger.io/v2/pet/1
 headers:
   Content-Type: application/json
+```
+
+### URI Template
+
+The DSL has limited support for URI template syntax as defined by [RFC 6570](https://datatracker.ietf.org/doc/html/rfc6570). Specifically, only the [Simple String Expansion](https://datatracker.ietf.org/doc/html/rfc6570#section-3.2.2) is supported, which allows authors to embed variables in a URI.
+
+To substitute a variable within a URI, use the `{}` syntax. The identifier inside the curly braces will be replaced with its value during runtime evaluation. If no value is found for the identifier, an empty string will be used.
+
+This has the following limitations compared to runtime expressions:
+
+- Only top-level properties can be interpolated within strings, thus identifiers are treated verbatim. This means that `{pet.id}` will be replaced with the value of the `"pet.id"` property, not the value of the `id` property of the `pet` property.
+- The referenced variable must be of type `string`, `number`, `boolean`, or `null`. If the variable is of a different type an error with type `https://https://serverlessworkflow.io/spec/1.0.0/errors/expression` and status `400` will be raised.
+- [Runtime expression arguments](./dsl.md#runtime-expression-arguments) are not available for string substitution.
+
+#### Examples
+
+```yaml
+uri: https://petstore.swagger.io/v2/pet/{petId}
 ```

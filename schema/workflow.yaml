@@ -1,3 +1,4 @@
+
 $id: https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
 description: Serverless Workflow DSL - Workflow Schema
@@ -266,6 +267,10 @@ $defs:
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.
               body:
                 description: The body, if any, of the HTTP request to perform.
+              query:
+                type: object
+                additionalProperties: true
+                description: A name/value mapping of the query parameters, if any, of the HTTP request to perform.
               output:
                 type: string
                 enum: [ raw, content, response ]
@@ -365,37 +370,9 @@ $defs:
           event:
             type: object
             properties:
-              id:
-                type: string
-                description: The event's unique identifier
-              source:
-                description: Identifies the context in which an event happened
-                oneOf:
-                  - title: LiteralSource
-                    type: string
-                    format: uri-template
-                  - $ref: '#/$defs/runtimeExpression'
-              type:
-                type: string
-                description: This attribute contains a value describing the type of event related to the originating occurrence.
-              time:
-                oneOf:
-                  - title: LiteralTime
-                    type: string
-                    format: date-time
-                  - $ref: '#/$defs/runtimeExpression'
-              subject:
-                type: string
-              datacontenttype:
-                type: string
-                description: Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format.
-              dataschema:
-                oneOf:
-                  - title: LiteralDataSchema
-                    type: string
-                    format: uri-template
-                  - $ref: '#/$defs/runtimeExpression'
-            required: [ source, type ]
+              with:
+                $ref: '#/$defs/eventProperties'
+                required: [ source, type ]
             additionalProperties: true
         required: [ event ]
   forTask:
@@ -504,11 +481,16 @@ $defs:
                   language:
                     type: string
                     description: The language of the script to run.
+                  arguments:
+                    title: ScriptArguments
+                    type: object
+                    additionalProperties: true
+                    description: A key/value mapping of the arguments, if any, to use when running the configured script.
                   environment:
                     title: ScriptEnvironment
                     type: object
                     additionalProperties: true
-                    description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                    description: A key/value mapping of the environment variables, if any, to use when running the configured script process.
                 oneOf:
                   - title: ScriptInline
                     properties:
@@ -730,7 +712,7 @@ $defs:
               properties:
                 authority:
                   type: string
-                  format: uri
+                  format: uri-template
                   description: The URI that references the OAuth2 authority to use.
                 grant:
                   type: string
@@ -848,6 +830,40 @@ $defs:
         $ref: '#/$defs/referenceableAuthenticationPolicy'
         description: The authentication policy to use.
     required: [ uri ]
+  eventProperties:
+    type: object
+    properties:
+      id:
+        type: string
+        description: The event's unique identifier
+      source:
+        description: Identifies the context in which an event happened
+        oneOf:
+          - title: LiteralSource
+            type: string
+            format: uri-template
+          - $ref: '#/$defs/runtimeExpression'
+      type:
+        type: string
+        description: This attribute contains a value describing the type of event related to the originating occurrence.
+      time:
+        oneOf:
+          - title: LiteralTime
+            type: string
+            format: date-time
+          - $ref: '#/$defs/runtimeExpression'
+      subject:
+        type: string
+      datacontenttype:
+        type: string
+        description: Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format.
+      dataschema:
+        oneOf:
+          - title: LiteralDataSchema
+            type: string
+            format: uri-template
+          - $ref: '#/$defs/runtimeExpression'
+    additionalProperties: true
   eventConsumptionStrategy:
     type: object
     unevaluatedProperties: false
@@ -880,28 +896,8 @@ $defs:
     properties:
       with:
         title: WithEvent
-        type: object
+        $ref: '#/$defs/eventProperties'
         minProperties: 1
-        properties:
-          id:
-            type: string
-            description: The event's unique identifier
-          source:
-            type: string
-            description: Identifies the context in which an event happened
-          type:
-            type: string
-            description: This attribute contains a value describing the type of event related to the originating occurrence.
-          time:
-            type: string
-          subject:
-            type: string
-          datacontenttype:
-            type: string
-            description: Content type of data value. This attribute enables data to carry any type of content, whereby format and encoding might differ from that of the chosen event format.
-          dataschema:
-            type: string
-        additionalProperties: true
         description: An event filter is a mechanism used to selectively process or handle events based on predefined criteria, such as event type, source, or specific attributes.
       correlate:
         type: object
@@ -940,14 +936,14 @@ $defs:
   externalResource:
     oneOf:
       - type: string
-        format: uri
+        format: uri-template
       - title: ExternalResourceURI
         type: object
         unevaluatedProperties: false
         properties:
           uri:
             type: string
-            format: uri
+            format: uri-template
             description: The endpoint's URI.
           authentication:
             $ref: '#/$defs/referenceableAuthenticationPolicy'
