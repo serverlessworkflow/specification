@@ -266,6 +266,10 @@ $defs:
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.
               body:
                 description: The body, if any, of the HTTP request to perform.
+              query:
+                type: object
+                additionalProperties: true
+                description: A name/value mapping of the query parameters, if any, of the HTTP request to perform.
               output:
                 type: string
                 enum: [ raw, content, response ]
@@ -730,7 +734,7 @@ $defs:
               properties:
                 authority:
                   type: string
-                  format: uri
+                  format: uri-template
                   description: The URI that references the OAuth2 authority to use.
                 grant:
                   type: string
@@ -940,14 +944,14 @@ $defs:
   externalResource:
     oneOf:
       - type: string
-        format: uri
+        format: uri-template
       - title: ExternalResourceURI
         type: object
         unevaluatedProperties: false
         properties:
           uri:
             type: string
-            format: uri
+            format: uri-template
             description: The endpoint's URI.
           authentication:
             $ref: '#/$defs/referenceableAuthenticationPolicy'
