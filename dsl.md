@@ -4,6 +4,7 @@
 
 - [Abstract](#abstract)
 - [Motivation](#motivation)
+- [Priority of Constituencies](#priority-of-constituencies)
 - [Design](#design)
 - [Concepts](#concepts)
   + [Workflow](#workflow)
@@ -39,6 +40,23 @@ Serverless Workflow aims to simplify the orchestration of complex processes acro
 Serverless computing has gained popularity for its ability to abstract away infrastructure management tasks, enabling developers to focus on application logic. However, orchestrating serverless workflows across multiple environments often involves dealing with disparate tools and platforms, leading to complexity and inefficiency.
 
 Serverless Workflow addresses this challenge by providing a DSL specifically designed for serverless workflow orchestration. By abstracting away the underlying infrastructure complexities and offering a modular and extensible framework, Serverless Workflow aims to streamline the development, deployment, and management of serverless workflows.
+
+## Priority of Constituencies
+
+Inspired by the [Priority of Constituencies](https://www.w3.org/TR/2024/NOTE-design-principles-20240718/#priority-of-constituencies) principle from the W3C Design Principles, the Serverless Workflow DSL prioritizes the following constituencies (collectively referred to as "users"):
+
+- Authors: people authoring and reading workflows
+- Operators: people running and operating a runtime implementation of the specification
+- Implementors: people implementing a specification compliant runtime
+- Specifications writers: people working on the specifications of Serverless Workflow
+
+If a trade-off needs to be made, always put author's needs above all.
+
+Similarly, when beginning to design an API, be sure to understand and document the user needs that the API aims to address.
+
+Author needs come before the needs of operators, which come before the needs of runtime implementors, which come before the needs of specification writers, which come before theoretical purity.
+
+Like all principles, this isn’t absolute. Ease of operations affects the perceived reliability of authors' workflows. Implementors have to prioritize finite engineering resources, which affects how features reach authors. Specification writers also have finite resources, and theoretical concerns reflect the underlying needs of all of these groups.
 
 ## Design
 
