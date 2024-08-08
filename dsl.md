@@ -296,18 +296,6 @@ This argument contains information about the runtime executing the workflow.
 | version | `string` | The version of the runtime. This can be an arbitrary string | a incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
 | metadata | `map` | An object/map of implementation specific key-value pairs. This can be chosen by runtime implementors and usage of this argument signals that a given workflow definition might not be runtime agnostic | A Software as a Service (SaaS) provider might choose to expose information about the tenant the workflow is executed for e.g. `{ "organization": { "id": "org-ff51cff2-fc83-4d70-9af1-8dacdbbce0be", "name": "example-corp" }, "featureFlags": ["fastZip", "arm64"] }`.  |
 
-##### Task Descriptor
-
-| Name | Type | Description | Example |
-|:-----|:----:|:------------|:--------|
-| name | `string` | The task's name. | `getPet` |
-| definition | `map` | The tasks definition (specified under the name) as a parsed object | `{ "call": "http", "with": { ... } }` |
-| input | `any` | The task's *raw* input (i.e. *BEFORE* the `input.from` expression). For the result of `input.from` expression use the context of the runtime expression (for jq `.`) | - |
-| output | `any` | The task's *raw* output (i.e. *BEFORE* the `output.as` expression). | - |
-| startedAt.iso8601 | `string` | The start time of the task as a ISO 8601 date time string. It uses `T` as the date-time delimiter, either UTC (`Z`) or a time zone offset (`+01:00`). The precision can be either seconds, milliseconds or nanoseconds | `2022-01-01T12:00:00Z`, `2022-01-01T12:00:00.123456Z`, `2022-01-01T12:00:00.123+01:00` |
-| startedAt.epochMillis | `integer` | The start time of the task as a integer value of milliseconds since midnight of 1970-01-01 UTC | `1641024000123` (="2022-01-01T08:00:00.123Z") |
-| startedAt.epochNanos | `integer` | The start time of the task as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
-
 ##### Workflow Descriptor
 
 | Name | Type | Description | Example |
@@ -330,6 +318,19 @@ The following table shows which arguments are available for each runtime express
 | Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ |
 | Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
 | Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | | ✔ | | ✔ |
+
+##### Task Descriptor
+
+| Name | Type | Description | Example |
+|:-----|:----:|:------------|:--------|
+| name | `string` | The task's name. | `getPet` |
+| reference | `string` | The task's reference. | `/do/2/myTask` |
+| definition | `map` | The tasks definition (specified under the name) as a parsed object | `{ "call": "http", "with": { ... } }` |
+| input | `any` | The task's *raw* input (i.e. *BEFORE* the `input.from` expression). For the result of `input.from` expression use the context of the runtime expression (for jq `.`) | - |
+| output | `any` | The task's *raw* output (i.e. *BEFORE* the `output.as` expression). | - |
+| startedAt.iso8601 | `string` | The start time of the task as a ISO 8601 date time string. It uses `T` as the date-time delimiter, either UTC (`Z`) or a time zone offset (`+01:00`). The precision can be either seconds, milliseconds or nanoseconds | `2022-01-01T12:00:00Z`, `2022-01-01T12:00:00.123456Z`, `2022-01-01T12:00:00.123+01:00` |
+| startedAt.epochMillis | `integer` | The start time of the task as a integer value of milliseconds since midnight of 1970-01-01 UTC | `1641024000123` (="2022-01-01T08:00:00.123Z") |
+| startedAt.epochNanos | `integer` | The start time of the task as a integer value of nanoseconds since midnight of 1970-01-01 UTC | `1641024000123456` (="2022-01-01T08:00:00.123456Z") |
 
 ### Fault Tolerance
 
