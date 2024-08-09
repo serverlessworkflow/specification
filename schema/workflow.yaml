@@ -95,7 +95,7 @@ properties:
         description: The workflow's reusable secrets.
         items:
           type: string
-        description: The workflow's secrets.
+          description: The workflow's secrets.
   do:
     $ref: '#/$defs/taskList'
     title: Do
@@ -786,7 +786,7 @@ $defs:
     unevaluatedProperties: false
     oneOf:
       - title: AuthenticationPolicyReference
-      description: The reference of the authentication policy to use.
+        description: The reference of the authentication policy to use.
         properties:
           use:
             type: string
@@ -941,7 +941,7 @@ $defs:
   duration:
     type: object
     title: Duration
-    description: Represents a duration.
+    description: The definition of a duration.
     minProperties: 1
     unevaluatedProperties: false
     properties:
@@ -965,7 +965,6 @@ $defs:
         type: integer
         title: DurationMilliseconds
         description: Number of milliseconds, if any.
-    description: The definition of a duration.
   error:
     type: object
     title: Error
