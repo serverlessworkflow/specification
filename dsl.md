@@ -476,7 +476,7 @@ document:
   version: '0.1.0'
 do:
   - validateEmail:
-      call: https://raw.githubusercontent.com/myorg/main/validateEmailAddress/1.0.0
+      call: https://github.com/myorg/functions/validateEmailAddress@v1.0.0
       with:
         emailAddress: ${ .userEmail }
 ```
