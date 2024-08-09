@@ -21,9 +21,9 @@
   + [Interoperability](#interoperability)
     - [Supported Protocols](#supported-protocols)
     - [Custom and Non-Standard Interactions](#custom-and-non-standard-interactions)
-    - [Creating a Custom Function](#creating-a-custom-function)
-    - [Using a Custom Function](#using-a-custom-function)
-    - [Publishing a Custom Function](#publishing-a-custom-function)
+      + [Creating a Custom Function](#creating-a-custom-function)
+      + [Using a Custom Function](#using-a-custom-function)
+      + [Publishing a Custom Function](#publishing-a-custom-function)
   + [Events](#events)
   + [Extensions](#extensions)
   + [External Resources](#external-resources)
@@ -394,7 +394,8 @@ A timeout error **must** have its `type` set to `https://serverlessworkflow.io/s
 Serverless Workflow DSL is designed to seamlessly interact with a variety of services, ensuring robust service interoperability.
 
 #### Supported Protocols
- - [**HTTP**](dsl-reference.md#http-call): Allows the workflow to make standard HTTP requests to web services. This is useful for RESTful services and web APIs that communicate over the HTTP protocol.
+
+- [**HTTP**](dsl-reference.md#http-call): Allows the workflow to make standard HTTP requests to web services. This is useful for RESTful services and web APIs that communicate over the HTTP protocol.
 - [**gRPC**](dsl-reference.md#grpc-call): Supports Remote Procedure Call (RPC) using gRPC, a high-performance, open-source universal RPC framework. This is suitable for connecting to services that require low-latency and high-throughput communication.
 - [**AsyncAPI**](dsl-reference.md#asyncapi-call): Facilitates interaction with asynchronous messaging protocols. AsyncAPI is designed for event-driven architectures, allowing workflows to publish and subscribe to events.
 - [**OpenAPI**](dsl-reference.md#openapi-call): Enables communication with services that provide OpenAPI specifications, which is useful for defining and consuming RESTful APIs.
@@ -411,47 +412,54 @@ For custom interactions, the workflow can define [tasks](dsl-reference.md#run) t
 
 Serverless Workflow DSL supports the creation and publication of custom functions to extend the DSL capabilities. 
 
-Custom functions allow you to define specific tasks and interactions that are not covered by the default supported protocols. Here’s how you can define and use custom functions within your workflows.
+Custom functions allow you to define specific tasks and interactions that are not covered by the default supported protocols. 
 
-1. In your repository, create a new directory for your function, for example, `/.serverless-workflow/functions/my-custom-function.
+Here’s how you can define and use custom functions within your workflows:
 
-2. Create a `function.yaml` file containing the [function's definition](dsl-reference.md#task).
+1. In your repository, create a new directory for your function, for example, `/serverless-workflow/functions/my-custom-function`. It is strongly recommended that custom function authors include the semantic version of the function in its path. For instance, you might structure the path as `/serverless-workflow/functions/my-custom-function/1.0.0` to reflect the function's version.
+
+2. Create a `function.yaml` file containing the [function's definition](dsl-reference.md#task). Ideally, the function should document both its input and output. This is important for documentation and validation purposes.
 
 ```yaml
 #function.yaml
-validateEmailAddress:
-  describe:
-    summary: Validate email addresses from input data
-  input:
-    schema:
+input:
+  schema:
+    document:
       type: object
+      description: The function's input
       properties:
         emailAddress:
           type: string
-  output:
-    schema:
+          description: The email address to validate.
+output:
+  schema:
+    document:
       type: object
+      description: The function's output
       properties:
         isValid:
           type: boolean
-  run:
-    script:
-      type: javascript
-      source: |
-        function validateEmail(email) {
-          const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-          return re.test(email);
-        }
-        const emailAddress = '${ .emailAddress }';
-        return { isValid: validateEmail(emailAddress) };
-
+          description: A boolean indicating whether or not the email address is valid.
+run:
+  script:
+    language: javascript
+    code: |
+      function validateEmail(email) {
+        const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return re.test(email);
+      }
+      return { isValid: validateEmail(emailAddress) };
+    arguments:
+      emailAddress: ${ .emailAddress }
 ```
 
 3. Optionally, add all the local files your function might need into its directory. 
 
 4. Commit and push your function to your repository.
 
-5. Optionally, submit your function to the Serverless Worfklow Function Registry, allowing users to find your function.
+5. Optionally, submit your function to the [Serverless Workflow Catalog](https://github.com/serverlessworkflow/catalog), allowing users to find your function.
+
+For more information about authoring a new custom function, visit the [Serverless Workflow Catalog](https://github.com/serverlessworkflow/catalog).
 
 ##### Using a Custom Function
 
@@ -466,19 +474,20 @@ document:
   namespace: default
   name: customFunctionWorkflow
   version: '0.1.0'
-
 do:
   - validateEmail:
-      call: https://github.com/myorg/functions/validateEmailAddress@v1
+      call: https://github.com/myorg/functions/validateEmailAddress@v1.0.0
       with:
         emailAddress: ${ .userEmail }
 ```
 
 ##### Publishing a Custom Function
 
-Consider submitting your function to the Serverless Workflow Function Registry. 
+Consider submitting your function to the [Serverless Workflow Function Catalog](https://github.com/serverlessworkflow/catalog). 
 
 This optional step allows users to discover and utilize your function, enhancing its visibility and usability within the Serverless Workflow community. By registering your function, you contribute to a shared repository of resources that can streamline workflow development for others.
+
+For detailed instructions on how to contribute your custom function, please refer to the [CONTRIBUTING.md](https://github.com/serverlessworkflow/catalog/blob/main/CONTRIBUTING.md) file.
 
 ### Events
 
