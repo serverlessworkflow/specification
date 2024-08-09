@@ -204,7 +204,7 @@ $defs:
             const: asyncapi
           with:
             type: object
-            title: WithAsyncAPI
+            title: AsyncApiArguments
             description: The Async API call arguments.
             properties:
               document:
@@ -249,7 +249,7 @@ $defs:
             const: grpc
           with:
             type: object
-            title: WithGRPC
+            title: GRPCArguments
             description: The GRPC call arguments.
             properties:
               proto:
@@ -304,7 +304,7 @@ $defs:
             const: http
           with:
             type: object
-            title: WithHTTP
+            title: HTTPArguments
             description: The HTTP call arguments.
             properties:
               method:
@@ -352,7 +352,7 @@ $defs:
             const: openapi
           with:
             type: object
-            title: WithOpenAPI
+            title: OpenAPIArguments
             description: The OpenAPI call arguments.
             properties:
               document:
@@ -393,9 +393,9 @@ $defs:
             description: The name of the function to call.
           with:
             type: object
-            additionalProperties: true
-            title: CallFunctionWith
+            title: FunctionArguments
             description: A name/value mapping of the parameters, if any, to call the function with.
+            additionalProperties: true
   forkTask:
     type: object
     $ref: '#/$defs/taskBase'
@@ -599,20 +599,21 @@ $defs:
                     description: A key/value mapping of the environment variables, if any, to use when running the configured script process.
                     additionalProperties: true
                 oneOf:
-                  - title: ScriptInline
+                  - title: InlineScript
                     type: object
                     description: The script's code.
                     properties:
                       code:
                         type: string
+                        title: InlineScriptCode
                     required: [ code ]
-                  - title: ScriptExternal
+                  - title: ExternalScript
                     type: object
                     description: The script's resource.
                     properties:
                       source:
                         $ref: '#/$defs/externalResource'
-                        title: ScriptExternalSource
+                        title: ExternalScriptResource
                     required: [ source ]
                 required: [ language ]
             required: [ script ]
@@ -646,26 +647,26 @@ $defs:
             properties:
               workflow:
                 type: object
-                title: RunWorkflowDescriptor
+                title: SubflowConfiguration 
                 description: The configuration of the workflow to run.
                 unevaluatedProperties: false
                 properties:
                   namespace:
                     type: string
-                    title: RunWorkflowNamespace
+                    title: SubflowNamespace
                     description: The namespace the workflow to run belongs to.
                   name:
                     type: string
-                    title: RunWorkflowName
+                    title: SubflowName
                     description: The name of the workflow to run.
                   version:
                     type: string
                     default: latest
-                    title: RunWorkflowVersion
+                    title: SubflowVersion
                     description: The version of the workflow to run. Defaults to latest.
                   input:
                     type: object
-                    title: RunWorkflowInput
+                    title: SubflowInput
                     description: The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified.
                     additionalProperties: true
                 required: [ namespace, name, version ]
@@ -711,11 +712,11 @@ $defs:
             properties:
               when:
                 type: string
-                title: SwitchCaseWhen
+                title: SwitchCaseCondition
                 description: A runtime expression used to determine whether or not the case matches.
               then:
                 $ref: '#/$defs/flowDirective'
-                title: SwitchCaseThen
+                title: SwitchCaseOutcome
                 description: The flow directive to execute when the case matches.
   tryTask:
     type: object
@@ -856,7 +857,7 @@ $defs:
               description: Secret based configuration of the bearer authentication policy.
       required: [ bearer ]
     - title: OAuth2AuthenticationPolicy
-      description: Use OAUTH2 authentication.
+      description: Use OAuth2 authentication.
       properties:
         oauth2:
           type: object
@@ -920,22 +921,22 @@ $defs:
                   title: OAuth2AutenthicationDataActor
                   description: The security token that represents the identity of the acting party.
             - $ref: '#/$defs/secretBasedAuthenticationPolicy'
-              title: OAuth2AuthenticationPolicyOauth2Secret
+              title: OAuth2AuthenticationPolicySecret
               description: Secret based configuration of the OAuth2 authentication policy.
       required: [ oauth2 ]
   oauth2Token:
     type: object
-    title: Oauth2TokenDefinition
+    title: OAuth2TokenDefinition
     description: Represents an OAuth2 token.
     unevaluatedProperties: false
     properties:
       token:
         type: string
-        title: Oauth2Token
+        title: OAuth2Token
         description: The security token to use.
       type:
         type: string
-        title: Oauth2TokenType
+        title: OAuth2TokenType
         description: The type of the security token to use.
     required: [ token, type ]
   duration:
@@ -1139,7 +1140,7 @@ $defs:
   extension:
     type: object
     title: Extension
-    description: The definition of a an extension.
+    description: The definition of an extension.
     unevaluatedProperties: false
     properties:
       extend:
@@ -1149,15 +1150,15 @@ $defs:
         description: The type of task to extend.
       when:
         type: string
-        title: ExtensionWhen
+        title: ExtensionCondition
         description: A runtime expression, if any, used to determine whether or not the extension should apply in the specified context.
       before:
         $ref: '#/$defs/taskList'
-        title: ExtensionBefore
+        title: ExtensionDoBefore
         description: The task(s) to execute before the extended task, if any.
       after:
         $ref: '#/$defs/taskList'
-        title: ExtensionAfter
+        title: ExtensionDoAfter
         description: The task(s) to execute after the extended task, if any.
     required: [ extend ]
   externalResource:
