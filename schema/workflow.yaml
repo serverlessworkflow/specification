@@ -822,7 +822,7 @@ $defs:
           description: The configuration of the basic authentication policy.
           unevaluatedProperties: false
           oneOf:
-            - title: BasicAuthenticationData
+            - title: BasicAuthenticationProperties
               description: Inline configuration of the basic authentication policy.
               properties:
                 username:
@@ -845,7 +845,7 @@ $defs:
           description: The configuration of the bearer authentication policy.
           unevaluatedProperties: false
           oneOf:
-            - title: BearerAuthenticationData
+            - title: BearerAuthenticationProperties
               description: Inline configuration of the bearer authentication policy.
               properties:
                 token:
@@ -856,6 +856,29 @@ $defs:
               title: BearerAuthenticationPolicySecret
               description: Secret based configuration of the bearer authentication policy.
       required: [ bearer ]
+    - title: DigestAuthenticationPolicy
+      description: Use digest authentication.
+      properties:
+        digest:
+          type: object
+          title: DigestAuthenticationPolicyConfiguration
+          description: The configuration of the digest authentication policy.
+          unevaluatedProperties: false
+          oneOf:
+            - title: BasicAuthenticationProperties
+              description: Inline configuration of the digest authentication policy.
+              properties:
+                username:
+                  type: string
+                  description: The username to use.
+                password:
+                  type: string
+                  description: The password to use.
+              required: [ username, password ]
+            - $ref: '#/$defs/secretBasedAuthenticationPolicy'
+              title: DigestAuthenticationPolicySecret
+              description: Secret based configuration of the digest authentication policy.
+      required: [ digest ]
     - title: OAuth2AuthenticationPolicy
       description: Use OAuth2 authentication.
       properties:
@@ -865,65 +888,139 @@ $defs:
           description: The configuration of the OAuth2 authentication policy.
           unevaluatedProperties: false
           oneOf:
-            - title: OAuth2AutenthicationData
-              description: Inline configuration of the OAuth2 authentication policy.
-              properties:
-                authority:
-                  type: string
-                  format: uri-template
-                  title: OAuth2AutenthicationDataAuthority
-                  description: The URI that references the OAuth2 authority to use.
-                grant:
-                  type: string
-                  title: OAuth2AutenthicationDataGrant
-                  description: The grant type to use.
-                client:
-                  type: object
-                  title: OAuth2AutenthicationDataClient
-                  description: The definition of an OAuth2 client.
-                  unevaluatedProperties: false
+            - type: object
+              title: OAuth2ConnectAuthenticationProperties
+              description: The inline configuration of the OAuth2 authentication policy.
+              allOf:
+                - $ref: '#/$defs/oauth2AuthenticationProperties'
+                - type: object
                   properties:
-                    id:
-                      type: string
-                      title: ClientId
-                      description: The client id to use.
-                    secret:
-                      type: string
-                      title: ClientSecret
-                      description: The client secret to use, if any.
-                  required: [ id ]
-                scopes:
-                  type: array
-                  title: OAuth2AutenthicationDataScopes
-                  description: The scopes, if any, to request the token for.
-                  items:
-                    type: string
-                audiences:
-                  type: array
-                  title: OAuth2AutenthicationDataAudiences
-                  description: The audiences, if any, to request the token for.
-                  items:
-                    type: string
-                username:
-                  type: string
-                  title: OAuth2AutenthicationDataUsername
-                  description: The username to use. Used only if the grant type is Password.
-                password:
-                  type: string
-                  title: OAuth2AutenthicationDataPassword
-                  description: The password to use. Used only if the grant type is Password.
-                subject:
-                  $ref: '#/$defs/oauth2Token'
-                  title: OAuth2AutenthicationDataSubject
-                  description: The security token that represents the identity of the party on behalf of whom the request is being made.
-                actor:
-                  $ref: '#/$defs/oauth2Token'
-                  title: OAuth2AutenthicationDataActor
-                  description: The security token that represents the identity of the acting party.
+                    endpoints:
+                      type: object
+                      title: OAuth2AuthenticationPropertiesEndpoints
+                      description: The endpoint configurations for OAuth2.
+                      properties:
+                        token:
+                          type: string
+                          format: uri-template
+                          default: /oauth2/token
+                          title: OAuth2TokenEndpoint
+                          description: The relative path to the token endpoint. Defaults to `/oauth2/token`.
+                        revocation:
+                          type: string
+                          format: uri-template
+                          default: /oauth2/revoke
+                          title: OAuth2RevocationEndpoint
+                          description: The relative path to the revocation endpoint. Defaults to `/oauth2/revoke`.
+                        introspection:
+                          type: string
+                          format: uri-template
+                          default: /oauth2/introspect
+                          title: OAuth2IntrospectionEndpoint
+                          description: The relative path to the introspection endpoint. Defaults to `/oauth2/introspect`.
             - $ref: '#/$defs/secretBasedAuthenticationPolicy'
               title: OAuth2AuthenticationPolicySecret
               description: Secret based configuration of the OAuth2 authentication policy.
       required: [ oauth2 ]
+    - title: OpenIdConnectAuthenticationPolicy
+      description: Use OpenIdConnect authentication.
+      properties:
+        oidc:
+          type: object
+          title: OpenIdConnectAuthenticationPolicyConfiguration
+          description: The configuration of the OpenIdConnect authentication policy.
+          unevaluatedProperties: false
+          oneOf:
+            - $ref: '#/$defs/oauth2AuthenticationProperties'
+              title: OpenIdConnectAuthenticationProperties
+              description: The inline configuration of the OpenIdConnect authentication policy.
+            - $ref: '#/$defs/secretBasedAuthenticationPolicy'
+              title: OpenIdConnectAuthenticationPolicySecret
+              description: Secret based configuration of the OpenIdConnect authentication policy.
+      required: [ oidc ]
+  oauth2AuthenticationProperties:
+    type: object
+    title: OAuth2AutenthicationData
+    description: Inline configuration of the OAuth2 authentication policy.
+    properties:
+      authority:
+        type: string
+        format: uri-template
+        title: OAuth2AutenthicationDataAuthority
+        description: The URI that references the OAuth2 authority to use.
+      grant:
+        type: string
+        enum: [ authorization_code, client_credentials, password, refresh_token, 'urn:ietf:params:oauth:grant-type:token-exchange']
+        title: OAuth2AutenthicationDataGrant
+        description: The grant type to use.
+      client:
+        type: object
+        title: OAuth2AutenthicationDataClient
+        description: The definition of an OAuth2 client.
+        unevaluatedProperties: false
+        properties:
+          id:
+            type: string
+            title: ClientId
+            description: The client id to use.
+          secret:
+            type: string
+            title: ClientSecret
+            description: The client secret to use, if any.
+          assertion:
+            type: string
+            title: ClientAssertion
+            description: A JWT containing a signed assertion with your application credentials.
+          authentication:
+            type: string
+            enum: [ client_secret_basic, client_secret_post, client_secret_jwt, private_key_jwt, none ]
+            default: client_secret_post
+            title: ClientAuthentication
+            description: The authentication method to use to authenticate the client.
+      request:
+        type: object
+        title: OAuth2TokenRequest
+        description: The configuration of an OAuth2 token request
+        properties:
+          encoding:
+            type: string
+            enum: [ 'application/x-www-form-urlencoded', 'application/json' ]
+            default: 'application/x-www-form-urlencoded'
+            title: Oauth2TokenRequestEncoding
+      issuers:
+        type: array
+        title: OAuth2Issuers
+        description: A list that contains that contains valid issuers that will be used to check against the issuer of generated tokens.
+        items:
+          type: string
+      scopes:
+        type: array
+        title: OAuth2AutenthicationDataScopes
+        description: The scopes, if any, to request the token for.
+        items:
+          type: string
+      audiences:
+        type: array
+        title: OAuth2AutenthicationDataAudiences
+        description: The audiences, if any, to request the token for.
+        items:
+          type: string
+      username:
+        type: string
+        title: OAuth2AutenthicationDataUsername
+        description: The username to use. Used only if the grant type is Password.
+      password:
+        type: string
+        title: OAuth2AutenthicationDataPassword
+        description: The password to use. Used only if the grant type is Password.
+      subject:
+        $ref: '#/$defs/oauth2Token'
+        title: OAuth2AutenthicationDataSubject
+        description: The security token that represents the identity of the party on behalf of whom the request is being made.
+      actor:
+        $ref: '#/$defs/oauth2Token'
+        title: OAuth2AutenthicationDataActor
+        description: The security token that represents the identity of the acting party.
   oauth2Token:
     type: object
     title: OAuth2TokenDefinition

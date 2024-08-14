@@ -37,6 +37,7 @@
     - [Certificate](#certificate-authentication)
     - [Digest](#digest-authentication)
     - [OAUTH2](#oauth2-authentication)
+    - [OpenIdConnect](#openidconnect-authentication)
   + [Extension](#extension)
   + [Error](#error)
     - [Standard Error Types](#standard-error-types)
@@ -1107,6 +1108,7 @@ Defines the mechanism used to authenticate users and workflows attempting to acc
 | certificate | [`certificateAuthentication`](#certificate-authentication) | `no` | The `certificate` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
 | digest | [`digestAuthentication`](#digest-authentication) | `no` | The `digest` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
 | oauth2 | [`oauth2`](#oauth2-authentication) | `no` | The `oauth2` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
+| oidc | [`oidc`](#openidconnect-authentication) | `no` | The `oidc` authentication scheme to use, if any.<br>Required if no other property has been set, otherwise ignored. |
 
 ##### Examples
 
@@ -1205,19 +1207,59 @@ do:
 
 #### Digest Authentication
 
-
-#### OAUTH2 Authentication
-
-Defines the fundamentals of an 'oauth2' authentication
+Defines the fundamentals of a 'digest' authentication.
 
 ##### Properties
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| authority | [`uri-template`](#uri-template) | `yes` | The URI that references the OAuth2 authority to use. |
-| grant | `string` | `yes` | The grant type to use. |
-| client.id | `string` | `yes` | The client id to use. |
+| username | `string` | `yes` | The username to use. |
+| password | `string` | `yes` | The password to use. |
+
+##### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: digest-authentication-example
+  version: '0.1.0'
+use:
+  authentications:
+    sampleDigest:
+      digest:
+        username: admin
+        password: password123
+do:
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        endpoint: 
+          uri: https://secured.fake.com/sample
+          authentication: 
+            use: sampleDigest
+```
+
+#### OAUTH2 Authentication
+
+Defines the fundamentals of an 'oauth2' authentication.
+
+##### Properties
+
+| Name | Type | Required | Description |
+|:-----|:----:|:--------:|:------------|
+| authority | `uri-template` | `yes` | The URI that references the authority to use when making OAUTH2 calls. |
+| endpoints.token | `uri-template` | `no` | The relative path to the endpoint for OAUTH2 token requests.<br>Defaults to `/oauth2/token`. |
+| endpoints.revocation | `uri-template` | `no` | The relative path to the endpoint used to invalidate tokens.<br>Defaults to `/oauth2/revoke`. |
+| endpoints.introspection | `uri-template` | `no` | The relative path to the endpoint used to validate and obtain information about a token, typically to check its validity and associated metadata.<br>Defaults to `/oauth2/introspect`. | 
+| grant | `string` | `yes` | The grant type to use.<br>Supported values are `authorization_code`, `client_credentials`, `password`, `refresh_token` and `urn:ietf:params:oauth:grant-type:token-exchange`. |
+| client.id | `string` | `no` | The client id to use.<br>Required if the `client.authentication` method has **not** been set to `none`. |
 | client.secret | `string` | `no` | The client secret to use, if any. |
+| client.assertion | `string` | `no` | A JWT containing a signed assertion with your application credentials.<br>Required when `client.authentication` has been set to `private_key_jwt`. |
+| client.authentication | `string` | `no` | The client authentication method to use.<br>Supported values are `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt` or `none`.<br>Defaults to `client_secret_post`. |
+| request.encoding | `string` | `no` | The encoding of the token request.<br>Supported values are `application/x-www-form-urlencoded` and `application/json`.<br>Defaults to application/x-www-form-urlencoded. |
+| issuers | `uri-template[]` | `no` | A list that contains that contains valid issuers that will be used to check against the issuer of generated tokens. |
 | scopes | `string[]` | `no` | The scopes, if any, to request the token for. |
 | audiences | `string[]` | `no` | The audiences, if any, to request the token for. |
 | username | `string` | `no` | The username to use. Used only if the grant type is `Password`. |
@@ -1242,7 +1284,9 @@ do:
           uri: https://secured.fake.com/sample
           authentication:
             oauth2:
-              authority: http://keycloak/realms/fake-authority/.well-known/openid-configuration
+              authority: http://keycloak/realms/fake-authority
+              endpoints:
+                token: /oauth2/token
               grant: client-credentials
               client:
                 id: workflow-runtime
@@ -1261,6 +1305,55 @@ Represents the definition of an OAUTH2 token
 |----------|:----:|:--------:|-------------|
 | token | `string` | `yes` | The security token to use to use. |
 | type | `string` | `yes` | The type of security token to use. |
+
+#### OpenIdConnect Authentication
+
+Defines the fundamentals of an 'oidc' authentication.
+
+##### Properties
+
+| Name | Type | Required | Description |
+|:-----|:----:|:--------:|:------------|
+| authority | `uri-template` | `yes` | The URI that references the authority to use when making OpenIdConnect calls. |
+| grant | `string` | `yes` | The grant type to use.<br>Supported values are `authorization_code`, `client_credentials`, `password`, `refresh_token` and `urn:ietf:params:oauth:grant-type:token-exchange`. |
+| client.id | `string` | `no` | The client id to use.<br>Required if the `client.authentication` method has **not** been set to `none`. |
+| client.secret | `string` | `no` | The client secret to use, if any. |
+| client.assertion | `string` | `no` | A JWT containing a signed assertion with your application credentials.<br>Required when `client.authentication` has been set to `private_key_jwt`. |
+| client.authentication | `string` | `no` | The client authentication method to use.<br>Supported values are `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt` or `none`.<br>Defaults to `client_secret_post`. |
+| request.encoding | `string` | `no` | The encoding of the token request.<br>Supported values are `application/x-www-form-urlencoded` and `application/json`.<br>Defaults to application/x-www-form-urlencoded. |
+| issuers | `uri-template[]` | `no` | A list that contains that contains valid issuers that will be used to check against the issuer of generated tokens. |
+| scopes | `string[]` | `no` | The scopes, if any, to request the token for. |
+| audiences | `string[]` | `no` | The audiences, if any, to request the token for. |
+| username | `string` | `no` | The username to use. Used only if the grant type is `Password`. |
+| password | `string` | `no` | The password to use. Used only if the grant type is `Password`. |
+| subject | [`oauth2Token`](#oauth2-token) | `no` | The security token that represents the identity of the party on behalf of whom the request is being made. |
+| actor | [`oauth2Token`](#oauth2-token) | `no` | The security token that represents the identity of the acting party. |
+
+##### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: oidc-authentication-example
+  version: '0.1.0'
+do:
+  - sampleTask:
+      call: http
+      with:
+        method: get
+        endpoint: 
+          uri: https://secured.fake.com/sample
+          authentication:
+            oidc:
+              authority: http://keycloak/realms/fake-authority/.well-known/openid-configuration
+              grant: client_credentials
+              client:
+                id: workflow-runtime
+                secret: "**********"
+              scopes: [ api ]
+              audiences: [ runtime ]
+```
 
 ### Extension
 
