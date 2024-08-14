@@ -148,7 +148,7 @@ use:
     petStoreOAuth2:
       oauth2: 
         authority: https://petstore.swagger.io/.well-known/openid-configuration
-        grant: client-credentials
+        grant: client_credentials
         client:
           id: workflow-runtime
           secret: "**********"
@@ -1287,7 +1287,7 @@ do:
               authority: http://keycloak/realms/fake-authority
               endpoints:
                 token: /oauth2/token
-              grant: client-credentials
+              grant: client_credentials
               client:
                 id: workflow-runtime
                 secret: "**********"
