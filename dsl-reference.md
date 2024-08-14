@@ -1250,7 +1250,7 @@ Defines the fundamentals of an 'oauth2' authentication.
 | Name | Type | Required | Description |
 |:-----|:----:|:--------:|:------------|
 | authority | `uri-template` | `yes` | The URI that references the authority to use when making OAuth2 calls. |
-| endpoints.token | `uri-template` | `no` | The relative path to the endpoint for OAUTH2 token requests.<br>Defaults to `/oauth2/token`. |
+| endpoints.token | `uri-template` | `no` | The relative path to the endpoint for OAuth2 token requests.<br>Defaults to `/oauth2/token`. |
 | endpoints.revocation | `uri-template` | `no` | The relative path to the endpoint used to invalidate tokens.<br>Defaults to `/oauth2/revoke`. |
 | endpoints.introspection | `uri-template` | `no` | The relative path to the endpoint used to validate and obtain information about a token, typically to check its validity and associated metadata.<br>Defaults to `/oauth2/introspect`. | 
 | grant | `string` | `yes` | The grant type to use.<br>Supported values are `authorization_code`, `client_credentials`, `password`, `refresh_token` and `urn:ietf:params:oauth:grant-type:token-exchange`. |
