@@ -178,7 +178,7 @@ use:
       call: openapi
       with:
         document:
-          uri: https://petstore.swagger.io/v2/swagger.json
+          endpoint: https://petstore.swagger.io/v2/swagger.json
         operationId: findByStatus
         parameters:
           status: available

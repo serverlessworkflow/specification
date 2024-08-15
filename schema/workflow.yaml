@@ -1003,7 +1003,6 @@ $defs:
         description: A human-readable explanation specific to this occurrence of the error.
     required: [ type, status, instance ]
   endpoint:
-    type: object
     title: Endpoint
     description: Represents an endpoint.
     oneOf:
