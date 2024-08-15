@@ -314,12 +314,7 @@ $defs:
               endpoint:
                 title: WithHTTPEndpoint
                 description: The HTTP endpoint to send the request to.
-                oneOf:
-                  - $ref: '#/$defs/endpoint'
-                  - $ref: '#/$defs/runtimeExpression'
-                  - title: LiteralEndpoint
-                    type: string
-                    format: uri-template
+                $ref: '#/$defs/endpoint'
               headers:
                 type: object
                 title: WithHTTPHeaders
@@ -1011,24 +1006,31 @@ $defs:
     type: object
     title: Endpoint
     description: Represents an endpoint.
-    unevaluatedProperties: false
-    properties:
-      uri:
-        title: EndpointUri
-        description: The endpoint's URI.
-        oneOf:
-          - title: LiteralEndpointURI
-            description: The literal endpoint's URI.
-            type: string
-            format: uri-template
-          - $ref: '#/$defs/runtimeExpression'
-            title: ExpressionEndpointURI
-            description: An expression based endpoint's URI.
-      authentication:
-        $ref: '#/$defs/referenceableAuthenticationPolicy'
-        title: EndpointAuthentication
-        description: The authentication policy to use.
-    required: [ uri ]
+    oneOf:
+      - $ref: '#/$defs/runtimeExpression'
+      - title: LiteralEndpoint
+        type: string
+        format: uri-template
+      - title: EndpointConfiguration
+        type: object
+        unevaluatedProperties: false
+        properties:
+          uri:
+            title: EndpointUri
+            description: The endpoint's URI.
+            oneOf:
+              - title: LiteralEndpointURI
+                description: The literal endpoint's URI.
+                type: string
+                format: uri-template
+              - $ref: '#/$defs/runtimeExpression'
+                title: ExpressionEndpointURI
+                description: An expression based endpoint's URI.
+          authentication:
+            $ref: '#/$defs/referenceableAuthenticationPolicy'
+            title: EndpointAuthentication
+            description: The authentication policy to use.
+        required: [ uri ]
   eventProperties:
     type: object
     title: EventProperties
@@ -1162,28 +1164,20 @@ $defs:
         description: The task(s) to execute after the extended task, if any.
     required: [ extend ]
   externalResource:
+    type: object
     title: ExternalResource
     description: Represents an external resource.
-    oneOf:
-      - type: string
-        format: uri-template
-      - title: ExternalResourceURI
-        type: object
-        unevaluatedProperties: false
-        properties:
-          uri:
-            type: string
-            format: uri-template
-            title: ExternalResourceURIEndpoint
-            description: The endpoint's URI.
-          authentication:
-            $ref: '#/$defs/referenceableAuthenticationPolicy'
-            title: ExternalResourceURIAuthentication
-            description: The authentication policy to use.
-          name:
-            type: string
-            description: The external resource's name, if any.
-        required: [ uri ]
+    unevaluatedProperties: false
+    properties:
+      name:
+        type: string
+        title: ExternalResourceName
+        description: The name of the external resource, if any.
+      endpoint:
+        $ref: '#/$defs/endpoint'
+        title: ExternalResourceEndpoint
+        description: The endpoint of the external resource.
+    required: [ endpoint ]
   input:
     type: object
     title: Input
