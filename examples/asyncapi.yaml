@@ -8,7 +8,7 @@ do:
       call: asyncapi
       with:
         document:
-          uri: https://fake.com/docs/asyncapi.json
+          endpoint: https://fake.com/docs/asyncapi.json
         operationRef: findPetsByStatus
         server: staging
         message: getPetByStatusQuery
