@@ -31,13 +31,13 @@ do:
             call: openapi
             with:
               document:
-                uri: http://myorg.io/ordersservices.json
+                endpoint: http://myorg.io/ordersservices.json
               operationId: logreading
   - generateReport:
       call: openapi
       with:
         document:
-          uri: http://myorg.io/ordersservices.json
+          endpoint: http://myorg.io/ordersservices.json
         operationId: produceReport
 timeout:
   after:

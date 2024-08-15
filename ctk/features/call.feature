@@ -103,7 +103,7 @@ Feature: Call Task
           call: openapi
           with:
             document:
-              uri: "https://petstore.swagger.io/v2/swagger.json"
+              endpoint: "https://petstore.swagger.io/v2/swagger.json"
             operation: findPetsByStatus
             parameters:
               status: ${ .status }
@@ -131,7 +131,7 @@ Feature: Call Task
           call: openapi
           with:
             document:
-              uri: "https://petstore.swagger.io/v2/swagger.json"
+              endpoint: "https://petstore.swagger.io/v2/swagger.json"
             operation: getPetById
             parameters:
               petId: ${ .petId }
