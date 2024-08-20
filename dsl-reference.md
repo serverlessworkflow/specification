@@ -50,6 +50,7 @@
   + [Export](#export)
   + [Timeout](#timeout)
   + [Duration](#duration)
+  + [Endpoint](#endpoint)
   + [HTTP Response](#http-response)
   + [HTTP Request](#http-request)
   + [URI Template](#uri-template)
@@ -178,7 +179,7 @@ use:
       call: openapi
       with:
         document:
-          uri: https://petstore.swagger.io/v2/swagger.json
+          endpoint: https://petstore.swagger.io/v2/swagger.json
         operationId: findByStatus
         parameters:
           status: available
@@ -315,7 +316,8 @@ do:
   - findPet:
       call: asyncapi
       with:
-        document: https://fake.com/docs/asyncapi.json
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
         operationRef: findPetsByStatus
         server: staging
         message: getPetByStatusQuery
@@ -352,7 +354,8 @@ do:
   - greet:
       call: grpc
       with:
-        proto: file://app/greet.proto
+        proto: 
+          endpoint: file://app/greet.proto
         service:
           name: GreeterApi.Greeter
           host: localhost
@@ -419,7 +422,8 @@ do:
   - findPet:
       call: openapi
       with:
-        document: https://petstore.swagger.io/v2/swagger.json
+        document: 
+          endpoint: https://petstore.swagger.io/v2/swagger.json
         operationId: findPetsByStatus
         parameters:
           status: available
@@ -1080,18 +1084,18 @@ Defines an external resource.
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | name | `string` | `no` | The name, if any, of the defined resource. |
-| uri | [`uri-template`](#uri-template) | `yes` | The URI at which to get the defined resource. |
-| authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when fecthing the resource. |
+| endpoint | [`endpoint`](#endpoint) | `yes` | The endpoint at which to get the defined resource. |
 
 ##### Examples
 
 ```yaml
 name: sample-resource
-uri: https://fake.com/resource/0123
-authentication:
-  basic:
-    username: admin
-    password: 1234
+endpoint:
+  uri: https://fake.com/resource/0123
+  authentication:
+    basic:
+      username: admin
+      password: 1234
 ```
 
 ### Authentication
@@ -1704,7 +1708,7 @@ document:
 ```yaml
 format: json
 resource:
-  uri: https://test.com/fake/schema/json/document.json
+  endpoint: https://test.com/fake/schema/json/document.json
 ```
 
 ### Timeout
