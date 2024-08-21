@@ -24,5 +24,5 @@ Feature: Raise Task
     status: 400
     type: https://serverlessworkflow.io/errors/types/compliance
     title: Compliance Error
-    instance: /do/raiseComplianceError
+    instance: /do/0/raiseError
     """
