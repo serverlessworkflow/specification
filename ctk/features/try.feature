@@ -43,7 +43,7 @@ Feature: Try Task
     And the workflow output should have properties 'error', 'error.type', 'error.status', 'error.title'
     And the workflow output should have a 'error.instance' property with value:
     """yaml
-    /do/tryGetPet/try
+    /do/0/tryGetPet/try/0/getPet
     """
 
   # Tests that try tasks fault when an uncaught error is raised
