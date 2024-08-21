@@ -104,7 +104,7 @@ Feature: Call Task
           with:
             document:
               endpoint: "https://petstore.swagger.io/v2/swagger.json"
-            operation: findPetsByStatus
+            operationId: findPetsByStatus
             parameters:
               status: ${ .status }
           output:
@@ -132,7 +132,7 @@ Feature: Call Task
           with:
             document:
               endpoint: "https://petstore.swagger.io/v2/swagger.json"
-            operation: getPetById
+            operationId: getPetById
             parameters:
               petId: ${ .petId }
             output: response
