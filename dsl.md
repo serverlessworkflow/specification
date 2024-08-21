@@ -12,6 +12,7 @@
     - [Components](#components)
       + [Task](#task)
     - [Scheduling](#scheduling)
+      + [Event-Driven Scheduling](#event-driven-scheduling)
   + [Task Flow](#task-flow)
   + [Data Flow](#data-flow)
   + [Runtime Expressions](#runtime-expressions)
@@ -149,6 +150,24 @@ Workflow scheduling in ServerlessWorkflow allows developers to specify when and 
 - `on` enables event-driven scheduling, triggering workflow execution based on specified events.
 
 See the [DSL reference](dsl-reference.md#schedule) for more details about workflow scheduling.
+
+##### Event-driven scheduling
+
+###### Input of event-driven scheduled workflows
+
+In event-driven scheduled workflows, the input is structured as an array containing the events that trigger the execution of the workflow. This array serves as a vital resource, providing workflow authors access to all relevant data associated with each triggering event. When an event activates the workflow, it populates this array with one or more occurrences, allowing authors to process multiple events simultaneously as needed.
+
+Authors can reference individual events within the array using syntax such as $workflow.input[index], where index indicates the event's position, starting from 0. For instance, $workflow.input[0] refers to the first event, while $workflow.input[1] refers to the second. This structure allows for easy access to specific event details, and if multiple events are received at once, authors can iterate through the array to handle each one appropriately. This flexibility ensures that workflows can respond effectively to various conditions and triggers, enhancing their overall responsiveness and functionality.
+
+###### Distinguishing event-driven scheduling from start `listen` Tasks
+
+While both `schedule.on` and a start listener task enable event-driven execution of workflows, they serve distinct purposes and have different implications:
+
+- **`schedule.on`**: This property defines when a new workflow instance should be created based on an external event. When an event matches the criteria specified in `schedule.on`, a new workflow instance is initiated. The critical point here is that `schedule.on` solely manages the creation of new workflow instances. Any faults or timeouts related to the scheduling process are typically invisible to the user and do not impact the workflow instance.
+
+- **Start `listen` task**: A start listener task defines a task that must be undertaken after a new workflow instance has been created. This task listens for specific events and begins processing once the instance is active. The critical difference is that a start listener task operates within an already instantiated workflow. If a start listener task experiences a timeout or fault, it can cause the entire workflow instance to fail or behave unexpectedly, directly impacting the flow's execution and outcome.
+
+While `schedule.on` is concerned with *when* a new workflow instance should be initiated, a start listener task deals with *what* should happen once the instance is active. This distinction is crucial because it influences how errors and timeouts are handled—`schedule.on` faults are typically invisible and do not affect the workflow, whereas start listener task failures can directly and potentially severely impact the workflow instance they belong to.
 
 ### Task Flow
 
