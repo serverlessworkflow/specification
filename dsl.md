@@ -167,7 +167,7 @@ While both `schedule.on` and a start listener task enable event-driven execution
 
 - **Start `listen` task**: A start listener task defines a task that must be undertaken after a new workflow instance has been created. This task listens for specific events and begins processing once the instance is active. The critical difference is that a start listener task operates within an already instantiated workflow. If a start listener task experiences a timeout or fault, it can cause the entire workflow instance to fail or behave unexpectedly, directly impacting the flow's execution and outcome.
 
-In essence, while `schedule.on` is concerned with *when* a new workflow instance should be initiated, a start listener task deals with *what* should happen once the instance is active. This distinction is important because it influences how errors and timeouts are handled—`schedule.on` faults are typically invisible and do not affect the workflow, whereas start listener task failures can have a direct and potentially severe impact on the workflow instance they belong to.
+While `schedule.on` is concerned with *when* a new workflow instance should be initiated, a start listener task deals with *what* should happen once the instance is active. This distinction is crucial because it influences how errors and timeouts are handled—`schedule.on` faults are typically invisible and do not affect the workflow, whereas start listener task failures can directly and potentially severely impact the workflow instance they belong to.
 
 ### Task Flow
 
