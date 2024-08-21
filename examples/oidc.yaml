@@ -1,0 +1,19 @@
+document:
+  dsl: 1.0.0-alpha1
+  namespace: examples
+  name: oidc-authentication
+  version: 1.0.0-alpha1
+do:
+  - getPet:
+      call: http
+      with:
+        method: get
+        endpoint:
+          uri: https://petstore.swagger.io/v2/pet/{petId}
+          authentication:
+            oidc:
+              authority: http://keycloak/realms/fake-authority #endpoints are resolved using the OIDC configuration located at '/.well-known/openid-configuration'
+              grant: client_credentials
+              client:
+                id: workflow-runtime-id
+                secret: workflow-runtime-secret
