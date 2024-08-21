@@ -163,7 +163,7 @@ Authors can reference individual events within the array using syntax such as $w
 
 While both `schedule.on` and a start listener task enable event-driven execution of workflows, they serve distinct purposes and have different implications:
 
-- **`schedule.on`**: This property defines when a new instance of a workflow should be created based on an external event. When an event occurs that matches the criteria specified in `schedule.on`, a new workflow instance is initiated. The key point here is that `schedule.on` solely manages the creation of new workflow instances. Any faults or timeouts related to the scheduling process itself are typically invisible to the user and do not impact the workflow instance.
+- **`schedule.on`**: This property defines when a new workflow instance should be created based on an external event. When an event matches the criteria specified in `schedule.on`, a new workflow instance is initiated. The critical point here is that `schedule.on` solely manages the creation of new workflow instances. Any faults or timeouts related to the scheduling process are typically invisible to the user and do not impact the workflow instance.
 
 - **Start `listen` task**: A start listener task defines a task that must be undertaken after a new workflow instance has been created. This task listens for specific events and begins processing once the instance is active. The critical difference lies in the fact that a start listener task operates within the context of an already instantiated workflow. If a start listener task experiences a timeout or fault, it can cause the entire workflow instance to fail or behave unexpectedly, directly impacting the flow's execution and outcome.
 
