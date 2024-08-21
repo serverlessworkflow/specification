@@ -1,0 +1,22 @@
+document:
+  dsl: 1.0.0-alpha1
+  namespace: examples
+  name: oauth2-authentication
+  version: 1.0.0-alpha1
+do:
+  - getPet:
+      call: http
+      with:
+        method: get
+        endpoint:
+          uri: https://petstore.swagger.io/v2/pet/{petId}
+          authentication:
+            oauth2:
+              authority: http://keycloak/realms/fake-authority
+              endpoints: #optional
+                token: /auth/token #defaults to /oauth2/token
+                introspection: /auth/introspect #defaults to /oauth2/introspect
+              grant: client_credentials
+              client:
+                id: workflow-runtime-id
+                secret: workflow-runtime-secret
