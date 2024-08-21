@@ -29,10 +29,6 @@ on:
       - 'examples/**'
   pull_request:
     branches: [ "main" ]
-    paths:
-      - 'schema/**'
-      - 'examples/**'
-
 jobs:
   build:
     defaults:
