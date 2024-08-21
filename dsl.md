@@ -12,6 +12,7 @@
     - [Components](#components)
       + [Task](#task)
     - [Scheduling](#scheduling)
+      + [Event-Driven Scheduling](#event-driven-scheduling)
   + [Task Flow](#task-flow)
   + [Data Flow](#data-flow)
   + [Runtime Expressions](#runtime-expressions)
@@ -150,7 +151,15 @@ Workflow scheduling in ServerlessWorkflow allows developers to specify when and 
 
 See the [DSL reference](dsl-reference.md#schedule) for more details about workflow scheduling.
 
-##### Distinguishing event-driven Scheduling from start `listen` Tasks
+##### Event-driven scheduling
+
+###### Input of event-driven scheduled workflows
+
+In event-driven scheduled workflows, the input is structured as an array containing the events that trigger the execution of the workflow. This array serves as a vital resource, providing workflow authors with access to all relevant data associated with each triggering event. When an event activates the workflow, it populates this array with one or more occurrences, allowing authors to process multiple events simultaneously as needed.
+
+Authors can reference individual events within the array using syntax such as $workflow.input[index], where index indicates the position of the event, starting from 0. For instance, $workflow.input[0] refers to the first event, while $workflow.input[1] refers to the second. This structure allows for easy access to specific event details, and if multiple events are received at once, authors can iterate through the array to handle each one appropriately. This flexibility ensures that workflows can respond effectively to various conditions and triggers, enhancing their overall responsiveness and functionality.
+
+###### Distinguishing event-driven scheduling from start `listen` Tasks
 
 While both `schedule.on` and a start listener task enable event-driven execution of workflows, they serve distinct purposes and have different implications:
 
