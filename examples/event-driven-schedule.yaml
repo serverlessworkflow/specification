@@ -1,0 +1,24 @@
+document:
+  dsl: 1.0.0-alpha1
+  namespace: examples
+  name: event-driven-schedule
+  version: 1.0.0-alpha1
+schedule:
+  on:
+    one:
+      with:
+        type: com.example.hospital.events.patients.heartbeat.low
+do:
+  - callNurse:
+      call: http
+      with:
+        method: post
+        endpoint: https://hospital.example.com/api/v1/notify
+        body:
+          patientId: ${ $workflow.input[0].data.patient.id }
+          patientName: ${ $workflow.input[0].data.patient.name }
+          roomNumber: ${ $workflow.input[0].data.patient.room.number }
+          vitals:
+            heartRate: ${ $workflow.input[0].data.patient.vitals.bpm }
+            timestamp: ${ $workflow.input[0].data.timestamp }
+          message: "Alert: Patient's heartbeat is critically low. Immediate attention required."
