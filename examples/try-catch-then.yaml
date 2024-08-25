@@ -36,4 +36,4 @@ do:
       with:
         method: put
         endpoint: https://petstore.swagger.io/v2/pet/{petId}
-        body: ${ . + { status: "sold" } }
+        body: '${ . + { status: "sold" } }'
