@@ -4,38 +4,59 @@
 
 ### System
 
-The system is an IoT device management workflow specifically designed for Electric Vehicle (EV) charging stations. It utilizes the Serverless Workflow DSL to automate the monitoring, management, and maintenance of EV charging units, ensuring they operate efficiently and are available for users.
+This use case focuses on managing Electric Vehicle (EV) charging stations using a serverless workflow. The system is responsible for handling various events related to the charging process, including card scanning, charging session management, and error handling. The system interacts with the EV power supplier's API to perform necessary operations like starting or ending sessions, locking and unlocking slots, processing payments, and handling errors.
 
 ### Actors
 
-- **EV Drivers:** Individuals who use electric vehicles and need charging services.
-- **Charging Station Operators:** Businesses or entities managing the charging stations.
-- **IoT Devices:** Sensors and controllers in the charging stations that provide real-time data.
-- **Cloud Services:** External systems for storing data and providing analytics.
+- **EV Owner:** The person using the charging station.
+- **Charging Station:** The physical unit where vehicles are charged.
+- **EV Power Supplier API:** The external system responsible for managing the charging process, slot availability, and session data.
 
 ### Goals
 
-- **Automate Charging Management:** Streamline the management of charging sessions, including starting, stopping, and monitoring.
-- **Monitor Station Health:** Enable real-time monitoring of the charging stations to detect and address issues proactively.
-- **Enhance User Experience:** Provide seamless experiences for EV drivers while charging their vehicles.
+- **Automate Charging Station Operations:** Automate the process of handling charging sessions, from card scanning to payment processing and error management.
+- **Improve User Experience:** Provide a smooth and efficient charging experience by ensuring slots are managed effectively and errors are promptly addressed.
+- **Ensure System Integrity:** Implement robust error handling to maintain service continuity and prevent misuse or unauthorized access.
 
 ### Preconditions
 
-- The workflow assumes that the charging stations are equipped with IoT devices that can send and receive events.
-- An appropriate cloud infrastructure is in place to handle the data from charging sessions and device statuses.
+- The charging station must be connected to the EV Power Supplier's network.
+- The card used for charging must be registered and valid.
+- The charging station has two available slots, each capable of handling one vehicle at a time.
 
 ## Scenario
 
 ### Triggers
 
-The workflow is triggered when:
-
-- An EV charging session starts.
-- An EV charging session ends.
-- The charging station reports an error.
+The workflow is triggered by two types of events:
+1. **Card Scanned Event:** Occurs when a user scans their card at the charging station.
+2. **Fault Event:** Occurs when the charging station reports an error or fault.
 
 ### Flow Breakdown
 
+#### 1. **Initialization:**
+   - Capture the event details and store them in the workflow context.
+
+#### 2. **Handle Station Events:**
+   - Depending on the event type, the workflow either attempts to manage a charging session or handles an error.
+
+#### 3. **Try to Get Active Session:**
+   - Check if there is an active session for the scanned card.
+
+#### 4. **Handle Active Session:**
+   - If a session is in progress, attempt to end it. If no session is in progress, try to acquire an available slot.
+
+#### 5. **Try to Acquire Slot:**
+   - If an available slot is found, start a new charging session. If no slots are available, make the station’s LED flicker red and end the workflow.
+
+#### 6. **Start Session:**
+   - Initialize a new charging session, lock the slot, and start the charging process.
+
+#### 7. **End Session:**
+   - End the charging session, process the payment, unlock the slot, and notify the user by flickering the LED.
+
+#### 8. **Handle Error:**
+   - Contact support, activate the red LED, and notify the system about the error.
 
 ### Visualization
 
@@ -49,7 +70,7 @@ The following diagram represents the high-level flow of the workflow:
 document:
   dsl: '1.0.0'
   namespace: default
-  name: managing-ev-charging-stations
+  name: manage-ev-charging-stations
   version: '0.1.0'
 schedule:
   on:
@@ -235,4 +256,4 @@ do:
 
 ## Conclusion
 
-This use case highlights the capabilities of Serverless Workflow in managing EV charging stations effectively. By automating charging sessions and monitoring station health, organizations can enhance user experiences for EV drivers while ensuring that their charging infrastructure operates efficiently. Leveraging Serverless Workflow enables responsive and scalable management solutions in the evolving landscape of electric vehicle infrastructure.
+This use case demonstrates the automation of key tasks in managing EV charging stations. By integrating with the EV Power Supplier API, the workflow efficiently handles charging sessions, processes payments, manages slot availability, and responds to errors. This ensures a seamless and user-friendly experience while maintaining operational integrity.
