@@ -1098,7 +1098,7 @@ $defs:
         type: string
         title: ErrorDetails
         description: A human-readable explanation specific to this occurrence of the error.
-    required: [ type, status, instance ]
+    required: [ type, status ]
   endpoint:
     title: Endpoint
     description: Represents an endpoint.
