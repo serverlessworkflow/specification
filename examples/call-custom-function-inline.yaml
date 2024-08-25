@@ -1,0 +1,25 @@
+document:
+  dsl: '1.0.0'
+  namespace: samples
+  name: call-custom-function-inline
+  version: '1.0.0'
+use:
+  functions:
+    getPetById:
+      input:
+        schema:
+          document:
+            type: object
+            properties:
+              petId:
+                type: string
+            required: [ petId ]
+      call: http
+      with:
+        method: get
+        endpoint: https://petstore.swagger.io/v2/pet/{petId}
+do:
+  - getPet:
+      call: getPetById
+      with:
+        petId: 69
