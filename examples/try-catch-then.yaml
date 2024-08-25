@@ -29,7 +29,7 @@ do:
               set:
                 error: $error
               export:
-                as: $context + { error: $error }
+                as: '$context + { error: $error }'
   - buyPet:
       if: $context.error == null
       call: http
