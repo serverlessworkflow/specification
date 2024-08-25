@@ -1,0 +1,21 @@
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: for-example
+  version: '0.1.0'
+do:
+  - checkup:
+      for:
+        each: pet
+        in: .pets
+        at: index
+      while: .vet != null
+      do:
+        - waitForCheckup:
+            listen:
+              to:
+                one:
+                  with:
+                    type: com.fake.petclinic.pets.checkup.completed.v2
+            output:
+              as: '.pets + [{ "id": $pet.id }]'        
