@@ -320,7 +320,6 @@ $defs:
                 title: WithHTTPHeaders
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.
               body:
-                type: object
                 title: WithHTTPBody
                 description: The body, if any, of the HTTP request to perform.
               query:
