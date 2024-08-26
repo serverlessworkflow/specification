@@ -18,7 +18,7 @@ The system is designed to facilitate collaboration between multiple AI agents, e
 
 - **Streamline AI Collaboration:** Facilitate efficient communication and collaboration between AI agents to generate cohesive and high-quality content.
 - **Improve Content Quality:** Utilize iterative feedback and refinement cycles to enhance the quality of the generated content.
-- **User Satisfaction:** Ensure that the final output aligns with the user’s expectations and meets high standards.
+- **User Satisfaction:** Ensure that the final output meets high standards and aligns with the user’s expectations.
 
 ### Preconditions
 
