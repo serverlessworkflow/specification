@@ -49,7 +49,7 @@ The workflow is triggered when a new issue is created in the GitHub repository b
    - Upon successful review, the workflow triggers a GitHub API call to close the issue. A final notification is sent to confirm the closure.
 
 6. **Error Handling:**
-   - The workflow includes steps to handle errors, such as when an unsupported action is taken or when a developer is incorrectly assigned as a reviewer.
+   - The workflow includes steps to handle errors, such as when an unsupported action is taken, or a developer is incorrectly assigned as a reviewer.
 
 ### Visualization
 
