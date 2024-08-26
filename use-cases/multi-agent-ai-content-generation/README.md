@@ -70,16 +70,19 @@ document:
   namespace: default
   name: multi-agent-collaboration-for-ai-content
   version: '0.1.0'
-schedule:
-  on:
-    one:
-      with:
-        type: com.ai-content-generator.prompt.submitted.v1
+input:
+  schema:
+    document:
+      type: object
+      properties:
+        prompt:
+          type: string
+      required: [ prompt ]
 do:
 
   - initialize:
       set:
-        prompt: ${ $workflow.input[0].data }
+        prompt: ${ $workflow.input.prompt }
       export:
         as: .prompt
 
@@ -164,15 +167,6 @@ do:
                   data:
                     text: ${ .text }
                     image: ${ .image }
-      then: end
-
-  - raiseUnsupportedEventError:
-      raise:
-        error:
-          type: https://serverlessworkflow.io/spec/1.0.0/errors/runtime
-          status: 400
-          title: Unsupported Event
-          detail: "The specified event is not supported in this context"
       then: end
 ```
 
