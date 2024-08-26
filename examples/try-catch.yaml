@@ -1,0 +1,18 @@
+document:
+  dsl: '1.0.0'
+  namespace: default
+  name: try-catch
+  version: '1.0.0'
+do:
+  - tryGetPet:
+      try:
+        - getPet:
+            call: http
+            with:
+              method: get
+              endpoint: https://petstore.swagger.io/v2/pet/{petId}
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io.io/dsl/errors/types/communication
+            status: 404

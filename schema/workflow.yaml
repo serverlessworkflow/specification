@@ -320,7 +320,6 @@ $defs:
                 title: WithHTTPHeaders
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.
               body:
-                type: object
                 title: WithHTTPBody
                 description: The body, if any, of the HTTP request to perform.
               query:
@@ -1032,32 +1031,37 @@ $defs:
         description: The type of the security token to use.
     required: [ token, type ]
   duration:
-    type: object
-    title: Duration
-    description: The definition of a duration.
-    minProperties: 1
-    unevaluatedProperties: false
-    properties:
-      days:
-        type: integer
-        title: DurationDays
-        description: Number of days, if any.
-      hours:
-        type: integer
-        title: DurationHours
-        description: Number of days, if any.
-      minutes:
-        type: integer
-        title: DurationMinutes
-        description: Number of minutes, if any.
-      seconds:
-        type: integer
-        title: DurationSeconds
-        description: Number of seconds, if any.
-      milliseconds:
-        type: integer
-        title: DurationMilliseconds
-        description: Number of milliseconds, if any.
+    oneOf:
+      - type: object
+        minProperties: 1
+        unevaluatedProperties: false
+        properties:
+          days:
+            type: integer
+            title: DurationDays
+            description: Number of days, if any.
+          hours:
+            type: integer
+            title: DurationHours
+            description: Number of days, if any.
+          minutes:
+            type: integer
+            title: DurationMinutes
+            description: Number of minutes, if any.
+          seconds:
+            type: integer
+            title: DurationSeconds
+            description: Number of seconds, if any.
+          milliseconds:
+            type: integer
+            title: DurationMilliseconds
+            description: Number of milliseconds, if any.
+        title: DurationInline
+        description: The inline definition of a duration.
+      - type: string
+        pattern: '^P(?!$)(\d+(?:\.\d+)?Y)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?W)?(\d+(?:\.\d+)?D)?(T(?=\d)(\d+(?:\.\d+)?H)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?S)?)?$'
+        title: DurationExpression
+        description: The ISO 8601 expression of a duration.
   error:
     type: object
     title: Error
@@ -1098,7 +1102,7 @@ $defs:
         type: string
         title: ErrorDetails
         description: A human-readable explanation specific to this occurrence of the error.
-    required: [ type, status, instance ]
+    required: [ type, status ]
   endpoint:
     title: Endpoint
     description: Represents an endpoint.

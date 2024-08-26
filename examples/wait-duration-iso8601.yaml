@@ -1,0 +1,8 @@
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: wait-duration-8601
+  version: '0.1.0'
+do: 
+  - wait30Seconds:
+      wait: PT30S

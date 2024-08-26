@@ -1,0 +1,22 @@
+document:
+  dsl: '1.0.0'
+  namespace: default
+  name: conditional-task
+  version: '1.0.0'
+do:
+  - raiseErrorIfUnderage:
+      if: .customer.age < 18
+      raise:
+        error:
+          type: https://superbet-casinos.com/customer/access-forbidden
+          status: 400
+          title: Access Forbidden
+      then: end
+  - placeBet:
+      call: http
+      with:
+        method: post
+        endpoint: https://superbet-casinos.com/api/bet/on/football
+        body:
+          customer: .customer
+          bet: .bet

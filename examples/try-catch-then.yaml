@@ -1,0 +1,39 @@
+document:
+  dsl: '1.0.0'
+  namespace: default
+  name: try-catch
+  version: '1.0.0'
+do:
+  - tryGetPet:
+      try:
+        - getPet:
+            call: http
+            with:
+              method: get
+              endpoint: https://petstore.swagger.io/v2/pet/{petId}
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io.io/dsl/errors/types/communication
+            status: 404
+        as: error
+        do:
+          - notifySupport:
+              emit:
+                event:
+                  with:
+                    source: https://petstore.swagger.io
+                    type: io.swagger.petstore.events.pets.not-found.v1
+                    data: ${ $error }
+          - setError:
+              set:
+                error: $error
+              export:
+                as: '$context + { error: $error }'
+  - buyPet:
+      if: $context.error == null
+      call: http
+      with:
+        method: put
+        endpoint: https://petstore.swagger.io/v2/pet/{petId}
+        body: '${ . + { status: "sold" } }'

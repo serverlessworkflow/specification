@@ -1,0 +1,13 @@
+document:
+  dsl: '1.0.0'
+  namespace: samples
+  name: call-custom-function-cataloged
+  version: '1.0.0'
+do:
+  - log:
+      call: https://raw.githubusercontent.com/serverlessworkflow/catalog/main/functions/log/1.0.0/function.yaml
+      with:
+        message: Hello, world!
+        level: information
+        timestamp: true
+        format: '{TIMESTAMP} [{LEVEL}] ({CONTEXT}): {MESSAGE}'

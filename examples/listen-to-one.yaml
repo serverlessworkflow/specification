@@ -1,0 +1,18 @@
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: listen-to-one
+  version: '0.1.0'
+do: 
+  - waitForStartup:
+      listen:
+        to:
+          one:
+            with:
+              type: com.virtual-wf-powered-race.events.race.started.v1
+  - startup:
+      call: http
+      with:
+        method: post
+        endpoint:
+          uri: https://virtual-wf-powered-race.com/api/v4/cars/{carId}/start
