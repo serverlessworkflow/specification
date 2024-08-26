@@ -16,7 +16,7 @@ This system automates the backup of an SQL Server database and uploads the backu
 ### Goals
 
 - **Automated Backups:** To facilitate automated backups of critical database data without manual intervention, ensuring regular data protection.
-- **Data Security:** To ensure that backup files are securely uploaded to a reliable storage solution (Minio).
+- **Data Security:** To ensure backup files are securely uploaded to a reliable storage solution (Minio).
 - **Efficiency:** To streamline the backup process, reducing the time and effort required to perform database backups.
 
 ### Preconditions
