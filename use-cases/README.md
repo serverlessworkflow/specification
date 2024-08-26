@@ -6,8 +6,8 @@ This directory contains a collection of high-level use cases that demonstrate th
 
 The primary purpose of these use cases is to:
 
-- **Educate Newcomers:** Provide clear examples of how to utilize Serverless Workflow DSL for real-world applications.
-- **Inspire Innovation:** Showcase the diverse possibilities of workflow automation and orchestration.
+- **Educate Newcomers:** Provide clear examples of utilizing Serverless Workflow DSL for real-world applications.
+- **Inspire Innovation:** Showcase the diverse workflow automation and orchestration possibilities.
 - **Facilitate Best Practices:** Encourage consistent structure and documentation, making it easier to share knowledge and experiences within the community.
 
 ## Structure
