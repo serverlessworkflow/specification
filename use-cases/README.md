@@ -35,7 +35,7 @@ Each use case in this directory MUST follow a specific structure to ensure clari
 #### Scenario
 
 - **Triggers:** Events that initiate the workflow.
-- **Flow Breakdown:** Detailed step-by-step breakdown of the workflow, including key actions and decisions made throughout the process.
+- **Flow Breakdown:** Detailed step-by-step workflow breakdown, including key actions and decisions made throughout the process.
 - **Visualization:** Optional diagrams or flowcharts that illustrate the workflow's structure and progression.
 - **Example:** A YAML example of the workflow using Serverless Workflow DSL, demonstrating how the concepts discussed are implemented.
 
