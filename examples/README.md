@@ -6,6 +6,6 @@ These examples are designed to demonstrate specific features and functionalities
 
 ## Contributing
 
-We welcome contributions! If you have an example that demonstrates a unique feature or use case of Serverless Workflow, feel free to submit a pull request.
+We welcome contributions! If you have an example demonstrating a unique feature or use case of Serverless Workflow, feel free to submit a pull request.
 
 For more detailed information on how to contribute, including guidelines and best practices, please refer to our [Contributing Guide](./CONTRIBUTING.md).
