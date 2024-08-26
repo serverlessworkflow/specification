@@ -4,7 +4,7 @@
 
 ### System
 
-This use case focuses on managing Electric Vehicle (EV) charging stations using a serverless workflow. The system is responsible for handling various events related to the charging process, including card scanning, charging session management, and error handling. The system interacts with the EV power supplier's API to perform necessary operations like starting or ending sessions, locking and unlocking slots, processing payments, and handling errors.
+This use case focuses on managing Electric Vehicle (EV) charging stations using a serverless workflow. The system handles various events related to the charging process, including card scanning, charging session management, and error handling. The system interacts with the EV power supplier's API to perform necessary operations like starting or ending sessions, locking and unlocking slots, processing payments, and handling errors.
 
 ### Actors
 
