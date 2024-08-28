@@ -537,6 +537,13 @@ $defs:
         type: object
         title: RunTaskConfiguration
         description: The configuration of the process to execute.
+        unevaluatedProperties: false
+        properties:
+          await:
+            type: boolean
+            default: true
+            title: AwaitProcessCompletion
+            description: Whether to await the process completion before continuing.
         oneOf:
           - title: RunContainer
             description: Enables the execution of external processes encapsulated within a containerized environment.
