@@ -1,0 +1,11 @@
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: listen-to-any
+  version: '0.1.0'
+do:
+  - callDoctor:
+      listen:
+        to:
+          any: []
+          until: ( . | length ) > 3 #wait until 3 events have been consumed
