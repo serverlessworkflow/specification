@@ -673,8 +673,7 @@ do:
         - lowPriority:
             when: .ticket.priority == "low"
             then: resolveTicket
-        - default:
-            then: raiseUndefinedPriorityError
+      then: raiseUndefinedPriorityError
   - raiseUndefinedPriorityError:
       raise:
         error:
@@ -926,8 +925,7 @@ do:
         - case2:
             when: .orderType == "physical"
             then: processPhysicalOrder
-        - default:
-            then: handleUnknownOrderType
+      then: handleUnknownOrderType
   - processElectronicOrder:
       do:
         - validatePayment:

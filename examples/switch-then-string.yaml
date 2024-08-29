@@ -12,8 +12,7 @@ do:
         - case2:
             when: .orderType == "physical"
             then: processPhysicalOrder
-        - default:
-            then: handleUnknownOrderType
+      then: handleUnknownOrderType
   - processElectronicOrder:
       do:
         - validatePayment:

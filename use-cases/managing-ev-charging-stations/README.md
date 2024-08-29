@@ -119,8 +119,7 @@ do:
         - sessionInProgress:
             when: .session != null
             then: endSession
-        - noActiveSession:
-            then: tryAquireSlot
+      then: tryAquireSlot
 
   - tryAquireSlot:
       try:

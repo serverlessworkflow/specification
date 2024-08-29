@@ -108,8 +108,7 @@ Feature: Switch Task
             - blue:
                 when: '.color == "blue"'
                 then: setBlue
-            - anyOtherColor:
-                then: setCustomColor
+          then: setCustomColor
       - setRed:
           set:
             colors: '${ .colors + [ "red" ] }'

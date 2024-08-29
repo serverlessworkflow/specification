@@ -114,8 +114,7 @@ do:
         - requestDetails:
             when: $context.issue.action == "requestDetails"
             then: awaitDetailsFromQA
-        - default:
-            then: raiseUnsupportedActionError
+      then: raiseUnsupportedActionError
               
   - awaitDetailsFromQA:
       do:
@@ -174,8 +173,7 @@ do:
          - reviewerIsNotAssignedDev:
               when: $context.issue.reviewer != $context.issue.dev
               then: evaluateReview
-         - reviewerIsAssignedDev:
-              then: raiseAssignedDevCannotBeReviewer
+        then: raiseAssignedDevCannotBeReviewer
 
   - evaluateReview:
       do:
@@ -206,8 +204,7 @@ do:
               - closeIssue:
                   when: $context.issue.action == "close"
                   then: closeIssue
-              - default:
-                  then: exit
+            then: exit
         - closeIssue:
             do:
               - initialize: 

@@ -702,7 +702,7 @@ $defs:
             title: SwitchCase
             description: The definition of a case within a switch task, defining a condition and corresponding tasks to execute if the condition is met.
             unevaluatedProperties: false
-            required: [ then ]
+            required: [ when, then ]
             properties:
               when:
                 type: string
