@@ -198,7 +198,7 @@ After `output.as` is evaluated, the transformed task output is validated against
 To update the context, one uses the `export.as` runtime expression. It evaluates the transformed task output and defaults to the expression that returns the existing context. The result of this runtime expression replaces the workflow's current context and the content of the `$context` runtime expression argument. This helps manage the data flow and keep the context clean by removing any unnecessary data produced by the task.
 
 8. **Validate Exported Context**
-After the context is updated, the exported context is validated against the `export.schema` property to ensure it conforms to the expected structure. The execution only proceeds if the exported context is valid otherwise it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
+After the context is updated, the exported context is validated against the `export.schema` property to ensure it conforms to the expected structure. The execution only proceeds if the exported context is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
 
 9. **Continue Workflow**
 After the context is updated, the workflow continues to the next task in the sequence. The transformed output of the previous task is passed as the raw input to the next task, and the data flow cycle repeats.
