@@ -187,7 +187,7 @@ The input data for the task can be transformed to match the specific requirement
 *Example: If the task is a function call that only needs a subset of the workflow input, a transformation can be applied to provide only those fields needed for the function to execute.*
 
 5. **Transform Task Output**
-After completing the task, its output can be transformed before passing it to the next task or storing it in the workflow context. Transformations are applied using the `output.as` runtime expression. It evaluates on the raw task output and defaults to the identity expression, which leaves the output unchanged. Its result will be input for the next task.
+After completing the task, its output can be transformed before passing it to the next task or storing it in the workflow context. Transformations are applied using the `output.as` runtime expression. It evaluates the raw task output and defaults to the identity expression, which leaves the output unchanged. Its result will be input for the next task.
 
 *Example: If the task returns a large dataset, a transformation can be applied to retain only the relevant results needed for subsequent tasks.*
 
