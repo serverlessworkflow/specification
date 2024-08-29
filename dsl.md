@@ -168,7 +168,7 @@ Here's how data flows through a workflow based on various transformation stages:
 
 1. **Validate Workflow Input**
 Before the workflow starts, the input data provided to the workflow can be validated against the `input.schema` property to ensure it conforms to the expected structure.
-The execution only proceeds if the input is valid otherwise it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
+The execution only proceeds if the input is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
 
 2. **Transform Workflow Input**
 Before the workflow starts, the input data provided to the workflow can be transformed to ensure only relevant data in the expected format is passed into the workflow context. This can be done using the top level `input.from` expression. It evaluates on the raw workflow input and defaults to the identity expression which leaves the input unchanged. This step allows the workflow to start with a clean and focused dataset, reducing potential overhead and complexity in subsequent tasks. The result of this expression will set as the initial value for the `$context` runtime expression argument and be passed to the first task.
