@@ -977,7 +977,7 @@ Defines a switch case, encompassing a condition for matching and an associated a
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| when | `string` | `no` | A runtime expression used to determine whether or not the case matches.<br>*If not set, the case will be matched by default if no other case match.*<br>*Note that there can be only one default case, all others **MUST** set a condition.*
+| when | `string` | `yes` | A runtime expression used to determine whether or not the case matches.<br>*To define a default case, use the task level `then` property, which will be used when no task matches.* |
 | then | [`flowDirective`](#flow-directive) | `yes` | The flow directive to execute when the case matches. |
 
 #### Try
