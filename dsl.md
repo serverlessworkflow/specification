@@ -192,7 +192,7 @@ After completing the task, its output can be transformed before passing it to th
 *Example: If the task returns a large dataset, a transformation can be applied to retain only the relevant results needed for subsequent tasks.*
 
 6. **Validate Task Output**
-After `output.as` is evaluated, the transformed task output is validated against the `output.schema` property to ensure it conforms to the expected structure. The execution only proceeds if the output is valid otherwise it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
+After `output.as` is evaluated, the transformed task output is validated against the `output.schema` property to ensure it conforms to the expected structure. The execution only proceeds if the output is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
 
 7. **Update Workflow Context**
 To update the context, one uses the `export.as` runtime expression. It evaluates on the transformed task output and defaults to the expression that returns the existing context. The result of this runtime expression replaces the workflow's current context and the content of the `$context` runtime expression argument. This helps manage the data flow and keep the context clean by removing any unnecessary data produced by the task.
