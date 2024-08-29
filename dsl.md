@@ -202,7 +202,7 @@ After the context is updated, the exported context is validated against the `exp
 
 9. **Continue Workflow**
 After the context is updated, the workflow continues to the next task in the sequence. The transformed output of the previous task is passed as the raw input to the next task, and the data flow cycle repeats.
-If no more tasks are defined, the task's transformed output is passed to the workflow output transformation step.
+If no more tasks are defined, the transformed output is passed to the workflow output transformation step.
 
 10. **Transform Workflow Output**
 Finally, the overall workflow output can be transformed before it is returned to the caller or stored. Transformations are applied using the `output.as` runtime expression. It evaluates on the last task's transformed output and defaults to the identity expression, which leaves the output unchanged. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
