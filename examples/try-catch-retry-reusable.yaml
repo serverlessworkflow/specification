@@ -1,0 +1,30 @@
+document:
+  dsl: '1.0.0'
+  namespace: default
+  name: try-catch-retry
+  version: '1.0.0'
+use:
+  retries:
+    default:
+      delay:
+        seconds: 3
+      backoff:
+        exponential: {}
+      limit:
+        attempt:
+          count: 5
+do:
+  - tryGetPet:
+      try:
+        - getPet:
+            call: http
+            with:
+              method: get
+              endpoint: https://petstore.swagger.io/v2/pet/{petId}
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io.io/dsl/errors/types/communication
+            status: 503
+        retry: default
+          

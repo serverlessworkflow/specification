@@ -73,7 +73,7 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | input | [`input`](#input) | `no` | Configures the workflow's input. |
 | use | [`use`](#use) | `no` | Defines the workflow's reusable components, if any. |
 | do | [`map[string, task][]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
-| timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
+| timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
 | output | [`output`](#output) | `no` | Configures the workflow's output. |
 | schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
 | evaluate | [`evaluate`](#evaluate) | `no` | Configures runtime expression evaluation. |
@@ -105,6 +105,7 @@ Defines the workflow's reusable components.
 | functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
 | retries | [`map[string, retryPolicy]`](#retry) | `no` | A name/value mapping of the workflow's reusable retry policies. |
 | secrets | `string[]` | `no` | A list containing the workflow's secrets. |
+| timeouts | [`map[string, timeout]`](#timeout) | `no` | A name/value mapping of the workflow's reusable timeouts. |
 
 #### Schedule
 
@@ -252,7 +253,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 | input | [`input`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
 | output | [`output`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
 | export | [`export`](#export) | `no` | An object used to customize the content of the workflow context. | 
-| timeout | [`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any. |
+| timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
 | then | [`flowDirective`](#flow-directive) | `no` | The flow directive to execute next.<br>*If not set, defaults to `continue`.* |
 | metadata | `map` | `no` | Additional information about the task. |
 
@@ -653,7 +654,7 @@ Intentionally triggers and propagates errors. By employing the "Raise" task, wor
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| raise.error | [`error`](#error) | `yes` | Defines the error to raise. |
+| raise.error | `string`<br>[`error`](#error) | `yes` | Defines the [error](#error) to raise.<br>*If a `string`, must be the name of an [error](#error) defined in the [workflow's reusable components](#use).* |
 
 ##### Examples
 
@@ -1036,12 +1037,12 @@ Defines the configuration of a catch clause, which a concept used to catch error
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| errors | [`errorFilter`](#retry) | `no` | The definition of the errors to catch |
+| errors | [`errorFilter`](#retry) | `no` | The definition of the errors to catch. |
 | as | `string` | `no` | The name of the runtime expression variable to save the error as. Defaults to 'error'. |
-| when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error |
-| exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error |
-| retry | [`retryPolicy`](#retry) | `no` | The retry policy to use, if any, when catching errors |
-| do | [`map[string, task][]`](#task) | `no` | The definition of the task(s) to run when catching an error |
+| when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error. |
+| exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error. |
+| retry | `string`<br>[`retryPolicy`](#retry) | `no` | The [`retry policy`](#retry) to use, if any, when catching [`errors`](#error).<br>*If a `string`, must be the name of a [retry policy](#retry) defined in the [workflow's reusable components](#use).* |
+| do | [`map[string, task][]`](#task) | `no` | The definition of the task(s) to run when catching an error. |
 
 #### Wait
 
@@ -1590,17 +1591,17 @@ Represents the definition of the parameters that control the randomness or varia
 
 ### Input
 
-Documents the structure - and optionally configures the filtering of - workflow/task input data.
+Documents the structure - and optionally configures the transformation of - workflow/task input data.
 
 It's crucial for authors to document the schema of input data whenever feasible. This documentation empowers consuming applications to provide contextual auto-suggestions when handling runtime expressions.
 
-When set, runtimes must validate input data against the defined schema, unless defined otherwise.
+When set, runtimes must validate raw input data against the defined schema before applying transformations, unless defined otherwise.
 
 #### Properties
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate input data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
+| schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate raw input data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
 | from | `string`<br>`object` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter and/or mutate the workflow/task input.  |
 
 #### Examples
@@ -1611,9 +1612,16 @@ schema:
   document:
     type: object
     properties:
-      petId:
-        type: string
-    required: [ petId ]
+      order:
+        type: object
+        required: [ pet ]
+        properties:
+          pet:
+            type: object
+            required: [ id ]
+            properties:
+              id:
+                type: string
 from: .order.pet
 ```
 
@@ -1623,7 +1631,7 @@ Documents the structure - and optionally configures the transformations of - wor
 
 It's crucial for authors to document the schema of output data whenever feasible. This documentation empowers consuming applications to provide contextual auto-suggestions when handling runtime expressions.
 
-When set, runtimes must validate output data against the defined schema, unless defined otherwise.
+When set, runtimes must validate output data against the defined schema after applying transformations, unless defined otherwise.
 
 #### Properties
 
@@ -1646,16 +1654,13 @@ output:
       required: [ petId ]
   as:
     petId: '${ .pet.id }'
-export:
-  as: 
-   '.petList += [ $task.output ]'  
 ```
 
 ### Export
 
-Certain task needs to set the workflow context to save the task output for later usage. Users set the content of the context through a runtime expression. The result of the expression is the new value of the context. The expression is evaluated against the existing context. 
+Certain task needs to set the workflow context to save the task output for later usage. Users set the content of the context through a runtime expression. The result of the expression is the new value of the context. The expression is evaluated against the transformed task output.
 
-Optionally, the context might have an associated schema. 
+Optionally, the context might have an associated schema which is validated against the result of the expression.
 
 #### Properties
 
@@ -1669,13 +1674,13 @@ Optionally, the context might have an associated schema.
 Merge the task output into the current context.
 
 ```yaml
-as: '.+$output'
+as: '$context+.'
 ```
 
 Replace the context with the task output.
 
 ```yaml
-as: $output
+as: '.'
 ```
 
 ### Schema
