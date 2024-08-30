@@ -891,7 +891,7 @@ $defs:
           description: The configuration of the digest authentication policy.
           unevaluatedProperties: false
           oneOf:
-            - title: BasicAuthenticationProperties
+            - title: DigestAuthenticationProperties
               description: Inline configuration of the digest authentication policy.
               properties:
                 username:
