@@ -73,7 +73,7 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | input | [`input`](#input) | `no` | Configures the workflow's input. |
 | use | [`use`](#use) | `no` | Defines the workflow's reusable components, if any. |
 | do | [`map[string, task][]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
-| timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
+| timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
 | output | [`output`](#output) | `no` | Configures the workflow's output. |
 | schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
 | evaluate | [`evaluate`](#evaluate) | `no` | Configures runtime expression evaluation. |
@@ -105,6 +105,7 @@ Defines the workflow's reusable components.
 | functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
 | retries | [`map[string, retryPolicy]`](#retry) | `no` | A name/value mapping of the workflow's reusable retry policies. |
 | secrets | `string[]` | `no` | A list containing the workflow's secrets. |
+| timeouts | [`map[string, timeout]`](#timeout) | `no` | A name/value mapping of the workflow's reusable timeouts. |
 
 #### Schedule
 
@@ -252,7 +253,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 | input | [`input`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
 | output | [`output`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
 | export | [`export`](#export) | `no` | An object used to customize the content of the workflow context. | 
-| timeout | [`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any. |
+| timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
 | then | [`flowDirective`](#flow-directive) | `no` | The flow directive to execute next.<br>*If not set, defaults to `continue`.* |
 | metadata | `map` | `no` | Additional information about the task. |
 
@@ -653,7 +654,7 @@ Intentionally triggers and propagates errors. By employing the "Raise" task, wor
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| raise.error | [`error`](#error) | `yes` | Defines the error to raise. |
+| raise.error | `string`<br>[`error`](#error) | `yes` | Defines the [error](#error) to raise.<br>*If a `string`, must be the name of an [error](#error) defined in the [workflow's reusable components](#use).* |
 
 ##### Examples
 
@@ -1035,12 +1036,12 @@ Defines the configuration of a catch clause, which a concept used to catch error
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| errors | [`errorFilter`](#retry) | `no` | The definition of the errors to catch |
+| errors | [`errorFilter`](#retry) | `no` | The definition of the errors to catch. |
 | as | `string` | `no` | The name of the runtime expression variable to save the error as. Defaults to 'error'. |
-| when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error |
-| exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error |
-| retry | [`retryPolicy`](#retry) | `no` | The retry policy to use, if any, when catching errors |
-| do | [`map[string, task][]`](#task) | `no` | The definition of the task(s) to run when catching an error |
+| when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error. |
+| exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error. |
+| retry | `string`<br>[`retryPolicy`](#retry) | `no` | The [`retry policy`](#retry) to use, if any, when catching [`errors`](#error).<br>*If a `string`, must be the name of a [retry policy](#retry) defined in the [workflow's reusable components](#use).* |
+| do | [`map[string, task][]`](#task) | `no` | The definition of the task(s) to run when catching an error. |
 
 #### Wait
 

@@ -101,14 +101,24 @@ properties:
         items:
           type: string
           description: The workflow's secrets.
+      timeouts:
+        type: object
+        title: UseTimeouts
+        description: The workflow's reusable timeouts.
+        additionalProperties:
+          $ref: '#/$defs/timeout'
   do:
     $ref: '#/$defs/taskList'
     title: Do
     description: Defines the task(s) the workflow must perform.
   timeout:
-    $ref: '#/$defs/timeout'
-    title: Timeout
-    description: The workflow's timeout configuration, if any.
+    oneOf:
+      - $ref: '#/$defs/timeout'
+        title: TimeoutDefinition
+        description: The workflow's timeout configuration, if any.
+      - type: string
+        title: TimeoutReference
+        description: The name of the workflow's timeout, if any.
   output:
     $ref: '#/$defs/output'
     title: Output
@@ -169,9 +179,13 @@ $defs:
         title: TaskBaseExport
         description: Export task output to context.
       timeout:
-        $ref: '#/$defs/timeout'
-        title: TaskBaseTimeout
-        description: The task's timeout configuration, if any.
+        oneOf:
+          - $ref: '#/$defs/timeout'
+            title: TaskTimeoutDefinition
+            description: The task's timeout configuration, if any.
+          - type: string
+            title: TaskTimeoutReference
+            description: The name of the task's timeout, if any.
       then:
         $ref: '#/$defs/flowDirective'
         title: TaskBaseThen
@@ -531,9 +545,13 @@ $defs:
         unevaluatedProperties: false
         properties:
           error:
-            $ref: '#/$defs/error'
-            title: RaiseError
-            description: Defines the error to raise.
+            oneOf:
+              - $ref: '#/$defs/error'
+                title: RaiseErrorDefinition
+                description: Defines the error to raise.
+              - type: string
+                title: RaiseErrorReference
+                description: The name of the error to raise
         required: [ error ]
   runTask:
     type: object
@@ -757,9 +775,13 @@ $defs:
             title: CatchExceptWhen
             description: A runtime expression used to determine whether or not to catch the filtered error.
           retry:
-            $ref: '#/$defs/retryPolicy'
-            title: TryTaskCatchRetry
-            description: The retry policy to use, if any, when catching errors.
+            oneOf:
+              - $ref: '#/$defs/retryPolicy'
+                title: RetryPolicyDefinition
+                description: The retry policy to use, if any, when catching errors.
+              - type: string
+                title: RetryPolicyReference
+                description: The name of the retry policy to use, if any, when catching errors.
           do:
             $ref: '#/$defs/taskList'
             title: TryTaskCatchDo
