@@ -1590,17 +1590,17 @@ Represents the definition of the parameters that control the randomness or varia
 
 ### Input
 
-Documents the structure - and optionally configures the filtering of - workflow/task input data.
+Documents the structure - and optionally configures the transformation of - workflow/task input data.
 
 It's crucial for authors to document the schema of input data whenever feasible. This documentation empowers consuming applications to provide contextual auto-suggestions when handling runtime expressions.
 
-When set, runtimes must validate input data against the defined schema, unless defined otherwise.
+When set, runtimes must validate raw input data against the defined schema before applying transformations, unless defined otherwise.
 
 #### Properties
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate input data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
+| schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate raw input data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
 | from | `string`<br>`object` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter and/or mutate the workflow/task input.  |
 
 #### Examples
@@ -1611,9 +1611,16 @@ schema:
   document:
     type: object
     properties:
-      petId:
-        type: string
-    required: [ petId ]
+      order:
+        type: object
+        required: [ pet ]
+        properties:
+          pet:
+            type: object
+            required: [ id ]
+            properties:
+              id:
+                type: string
 from: .order.pet
 ```
 
@@ -1623,7 +1630,7 @@ Documents the structure - and optionally configures the transformations of - wor
 
 It's crucial for authors to document the schema of output data whenever feasible. This documentation empowers consuming applications to provide contextual auto-suggestions when handling runtime expressions.
 
-When set, runtimes must validate output data against the defined schema, unless defined otherwise.
+When set, runtimes must validate output data against the defined schema after applying transformations, unless defined otherwise.
 
 #### Properties
 
@@ -1646,16 +1653,13 @@ output:
       required: [ petId ]
   as:
     petId: '${ .pet.id }'
-export:
-  as: 
-   '.petList += [ $task.output ]'  
 ```
 
 ### Export
 
-Certain task needs to set the workflow context to save the task output for later usage. Users set the content of the context through a runtime expression. The result of the expression is the new value of the context. The expression is evaluated against the existing context. 
+Certain task needs to set the workflow context to save the task output for later usage. Users set the content of the context through a runtime expression. The result of the expression is the new value of the context. The expression is evaluated against the transformed task output.
 
-Optionally, the context might have an associated schema. 
+Optionally, the context might have an associated schema which is validated against the result of the expression.
 
 #### Properties
 
@@ -1669,13 +1673,13 @@ Optionally, the context might have an associated schema.
 Merge the task output into the current context.
 
 ```yaml
-as: '.+$output'
+as: '$context+.'
 ```
 
 Replace the context with the task output.
 
 ```yaml
-as: $output
+as: '.'
 ```
 
 ### Schema
