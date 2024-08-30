@@ -1,0 +1,16 @@
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: raise-not-implemented
+  version: '0.1.0'
+use:
+  errors:
+    notImplemented:
+      type: https://serverlessworkflow.io/errors/not-implemented
+      status: 500
+      title: Not Implemented
+      detail: ${ "The workflow '\( $workflow.definition.document.name ):\( $workflow.definition.document.version )' is a work in progress and cannot be run yet" }
+do: 
+  - notImplemented:
+      raise:
+        error: notImplemented
