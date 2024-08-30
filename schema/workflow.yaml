@@ -43,6 +43,11 @@ properties:
         title: WorkflowTags
         description: A key/value mapping of the workflow's tags, if any.
         additionalProperties: true
+      metadata:
+        type: object
+        title: WorkflowMetadata
+        description: Holds additional information about the workflow.
+        additionalProperties: true
     required: [ dsl, namespace, name, version ]
   input:
     $ref: '#/$defs/input'
@@ -171,6 +176,11 @@ $defs:
         $ref: '#/$defs/flowDirective'
         title: TaskBaseThen
         description: The flow directive to be performed upon completion of the task.
+      metadata:
+        type: object
+        title: TaskMetadata
+        description: Holds additional information about the task.
+        additionalProperties: true
   task:
     title: Task
     description: A discrete unit of work that contributes to achieving the overall objectives defined by the workflow.

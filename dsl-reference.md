@@ -91,6 +91,7 @@ Documents the workflow definition.
 | title | `string` | `no` | The workflow's title. |
 | summary | `string` | `no` | The workflow's Markdown summary. |
 | tags | `map[string, string]` | `no` | A key/value mapping of the workflow's tags, if any. |
+| metadata | `map` | `no` | Additional information about the workflow. |
 
 #### Use
 
@@ -253,6 +254,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 | export | [`export`](#export) | `no` | An object used to customize the content of the workflow context. | 
 | timeout | [`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any. |
 | then | [`flowDirective`](#flow-directive) | `no` | The flow directive to execute next.<br>*If not set, defaults to `continue`.* |
+| metadata | `map` | `no` | Additional information about the task. |
 
 #### Call
 
