@@ -720,6 +720,7 @@ Provides the capability to execute external [containers](#container-process), [s
 | run.script | [`script`](#script-process) | `no` | The definition of the script to run.<br>*Required if `container`, `shell` and `workflow` have not been set.* |
 | run.shell | [`shell`](#shell-process) | `no` | The definition of the shell command to run.<br>*Required if `container`, `script` and `workflow` have not been set.* |
 | run.workflow | [`workflow`](#workflow-process) | `no` | The definition of the workflow to run.<br>*Required if `container`, `script` and `shell` have not been set.* |
+| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*Defaults to `true`.* |
 
 ##### Examples
 
