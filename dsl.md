@@ -256,6 +256,7 @@ flowchart TD
   workflow_transformed_input{{Transformed Workflow Input}}
 
   task_raw_input{{Raw Task Input}}
+  task_if[Task: <code>if</code>]
   task_input_schema[\Task: <code>input.schema</code>/]
   task_input_from[Task: <code>input.from</code>]
   task_transformed_input{{Transformed Task Input}}
@@ -282,7 +283,8 @@ flowchart TD
 
   subgraph Task
 
-    task_raw_input -- Validated by --> task_input_schema
+    task_raw_input -- Passed to --> task_if
+    task_if -- Validated by --> task_input_schema
     task_input_schema -- Passed to --> task_input_from
     task_input_from -- Produces --> task_transformed_input
     task_transformed_input -- Set as --> input_arg
