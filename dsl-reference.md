@@ -249,7 +249,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| if | `string` | `no` | A [`runtime expression`](dsl.md#runtime-expressions), if any, used to determine whether or not the task should be run.<br>The task is considered skipped if not run and the *raw* task input becomes the task's output. The expression is evaluated against the *raw* task input, before any other expression of the task. |
+| if | `string` | `no` | A [`runtime expression`](dsl.md#runtime-expressions), if any, used to determine whether or not the task should be run.<br>The task is considered skipped if not run, and the *raw* task input becomes the task's output. The expression is evaluated against the *raw* task input before any other expression of the task. |
 | input | [`input`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
 | output | [`output`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
 | export | [`export`](#export) | `no` | An object used to customize the content of the workflow context. | 
