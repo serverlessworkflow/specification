@@ -8,7 +8,7 @@ Feature: Composite Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: '1.0.0-alpha3'
+      dsl: '1.0.0'
       namespace: default
       name: do
     do:

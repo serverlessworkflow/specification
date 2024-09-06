@@ -1,8 +1,8 @@
 document:
-  dsl: '1.0.0-alpha3'
+  dsl: '1.0.0'
   namespace: examples
   name: cron-schedule
-  version: '1.0.0'
+  version: '0.1.0'
 schedule:
   cron: 0 0 * * *
 do:

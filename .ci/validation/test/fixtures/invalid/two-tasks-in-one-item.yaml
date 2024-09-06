@@ -1,8 +1,8 @@
 document:
-  dsl: '1.0.0-alpha3'
+  dsl: '1.0.0'
   namespace: examples
   name: two-tasks-in-one-item
-  version: '1.0.0'
+  version: '0.1.0'
 do:
   - getPet:
       call: http
