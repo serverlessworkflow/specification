@@ -7,7 +7,7 @@ Feature: Switch Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0'
       namespace: default
       name: switch-match
     do:
@@ -51,7 +51,7 @@ Feature: Switch Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0'
       namespace: default
       name: switch-default-implicit
     do:
@@ -93,7 +93,7 @@ Feature: Switch Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0'
       namespace: default
       name: switch-default-implicit
     do:
