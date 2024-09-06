@@ -924,6 +924,7 @@ $defs:
             - type: object
               title: OAuth2ConnectAuthenticationProperties
               description: The inline configuration of the OAuth2 authentication policy.
+              unevaluatedProperties: false
               allOf:
                 - $ref: '#/$defs/oauth2AuthenticationProperties'
                 - type: object
@@ -967,6 +968,7 @@ $defs:
             - $ref: '#/$defs/oauth2AuthenticationProperties'
               title: OpenIdConnectAuthenticationProperties
               description: The inline configuration of the OpenIdConnect authentication policy.
+              unevaluatedProperties: false
             - $ref: '#/$defs/secretBasedAuthenticationPolicy'
               title: OpenIdConnectAuthenticationPolicySecret
               description: Secret based configuration of the OpenIdConnect authentication policy.
