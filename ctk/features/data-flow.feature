@@ -8,7 +8,7 @@ Feature: Data Flow
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha3'
       namespace: default
       name: output-filtering
     do:
@@ -35,7 +35,7 @@ Feature: Data Flow
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha3'
       namespace: default
       name: output-filtering
     do:
@@ -63,7 +63,7 @@ Feature: Data Flow
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha3'
       namespace: default
       name: non-object-output
     do:

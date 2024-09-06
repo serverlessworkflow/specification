@@ -1,8 +1,8 @@
 document:
-  dsl: 1.0.0-alpha1
+  dsl: '1.0.0-alpha3'
   namespace: examples
   name: event-driven-schedule
-  version: 1.0.0-alpha1
+  version: '1.0.0'
 schedule:
   on:
     one:
