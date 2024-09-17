@@ -14,6 +14,7 @@ Feature: Try Task
       dsl: '1.0.0'
       namespace: default
       name: try-catch-404
+      version: '1.0.0'
     do:
       - tryGetPet:
           try:
@@ -57,6 +58,7 @@ Feature: Try Task
       dsl: '1.0.0'
       namespace: default
       name: try-catch-503
+      version: '1.0.0'
     do:
       - tryGetPet:
           try:

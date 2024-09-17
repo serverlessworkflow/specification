@@ -10,6 +10,7 @@ Feature: Flow Directive
       dsl: '1.0.0'
       namespace: default
       name: implicit-sequence
+      version: '1.0.0'
     do:
       - setRed:
           set:
@@ -37,6 +38,7 @@ Feature: Flow Directive
       dsl: '1.0.0'
       namespace: default
       name: explicit-sequence
+      version: '1.0.0'
     do:
       - setRed:
           set:

@@ -10,6 +10,7 @@ Feature: Switch Task
       dsl: '1.0.0'
       namespace: default
       name: switch-match
+      version: '1.0.0'
     do:
       - switchColor:
           switch:
@@ -54,6 +55,7 @@ Feature: Switch Task
       dsl: '1.0.0'
       namespace: default
       name: switch-default-implicit
+      version: '1.0.0'
     do:
       - switchColor:
           switch:
@@ -96,6 +98,7 @@ Feature: Switch Task
       dsl: '1.0.0'
       namespace: default
       name: switch-default-implicit
+      version: '1.0.0'
     do:
       - switchColor:
           switch:

@@ -11,6 +11,7 @@ Feature: Composite Task
       dsl: '1.0.0'
       namespace: default
       name: do
+      version: '1.0.0'
     do:
       - compositeExample:
           do:
