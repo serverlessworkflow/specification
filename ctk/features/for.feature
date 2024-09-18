@@ -13,6 +13,7 @@ Feature: For Task
       dsl: '1.0.0'
       namespace: default
       name: for
+      version: '1.0.0'
     do:
       - loopColors:
           for:

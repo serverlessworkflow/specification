@@ -10,6 +10,7 @@ Feature: Raise Task
       dsl: '1.0.0'
       namespace: default
       name: raise-custom-error
+      version: '1.0.0'
     do:
       - raiseError:
           raise:

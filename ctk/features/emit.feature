@@ -11,6 +11,7 @@ Feature: Emit Task
       dsl: '1.0.0'
       namespace: default
       name: emit
+      version: '1.0.0'
     do:
       - emitEvent:
           emit:

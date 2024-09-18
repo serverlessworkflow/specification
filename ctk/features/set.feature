@@ -11,6 +11,7 @@ Feature: Set Task
       dsl: '1.0.0'
       namespace: default
       name: set
+      version: '1.0.0'
     do:
       - setShape:
           set:

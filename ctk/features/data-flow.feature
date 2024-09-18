@@ -11,6 +11,7 @@ Feature: Data Flow
       dsl: '1.0.0'
       namespace: default
       name: output-filtering
+      version: '1.0.0'
     do:
       - setPlayerId:
           input:
@@ -38,6 +39,7 @@ Feature: Data Flow
       dsl: '1.0.0'
       namespace: default
       name: output-filtering
+      version: '1.0.0'
     do:
       - getPet:
           call: http
@@ -66,6 +68,7 @@ Feature: Data Flow
       dsl: '1.0.0'
       namespace: default
       name: non-object-output
+      version: '1.0.0'
     do:
       - getPetById1:
           call: http
