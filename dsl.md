@@ -531,7 +531,7 @@ The following example demonstrates how to use the `validateEmailAddress` custom 
 ```yaml
 # workflow.yaml
 document:
-  dsl: '1.0.0'
+  dsl: '1.0.0-alpha3'
   namespace: default
   name: customFunctionWorkflow
   version: '0.1.0'
@@ -599,7 +599,7 @@ See the [DSL reference](dsl-reference.md#extension) for more details about exten
 *Sample logging extension:*
 ```yaml
 document:
-  dsl: '1.0.0'
+  dsl: '1.0.0-alpha3'
   namespace: test
   name: sample-workflow
   version: '0.1.0'
