@@ -358,7 +358,7 @@ do:
       call: grpc
       with:
         proto: 
-          endpoint: file://app/greet.proto
+          endpoint: https://greeter.com/greet.proto
         service:
           name: GreeterApi.Greeter
           host: localhost
