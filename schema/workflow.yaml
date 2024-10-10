@@ -1144,6 +1144,17 @@ $defs:
         title: ErrorDetails
         description: A human-readable explanation specific to this occurrence of the error.
     required: [ type, status ]
+  uriTemplate:
+    title: UriTemplate
+    anyOf:
+      - title: LiteralUriTemplate
+        type: string
+        format: uri-template
+        pattern: "^http(s?)://.*"
+      - title: LiteralUri
+        type: string
+        format: uri
+        pattern: "^http(s?)://.*"
   endpoint:
     title: Endpoint
     description: Represents an endpoint.
