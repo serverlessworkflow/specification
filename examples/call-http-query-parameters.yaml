@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://serverlessworkflow.io/schemas/1.0.0-alpha2/workflow.yaml
+# yaml-language-server: $schema=../schema/workflow.yaml
 document:
   dsl: 1.0.0-alpha2
   namespace: examples
