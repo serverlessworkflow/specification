@@ -979,8 +979,7 @@ $defs:
     description: Inline configuration of the OAuth2 authentication policy.
     properties:
       authority:
-        type: string
-        format: uri-template
+        $ref: '#/$defs/uriTemplate'
         title: OAuth2AutenthicationDataAuthority
         description: The URI that references the OAuth2 authority to use.
       grant:
@@ -1114,11 +1113,10 @@ $defs:
         description: A URI reference that identifies the error type.
         oneOf:
           - title: LiteralErrorType
+            $ref: '#/$defs/uriTemplate'
             description: The literal error type.
-            type: string
-            format: uri-template
-          - $ref: '#/$defs/runtimeExpression'
-            title: ExpressionErrorType
+          - title: ExpressionErrorType
+            $ref: '#/$defs/runtimeExpression'
             description: An expression based error type.
       status:
         type: integer
@@ -1160,9 +1158,7 @@ $defs:
     description: Represents an endpoint.
     oneOf:
       - $ref: '#/$defs/runtimeExpression'
-      - title: LiteralEndpoint
-        type: string
-        format: uri-template
+      - $ref: '#/$defs/uriTemplate'
       - title: EndpointConfiguration
         type: object
         unevaluatedProperties: false
@@ -1173,10 +1169,9 @@ $defs:
             oneOf:
               - title: LiteralEndpointURI
                 description: The literal endpoint's URI.
-                type: string
-                format: uri-template
-              - $ref: '#/$defs/runtimeExpression'
-                title: ExpressionEndpointURI
+                $ref: '#/$defs/uriTemplate'
+              - title: ExpressionEndpointURI
+                $ref: '#/$defs/runtimeExpression'
                 description: An expression based endpoint's URI.
           authentication:
             $ref: '#/$defs/referenceableAuthenticationPolicy'
@@ -1196,9 +1191,7 @@ $defs:
         title: EventSource
         description: Identifies the context in which an event happened.
         oneOf:
-          - title: LiteralSource
-            type: string
-            format: uri-template
+          - $ref: '#/$defs/uriTemplate'
           - $ref: '#/$defs/runtimeExpression'
       type:
         type: string
@@ -1225,11 +1218,10 @@ $defs:
         description: The schema describing the event format.
         oneOf:
           - title: LiteralDataSchema
+            $ref: '#/$defs/uriTemplate'
             description: The literal event data schema.
-            type: string
-            format: uri-template
-          - $ref: '#/$defs/runtimeExpression'
-            title: ExpressionDataSchema
+          - title: ExpressionDataSchema
+            $ref: '#/$defs/runtimeExpression'
             description: An expression based event data schema.
     additionalProperties: true
   eventConsumptionStrategy:
