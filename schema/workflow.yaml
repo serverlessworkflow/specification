@@ -1148,11 +1148,11 @@ $defs:
       - title: LiteralUriTemplate
         type: string
         format: uri-template
-        pattern: "^http(s?)://.*"
+        pattern: "^[A-Za-z][A-Za-z0-9+\\-.]*://.*"
       - title: LiteralUri
         type: string
         format: uri
-        pattern: "^http(s?)://.*"
+        pattern: "^[A-Za-z][A-Za-z0-9+\\-.]*://.*"
   endpoint:
     title: Endpoint
     description: Represents an endpoint.
