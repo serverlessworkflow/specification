@@ -1,4 +1,4 @@
-$id: https://serverlessworkflow.io/schemas/1.0.0-alpha3/workflow.yaml
+$id: https://serverlessworkflow.io/schemas/1.0.0-alpha5/workflow.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
 description: Serverless Workflow DSL - Workflow Schema.
 type: object
@@ -107,6 +107,12 @@ properties:
         description: The workflow's reusable timeouts.
         additionalProperties:
           $ref: '#/$defs/timeout'
+      catalogs:
+        type: object
+        title: UseCatalogs
+        description: The workflow's reusable catalogs.
+        additionalProperties:
+          $ref: '#/$defs/catalog'
   do:
     $ref: '#/$defs/taskList'
     title: Do
@@ -1485,6 +1491,17 @@ $defs:
         title: TimeoutAfter
         description: The duration after which to timeout.
     required: [ after ]
+  catalog:
+    type: object
+    title: Catalog
+    description: The definition of a resource catalog
+    unevaluatedProperties: false
+    properties:
+      endpoint:
+        $ref: '#/$defs/endpoint'
+        title: CatalogEndpoint
+        description: The root URL where the catalog is hosted
+    required: [ endpoint ]
   runtimeExpression:
     type: string
     title: RuntimeExpression

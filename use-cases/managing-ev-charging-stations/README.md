@@ -70,7 +70,7 @@ The following diagram represents the high-level flow of the workflow:
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha3'
+  dsl: '1.0.0-alpha5'
   namespace: default
   name: manage-ev-charging-stations
   version: '0.1.0'

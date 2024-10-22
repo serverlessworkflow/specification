@@ -7,7 +7,7 @@ Feature: Flow Directive
     Given a workflow with definition:
     """yaml
     document:
-      dsl: '1.0.0-alpha3'
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: implicit-sequence
       version: '1.0.0'
@@ -35,7 +35,7 @@ Feature: Flow Directive
     Given a workflow with definition:
     """yaml
     document:
-      dsl: '1.0.0-alpha3'
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: explicit-sequence
       version: '1.0.0'

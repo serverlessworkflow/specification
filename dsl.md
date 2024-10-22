@@ -19,6 +19,10 @@
     - [Arguments](#runtime-expression-arguments)
   + [Fault Tolerance](#fault-tolerance)
   + [Timeouts](#timeouts)
+  + [Catalogs](#catalogs)
+    + [File Structure](#file-structure)
+    + [Default Catalog](#default-catalog)
+    + [Using Cataloged Functions](#using-cataloged-functions)
   + [Interoperability](#interoperability)
     - [Supported Protocols](#supported-protocols)
     - [Custom and Non-Standard Interactions](#custom-and-non-standard-interactions)
@@ -450,6 +454,77 @@ When a timeout occur, runtimes **must** abruptly interrupt the execution of the 
 
 A timeout error **must** have its `type` set to `https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
 
+### Catalogs
+
+A **resource catalog** is an external collection of reusable components, such as functions, that can be referenced and imported into workflows. The primary purpose of catalogs is to allow workflows to seamlessly integrate with externally defined resources, facilitating better reuse, versioning, and consistency across multiple workflows.
+
+Each catalog is defined by an `endpoint` property that specifies the root URL where the resources are hosted. This enables workflows to access external functions and services from those catalogs.
+
+#### File Structure
+
+To ensure portability and standardization, catalogs must follow a specific file structure, which is documented [here](https://github.com/serverlessworkflow/catalog?tab=readme-ov-file#structure). This file structure ensures that runtimes can correctly interpret and resolve the resources contained within a catalog.
+
+If a catalog is hosted in a GitHub or GitLab repository, runtimes are expected to resolve the **raw** machine-readable documents that define the cataloged resources. For example, for the function `log:1.0.0` located in a catalog at `https://github.com/serverlessworkflow/catalog/tree/main`, the function definition URI:
+
+```
+https://github.com/serverlessworkflow/catalog/tree/main/functions/log/1.0.0/function.yaml
+```
+
+Should be transformed by the runtime to point to the raw content of the document:
+
+```
+https://raw.githubusercontent.com/serverlessworkflow/catalog/refs/heads/main/functions/log/1.0.0/function.yaml
+```
+
+This transformation ensures that runtimes can retrieve and process the actual content of the resource definitions in a machine-readable format. It also ensures that authors can use the standard, user-friendly URIs of such Git repositories, making it easier to reference and manage resources without needing to directly use the raw content links.
+
+#### Default Catalog
+
+Runtimes may optionally define a **"default" catalog**, which can be used implicitly by any and all workflows, unlike other catalogs which must be explicitly defined at the top level. The default catalog provides authors with a way to define and publish functions directly to their runtime, without any additional overhead or external dependencies.
+
+When using the default catalog, users follow the same format as described above, but with the reserved name `default` for the catalog:
+
+```
+{functionName}:{functionVersion}@default
+```
+
+This allows workflows to call functions from the default catalog without needing to explicitly define it in the workflow definition. 
+
+It's important to note that the name `default` should not be used by catalogs explicitly defined at the top level, unless the intent is to override the runtime's default catalog. How resources in the default catalog are stored and resolved is entirely up to the runtime, and they could be managed in various ways, such as in a database, as files, in configuration settings, or within a remote dedicated repository.
+
+#### Using Cataloged Functions
+
+When calling a custom function defined in a catalog, users must follow a specific format:
+
+```
+{functionName}:{functionVersion}@{catalogName}
+```
+
+This format ensures that the function, its version, and the catalog it belongs to are clearly defined, allowing workflows to differentiate between multiple functions with similar names across different catalogs.
+
+*Calling a custom function defined within a catalog:*
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: catalog-example
+  version: '0.1.0'
+use:
+  catalogs:
+    global:
+      endpoint:
+        uri: https://github.com/serverlessworkflow/catalog
+        authentication:
+          basic:
+            username: user
+            password: '012345'
+do:
+  - log:
+      call: log:0.5.2@global
+      with:
+        message: The cataloged custom function has been successfully called
+```
+
 ### Interoperability
 
 Serverless Workflow DSL is designed to seamlessly interact with a variety of services, ensuring robust service interoperability.
@@ -531,7 +606,7 @@ The following example demonstrates how to use the `validateEmailAddress` custom 
 ```yaml
 # workflow.yaml
 document:
-  dsl: '1.0.0-alpha3'
+  dsl: '1.0.0-alpha5'
   namespace: default
   name: customFunctionWorkflow
   version: '0.1.0'
@@ -599,7 +674,7 @@ See the [DSL reference](dsl-reference.md#extension) for more details about exten
 *Sample logging extension:*
 ```yaml
 document:
-  dsl: '1.0.0-alpha3'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: sample-workflow
   version: '0.1.0'
