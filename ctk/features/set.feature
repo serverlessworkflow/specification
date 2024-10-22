@@ -8,7 +8,7 @@ Feature: Set Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: '1.0.0-alpha3'
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: set
       version: '1.0.0'

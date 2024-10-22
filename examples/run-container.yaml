@@ -1,5 +1,5 @@
 document:
-  dsl: '1.0.0-alpha3'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: run-container
   version: '0.1.0'
