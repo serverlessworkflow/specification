@@ -118,6 +118,7 @@ properties:
     title: Do
     description: Defines the task(s) the workflow must perform.
   timeout:
+    title: DoTimeout
     oneOf:
       - $ref: '#/$defs/timeout'
         title: TimeoutDefinition
@@ -185,6 +186,7 @@ $defs:
         title: TaskBaseExport
         description: Export task output to context.
       timeout:
+        title: TaskTimeout
         oneOf:
           - $ref: '#/$defs/timeout'
             title: TaskTimeoutDefinition
@@ -551,6 +553,7 @@ $defs:
         unevaluatedProperties: false
         properties:
           error:
+            title: RaiseTaskError
             oneOf:
               - $ref: '#/$defs/error'
                 title: RaiseErrorDefinition
@@ -815,7 +818,8 @@ $defs:
     title: FlowDirective
     description: Represents different transition options for a workflow.
     anyOf:
-      - type: string
+      - title: FlowDirectiveEnum
+        type: string
         enum: [ continue, exit, end ]
         default: continue
       - type: string
