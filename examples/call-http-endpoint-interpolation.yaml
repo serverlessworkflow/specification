@@ -7,5 +7,7 @@ do:
   - getPet:
       call: http
       with:
+        headers:
+          content-type: application/json
         method: get
         endpoint: ${ "https://petstore.swagger.io/v2/pet/\(.petId)" }
