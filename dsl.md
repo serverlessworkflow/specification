@@ -339,7 +339,7 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 
 | Name | Type | Description |
 |:-----|:----:|:------------|
-| context | `map` | The task's context data. |
+| context | `map` | The workflow's context data. |
 | input | `any` | The task's transformed input. |
 | output | `any` | The task's transformed output. |
 | secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
