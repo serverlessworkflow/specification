@@ -1818,7 +1818,7 @@ Describes an enpoint.
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | uri | `string` | `yes` | The endpoint's URI. |
-| authentication | `[authentication](#authentication)` | `no` | The authentication policy to use. |
+| authentication | [authentication](#authentication) | `no` | The authentication policy to use. |
 
 ### HTTP Response
 
