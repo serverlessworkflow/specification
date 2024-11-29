@@ -777,7 +777,10 @@ $defs:
           errors:
             type: object
             title: CatchErrors
-            description: The configuration of a concept used to catch errors.
+            properties:
+              with:
+                $ref: '#/$defs/errorFilter'
+            description: static error filter
           as:
             type: string
             title: CatchAs
@@ -785,11 +788,11 @@ $defs:
           when:
             type: string
             title: CatchWhen
-            description: A runtime expression used to determine whether or not to catch the filtered error.
+            description: A runtime expression used to determine whether to catch the filtered error.
           exceptWhen:
             type: string
             title: CatchExceptWhen
-            description: A runtime expression used to determine whether or not to catch the filtered error.
+            description: A runtime expression used to determine whether not to catch the filtered error.
           retry:
             oneOf:
               - $ref: '#/$defs/retryPolicy'
@@ -1152,6 +1155,27 @@ $defs:
         title: ErrorDetails
         description: A human-readable explanation specific to this occurrence of the error.
     required: [ type, status ]
+  errorFilter:
+    type: object
+    title: ErrorFilter
+    description: Error filtering base on static values. For error filtering on dynamic values, use catch.when property
+    minProperties: 1
+    properties:
+      type:
+        type: string
+        description: if present, means this value should be used for filtering
+      status: 
+        type: integer
+        description: if present, means this value should be used for filtering
+      instance:
+        type: string
+        description: if present, means this value should be used for filtering
+      title: 
+        type: string
+        description: if present, means this value should be used for filtering
+      details:
+        type: string
+        description: if present, means this value should be used for filtering
   uriTemplate:
     title: UriTemplate
     anyOf:
