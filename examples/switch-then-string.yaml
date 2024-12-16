@@ -15,31 +15,17 @@ do:
         - default:
             then: handleUnknownOrderType
   - processElectronicOrder:
-      do:
-        - validatePayment:
-            set:
-              validate: true
-        - fulfillOrder:
-            set:
-              status: fulfilled
+      set:
+        validate: true
+        status: fulfilled
       then: exit
   - processPhysicalOrder:
-      do:
-        - checkInventory:
-            set:
-              inventory: clear
-        - packItems:
-            set:
-              items: 1
-        - scheduleShipping:
-            set:
-              address: Elmer St
+      set:
+        inventory: clear
+        items: 1
+        address: Elmer St
       then: exit
   - handleUnknownOrderType:
-      do:
-        - logWarning:
-            set:
-              log: warn
-        - notifyAdmin:
-            set:
-              message: something's wrong
+      set:
+        log: warn
+        message: something's wrong
