@@ -243,7 +243,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 - [Raise](#raise), used to raise an [error](#error) and potentially fault the [workflow](#workflow).
 - [Run](#run), used to run a [container](#container-process), a [script](#script-process) , a [shell](#shell-process) command or even another [workflow](#workflow-process). 
 - [Switch](#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
-- [Set](#set), used to dynamically set or update the [workflow](#workflow)'s data during the its execution. 
+- [Set](#set), used to dynamically set the [workflow](#workflow)'s data during the its execution. 
 - [Try](#try), used to attempt executing a specified [task](#task), and to handle any resulting [errors](#error) gracefully, allowing the [workflow](#workflow) to continue without interruption.
 - [Wait](#wait), used to pause or wait for a specified duration before proceeding to the next task.
 
@@ -1818,7 +1818,7 @@ Describes an enpoint.
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | uri | `string` | `yes` | The endpoint's URI. |
-| authentication | `[authentication](#authentication)` | `no` | The authentication policy to use. |
+| authentication | [authentication](#authentication) | `no` | The authentication policy to use. |
 
 ### HTTP Response
 
