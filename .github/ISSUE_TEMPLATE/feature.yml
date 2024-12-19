@@ -1,0 +1,48 @@
+name: Feature Request
+description: Create a feature request
+labels: ["type: feature"]
+body:
+
+- type: markdown
+  attributes:
+    value: |
+       :pray: Thanks for taking the time to fill out this feature request!
+
+- type: markdown
+  attributes:
+    value: |
+       ## Feature Request
+
+- type: textarea
+  id: what-would-you-like-to-be-added
+  attributes:
+    label: "What would you like to be added?"
+    placeholder: "Description of the feature you'd like to see."
+  validations:
+    required: true
+
+- type: textarea
+  id: proposals
+  attributes:
+    label: "Proposal(s):"
+    placeholder: "Describe your proposal(s) and any relevant details here."
+
+- type: textarea
+  id: alternatives
+  attributes:
+    label: "Alternative(s):"
+    placeholder: "Describe any alternative approaches, options, or suggestions you’d like to consider."
+
+- type: textarea
+  id: additional-info
+  attributes:
+    label: "Additional info:"
+    placeholder: "Provide any supplementary details, context, or supporting information here."
+
+- type: textarea
+  attributes:
+    label: Community Notes
+    value: |
+      <!-- Please keep this note for the community -->
+      * Please vote by adding a 👍 reaction to the feature to help us prioritize.
+      * If you are interested to work on this feature, please leave a comment.
