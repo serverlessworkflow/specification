@@ -585,6 +585,12 @@ $defs:
             default: true
             title: AwaitProcessCompletion
             description: Whether to await the process completion before continuing.
+          return:
+            type: string
+            title: ProcessReturnType
+            description: Configures the output of the process.
+            enum: [ stdout, stderr, code, all, none ]
+            default: stdout
         oneOf:
           - title: RunContainer
             description: Enables the execution of external processes encapsulated within a containerized environment.
@@ -1539,3 +1545,21 @@ $defs:
     title: RuntimeExpression
     description: A runtime expression.
     pattern: "^\\s*\\$\\{.+\\}\\s*$"
+  processResult:
+    type: object
+    title: ProcessResult
+    description: The object returned by a run task when its return type has been set 'all'
+    properties:
+      code:
+        type: integer
+        title: ProcessExitCode
+        description: The process's exit code.
+      stdout:
+        type: string
+        title: ProcessStandardOutput
+        description: The content of the process's STDOUT
+      stderr:
+        type: string
+        title: ProcessStandardError
+        description: The content of the process's STDERR
+    required: [ code, stdout, stderr ]

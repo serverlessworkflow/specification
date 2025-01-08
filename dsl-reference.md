@@ -55,6 +55,7 @@
   + [HTTP Response](#http-response)
   + [HTTP Request](#http-request)
   + [URI Template](#uri-template)
+  + [Process Result](#process-result)
 
 ## Abstract
 
@@ -411,7 +412,7 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 |:--|:---:|:---:|:---|
 | document | [`externalResource`](#external-resource) | `yes` | The OpenAPI document that defines the operation to call. |
 | operationId | `string` | `yes` | The id of the OpenAPI operation to call. |
-| arguments | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
+| parameters | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
 | authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the OpenAPI operation. |
 | output | `string` | `no` | The OpenAPI call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
 
@@ -717,13 +718,14 @@ Provides the capability to execute external [containers](#container-process), [s
 
 ##### Properties
 
-| Name | Type | Required | Description|
+| Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | run.container | [`container`](#container-process) | `no` | The definition of the container to run.<br>*Required if `script`, `shell` and `workflow` have not been set.* |
 | run.script | [`script`](#script-process) | `no` | The definition of the script to run.<br>*Required if `container`, `shell` and `workflow` have not been set.* |
 | run.shell | [`shell`](#shell-process) | `no` | The definition of the shell command to run.<br>*Required if `container`, `script` and `workflow` have not been set.* |
 | run.workflow | [`workflow`](#workflow-process) | `no` | The definition of the workflow to run.<br>*Required if `container`, `script` and `shell` have not been set.* |
-| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*Defaults to `true`.* |
+| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*When set to `false`, the task cannot wait for the process to complete and thus cannot output the process’s result. In this case, it should simply output its transformed input.*<br>*Defaults to `true`.* |
+| return | `string` | `no` | Configures the output of the process.<br>*Supported values are:*<br>*- `stdout`: Outputs the content of the process **STDOUT**.*<br>*- `stderr`: Outputs the content of the process **STDERR**.*<br>*- `code`:  Outputs the process's **exit code**.*<br>*- `all`: Outputs the **exit code**, the **STDOUT** content and the **STDERR** content, wrapped into a new [processResult](#process-result) object.*<br>*- `none`: Does not output anything.*<br>*Defaults to `stdout`.* |
 
 ##### Examples
 
@@ -1888,4 +1890,55 @@ This has the following limitations compared to runtime expressions:
 
 ```yaml
 uri: https://petstore.swagger.io/v2/pet/{petId}
+```
+
+### Process Result
+
+Describes the result of a process.
+
+#### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| code | `integer` | `yes` | The process's exit code. |
+| stdout | `string` | `yes` | The process's **STDOUT** output. |
+| stderr | `string` | `yes` | The process's **STDERR** output. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: run-example
+  version: '0.1.0'
+do:
+  - runContainer:
+      run:
+        container:
+          image: fake-image
+        return: stderr
+
+  - runScript:
+      run:
+        script:
+          language: js
+          code: >
+            Some cool multiline script
+        return: code
+
+  - runShell:
+      run:
+        shell:
+          command: 'echo "Hello, ${ .user.name }"'
+        return: all
+
+  - runWorkflow:
+      run:
+        workflow:
+          namespace: another-one
+          name: do-stuff
+          version: '0.1.0'
+          input: {}
+        return: none
 ```
