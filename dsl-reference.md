@@ -2105,7 +2105,7 @@ do:
         subscription:
           correlation: ${ . == $workflow.input.chat.roomId } 
           consume:
-            until: ($context.messages | length) == 5
+            until: '${ ($context.messages | length) == 5 }'
             for:
               seconds: 10
 ```
