@@ -716,13 +716,13 @@ Provides the capability to execute external [containers](#container-process), [s
 
 ##### Properties
 
-| Name | Type | Required | Description|
+| Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | run.container | [`container`](#container-process) | `no` | The definition of the container to run.<br>*Required if `script`, `shell` and `workflow` have not been set.* |
 | run.script | [`script`](#script-process) | `no` | The definition of the script to run.<br>*Required if `container`, `shell` and `workflow` have not been set.* |
 | run.shell | [`shell`](#shell-process) | `no` | The definition of the shell command to run.<br>*Required if `container`, `script` and `workflow` have not been set.* |
 | run.workflow | [`workflow`](#workflow-process) | `no` | The definition of the workflow to run.<br>*Required if `container`, `script` and `shell` have not been set.* |
-| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*Defaults to `true`.* |
+| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*When set to `false`, the task cannot wait for the process to complete and thus cannot output the process’s result. In this case, it should simply output its transformed input.*<br>*Defaults to `true`.* |
 
 ##### Examples
 
