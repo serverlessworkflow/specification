@@ -2103,7 +2103,7 @@ do:
         operation: chat-inbox
         protocol: http
         subscription:
-          correlation: ${ . == $workflow.input.chat.roomId } 
+          filter: ${ . == $workflow.input.chat.roomId } 
           consume:
             until: '${ ($context.messages | length) == 5 }'
             for:
