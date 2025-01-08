@@ -8,4 +8,4 @@ do:
       run:
         container:
           image: hello-world
-      return: all
+        return: all
