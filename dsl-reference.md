@@ -508,6 +508,7 @@ Allows workflows to publish events to event brokers or messaging systems, facili
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | emit.event | [`eventProperties`](#event-properties) | `yes` | Defines the event to emit. |
+| emit.to | [`endpoint`](#endpoint) | `no` | Specifies an additional endpoint for emitting the event. While the runtime's default cloud event endpoint remains the primary destination, setting this property ensures that the event is also published to the specified endpoint. Ideally, this property is left unset so that event delivery relies solely on the runtime's configured endpoint, but when provided, the event will be sent to both endpoints concurrently. |
 
 ##### Examples
 
