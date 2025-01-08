@@ -55,6 +55,7 @@
   + [HTTP Response](#http-response)
   + [HTTP Request](#http-request)
   + [URI Template](#uri-template)
+  + [Process Result](#process-result)
 
 ## Abstract
 
@@ -723,6 +724,7 @@ Provides the capability to execute external [containers](#container-process), [s
 | run.shell | [`shell`](#shell-process) | `no` | The definition of the shell command to run.<br>*Required if `container`, `script` and `workflow` have not been set.* |
 | run.workflow | [`workflow`](#workflow-process) | `no` | The definition of the workflow to run.<br>*Required if `container`, `script` and `shell` have not been set.* |
 | await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*Defaults to `true`.* |
+| return | `string` | `no` | Configures the output of the process.<br>*Supported values are:*<br>*- `stdout`: Outputs the content of the process **STDOUT**.*<br>*- `stderr`: Outputs the content of the process **STDERR**.*<br>*- `code`:  Outputs the process's **exit code**.*<br>*- `all`: Outputs the **exit code**, the **STDOUT** content and the **STDERR** content, wrapped into a new [processResult](#process-result) object.*<br>*- `none`: Does not output anything.*<br>*Defaults to `stdout`.* |
 
 ##### Examples
 
@@ -1887,4 +1889,55 @@ This has the following limitations compared to runtime expressions:
 
 ```yaml
 uri: https://petstore.swagger.io/v2/pet/{petId}
+```
+
+### Process Result
+
+Describes the result of a process.
+
+#### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| code | `integer` | `yes` | The process's exit code. |
+| stdout | `string` | `yes` | The process's **STDOUT** output. |
+| stderr | `string` | `yes` | The process's **STDERR** output. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: run-example
+  version: '0.1.0'
+do:
+  - runContainer:
+      run:
+        container:
+          image: fake-image
+      return: stderr
+
+  - runScript:
+      run:
+        script:
+          language: js
+          code: >
+            Some cool multiline script
+      return: code
+
+  - runShell:
+      run:
+        shell:
+          command: 'echo "Hello, ${ .user.name }"'
+      return: all
+
+  - runWorkflow:
+      run:
+        workflow:
+          namespace: another-one
+          name: do-stuff
+          version: '0.1.0'
+          input: {}
+      return: none
 ```
