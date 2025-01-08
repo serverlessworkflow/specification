@@ -348,7 +348,7 @@ do:
         operation: chat-inbox
         protocol: http
         subscription:
-          correlation: ${ . == $workflow.input.chat.roomId } 
+          filter: ${ . == $workflow.input.chat.roomId } 
           consume:
             amount: 5
             for:
@@ -2046,9 +2046,8 @@ Configures a subscription to an AsyncAPI operation.
 
 | Name | Type | Required | Description |
 |:-------|:------:|:----------:|:--------------|
-| correlation | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter consumed messages based on their [correlation id.](https://www.asyncapi.com/docs/reference/specification/v3.0.0#correlationIdObject). |
+| filter | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter consumed messages. |
 | consume | [`subscriptionLifetime`](#asyncapi-subscription-lifetime) | `yes` | An object used to configure the subscription's lifetime. |
-
 
 #### Examples
 
@@ -2067,7 +2066,7 @@ do:
         operation: chat-inbox
         protocol: http
         subscription:
-          correlation: ${ . == $workflow.input.chat.roomId } 
+          filter: ${ . == $workflow.input.chat.roomId } 
           consume:
             amount: 5
             for:
@@ -2103,7 +2102,7 @@ do:
           endpoint: https://fake.com/docs/asyncapi.json
         operation: chat-inbox
         protocol: http
-        subscription:
+        filter:
           correlation: ${ . == $workflow.input.chat.roomId } 
           consume:
             until: ($context.messages | length) == 5

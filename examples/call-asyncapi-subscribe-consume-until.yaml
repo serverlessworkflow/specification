@@ -9,7 +9,6 @@ do:
       with:
         document:
           endpoint: https://fake.com/docs/asyncapi.json
-        operation: getNotifications
         channel: /notifications
         subscription:
           filter: '${ .correlationId == $context.userId and .payload.from.firstName == $context.contact.firstName and .payload.from.lastName == $context.contact.lastName }'

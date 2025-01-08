@@ -10,7 +10,8 @@ do:
         document:
           endpoint: https://fake.com/docs/asyncapi.json
         operation: findPetsByStatus
-        server: staging
+        server:
+          name: staging
         message:
           payload:
             petId: ${ .pet.id }
