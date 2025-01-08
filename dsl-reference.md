@@ -2058,7 +2058,7 @@ document:
   name: asyncapi-example
   version: '0.1.0'
 do:
-  - subscribeToChatInbox:
+  - subscribeToChatInboxForAmount:
       call: asyncapi
       with:
         document:
@@ -2095,7 +2095,7 @@ document:
   name: asyncapi-example
   version: '0.1.0'
 do:
-  - subscribeToChatInbox:
+  - subscribeToChatInboxUntil:
       call: asyncapi
       with:
         document:
