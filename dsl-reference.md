@@ -2102,7 +2102,7 @@ do:
           endpoint: https://fake.com/docs/asyncapi.json
         operation: chat-inbox
         protocol: http
-        filter:
+        subscription:
           correlation: ${ . == $workflow.input.chat.roomId } 
           consume:
             until: ($context.messages | length) == 5

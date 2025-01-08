@@ -10,7 +10,7 @@ do:
         document:
           endpoint: https://fake.com/docs/asyncapi.json
         operation: getNotifications
-        protoçol: ws
+        protocol: ws
         subscription:
           filter: '${ .correlationId == $context.userId and .payload.from.firstName == $context.contact.firstName and .payload.from.lastName == $context.contact.lastName }'
           consume:
