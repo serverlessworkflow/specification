@@ -241,33 +241,42 @@ $defs:
             properties:
               document:
                 $ref: '#/$defs/externalResource'
-                title: WithAsyncAPIDocument
+                title: AsyncAPIDocument
                 description: The document that defines the AsyncAPI operation to call.
-              operationRef:
+              channel:
                 type: string
-                title: WithAsyncAPIOperation
+                title: With
+                description: The name of the channel on which to perform the operation. Used only in case the referenced document uses AsyncAPI v2.6.0.
+              operation:
+                type: string
+                title: AsyncAPIOperation
                 description: A reference to the AsyncAPI operation to call.
               server:
+                $ref: '#/$defs/asyncApiServer'
+                title: AsyncAPIServer
+                description: An object used to configure to the server to call the specified AsyncAPI operation on.
+              protocol:
                 type: string
-                title: WithAsyncAPIServer
-                description: A a reference to the server to call the specified AsyncAPI operation on. If not set, default to the first server matching the operation's channel.
+                title: AsyncApiProtocol
+                description: The protocol to use to select the target server.
+                enum: [ amqp, amqp1, anypointmq, googlepubsub, http, ibmmq, jms, kafka, mercure, mqtt, mqtt5, nats, pulsar, redis, sns, solace, sqs, stomp, ws ]
               message:
-                type: string
-                title: WithAsyncAPIMessage
-                description: The name of the message to use. If not set, defaults to the first message defined by the operation.
-              binding:
-                type: string
-                title: WithAsyncAPIBinding
-                description: The name of the binding to use. If not set, defaults to the first binding defined by the operation.
-              payload:
-                type: object
-                title: WithAsyncAPIPayload
-                description: The payload to call the AsyncAPI operation with, if any.
+                $ref: '#/$defs/asyncApiOutboundMessage'
+                title: AsyncApiMessage
+                description: An object used to configure the message to publish using the target operation.
+              subscription:
+                $ref: '#/$defs/asyncApiSubscription'
+                title: AsyncApiSubscription
+                description: An object used to configure the subscription to messages consumed using the target operation.
               authentication:
                 $ref: '#/$defs/referenceableAuthenticationPolicy'
-                title: WithAsyncAPIAuthentication
+                title: AsyncAPIAuthentication
                 description: The authentication policy, if any, to use when calling the AsyncAPI operation.
-            required: [ document, operationRef ]
+            oneOf:
+              - required: [ document, operation, message ]
+              - required: [ document, operation, subscription ]
+              - required: [ document, channel, message ]
+              - required: [ document, channel, subscription ]
             unevaluatedProperties: false
       - title: CallGRPC
         description: Defines the GRPC call to perform.
@@ -1528,13 +1537,13 @@ $defs:
   catalog:
     type: object
     title: Catalog
-    description: The definition of a resource catalog
+    description: The definition of a resource catalog.
     unevaluatedProperties: false
     properties:
       endpoint:
         $ref: '#/$defs/endpoint'
         title: CatalogEndpoint
-        description: The root URL where the catalog is hosted
+        description: The root URL where the catalog is hosted.
     required: [ endpoint ]
   runtimeExpression:
     type: string
@@ -1544,7 +1553,8 @@ $defs:
   processResult:
     type: object
     title: ProcessResult
-    description: The object returned by a run task when its return type has been set 'all'
+    description: The object returned by a run task when its return type has been set 'all'.
+    unevaluatedProperties: false
     properties:
       code:
         type: integer
@@ -1553,9 +1563,95 @@ $defs:
       stdout:
         type: string
         title: ProcessStandardOutput
-        description: The content of the process's STDOUT
+        description: The content of the process's STDOUT.
       stderr:
         type: string
         title: ProcessStandardError
-        description: The content of the process's STDERR
+        description: The content of the process's STDERR.
     required: [ code, stdout, stderr ]
+  asyncApiServer:
+    type: object
+    title: AsyncApiServer
+    description: Configures the target server of an AsyncAPI operation.
+    unevaluatedProperties: false
+    properties:
+      name:
+        type: string
+        title: AsyncApiServerName
+        description: The target server's name.
+      variables:
+        type: object
+        title: AsyncApiServerVariables
+        description: The target server's variables, if any.
+    required: [ name ]
+  asyncApiOutboundMessage:
+    type: object
+    title: AsyncApiOutboundMessage
+    description: An object used to configure the message to publish using the target operation.
+    unevaluatedProperties: false
+    properties:
+      payload:
+        type: object
+        title: AsyncApiMessagePayload
+        description: The message's payload, if any.
+        additionalProperties: true
+      headers:
+        type: object
+        title: AsyncApiMessageHeaders
+        description: The message's headers, if any.
+        additionalProperties: true
+  asyncApiInboundMessage:
+    type: object
+    title: AsyncApiInboundMessage
+    description: Represents a message counsumed by an AsyncAPI subscription.
+    allOf:
+      - $ref: '#/$defs/asyncApiOutboundMessage'
+    properties:
+      correlationId:
+        type: string
+        title: AsyncApiMessageCorrelationId
+        description: The message's correlation id, if any.
+  asyncApiSubscription:
+    type: object
+    title: AsyncApiSubscription
+    description: An object used to configure the subscription to messages consumed using the target operation.
+    unevaluatedProperties: false
+    properties:
+      filter:
+        $ref: '#/$defs/runtimeExpression'
+        title: AsyncApiSubscriptionCorrelation
+        description: A runtime expression, if any, used to filter consumed messages.
+      consume:
+        $ref: '#/$defs/asyncApiMessageConsumptionPolicy'
+        title: AsyncApiMessageConsumptionPolicy
+        description: An object used to configure the subscription's message consumption policy.
+    required: [ consume ]
+  asyncApiMessageConsumptionPolicy:
+    type: object
+    title: AsyncApiMessageConsumptionPolicy
+    description: An object used to configure a subscription's message consumption policy.
+    unevaluatedProperties: false
+    properties:
+      for:
+        $ref: '#/$defs/duration'
+        title: AsyncApiMessageConsumptionPolicyFor
+        description: Specifies the time period over which messages will be consumed.
+    oneOf:
+      - properties:
+          amount:
+            type: integer
+            title: AsyncApiMessageConsumptionPolicyAmount
+            description: The amount of (filtered) messages to consume before disposing of the subscription.
+        required: [ amount ]
+      - properties:
+          while:
+            $ref: '#/$defs/runtimeExpression'
+            title: AsyncApiMessageConsumptionPolicyWhile
+            description: A runtime expression evaluated after each consumed (filtered) message to decide if message consumption should continue.
+        required: [ while ]
+      - properties:
+          until:
+            $ref: '#/$defs/runtimeExpression'
+            title: AsyncApiMessageConsumptionPolicyUntil
+            description: A runtime expression evaluated before each consumed (filtered) message to decide if message consumption should continue.
+        required: [ until ]

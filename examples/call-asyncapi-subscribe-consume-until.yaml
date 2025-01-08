@@ -1,0 +1,18 @@
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: examples
+  name: bearer-auth
+  version: '0.1.0'
+do:
+  - getNotifications:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        channel: /notifications
+        subscription:
+          filter: '${ .correlationId == $context.userId and .payload.from.firstName == $context.contact.firstName and .payload.from.lastName == $context.contact.lastName }'
+          consume:
+            for:
+              minutes: 30
+            until: '${ ($context.consumedMessages | length) == 5 }'
