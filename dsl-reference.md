@@ -1916,7 +1916,7 @@ do:
       run:
         container:
           image: fake-image
-      return: stderr
+        return: stderr
 
   - runScript:
       run:
@@ -1924,13 +1924,13 @@ do:
           language: js
           code: >
             Some cool multiline script
-      return: code
+        return: code
 
   - runShell:
       run:
         shell:
           command: 'echo "Hello, ${ .user.name }"'
-      return: all
+        return: all
 
   - runWorkflow:
       run:
@@ -1939,5 +1939,5 @@ do:
           name: do-stuff
           version: '0.1.0'
           input: {}
-      return: none
+        return: none
 ```
