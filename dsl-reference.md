@@ -412,7 +412,7 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 |:--|:---:|:---:|:---|
 | document | [`externalResource`](#external-resource) | `yes` | The OpenAPI document that defines the operation to call. |
 | operationId | `string` | `yes` | The id of the OpenAPI operation to call. |
-| arguments | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
+| parameters | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
 | authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the OpenAPI operation. |
 | output | `string` | `no` | The OpenAPI call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
 
