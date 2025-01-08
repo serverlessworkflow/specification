@@ -55,6 +55,7 @@
   + [HTTP Response](#http-response)
   + [HTTP Request](#http-request)
   + [URI Template](#uri-template)
+  + [Container Lifetime](#container-lifetime)
 
 ## Abstract
 
@@ -772,6 +773,7 @@ Enables the execution of external processes encapsulated within a containerized 
 | ports | `map` | `no` | The container's port mappings, if any  |
 | volumes | `map` | `no` | The container's volume mappings, if any  |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured process |
+| lifetime | [`containerLifetime`](#container-lifetime) | `no` | An object used to configure the container's lifetime. |
 
 ###### Examples
 
@@ -1887,4 +1889,34 @@ This has the following limitations compared to runtime expressions:
 
 ```yaml
 uri: https://petstore.swagger.io/v2/pet/{petId}
+```
+
+### Container Lifetime
+
+Configures the lifetime of a container.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| cleanup | `string` | `yes` | The cleanup policy to use.<br>*Supported values are:<br>- `always`: the container is deleted immediately after execution.<br>-`never`: the runtime should never delete the container.<br>-`eventually`: the container is deleted after a configured amount of time after its execution.*<br>*Defaults to `never`.* |
+| after | [`duration`](#duration) | `no` | The [`duration`](#duration), if any, after which to delete the container once executed.<br>*Required if `cleanup` has been set to `eventually`, otherwise ignored.* |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: run-container-example
+  version: '0.1.0'
+do:
+  - runContainer:
+      run:
+        container:
+          image: fake-image
+          lifetime:
+            cleanup: eventually
+            after:
+              minutes: 30
 ```
