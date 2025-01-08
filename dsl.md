@@ -343,18 +343,20 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 | input | `any` | The task's transformed input. |
 | output | `any` | The task's transformed output. |
 | secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
+| authorization | [`authorizationDescriptor`](#authorization-descriptor) | Describes the resolved authorization, as defined by the task's authentication, if any. |
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
 | workflow | [`workflowDescriptor`](#workflow-descriptor) | Describes the current workflow. |
 | runtime | [`runtimeDescriptor`](#runtime-descriptor) | Describes the runtime. |
+
 
 ##### Runtime Descriptor
 
 This argument contains information about the runtime executing the workflow.
 
 | Name | Type | Description | Example |
-|:-----|:----:|:------------| ------- |
+|:-----|:----:|:------------|:--------|
 | name | `string` | A human friendly name for the runtime. | `Synapse`, `Sonata` |
-| version | `string` | The version of the runtime. This can be an arbitrary string | a incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
+| version | `string` | The version of the runtime. This can be an arbitrary string | An incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
 | metadata | `map` | An object/map of implementation specific key-value pairs. This can be chosen by runtime implementors and usage of this argument signals that a given workflow definition might not be runtime agnostic | A Software as a Service (SaaS) provider might choose to expose information about the tenant the workflow is executed for e.g. `{ "organization": { "id": "org-ff51cff2-fc83-4d70-9af1-8dacdbbce0be", "name": "example-corp" }, "featureFlags": ["fastZip", "arm64"] }`.  |
 
 ##### Workflow Descriptor
@@ -377,6 +379,13 @@ This argument contains information about the runtime executing the workflow.
 | output | `any` | The task's *raw* output (i.e. *BEFORE* the `output.as` expression). | |
 | startedAt | [`dateTimeDescriptor`](#datetime-descriptor) | The start time of the task | |
 
+##### Authorization Descriptor
+
+| Name   | Type   | Description | Example |
+|:-------|:------:|:------------|:--------|
+| scheme | `string` | The resolved authorization scheme. | `Bearer` |
+| parameter | `string` | The resolved authorization parameter. | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJVadQssw5c` |
+
 ##### DateTime Descriptor
 
 | Name | Type | Description | Example |
@@ -387,15 +396,15 @@ This argument contains information about the runtime executing the workflow.
 
 The following table shows which arguments are available for each runtime expression:
 
-| Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$output` | `$secrets` | `$task` | `$workflow` |
-|:-------------------|:---------:|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|
-| Workflow `input.from` | Raw workflow input | Transformed workflow input | | | | ✔ | | ✔ |
-| Task `input.from` | Raw task input (i.e. transformed workflow input for the first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | | ✔ | ✔ | ✔ |
-| Task `if` | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
-| Task definition | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
-| Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ |
-| Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | | ✔ | | ✔ |
+| Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$output` | `$secrets` | `$task` | `$workflow` | `$runtime` | `$authorization` |
+|:-------------------|:---------:|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|:----------:|:----------:|
+| Workflow `input.from` | Raw workflow input | Transformed workflow input | | | | ✔ | | ✔ | ✔ | |
+| Task `input.from` | Raw task input (i.e. transformed workflow input for the first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | | ✔ | ✔ | ✔ | ✔ | |
+| Task `if` | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | |
+| Task definition | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | | ✔ | | ✔ | ✔ | |
 
 ### Fault Tolerance
 
