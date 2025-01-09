@@ -1253,7 +1253,7 @@ cancelledAt: '2024-07-26T16:59:57-05:00'
 
 ##### Workflow Faulted Event
 
-The data carried by the cloud event that notifies that notifies that a workflow has faulted.
+The data carried by the cloud event that notifies that a workflow has faulted.
 
 ###### Properties
 
