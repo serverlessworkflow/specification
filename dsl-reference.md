@@ -1299,7 +1299,7 @@ output:
 
 ##### Workflow Status Changed Event
 
-The data carried by the cloud event that notifies that notifies that the status phase of a workflow has changed.
+The data carried by the cloud event that notifies that the status phase of a workflow has changed.
 
 ###### Properties
 
