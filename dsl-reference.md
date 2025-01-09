@@ -56,6 +56,10 @@
   + [HTTP Request](#http-request)
   + [URI Template](#uri-template)
   + [Container Lifetime](#container-lifetime)
+  + [Process Result](#process-result)
+  + [AsyncAPI Server](#asyncapi-server)
+  + [AsyncAPI Message](#asyncapi-message)
+  + [AsyncAPI Subscription](#asyncapi-subscription)
 
 ## Abstract
 
@@ -300,15 +304,16 @@ The [AsyncAPI Call](#asyncapi-call) enables workflows to interact with external 
 
 ###### Properties
 
-| Name | Type | Required | Description|
-|:--|:---:|:---:|:---|
-| document | [`externalResource`](#external-resource) | `yes` | The AsyncAPI document that defines the operation to call. |
-| operationRef | `string` | `yes` | A reference to the AsyncAPI operation to call. |
-| server | `string` | `no` | A reference to the server to call the specified AsyncAPI operation on.<br>If not set, default to the first server matching the operation's channel. |
-| message | `string` | `no` | The name of the message to use. <br>If not set, defaults to the first message defined by the operation. |
-| binding | `string` | `no` | The name of the binding to use. <br>If not set, defaults to the first binding defined by the operation |
-| payload | `any` | `no` | The operation's payload, as defined by the configured message |
-| authentication | `string`<br>[`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the AsyncAPI operation. |
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| document | [`externalResource`](#external-resource) | `yes` | The AsyncAPI document that defines the [operation](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationObject) to call. |
+| channel | `string` | `yes` | The name of the channel on which to perform the operation. The operation to perform is defined by declaring either `message`, in which case the [channel](https://v2.asyncapi.com/docs/reference/specification/v2.6.0#channelItemObject)'s `publish` operation will be executed, or `subscription`, in which case the [channel](https://v2.asyncapi.com/docs/reference/specification/v2.6.0#channelItemObject)'s `subscribe` operation will be executed.<br>*Used only in case the referenced document uses AsyncAPI `v2.6.0`.*  |
+| operation | `string` | `yes` | A reference to the AsyncAPI [operation](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationObject) to call.<br>*Used only in case the referenced document uses AsyncAPI `v3.0.0`.*  |
+| server | [`asyncApiServer`](#asyncapi-server) | `no` | An object used to configure to the [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject) to call the specified AsyncAPI [operation](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationObject) on.<br>If not set, default to the first [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject) matching the operation's channel. |
+| protocol | `string` | `no` | The [protocol](https://www.asyncapi.com/docs/reference/specification/v3.0.0#definitionsProtocol) to use to select the target [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject). <br>Ignored if `server` has been set.<br>*Supported values are:  `amqp`, `amqp1`, `anypointmq`, `googlepubsub`, `http`, `ibmmq`, `jms`, `kafka`, `mercure`, `mqtt`, `mqtt5`, `nats`, `pulsar`, `redis`, `sns`, `solace`, `sqs`, `stomp` and `ws`* |
+| message  | [`asyncApiMessage`](#asyncapi-message) | `no` | An object used to configure the message to publish using the target operation.<br>*Required if `subscription` has not been set.* |
+| subscription | [`asyncApiSubscription`](#asyncapi-subscription) | `no` | An object used to configure the subscription to messages consumed using the target operation.<br>*Required if `message` has not been set.*  |
+| authentication | `string`<br>[`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the AsyncAPI operation. | 
 
 ###### Examples
 
@@ -319,17 +324,35 @@ document:
   name: asyncapi-example
   version: '0.1.0'
 do:
-  - findPet:
+  - publishGreetings:
       call: asyncapi
       with:
         document:
           endpoint: https://fake.com/docs/asyncapi.json
-        operationRef: findPetsByStatus
-        server: staging
-        message: getPetByStatusQuery
-        binding: http
-        payload:
-          petId: ${ .pet.id }
+        operation: greet
+        server:
+          name: greetingsServer
+          variables:
+            environment:  dev
+        message:
+          payload:
+            greetings: Hello, World!
+          headers:
+            foo: bar
+            bar: baz
+  - subscribeToChatInbox:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: chat-inbox
+        protocol: http
+        subscription:
+          filter: ${ . == $workflow.input.chat.roomId } 
+          consume:
+            amount: 5
+            for:
+              seconds: 10
 ```
 
 ##### gRPC Call
@@ -412,7 +435,7 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 |:--|:---:|:---:|:---|
 | document | [`externalResource`](#external-resource) | `yes` | The OpenAPI document that defines the operation to call. |
 | operationId | `string` | `yes` | The id of the OpenAPI operation to call. |
-| arguments | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
+| parameters | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
 | authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the OpenAPI operation. |
 | output | `string` | `no` | The OpenAPI call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
 
@@ -717,13 +740,14 @@ Provides the capability to execute external [containers](#container-process), [s
 
 ##### Properties
 
-| Name | Type | Required | Description|
+| Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | run.container | [`container`](#container-process) | `no` | The definition of the container to run.<br>*Required if `script`, `shell` and `workflow` have not been set.* |
 | run.script | [`script`](#script-process) | `no` | The definition of the script to run.<br>*Required if `container`, `shell` and `workflow` have not been set.* |
 | run.shell | [`shell`](#shell-process) | `no` | The definition of the shell command to run.<br>*Required if `container`, `script` and `workflow` have not been set.* |
 | run.workflow | [`workflow`](#workflow-process) | `no` | The definition of the workflow to run.<br>*Required if `container`, `script` and `shell` have not been set.* |
-| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*Defaults to `true`.* |
+| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*When set to `false`, the task cannot wait for the process to complete and thus cannot output the process’s result. In this case, it should simply output its transformed input.*<br>*Defaults to `true`.* |
+| return | `string` | `no` | Configures the output of the process.<br>*Supported values are:*<br>*- `stdout`: Outputs the content of the process **STDOUT**.*<br>*- `stderr`: Outputs the content of the process **STDERR**.*<br>*- `code`:  Outputs the process's **exit code**.*<br>*- `all`: Outputs the **exit code**, the **STDOUT** content and the **STDERR** content, wrapped into a new [processResult](#process-result) object.*<br>*- `none`: Does not output anything.*<br>*Defaults to `stdout`.* |
 
 ##### Examples
 
@@ -1901,6 +1925,17 @@ Configures the lifetime of a container.
 |----------|:----:|:--------:|-------------|
 | cleanup | `string` | `yes` | The cleanup policy to use.<br>*Supported values are:<br>- `always`: the container is deleted immediately after execution.<br>-`never`: the runtime should never delete the container.<br>-`eventually`: the container is deleted after a configured amount of time after its execution.*<br>*Defaults to `never`.* |
 | after | [`duration`](#duration) | `no` | The [`duration`](#duration), if any, after which to delete the container once executed.<br>*Required if `cleanup` has been set to `eventually`, otherwise ignored.* |
+### Process Result
+
+Describes the result of a process.
+
+#### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| code | `integer` | `yes` | The process's exit code. |
+| stdout | `string` | `yes` | The process's **STDOUT** output. |
+| stderr | `string` | `yes` | The process's **STDERR** output. |
 
 #### Examples
 
@@ -1919,4 +1954,173 @@ do:
             cleanup: eventually
             after:
               minutes: 30
+        return: stderr
+
+  - runScript:
+      run:
+        script:
+          language: js
+          code: >
+            Some cool multiline script
+        return: code
+
+  - runShell:
+      run:
+        shell:
+          command: 'echo "Hello, ${ .user.name }"'
+        return: all
+
+  - runWorkflow:
+      run:
+        workflow:
+          namespace: another-one
+          name: do-stuff
+          version: '0.1.0'
+          input: {}
+        return: none
+```
+
+### AsyncAPI Server
+
+Configures the target server of an AsyncAPI operation.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| name | `string` | `yes` | The name of the [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject) to call the specified AsyncAPI operation on. |
+| variables | `object` | `no` | The target [server's variables](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverVariableObject), if any. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: asyncapi-example
+  version: '0.1.0'
+do:
+  - publishGreetings:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: greet
+        server:
+          name: greetingsServer
+          variables:
+            environment:  dev
+        message:
+          payload:
+            greetings: Hello, World!
+          headers:
+            foo: bar
+            bar: baz
+```
+
+### AsyncAPI Message
+
+Configures an AsyncAPI message to publish.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| payload | `object` | `no` | The message's payload, if any. |
+| headers | `object` | `no` | The message's headers, if any. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: asyncapi-example
+  version: '0.1.0'
+do:
+  - publishGreetings:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: greet
+        protocol: http
+        message:
+          payload:
+            greetings: Hello, World!
+          headers:
+            foo: bar
+            bar: baz
+```
+
+### AsyncAPI Subscription
+
+Configures a subscription to an AsyncAPI operation.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| filter | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter consumed messages. |
+| consume | [`subscriptionLifetime`](#asyncapi-subscription-lifetime) | `yes` | An object used to configure the subscription's lifetime. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: asyncapi-example
+  version: '0.1.0'
+do:
+  - subscribeToChatInboxForAmount:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: chat-inbox
+        protocol: http
+        subscription:
+          filter: ${ . == $workflow.input.chat.roomId } 
+          consume:
+            amount: 5
+            for:
+              seconds: 10
+```
+
+### AsyncAPI Subscription Lifetime
+
+Configures the lifetime of an AsyncAPI subscription
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| amount | `integer` | `no` | The amount of messages to consume.<br>*Required if `while` and `until` have not been set.* |
+| for | [`duration`](#duration) | `no` | The [`duration`](#duration) that defines for how long to consume messages. |
+| while | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to determine whether or not to keep consuming messages.<br>*Required if `amount` and `until` have not been set.* |
+| until | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to determine until when to consume messages.<br>*Required if `amount` and `while` have not been set.* |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: asyncapi-example
+  version: '0.1.0'
+do:
+  - subscribeToChatInboxUntil:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: chat-inbox
+        protocol: http
+        subscription:
+          filter: ${ . == $workflow.input.chat.roomId } 
+          consume:
+            until: '${ ($context.messages | length) == 5 }'
+            for:
+              seconds: 10
 ```
