@@ -348,6 +348,7 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 | workflow | [`workflowDescriptor`](#workflow-descriptor) | Describes the current workflow. |
 | runtime | [`runtimeDescriptor`](#runtime-descriptor) | Describes the runtime. |
 
+⚠️ **Warning**: Use `$secrets` with caution: incorporating them in expressions or passing them as call inputs may inadvertently expose sensitive information.
 
 ##### Runtime Descriptor
 
@@ -405,6 +406,8 @@ The following table shows which arguments are available for each runtime express
 | Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | ✔ |
 | Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
 | Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | | ✔ | | ✔ | ✔ | |
+
+⚠️ **Warning**: Use `$secrets` with caution: incorporating them in expressions or passing them as call inputs may inadvertently expose sensitive information.
 
 ### Fault Tolerance
 
