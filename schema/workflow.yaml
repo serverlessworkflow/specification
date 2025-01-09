@@ -630,6 +630,10 @@ $defs:
                     type: object
                     title: ContainerEnvironment
                     description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                  lifetime:
+                    $ref: '#/$defs/containerLifetime'
+                    title: ContainerLifetime
+                    description: An object, if any, used to configure the container's lifetime
                 required: [ image ]
             required: [ container ]
           - title: RunScript
@@ -1554,6 +1558,32 @@ $defs:
     title: RuntimeExpression
     description: A runtime expression.
     pattern: "^\\s*\\$\\{.+\\}\\s*$"
+  containerLifetime:
+    type: object
+    title: ContainerLifetime
+    description: The configuration of a container's lifetime
+    unevaluatedProperties: false
+    properties:
+      cleanup:
+        type: string
+        title: ContainerCleanupPolicy
+        description: The container cleanup policy to use
+        enum: [ always, never, eventually ]
+        default: never
+      after:
+        $ref: '#/$defs/duration'
+        title: ContainerLifetimeDuration
+        description: The duration after which to cleanup the container, in case the cleanup policy has been set to 'eventually'
+    required: [ cleanup ]
+    if:
+      properties:
+        cleanup:
+          const: eventually
+    then:
+      required: [ after ]
+    else:
+      not:
+        required: [ after ]
   processResult:
     type: object
     title: ProcessResult
