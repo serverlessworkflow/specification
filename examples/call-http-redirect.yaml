@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../schema/workflow.yaml
+document:
+  dsl: 1.0.0-alpha2
+  namespace: examples
+  name: http-query-params
+  version: 1.0.0-alpha2
+input:
+  schema:
+    format: json
+    document:
+      type: object
+      required:
+        - searchQuery
+      properties:
+        searchQuery:
+          type: string
+do:
+  - searchStarWarsCharacters:
+      call: http
+      with:
+        method: get
+        endpoint: https://swapi.dev/api/people/
+        query:
+          search: ${.searchQuery}
+        redirect: true
+      

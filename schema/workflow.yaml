@@ -350,29 +350,33 @@ $defs:
             properties:
               method:
                 type: string
-                title: WithHTTPMethod
+                title: HTTPMethod
                 description: The HTTP method of the HTTP request to perform.
               endpoint:
-                title: WithHTTPEndpoint
+                title: HTTPEndpoint
                 description: The HTTP endpoint to send the request to.
                 $ref: '#/$defs/endpoint'
               headers:
                 type: object
-                title: WithHTTPHeaders
+                title: HTTPHeaders
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.
               body:
-                title: WithHTTPBody
+                title: HTTPBody
                 description: The body, if any, of the HTTP request to perform.
               query:
                 type: object
-                title: WithHTTPQuery
+                title: HTTPQuery
                 description: A name/value mapping of the query parameters, if any, of the HTTP request to perform.
                 additionalProperties: true
               output:
                 type: string
-                title: WithHTTPOutput
+                title: HTTPOutput
                 description: The http call output format. Defaults to 'content'.
                 enum: [ raw, content, response ]
+              redirect:
+                type: boolean
+                title: HttpRedirect
+                description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
             required: [ method, endpoint ]
             unevaluatedProperties: false
       - title: CallOpenAPI
@@ -412,6 +416,10 @@ $defs:
                 enum: [ raw, content, response ]
                 title: WithOpenAPIOutput
                 description: The http call output format. Defaults to 'content'.
+              redirect:
+                type: boolean
+                title: HttpRedirect
+                description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
             required: [ document, operationId ]
             unevaluatedProperties: false
       - title: CallFunction

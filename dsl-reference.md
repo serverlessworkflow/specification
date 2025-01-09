@@ -408,6 +408,7 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 | body | `any` | `no` | The HTTP request body, if any. |
 | query | `map[string, any]` | `no` | A name/value mapping of the query parameters to use, if any. |
 | output | `string` | `no` | The http call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
+| redirect | `boolean` | `no` | Specifies whether redirection status codes (`300–399`) should be treated as errors.<br>*If set to `false`, runtimes must raise an error for response status codes outside the `200–299` range.*<br>*If set to `true`, they must raise an error for status codes outside the `200–399` range.*<br>*Defaults to `false`.* |
 
 ###### Examples
 
@@ -438,6 +439,7 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 | parameters | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
 | authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the OpenAPI operation. |
 | output | `string` | `no` | The OpenAPI call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
+| redirect | `boolean` | `no` | Specifies whether redirection status codes (`300–399`) should be treated as errors.<br>*If set to `false`, runtimes must raise an error for response status codes outside the `200–299` range.*<br>*If set to `true`, they must raise an error for status codes outside the `200–399` range.*<br>*Defaults to `false`.* |
 
 ###### Examples
 
