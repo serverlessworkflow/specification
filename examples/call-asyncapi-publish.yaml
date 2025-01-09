@@ -9,12 +9,12 @@ do:
       with:
         document:
           endpoint: https://fake.com/docs/asyncapi.json
-        operationRef: findPetsByStatus
-        server: staging
-        message: getPetByStatusQuery
-        binding: http
-        payload:
-          petId: ${ .pet.id }
+        operation: findPetsByStatus
+        server:
+          name: staging
+        message:
+          payload:
+            petId: ${ .pet.id }
         authentication:
           bearer:
             token: ${ .token }
