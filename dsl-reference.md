@@ -1235,7 +1235,7 @@ correlationKeys:
 
 ##### Workflow Cancelled Event
 
-The data carried by the cloud event that notifies that notifies that a workflow has been cancelled.
+The data carried by the cloud event that notifies that a workflow has been canceled.
 
 ###### Properties
 
