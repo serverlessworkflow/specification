@@ -1466,7 +1466,7 @@ error:
 
 ##### Task Completed Event
 
-The data carried by the cloud event that notifies that notifies that a task ran to completion.
+The data carried by the cloud event that notifies that a task ran to completion.
 
 ###### Properties
 
