@@ -80,6 +80,7 @@
   + [AsyncAPI Server](#asyncapi-server)
   + [AsyncAPI Message](#asyncapi-message)
   + [AsyncAPI Subscription](#asyncapi-subscription)
+  + [Workflow Definition Reference](#workflow-definition-reference)
 
 
 ## Abstract
@@ -326,7 +327,7 @@ The [AsyncAPI Call](#asyncapi-call) enables workflows to interact with external 
 ###### Properties
 
 | Name | Type | Required | Description |
-|:-------|:------:|:----------:|:--------------|
+|:-----|:----:|:--------:|:------------|
 | document | [`externalResource`](#external-resource) | `yes` | The AsyncAPI document that defines the [operation](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationObject) to call. |
 | channel | `string` | `yes` | The name of the channel on which to perform the operation. The operation to perform is defined by declaring either `message`, in which case the [channel](https://v2.asyncapi.com/docs/reference/specification/v2.6.0#channelItemObject)'s `publish` operation will be executed, or `subscription`, in which case the [channel](https://v2.asyncapi.com/docs/reference/specification/v2.6.0#channelItemObject)'s `subscribe` operation will be executed.<br>*Used only in case the referenced document uses AsyncAPI `v2.6.0`.*  |
 | operation | `string` | `yes` | A reference to the AsyncAPI [operation](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationObject) to call.<br>*Used only in case the referenced document uses AsyncAPI `v3.0.0`.*  |
@@ -2376,7 +2377,7 @@ Configures the target server of an AsyncAPI operation.
 #### Properties
 
 | Name | Type | Required | Description |
-|:-------|:------:|:----------:|:--------------|
+|:-----|:----:|:--------:|:------------|
 | name | `string` | `yes` | The name of the [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject) to call the specified AsyncAPI operation on. |
 | variables | `object` | `no` | The target [server's variables](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverVariableObject), if any. |
 
@@ -2414,7 +2415,7 @@ Configures an AsyncAPI message to publish.
 #### Properties
 
 | Name | Type | Required | Description |
-|:-------|:------:|:----------:|:--------------|
+|:-----|:----:|:--------:|:------------|
 | payload | `object` | `no` | The message's payload, if any. |
 | headers | `object` | `no` | The message's headers, if any. |
 
@@ -2449,7 +2450,7 @@ Configures a subscription to an AsyncAPI operation.
 #### Properties
 
 | Name | Type | Required | Description |
-|:-------|:------:|:----------:|:--------------|
+|:-----|:----:|:--------:|:------------|
 | filter | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter consumed messages. |
 | consume | [`subscriptionLifetime`](#asyncapi-subscription-lifetime) | `yes` | An object used to configure the subscription's lifetime. |
 
@@ -2484,7 +2485,7 @@ Configures the lifetime of an AsyncAPI subscription
 #### Properties
 
 | Name | Type | Required | Description |
-|:-------|:------:|:----------:|:--------------|
+|:-----|:----:|:--------:|:------------|
 | amount | `integer` | `no` | The amount of messages to consume.<br>*Required if `while` and `until` have not been set.* |
 | for | [`duration`](#duration) | `no` | The [`duration`](#duration) that defines for how long to consume messages. |
 | while | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to determine whether or not to keep consuming messages.<br>*Required if `amount` and `until` have not been set.* |
@@ -2512,4 +2513,24 @@ do:
             until: '${ ($context.messages | length) == 5 }'
             for:
               seconds: 10
+```
+
+### Workflow Definition Reference
+
+References a workflow definition.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-----|:----:|:--------:|:------------|
+| name | `string` | `yes` | The name of the referenced workflow definition. |
+| namespace | `string` | `yes` | The namespace of the referenced workflow definition. |
+| version | `string` | `yes` | The semantic version of the referenced workflow definition. |
+
+#### Examples
+
+```yaml
+name: greet
+namespace: samples
+version: '0.1.0-rc2'
 ```
