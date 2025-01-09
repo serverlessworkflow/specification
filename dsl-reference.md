@@ -1143,7 +1143,7 @@ The data carried by the cloud event that notifies that a workflow has started.
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | name | `string` | `yes` | The qualified name of the workflow that has started. |
-| definition | [`workflowDefinitionReference`](#workflow-definition-reference) | `yes` | An an object that describes the definition of the workflow that has started. |
+| definition | [`workflowDefinitionReference`](#workflow-definition-reference) | `yes` | An object that describes the definition of the workflow that has started. |
 | startedAt | `dateTime` | `yes` | The date and time at which the workflow has started. |
 
 ###### Examples
