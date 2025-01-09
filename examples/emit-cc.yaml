@@ -17,4 +17,4 @@ do:
               items:
                 - breed: dalmatian
                   quantity: 101
-        to: https://additional-cloud-event-sink.com/pub
+        cc: https://additional-cloud-event-sink.com/pub
