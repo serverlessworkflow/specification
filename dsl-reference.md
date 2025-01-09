@@ -1491,7 +1491,7 @@ output:
 
 ##### Task Status Changed Event
 
-The data carried by the cloud event that notifies that notifies that the status phase of a task has changed.
+The data carried by the cloud event that notifies that the status phase of a task has changed.
 
 ###### Properties
 
