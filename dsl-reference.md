@@ -30,6 +30,27 @@
     - [Try](#try)
     - [Wait](#wait)
   + [Flow Directive](#flow-directive)
+  + [Lifecycle Events](#lifecycle-events)
+    - [Workflow Lifecycle Events](#workflow-lifecycle-events)
+      + [Workflow Started](#workflow-started-event)
+      + [Workflow Suspended](#workflow-suspended-event)
+      + [Workflow Resumed](#workflow-resumed-event)
+      + [Workflow Correlation Started](#workflow-correlation-started-event)
+      + [Workflow Correlation Completed](#workflow-correlation-completed-event)
+      + [Workflow Cancelled](#workflow-cancelled-event)
+      + [Workflow Faulted](#workflow-faulted-event)
+      + [Workflow Completed](#workflow-completed-event)
+      + [Workflow Status Changed](#workflow-status-changed-event)
+    - [Task Lifecycle Events](#task-lifecycle-events)
+      + [Task Created](#task-created-event)
+      + [Task Started](#task-started-event)
+      + [Task Suspended](#task-suspended-event)
+      + [Task Resumed](#task-resumed-event)
+      + [Task Retried](#task-retried-event)
+      + [Task Cancelled](#task-cancelled-event)
+      + [Task Faulted](#task-faulted-event)
+      + [Task Completed](#task-completed-event)
+      + [Task Status Changed](#task-status-changed-event)
   + [External Resource](#external-resource)
   + [Authentication](#authentication)
     - [Basic](#basic-authentication)
@@ -1105,6 +1126,389 @@ Flow Directives are commands within a workflow that dictate its progression.
 | `"exit"` | Halts the current branch's execution, potentially terminating the entire workflow if the current task resides within the main branch. |
 | `"end"` | Provides a graceful conclusion to the workflow execution, signaling its completion explicitly. |
 | `string` | Continues the workflow at the task with the specified name |
+
+### Lifecycle Events
+
+Lifecycle events are [cloud events](https://github.com/cloudevents/spec) used to notify users and external services about key state changes in workflows and tasks.
+
+#### Workflow Lifecycle Events
+
+##### Workflow Started Event
+
+The data carried by the cloud event that notifies that a workflow has started.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow that has started. |
+| definition | [`workflowDefinitionReference`](#workflow-definition-reference) | `yes` | An an object that describes the definition of the workflow that has started. |
+| startedAt | `dateTime` | `yes` | The date and time at which the workflow has started. |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+definition:
+  name: orderPetWorkflow
+  namespace: samples
+  version: '1.0.0'
+startedAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Workflow Suspended Event
+
+The data carried by the cloud event that notifies that the execution of a workflow has been suspended.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow that has been suspended. |
+| suspendedAt | `dateTime` | `yes` | The date and time at which the workflow has been suspended. |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+suspendedAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Workflow Resumed Event
+
+The data carried by the cloud event that notifies that notifies that a workflow has been resumed.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow that has been resumed. |
+| resumedAt | `dateTime` | `yes` | The date and time at which the workflow has been resumed. |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+resumedAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Workflow Correlation Started Event
+
+The data carried by the cloud event that notifies that a workflow has started correlating events.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow that has started correlating events. |
+| startedAt | `dateTime` | `yes` | The date and time at which the workflow has started correlating events. |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+startedAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Workflow Correlation Completed Event
+
+The data carried by the cloud event that notifies that a workflow has completed correlating events.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow that has completed correlating events. |
+| completedAt | `dateTime` | `yes` | The date and time at which the workflow has completed correlating events. |
+| correlationKeys | `map` | `no` | A key/value mapping, if any, of the resolved correlation keys. |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+completedAt: '2024-07-26T16:59:57-05:00'
+correlationKeys:
+  petId: xt84hj202q14s
+  orderId: '0a7f8581-acb9-4133-a378-0460c98ea60c'
+```
+
+##### Workflow Cancelled Event
+
+The data carried by the cloud event that notifies that notifies that a workflow has been cancelled.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow that has been cancelled. |
+| cancelledAt | `dateTime` | `yes` | The date and time at which the workflow has been cancelled. |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+cancelledAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Workflow Faulted Event
+
+The data carried by the cloud event that notifies that notifies that a workflow has faulted.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow that has faulted. |
+| faultedAt | `dateTime` | `yes` | The date and time at which the workflow has faulted. |
+| error | [`error`](#error) | `yes` | The error that has cause the workflow to fault. |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+faultedAt: '2024-07-26T16:59:57-05:00'
+error:
+  type: https://serverlessworkflow.io/spec/1.0.0/errors/communication
+  title: Service Not Available
+  status: 503
+```
+
+##### Workflow Completed Event
+
+The data carried by the cloud event that notifies that notifies that a workflow ran to completion.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow ran to completion. |
+| completedAt | `dateTime` | `yes` | The date and time at which the workflow ran to completion. |
+| output | `map` | `no` | The workflow's output, if any. |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+completedAt: '2024-07-26T16:59:57-05:00'
+output:
+  orderId: '0a7f8581-acb9-4133-a378-0460c98ea60c'
+  petId: xt84hj202q14s
+  status: placed
+```
+
+##### Workflow Status Changed Event
+
+The data carried by the cloud event that notifies that notifies that the status phase of a workflow has changed.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| name | `string` | `yes` | The qualified name of the workflow which's status phase has changed. |
+| updatedAt | `dateTime` | `yes` | The date and time at which the workflow's status phase has changed. |
+| status | `string` | The workflow's current [status phase](https://github.com/serverlessworkflow/specification/blob/main/dsl.md#status-phases). |
+
+###### Examples
+
+```yaml
+name: orderPetWorkflow-ix7iryakiem8j.samples
+updatedAt: '2024-07-26T16:59:57-05:00'
+status: completed
+```
+
+#### Task Lifecycle Events
+
+##### Task Created Event
+
+The data carried by the cloud event that notifies that a task has been created.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task that has been created belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task that has been created. |
+| createdAt | `dateTime` | `yes` | The date and time at which the task has been created. |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+createdAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Task Started Event
+
+The data carried by the cloud event that notifies that a task has started.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task that has started belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task that has started. |
+| startedAt | `dateTime` | `yes` | The date and time at which the task has started. |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+startedAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Task Suspended Event
+
+The data carried by the cloud event that notifies that the execution of a task has been suspended.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task that has been suspended belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task that has been suspended. |
+| suspendedAt | `dateTime` | `yes` | The date and time at which the task has been suspended. |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+suspendedAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Task Resumed Event
+
+The data carried by the cloud event that notifies that notifies that a task has been resumed.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task that has been resumed belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task that has been resumed. |
+| resumedAt | `dateTime` | `yes` | The date and time at which the task has been resumed. |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+resumedAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Task Retried Event
+
+The data carried by the cloud event that notifies that notifies that a task is being retried.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task that is being retried belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task that is being retried. |
+| retriedAt | `dateTime` | `yes` | The date and time at which the task has been retried. |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+retriedAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Task Cancelled Event
+
+The data carried by the cloud event that notifies that notifies that a task has been cancelled.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task that has been cancelled belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task that has been cancelled. |
+| cancelledAt | `dateTime` | `yes` | The date and time at which the task has been cancelled. |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+cancelledAt: '2024-07-26T16:59:57-05:00'
+```
+
+##### Task Faulted Event
+
+The data carried by the cloud event that notifies that notifies that a task has faulted.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task that has faulted belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task that has faulted. |
+| faultedAt | `dateTime` | `yes` | The date and time at which the task has faulted. |
+| error | [`error`](#error) | `yes` | The error that has cause the task to fault. |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+faultedAt: '2024-07-26T16:59:57-05:00'
+error:
+  type: https://serverlessworkflow.io/spec/1.0.0/errors/communication
+  title: Service Not Available
+  status: 503
+```
+
+##### Task Completed Event
+
+The data carried by the cloud event that notifies that notifies that a task ran to completion.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task that ran to completion belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task that ran to completion. |
+| completedAt | `dateTime` | `yes` | The date and time at which the task ran to completion. |
+| output | `map` | `no` | The task's output, if any. |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+completedAt: '2024-07-26T16:59:57-05:00'
+output:
+  orderId: '0a7f8581-acb9-4133-a378-0460c98ea60c'
+  petId: xt84hj202q14s
+  status: placed
+```
+
+##### Task Status Changed Event
+
+The data carried by the cloud event that notifies that notifies that the status phase of a task has changed.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| workflow | `string` | `yes` | The qualified name of the workflow the task which's status phase has changed belongs to. |
+| task | `uri` | `yes` | A JSON Pointer that references the task which's status phase has changed. |
+| updatedAt | `dateTime` | `yes` | The date and time at which the task's status phase has changed. |
+| status | `string` | The task's current [status phase](https://github.com/serverlessworkflow/specification/blob/main/dsl.md#status-phases). |
+
+###### Examples
+
+```yaml
+workflow: orderPetWorkflow-ix7iryakiem8j.samples
+task: '/do/1/initialize'
+updatedAt: '2024-07-26T16:59:57-05:00'
+status: completed
+```
 
 ### External Resource
 
