@@ -491,10 +491,10 @@ $defs:
                 description: Defines the properties of event to emit.
                 required: [ source, type ]
             additionalProperties: true
-          to:
+          cc:
             $ref: '#/$defs/endpoint'
-            title: EmitEndpointDefinition
-            description: Defines the additional endpoint, if any, to emit the event to.
+            title: EmitCarbonCopyDefinition
+            description: Defines an additional endpoint, if any, to publish an event's carbon copy to.
         required: [ event ]
   forTask:
     type: object
