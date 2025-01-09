@@ -1276,7 +1276,7 @@ error:
 
 ##### Workflow Completed Event
 
-The data carried by the cloud event that notifies that notifies that a workflow ran to completion.
+The data carried by the cloud event that notifies that a workflow ran to completion.
 
 ###### Properties
 
