@@ -609,7 +609,7 @@ Allows workflows to execute multiple subtasks concurrently, enabling parallel pr
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently. | 
-| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output. Defaults to `false`. |
+| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*If set to `false`, the task returns an array that includes the outputs from each branch, preserving the order in which the branches are declared.*<br>*If to `true`, the task returns only the output of the winning branch.*<br>*Defaults to `false`.* |
 
 ##### Examples
 
@@ -818,6 +818,11 @@ do:
           image: fake-image
 ```
 
+> [!NOTE]
+> When a `container process` is executed, runtime implementations are recommended to follow a predictable naming convention for the container name. This can improve monitoring, logging, and container lifecycle management.
+>
+> The Serverless Workflow specification recommends using the following convention: `{workflow.name}-{uuid}.{workflow.namespace}-{task.name}`
+
 ##### Script Process
 
 Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
@@ -826,11 +831,20 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| language | `string` | `yes` | The language of the script to run |
+| language | `string` | `yes` | The language of the script to run.<br>*Supported values are: [`js`](https://tc39.es/ecma262/2024/) and [`python`](https://www.python.org/downloads/release/python-3131/).* |
 | code | `string` | `no` | The script's code.<br>*Required if `source` has not been set.* |
 | source | [externalResource](#external-resource) | `no` | The script's resource.<br>*Required if `code` has not been set.* |
 | arguments | `map` | `no` | A list of the arguments, if any, of the script to run |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured script process |
+
+> [!WARNING]
+> To ensure cross-compatibility, Serverless Workflow strictly limits the versions of supported scripting languages. These versions may evolve with future releases. If you wish to use a different version of a language, you may do so by utilizing the [`container process`](#container-process).
+
+**Supported languages**
+| Language | Version |
+|:-----------|:---------:|
+| `JavaScript` | [`ES2024`](https://tc39.es/ecma262/2024/) |
+| `Python` | [`3.13.x`](https://www.python.org/downloads/release/python-3131/) |
 
 ###### Examples
 
@@ -1110,6 +1124,9 @@ Flow Directives are commands within a workflow that dictate its progression.
 | `"exit"` | Halts the current branch's execution, potentially terminating the entire workflow if the current task resides within the main branch. |
 | `"end"` | Provides a graceful conclusion to the workflow execution, signaling its completion explicitly. |
 | `string` | Continues the workflow at the task with the specified name |
+
+> [!WARNING] 
+> Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
 
 ### External Resource
 
