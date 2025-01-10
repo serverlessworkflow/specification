@@ -183,6 +183,8 @@ Once the task has been executed, different things can happen:
 - `fault`: the task raised an uncaught error, which abruptly halts the workflow's execution and makes it transition to `faulted` [status phase](#status-phases).
 - `end`: the task explicitly and gracefully ends the workflow's execution. 
 
+⚠️ Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
+
 ### Data Flow
 
 In Serverless Workflow DSL, data flow management is crucial to ensure that the right data is passed between tasks and to the workflow itself.
