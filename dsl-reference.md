@@ -817,6 +817,11 @@ do:
           image: fake-image
 ```
 
+> [!NOTE]
+> When a `container process` is executed, runtime implementations are recommended to follow a predictable naming convention for the container name. This can improve monitoring, logging, and container lifecycle management.
+>
+> The Serverless Workflow specification recommends using the following convention: `{workflow.name}-{uuid}.{workflow.namespace}-{task.name}`
+
 ##### Script Process
 
 Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
