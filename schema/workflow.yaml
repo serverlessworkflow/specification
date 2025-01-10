@@ -625,7 +625,7 @@ $defs:
                   name:
                     type: string
                     title: ContainerName
-                    description: A runtime expression used to give specific name to the container, if any.
+                    description: A runtime expression, if any, used to give specific name to the container.
                   command:
                     type: string
                     title: ContainerCommand
