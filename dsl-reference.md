@@ -838,7 +838,7 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 | Language | Version |
 |:-----------|:---------:|
 | `JavaScript` | [`ES2024`](https://tc39.es/ecma262/2024/) |
-| `Python` | [`3.13.1`](https://www.python.org/downloads/release/python-3131/) |
+| `Python` | [`3.13.x`](https://www.python.org/downloads/release/python-3131/) |
 
 ###### Examples
 
