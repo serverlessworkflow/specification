@@ -1110,7 +1110,8 @@ Flow Directives are commands within a workflow that dictate its progression.
 | `"end"` | Provides a graceful conclusion to the workflow execution, signaling its completion explicitly. |
 | `string` | Continues the workflow at the task with the specified name |
 
-⚠️ Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
+> [!WARNING] 
+> Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
 
 ### External Resource
 
