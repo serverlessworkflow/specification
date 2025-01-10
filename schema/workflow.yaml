@@ -622,6 +622,10 @@ $defs:
                     type: string
                     title: ContainerImage
                     description: The name of the container image to run.
+                  name:
+                    type: string
+                    title: ContainerName
+                    description: A runtime expression used to give specific name to the container, if any.
                   command:
                     type: string
                     title: ContainerCommand

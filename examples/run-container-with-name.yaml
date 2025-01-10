@@ -1,0 +1,11 @@
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: run-container-with-name
+  version: '0.1.0'
+do:
+  - runContainer:
+      run:
+        container:
+          image: hello-world
+          name: ${ "hello-\(.workflow.document.name)-\(.task.name)-\(.workflow.id)" }
