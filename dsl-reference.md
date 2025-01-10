@@ -609,7 +609,7 @@ Allows workflows to execute multiple subtasks concurrently, enabling parallel pr
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently. | 
-| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output. Defaults to `false`. |
+| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*If set to `false`, the task returns an array that includes the outputs from each branch, preserving the order in which the branches are declared.*<br>*If to `true`, the task returns only the output of the winning branch.*<br>*Defaults to `false`.* |
 
 ##### Examples
 
