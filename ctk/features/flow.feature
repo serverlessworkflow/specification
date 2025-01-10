@@ -7,9 +7,10 @@ Feature: Flow Directive
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: implicit-sequence
+      version: '1.0.0'
     do:
       - setRed:
           set:
@@ -34,9 +35,10 @@ Feature: Flow Directive
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: explicit-sequence
+      version: '1.0.0'
     do:
       - setRed:
           set:

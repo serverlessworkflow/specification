@@ -1,4 +1,4 @@
-$id: https://serverlessworkflow.io/schemas/1.0.0-alpha1/workflow.yaml
+$id: https://serverlessworkflow.io/schemas/1.0.0-alpha5/workflow.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
 description: Serverless Workflow DSL - Workflow Schema.
 type: object
@@ -42,6 +42,11 @@ properties:
         type: object
         title: WorkflowTags
         description: A key/value mapping of the workflow's tags, if any.
+        additionalProperties: true
+      metadata:
+        type: object
+        title: WorkflowMetadata
+        description: Holds additional information about the workflow.
         additionalProperties: true
     required: [ dsl, namespace, name, version ]
   input:
@@ -96,14 +101,31 @@ properties:
         items:
           type: string
           description: The workflow's secrets.
+      timeouts:
+        type: object
+        title: UseTimeouts
+        description: The workflow's reusable timeouts.
+        additionalProperties:
+          $ref: '#/$defs/timeout'
+      catalogs:
+        type: object
+        title: UseCatalogs
+        description: The workflow's reusable catalogs.
+        additionalProperties:
+          $ref: '#/$defs/catalog'
   do:
     $ref: '#/$defs/taskList'
     title: Do
     description: Defines the task(s) the workflow must perform.
   timeout:
-    $ref: '#/$defs/timeout'
-    title: Timeout
-    description: The workflow's timeout configuration, if any.
+    title: DoTimeout
+    oneOf:
+      - $ref: '#/$defs/timeout'
+        title: TimeoutDefinition
+        description: The workflow's timeout configuration, if any.
+      - type: string
+        title: TimeoutReference
+        description: The name of the workflow's timeout, if any.
   output:
     $ref: '#/$defs/output'
     title: Output
@@ -164,13 +186,23 @@ $defs:
         title: TaskBaseExport
         description: Export task output to context.
       timeout:
-        $ref: '#/$defs/timeout'
-        title: TaskBaseTimeout
-        description: The task's timeout configuration, if any.
+        title: TaskTimeout
+        oneOf:
+          - $ref: '#/$defs/timeout'
+            title: TaskTimeoutDefinition
+            description: The task's timeout configuration, if any.
+          - type: string
+            title: TaskTimeoutReference
+            description: The name of the task's timeout, if any.
       then:
         $ref: '#/$defs/flowDirective'
         title: TaskBaseThen
         description: The flow directive to be performed upon completion of the task.
+      metadata:
+        type: object
+        title: TaskMetadata
+        description: Holds additional information about the task.
+        additionalProperties: true
   task:
     title: Task
     description: A discrete unit of work that contributes to achieving the overall objectives defined by the workflow.
@@ -209,33 +241,42 @@ $defs:
             properties:
               document:
                 $ref: '#/$defs/externalResource'
-                title: WithAsyncAPIDocument
+                title: AsyncAPIDocument
                 description: The document that defines the AsyncAPI operation to call.
-              operationRef:
+              channel:
                 type: string
-                title: WithAsyncAPIOperation
+                title: With
+                description: The name of the channel on which to perform the operation. Used only in case the referenced document uses AsyncAPI v2.6.0.
+              operation:
+                type: string
+                title: AsyncAPIOperation
                 description: A reference to the AsyncAPI operation to call.
               server:
+                $ref: '#/$defs/asyncApiServer'
+                title: AsyncAPIServer
+                description: An object used to configure to the server to call the specified AsyncAPI operation on.
+              protocol:
                 type: string
-                title: WithAsyncAPIServer
-                description: A a reference to the server to call the specified AsyncAPI operation on. If not set, default to the first server matching the operation's channel.
+                title: AsyncApiProtocol
+                description: The protocol to use to select the target server.
+                enum: [ amqp, amqp1, anypointmq, googlepubsub, http, ibmmq, jms, kafka, mercure, mqtt, mqtt5, nats, pulsar, redis, sns, solace, sqs, stomp, ws ]
               message:
-                type: string
-                title: WithAsyncAPIMessage
-                description: The name of the message to use. If not set, defaults to the first message defined by the operation.
-              binding:
-                type: string
-                title: WithAsyncAPIBinding
-                description: The name of the binding to use. If not set, defaults to the first binding defined by the operation.
-              payload:
-                type: object
-                title: WithAsyncAPIPayload
-                description: The payload to call the AsyncAPI operation with, if any.
+                $ref: '#/$defs/asyncApiOutboundMessage'
+                title: AsyncApiMessage
+                description: An object used to configure the message to publish using the target operation.
+              subscription:
+                $ref: '#/$defs/asyncApiSubscription'
+                title: AsyncApiSubscription
+                description: An object used to configure the subscription to messages consumed using the target operation.
               authentication:
                 $ref: '#/$defs/referenceableAuthenticationPolicy'
-                title: WithAsyncAPIAuthentication
+                title: AsyncAPIAuthentication
                 description: The authentication policy, if any, to use when calling the AsyncAPI operation.
-            required: [ document, operationRef ]
+            oneOf:
+              - required: [ document, operation, message ]
+              - required: [ document, operation, subscription ]
+              - required: [ document, channel, message ]
+              - required: [ document, channel, subscription ]
             unevaluatedProperties: false
       - title: CallGRPC
         description: Defines the GRPC call to perform.
@@ -309,29 +350,33 @@ $defs:
             properties:
               method:
                 type: string
-                title: WithHTTPMethod
+                title: HTTPMethod
                 description: The HTTP method of the HTTP request to perform.
               endpoint:
-                title: WithHTTPEndpoint
+                title: HTTPEndpoint
                 description: The HTTP endpoint to send the request to.
                 $ref: '#/$defs/endpoint'
               headers:
                 type: object
-                title: WithHTTPHeaders
+                title: HTTPHeaders
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.
               body:
-                title: WithHTTPBody
+                title: HTTPBody
                 description: The body, if any, of the HTTP request to perform.
               query:
                 type: object
-                title: WithHTTPQuery
+                title: HTTPQuery
                 description: A name/value mapping of the query parameters, if any, of the HTTP request to perform.
                 additionalProperties: true
               output:
                 type: string
-                title: WithHTTPOutput
+                title: HTTPOutput
                 description: The http call output format. Defaults to 'content'.
                 enum: [ raw, content, response ]
+              redirect:
+                type: boolean
+                title: HttpRedirect
+                description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
             required: [ method, endpoint ]
             unevaluatedProperties: false
       - title: CallOpenAPI
@@ -371,6 +416,10 @@ $defs:
                 enum: [ raw, content, response ]
                 title: WithOpenAPIOutput
                 description: The http call output format. Defaults to 'content'.
+              redirect:
+                type: boolean
+                title: HttpRedirect
+                description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
             required: [ document, operationId ]
             unevaluatedProperties: false
       - title: CallFunction
@@ -450,6 +499,10 @@ $defs:
                 description: Defines the properties of event to emit.
                 required: [ source, type ]
             additionalProperties: true
+          cc:
+            $ref: '#/$defs/endpoint'
+            title: EmitCarbonCopyDefinition
+            description: Defines an additional endpoint, if any, to publish an event's carbon copy to.
         required: [ event ]
   forTask:
     type: object
@@ -521,9 +574,14 @@ $defs:
         unevaluatedProperties: false
         properties:
           error:
-            $ref: '#/$defs/error'
-            title: RaiseError
-            description: Defines the error to raise.
+            title: RaiseTaskError
+            oneOf:
+              - $ref: '#/$defs/error'
+                title: RaiseErrorDefinition
+                description: Defines the error to raise.
+              - type: string
+                title: RaiseErrorReference
+                description: The name of the error to raise
         required: [ error ]
   runTask:
     type: object
@@ -537,6 +595,19 @@ $defs:
         type: object
         title: RunTaskConfiguration
         description: The configuration of the process to execute.
+        unevaluatedProperties: false
+        properties:
+          await:
+            type: boolean
+            default: true
+            title: AwaitProcessCompletion
+            description: Whether to await the process completion before continuing.
+          return:
+            type: string
+            title: ProcessReturnType
+            description: Configures the output of the process.
+            enum: [ stdout, stderr, code, all, none ]
+            default: stdout
         oneOf:
           - title: RunContainer
             description: Enables the execution of external processes encapsulated within a containerized environment.
@@ -567,6 +638,10 @@ $defs:
                     type: object
                     title: ContainerEnvironment
                     description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                  lifetime:
+                    $ref: '#/$defs/containerLifetime'
+                    title: ContainerLifetime
+                    description: An object, if any, used to configure the container's lifetime
                 required: [ image ]
             required: [ container ]
           - title: RunScript
@@ -733,7 +808,10 @@ $defs:
           errors:
             type: object
             title: CatchErrors
-            description: The configuration of a concept used to catch errors.
+            properties:
+              with:
+                $ref: '#/$defs/errorFilter'
+            description: static error filter
           as:
             type: string
             title: CatchAs
@@ -741,15 +819,19 @@ $defs:
           when:
             type: string
             title: CatchWhen
-            description: A runtime expression used to determine whether or not to catch the filtered error.
+            description: A runtime expression used to determine whether to catch the filtered error.
           exceptWhen:
             type: string
             title: CatchExceptWhen
-            description: A runtime expression used to determine whether or not to catch the filtered error.
+            description: A runtime expression used to determine whether not to catch the filtered error.
           retry:
-            $ref: '#/$defs/retryPolicy'
-            title: TryTaskCatchRetry
-            description: The retry policy to use, if any, when catching errors.
+            oneOf:
+              - $ref: '#/$defs/retryPolicy'
+                title: RetryPolicyDefinition
+                description: The retry policy to use, if any, when catching errors.
+              - type: string
+                title: RetryPolicyReference
+                description: The name of the retry policy to use, if any, when catching errors.
           do:
             $ref: '#/$defs/taskList'
             title: TryTaskCatchDo
@@ -770,7 +852,8 @@ $defs:
     title: FlowDirective
     description: Represents different transition options for a workflow.
     anyOf:
-      - type: string
+      - title: FlowDirectiveEnum
+        type: string
         enum: [ continue, exit, end ]
         default: continue
       - type: string
@@ -859,7 +942,7 @@ $defs:
           description: The configuration of the digest authentication policy.
           unevaluatedProperties: false
           oneOf:
-            - title: BasicAuthenticationProperties
+            - title: DigestAuthenticationProperties
               description: Inline configuration of the digest authentication policy.
               properties:
                 username:
@@ -885,6 +968,7 @@ $defs:
             - type: object
               title: OAuth2ConnectAuthenticationProperties
               description: The inline configuration of the OAuth2 authentication policy.
+              unevaluatedProperties: false
               allOf:
                 - $ref: '#/$defs/oauth2AuthenticationProperties'
                 - type: object
@@ -928,6 +1012,7 @@ $defs:
             - $ref: '#/$defs/oauth2AuthenticationProperties'
               title: OpenIdConnectAuthenticationProperties
               description: The inline configuration of the OpenIdConnect authentication policy.
+              unevaluatedProperties: false
             - $ref: '#/$defs/secretBasedAuthenticationPolicy'
               title: OpenIdConnectAuthenticationPolicySecret
               description: Secret based configuration of the OpenIdConnect authentication policy.
@@ -938,8 +1023,7 @@ $defs:
     description: Inline configuration of the OAuth2 authentication policy.
     properties:
       authority:
-        type: string
-        format: uri-template
+        $ref: '#/$defs/uriTemplate'
         title: OAuth2AutenthicationDataAuthority
         description: The URI that references the OAuth2 authority to use.
       grant:
@@ -1073,11 +1157,10 @@ $defs:
         description: A URI reference that identifies the error type.
         oneOf:
           - title: LiteralErrorType
+            $ref: '#/$defs/uriTemplate'
             description: The literal error type.
-            type: string
-            format: uri-template
-          - $ref: '#/$defs/runtimeExpression'
-            title: ExpressionErrorType
+          - title: ExpressionErrorType
+            $ref: '#/$defs/runtimeExpression'
             description: An expression based error type.
       status:
         type: integer
@@ -1103,14 +1186,44 @@ $defs:
         title: ErrorDetails
         description: A human-readable explanation specific to this occurrence of the error.
     required: [ type, status ]
+  errorFilter:
+    type: object
+    title: ErrorFilter
+    description: Error filtering base on static values. For error filtering on dynamic values, use catch.when property
+    minProperties: 1
+    properties:
+      type:
+        type: string
+        description: if present, means this value should be used for filtering
+      status: 
+        type: integer
+        description: if present, means this value should be used for filtering
+      instance:
+        type: string
+        description: if present, means this value should be used for filtering
+      title: 
+        type: string
+        description: if present, means this value should be used for filtering
+      details:
+        type: string
+        description: if present, means this value should be used for filtering
+  uriTemplate:
+    title: UriTemplate
+    anyOf:
+      - title: LiteralUriTemplate
+        type: string
+        format: uri-template
+        pattern: "^[A-Za-z][A-Za-z0-9+\\-.]*://.*"
+      - title: LiteralUri
+        type: string
+        format: uri
+        pattern: "^[A-Za-z][A-Za-z0-9+\\-.]*://.*"
   endpoint:
     title: Endpoint
     description: Represents an endpoint.
     oneOf:
       - $ref: '#/$defs/runtimeExpression'
-      - title: LiteralEndpoint
-        type: string
-        format: uri-template
+      - $ref: '#/$defs/uriTemplate'
       - title: EndpointConfiguration
         type: object
         unevaluatedProperties: false
@@ -1121,10 +1234,9 @@ $defs:
             oneOf:
               - title: LiteralEndpointURI
                 description: The literal endpoint's URI.
-                type: string
-                format: uri-template
-              - $ref: '#/$defs/runtimeExpression'
-                title: ExpressionEndpointURI
+                $ref: '#/$defs/uriTemplate'
+              - title: ExpressionEndpointURI
+                $ref: '#/$defs/runtimeExpression'
                 description: An expression based endpoint's URI.
           authentication:
             $ref: '#/$defs/referenceableAuthenticationPolicy'
@@ -1144,9 +1256,7 @@ $defs:
         title: EventSource
         description: Identifies the context in which an event happened.
         oneOf:
-          - title: LiteralSource
-            type: string
-            format: uri-template
+          - $ref: '#/$defs/uriTemplate'
           - $ref: '#/$defs/runtimeExpression'
       type:
         type: string
@@ -1173,11 +1283,10 @@ $defs:
         description: The schema describing the event format.
         oneOf:
           - title: LiteralDataSchema
+            $ref: '#/$defs/uriTemplate'
             description: The literal event data schema.
-            type: string
-            format: uri-template
-          - $ref: '#/$defs/runtimeExpression'
-            title: ExpressionDataSchema
+          - title: ExpressionDataSchema
+            $ref: '#/$defs/runtimeExpression'
             description: An expression based event data schema.
     additionalProperties: true
   eventConsumptionStrategy:
@@ -1468,8 +1577,150 @@ $defs:
         title: TimeoutAfter
         description: The duration after which to timeout.
     required: [ after ]
+  catalog:
+    type: object
+    title: Catalog
+    description: The definition of a resource catalog.
+    unevaluatedProperties: false
+    properties:
+      endpoint:
+        $ref: '#/$defs/endpoint'
+        title: CatalogEndpoint
+        description: The root URL where the catalog is hosted.
+    required: [ endpoint ]
   runtimeExpression:
     type: string
     title: RuntimeExpression
     description: A runtime expression.
     pattern: "^\\s*\\$\\{.+\\}\\s*$"
+  containerLifetime:
+    type: object
+    title: ContainerLifetime
+    description: The configuration of a container's lifetime
+    unevaluatedProperties: false
+    properties:
+      cleanup:
+        type: string
+        title: ContainerCleanupPolicy
+        description: The container cleanup policy to use
+        enum: [ always, never, eventually ]
+        default: never
+      after:
+        $ref: '#/$defs/duration'
+        title: ContainerLifetimeDuration
+        description: The duration after which to cleanup the container, in case the cleanup policy has been set to 'eventually'
+    required: [ cleanup ]
+    if:
+      properties:
+        cleanup:
+          const: eventually
+    then:
+      required: [ after ]
+    else:
+      not:
+        required: [ after ]
+  processResult:
+    type: object
+    title: ProcessResult
+    description: The object returned by a run task when its return type has been set 'all'.
+    unevaluatedProperties: false
+    properties:
+      code:
+        type: integer
+        title: ProcessExitCode
+        description: The process's exit code.
+      stdout:
+        type: string
+        title: ProcessStandardOutput
+        description: The content of the process's STDOUT.
+      stderr:
+        type: string
+        title: ProcessStandardError
+        description: The content of the process's STDERR.
+    required: [ code, stdout, stderr ]
+  asyncApiServer:
+    type: object
+    title: AsyncApiServer
+    description: Configures the target server of an AsyncAPI operation.
+    unevaluatedProperties: false
+    properties:
+      name:
+        type: string
+        title: AsyncApiServerName
+        description: The target server's name.
+      variables:
+        type: object
+        title: AsyncApiServerVariables
+        description: The target server's variables, if any.
+    required: [ name ]
+  asyncApiOutboundMessage:
+    type: object
+    title: AsyncApiOutboundMessage
+    description: An object used to configure the message to publish using the target operation.
+    unevaluatedProperties: false
+    properties:
+      payload:
+        type: object
+        title: AsyncApiMessagePayload
+        description: The message's payload, if any.
+        additionalProperties: true
+      headers:
+        type: object
+        title: AsyncApiMessageHeaders
+        description: The message's headers, if any.
+        additionalProperties: true
+  asyncApiInboundMessage:
+    type: object
+    title: AsyncApiInboundMessage
+    description: Represents a message counsumed by an AsyncAPI subscription.
+    allOf:
+      - $ref: '#/$defs/asyncApiOutboundMessage'
+    properties:
+      correlationId:
+        type: string
+        title: AsyncApiMessageCorrelationId
+        description: The message's correlation id, if any.
+  asyncApiSubscription:
+    type: object
+    title: AsyncApiSubscription
+    description: An object used to configure the subscription to messages consumed using the target operation.
+    unevaluatedProperties: false
+    properties:
+      filter:
+        $ref: '#/$defs/runtimeExpression'
+        title: AsyncApiSubscriptionCorrelation
+        description: A runtime expression, if any, used to filter consumed messages.
+      consume:
+        $ref: '#/$defs/asyncApiMessageConsumptionPolicy'
+        title: AsyncApiMessageConsumptionPolicy
+        description: An object used to configure the subscription's message consumption policy.
+    required: [ consume ]
+  asyncApiMessageConsumptionPolicy:
+    type: object
+    title: AsyncApiMessageConsumptionPolicy
+    description: An object used to configure a subscription's message consumption policy.
+    unevaluatedProperties: false
+    properties:
+      for:
+        $ref: '#/$defs/duration'
+        title: AsyncApiMessageConsumptionPolicyFor
+        description: Specifies the time period over which messages will be consumed.
+    oneOf:
+      - properties:
+          amount:
+            type: integer
+            title: AsyncApiMessageConsumptionPolicyAmount
+            description: The amount of (filtered) messages to consume before disposing of the subscription.
+        required: [ amount ]
+      - properties:
+          while:
+            $ref: '#/$defs/runtimeExpression'
+            title: AsyncApiMessageConsumptionPolicyWhile
+            description: A runtime expression evaluated after each consumed (filtered) message to decide if message consumption should continue.
+        required: [ while ]
+      - properties:
+          until:
+            $ref: '#/$defs/runtimeExpression'
+            title: AsyncApiMessageConsumptionPolicyUntil
+            description: A runtime expression evaluated before each consumed (filtered) message to decide if message consumption should continue.
+        required: [ until ]

@@ -7,9 +7,10 @@ Feature: Raise Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: raise-custom-error
+      version: '1.0.0'
     do:
       - raiseError:
           raise:

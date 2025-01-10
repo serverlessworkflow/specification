@@ -1,8 +1,8 @@
 document:
-  dsl: '1.0.0'
+  dsl: '1.0.0-alpha5'
   namespace: default
   name: conditional-task
-  version: '1.0.0'
+  version: '0.1.0'
 do:
   - raiseErrorIfUnderage:
       if: .customer.age < 18

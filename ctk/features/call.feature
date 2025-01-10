@@ -11,9 +11,10 @@ Feature: Call Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: http-call-with-content-output
+      version: '1.0.0'
     do:
       - findPet:
           call: http
@@ -39,9 +40,10 @@ Feature: Call Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: http-call-with-response-output
+      version: '1.0.0'
     do:
       - getPet:
           call: http
@@ -66,9 +68,10 @@ Feature: Call Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: http-call-with-basic-auth
+      version: '1.0.0'
     do:
       - login:
           call: http
@@ -95,9 +98,10 @@ Feature: Call Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: openapi-call-with-content-output
+      version: '1.0.0'
     do:
       - findPet:
           call: openapi
@@ -123,9 +127,10 @@ Feature: Call Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: openapi-call-with-response-output
+      version: '1.0.0'
     do:
       - getPet:
           call: openapi

@@ -19,6 +19,10 @@
     - [Arguments](#runtime-expression-arguments)
   + [Fault Tolerance](#fault-tolerance)
   + [Timeouts](#timeouts)
+  + [Catalogs](#catalogs)
+    + [File Structure](#file-structure)
+    + [Default Catalog](#default-catalog)
+    + [Using Cataloged Functions](#using-cataloged-functions)
   + [Interoperability](#interoperability)
     - [Supported Protocols](#supported-protocols)
     - [Custom and Non-Standard Interactions](#custom-and-non-standard-interactions)
@@ -127,7 +131,7 @@ The Serverless Workflow DSL defines several default [task](dsl-reference.md#task
 - [Listen](dsl-reference.md#listen), used to listen for an [event](dsl-reference.md#event) or more.
 - [Raise](dsl-reference.md#raise), used to raise an [error](dsl-reference.md#error) and potentially fault the [workflow](dsl-reference.md#workflow).
 - [Run](dsl-reference.md#run), used to run a [container](dsl-reference.md#container-process), a [script](dsl-reference.md#script-process), a [shell](dsl-reference.md#shell-process) command or even another [workflow](dsl-reference.md#workflow-process). 
-- [Set](dsl-reference.md#set), used to dynamically set or update the [workflow](dsl-reference.md#workflow)'s data during the its execution. 
+- [Set](dsl-reference.md#set), used to dynamically set the [workflow](dsl-reference.md#workflow)'s data during the its execution. 
 - [Switch](dsl-reference.md#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
 - [Try](dsl-reference.md#try), used to attempt executing a specified [task](dsl-reference.md#task), and to handle any resulting [errors](dsl-reference.md#error) gracefully, allowing the [workflow](dsl-reference.md#workflow) to continue without interruption.
 - [Wait](dsl-reference.md#wait), used to pause or wait for a specified duration before proceeding to the next task.
@@ -181,39 +185,55 @@ Once the task has been executed, different things can happen:
 
 ### Data Flow
 
-In Serverless Workflow DSL, data flow management is crucial to ensure that the right data is passed between tasks and to the workflow itself. 
+In Serverless Workflow DSL, data flow management is crucial to ensure that the right data is passed between tasks and to the workflow itself.
 
 Here's how data flows through a workflow based on various transformation stages:
 
-1. **Transform Workflow Input**
+1. **Validate Workflow Input**
+Before the workflow starts, the input data provided to the workflow can be validated against the `input.schema` property to ensure it conforms to the expected structure.
+The execution only proceeds if the input is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
+
+2. **Transform Workflow Input**
 Before the workflow starts, the input data provided to the workflow can be transformed to ensure only relevant data in the expected format is passed into the workflow context. This can be done using the top level `input.from` expression. It evaluates on the raw workflow input and defaults to the identity expression which leaves the input unchanged. This step allows the workflow to start with a clean and focused dataset, reducing potential overhead and complexity in subsequent tasks. The result of this expression will set as the initial value for the `$context` runtime expression argument and be passed to the first task.
 
 *Example: If the workflow receives a JSON object as input, a transformation can be applied to remove unnecessary fields and retain only those that are required for the workflow's execution.*
 
-2. **Transform First Task Input**
-The input data for the first task can be transformed to match the specific requirements of that task. This ensures that the first task receives only the data required to perform its operations. This can be done using the task's `input.from` expression. It evaluates the transformed workflow input and defaults to the identity expression, which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. This transformed input will be evaluated against any runtime expressions used within the task definition.
+After workflow input validation and transformation, the transformed input is passed as the raw input to the first task.
 
-*Example: If the first task is a function call that only needs a subset of the workflow input, a transformation can be applied to provide only those fields needed for the function to execute.*
+3. **Validate Task Input**
+Before a task executes, its raw input can be validated against the `input.schema` property to ensure it conforms to the expected structure.
+The execution only proceeds if the input is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
 
-3. **Transform First Task Output**
-After completing the first task, its output can be transformed before passing it to the next task or storing it in the workflow context. Transformations are applied using the `output.as` runtime expression. It evaluates the raw task output and defaults to the identity expression, which leaves the output unchanged. Its result will be input for the next task. To update the context, one uses the `export.as` runtime expression. It evaluates the raw output and defaults to the expression that returns the existing context. The result of this runtime expression replaces the workflow's current context and the content of the `$context` runtime expression argument. This helps manage the data flow and keep the context clean by removing any unnecessary data produced by the task.
+4. **Transform Task Input**
+The input data for the task can be transformed to match the specific requirements of that task. This ensures that the task receives only the data required to perform its operations. This can be done using the task's `input.from` expression. It evaluates the raw task input (i.e., the transformed workflow input for the first task or the transformed output of the previous task) and defaults to the identity expression, which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. This transformed input will be evaluated against any runtime expressions used within the task definition.
 
-*Example: If the first task returns a large dataset, a transformation can be applied to retain only the relevant results needed for subsequent tasks.*
+*Example: If the task is a function call that only needs a subset of the workflow input, a transformation can be applied to provide only those fields needed for the function to execute.*
 
-4. **Transform Last Task Input**
-Before the last task in the workflow executes, its input data can be transformed to ensure it receives only the necessary information. This can be done using the task's `input.from` expression. It evaluates the transformed workflow input and defaults to the identity expression, which leaves the input unchanged. The result of this expression will be set as the `$input` runtime expression argument and be passed to the task. This transformed input will be evaluated against any runtime expressions used within the task definition. This step is crucial for ensuring the final task has all the required data to complete the workflow successfully.
+5. **Transform Task Output**
+After completing the task, its output can be transformed before passing it to the next task or storing it in the workflow context. Transformations are applied using the `output.as` runtime expression. It evaluates the raw task output and defaults to the identity expression, which leaves the output unchanged. Its result will be input for the next task.
 
-*Example: If the last task involves generating a report, the input transformation can ensure that only the data required for the report generation is passed to the task.*
+*Example: If the task returns a large dataset, a transformation can be applied to retain only the relevant results needed for subsequent tasks.*
 
-5. **Transform Last Task Output**
-After the last task completes, its output can be transformed before it is considered the workflow output. Transformations are applied using the `output.as` runtime expression. It evaluates the raw task output and defaults to the identity expression, which leaves the output unchanged. Its result will be passed to the workflow `output.as` runtime expression. This ensures that the workflow produces a clean and relevant output, free from any extraneous data that might have been generated during the task execution.
+6. **Validate Task Output**
+After `output.as` is evaluated, the transformed task output is validated against the `output.schema` property to ensure it conforms to the expected structure. The execution only proceeds if the output is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
 
-*Example: If the last task outputs various statistics, a transformation can be applied to retain only the key metrics that are relevant to the stakeholders.*
+7. **Update Workflow Context**
+To update the context, one uses the `export.as` runtime expression. It evaluates the transformed task output and defaults to the expression that returns the existing context. The result of this runtime expression replaces the workflow's current context and the content of the `$context` runtime expression argument. This helps manage the data flow and keep the context clean by removing any unnecessary data produced by the task.
 
-6. **Transform Workflow Output**
-Finally, the overall workflow output can be transformed before it is returned to the caller or stored. Transformations are applied using the `output.as` runtime expression. It evaluates the last task's output and defaults to the identity expression, which leaves the output unchanged. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
+8. **Validate Exported Context**
+After the context is updated, the exported context is validated against the `export.schema` property to ensure it conforms to the expected structure. The execution only proceeds if the exported context is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
+
+9. **Continue Workflow**
+After the context is updated, the workflow continues to the next task in the sequence. The transformed output of the previous task is passed as the raw input to the next task, and the data flow cycle repeats.
+If no more tasks are defined, the transformed output is passed to the workflow output transformation step.
+
+10. **Transform Workflow Output**
+Finally, the overall workflow output can be transformed before it is returned to the caller or stored. Transformations are applied using the `output.as` runtime expression. It evaluates the last task's transformed output and defaults to the identity expression, which leaves the output unchanged. This step ensures that the final output of the workflow is concise and relevant, containing only the necessary information that needs to be communicated or recorded.
 
 *Example: If the workflow's final output is a summary report, a transformation can ensure that the report contains only the most important summaries and conclusions, excluding any intermediate data.*
+
+11. **Validate Workflow Output**
+After `output.as` is evaluated, the transformed workflow output is validated against the `output.schema` property to ensure it conforms to the expected structure. The execution only proceeds if the output is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
 
 By applying transformations at these strategic points, Serverless Workflow DSL ensures that data flows through the workflow in a controlled and efficient manner, maintaining clarity and relevance at each execution stage. This approach helps manage complex workflows and ensures that each task operates with the precise data required, leading to more predictable and reliable workflow outcomes.
 
@@ -222,36 +242,54 @@ Visually, this can be represented as follows:
 ```mermaid
 flowchart TD
 
+  subgraph Legend
+    legend_data{{Data}}
+    legend_schema[\Schema/]
+    legend_transformation[Transformation]
+    legend_arg([Runtime Argument])
+  end
+
   initial_context_arg([<code>$context</code>])
   context_arg([<code>$context</code>])
   input_arg([<code>$input</code>])
   output_arg([<code>$output</code>])
 
   workflow_raw_input{{Raw Workflow Input}}
+  workflow_input_schema[\Workflow: <code>input.schema</code>/]
   workflow_input_from[Workflow: <code>input.from</code>]
   workflow_transformed_input{{Transformed Workflow Input}}
 
   task_raw_input{{Raw Task Input}}
+  task_if[Task: <code>if</code>]
+  task_input_schema[\Task: <code>input.schema</code>/]
   task_input_from[Task: <code>input.from</code>]
   task_transformed_input{{Transformed Task Input}}
   task_definition[Task definition]
   task_raw_output{{Raw Task output}}
   task_output_as[Task: <code>output.as</code>]
   task_transformed_output{{Transformed Task output}}
+  task_output_schema[\Task: <code>output.schema</code>/]
   task_export_as[Task: <code>export.as</code>]
+  task_export_schema[\Task: <code>export.schema</code>/]
+
+  new_context{{New execution context}}
   
   workflow_raw_output{{Raw Workflow Output}}
   workflow_output_as[Workflow: <code>output.as</code>]
   workflow_transformed_output{{Transformed Workflow Output}}
+  workflow_output_schema[\Workflow: <code>output.schema</code>/]
 
-  workflow_raw_input --> workflow_input_from
+  workflow_raw_input -- Validated by --> workflow_input_schema
+  workflow_input_schema -- Passed to --> workflow_input_from
   workflow_input_from -- Produces --> workflow_transformed_input
   workflow_transformed_input -- Set as --> initial_context_arg
   workflow_transformed_input -- Passed to --> task_raw_input
 
   subgraph Task
 
-    task_raw_input -- Passed to --> task_input_from
+    task_raw_input -- Passed to --> task_if
+    task_if -- Validated by --> task_input_schema
+    task_input_schema -- Passed to --> task_input_from
     task_input_from -- Produces --> task_transformed_input
     task_transformed_input -- Set as --> input_arg
     task_transformed_input -- Passed to --> task_definition
@@ -259,8 +297,11 @@ flowchart TD
     task_definition -- Execution produces --> task_raw_output
     task_raw_output -- Passed to --> task_output_as
     task_output_as -- Produces --> task_transformed_output
-    task_output_as -- Set as --> output_arg
-    task_transformed_output -- Passed to --> task_export_as
+    task_transformed_output -- Set as --> output_arg
+    task_transformed_output -- Validated by --> task_output_schema
+    task_output_schema -- Passed to --> task_export_as
+    task_export_as -- Produces --> new_context
+    new_context -- Validated by --> task_export_schema
   end
 
   task_transformed_output -- Passed as raw input to --> next_task
@@ -268,11 +309,12 @@ flowchart TD
   subgraph next_task [Next Task]
   end
 
-  task_export_as -- Result set as --> context_arg
+  new_context -- set as --> context_arg
 
   next_task -- Transformed output becomes --> workflow_raw_output
   workflow_raw_output -- Passed to --> workflow_output_as
   workflow_output_as -- Produces --> workflow_transformed_output
+  workflow_transformed_output -- Validated by --> workflow_output_schema
 ```
 
 ### Runtime Expressions
@@ -297,22 +339,25 @@ When the evaluation of an expression fails, runtimes **must** raise an error wit
 
 | Name | Type | Description |
 |:-----|:----:|:------------|
-| context | `map` | The task's context data. |
+| context | `map` | The workflow's context data. |
 | input | `any` | The task's transformed input. |
 | output | `any` | The task's transformed output. |
 | secrets | `map` | A key/value map of the workflow secrets.<br>To avoid unintentional bleeding, secrets can only be used in the `input.from` runtime expression. |
+| authorization | [`authorizationDescriptor`](#authorization-descriptor) | Describes the resolved authorization, as defined by the task's authentication, if any. |
 | task | [`taskDescriptor`](#task-descriptor) | Describes the current task. |
 | workflow | [`workflowDescriptor`](#workflow-descriptor) | Describes the current workflow. |
 | runtime | [`runtimeDescriptor`](#runtime-descriptor) | Describes the runtime. |
+
+⚠️ **Warning**: Use `$secrets` with caution: incorporating them in expressions or passing them as call inputs may inadvertently expose sensitive information.
 
 ##### Runtime Descriptor
 
 This argument contains information about the runtime executing the workflow.
 
 | Name | Type | Description | Example |
-|:-----|:----:|:------------| ------- |
+|:-----|:----:|:------------|:--------|
 | name | `string` | A human friendly name for the runtime. | `Synapse`, `Sonata` |
-| version | `string` | The version of the runtime. This can be an arbitrary string | a incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
+| version | `string` | The version of the runtime. This can be an arbitrary string | An incrementing positive integer (`362`), semantic version (`1.4.78`), commit hash (`04cd3be6da98fc35422c8caa821e0aa1ef6b2c02`) or container image label (`v0.7.43-alpine`) |
 | metadata | `map` | An object/map of implementation specific key-value pairs. This can be chosen by runtime implementors and usage of this argument signals that a given workflow definition might not be runtime agnostic | A Software as a Service (SaaS) provider might choose to expose information about the tenant the workflow is executed for e.g. `{ "organization": { "id": "org-ff51cff2-fc83-4d70-9af1-8dacdbbce0be", "name": "example-corp" }, "featureFlags": ["fastZip", "arm64"] }`.  |
 
 ##### Workflow Descriptor
@@ -335,6 +380,13 @@ This argument contains information about the runtime executing the workflow.
 | output | `any` | The task's *raw* output (i.e. *BEFORE* the `output.as` expression). | |
 | startedAt | [`dateTimeDescriptor`](#datetime-descriptor) | The start time of the task | |
 
+##### Authorization Descriptor
+
+| Name   | Type   | Description | Example |
+|:-------|:------:|:------------|:--------|
+| scheme | `string` | The resolved authorization scheme. | `Bearer` |
+| parameter | `string` | The resolved authorization parameter. | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJVadQssw5c` |
+
 ##### DateTime Descriptor
 
 | Name | Type | Description | Example |
@@ -345,15 +397,17 @@ This argument contains information about the runtime executing the workflow.
 
 The following table shows which arguments are available for each runtime expression:
 
-| Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$output` | `$secrets` | `$task` | `$workflow` |
-|:-------------------|:---------:|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|
-| Workflow `input.from` | Raw workflow input | Transformed workflow input | | | | ✔ | | ✔ |
-| Task `input.from` | Raw task input (i.e. transformed workflow input for the first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | | ✔ | ✔ | ✔ |
-| Task `if` | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
-| Task definition | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ |
-| Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ |
-| Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | | ✔ | | ✔ |
+| Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$output` | `$secrets` | `$task` | `$workflow` | `$runtime` | `$authorization` |
+|:-------------------|:---------:|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|:----------:|:----------:|
+| Workflow `input.from` | Raw workflow input | Transformed workflow input | | | | ✔ | | ✔ | ✔ | |
+| Task `input.from` | Raw task input (i.e. transformed workflow input for the first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | | ✔ | ✔ | ✔ | ✔ | |
+| Task `if` | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | |
+| Task definition | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Workflow `output.as` | Last task's transformed output | Transformed workflow output | ✔ | | | ✔ | | ✔ | ✔ | |
+
+⚠️ **Warning**: Use `$secrets` with caution: incorporating them in expressions or passing them as call inputs may inadvertently expose sensitive information.
 
 ### Fault Tolerance
 
@@ -411,6 +465,77 @@ Workflows and tasks alike can be configured to timeout after a defined amount of
 When a timeout occur, runtimes **must** abruptly interrupt the execution of the workflow/task, and **must** raise an error that, if uncaught, force the workflow/task to transition to the [`faulted` status phase](#status-phases).
 
 A timeout error **must** have its `type` set to `https://serverlessworkflow.io/spec/1.0.0/errors/timeout` and **should** have its `status` set to `408`.
+
+### Catalogs
+
+A **resource catalog** is an external collection of reusable components, such as functions, that can be referenced and imported into workflows. The primary purpose of catalogs is to allow workflows to seamlessly integrate with externally defined resources, facilitating better reuse, versioning, and consistency across multiple workflows.
+
+Each catalog is defined by an `endpoint` property that specifies the root URL where the resources are hosted. This enables workflows to access external functions and services from those catalogs.
+
+#### File Structure
+
+To ensure portability and standardization, catalogs must follow a specific file structure, which is documented [here](https://github.com/serverlessworkflow/catalog?tab=readme-ov-file#structure). This file structure ensures that runtimes can correctly interpret and resolve the resources contained within a catalog.
+
+If a catalog is hosted in a GitHub or GitLab repository, runtimes are expected to resolve the **raw** machine-readable documents that define the cataloged resources. For example, for the function `log:1.0.0` located in a catalog at `https://github.com/serverlessworkflow/catalog/tree/main`, the function definition URI:
+
+```
+https://github.com/serverlessworkflow/catalog/tree/main/functions/log/1.0.0/function.yaml
+```
+
+Should be transformed by the runtime to point to the raw content of the document:
+
+```
+https://raw.githubusercontent.com/serverlessworkflow/catalog/refs/heads/main/functions/log/1.0.0/function.yaml
+```
+
+This transformation ensures that runtimes can retrieve and process the actual content of the resource definitions in a machine-readable format. It also ensures that authors can use the standard, user-friendly URIs of such Git repositories, making it easier to reference and manage resources without needing to directly use the raw content links.
+
+#### Default Catalog
+
+Runtimes may optionally define a **"default" catalog**, which can be used implicitly by any and all workflows, unlike other catalogs which must be explicitly defined at the top level. The default catalog provides authors with a way to define and publish functions directly to their runtime, without any additional overhead or external dependencies.
+
+When using the default catalog, users follow the same format as described above, but with the reserved name `default` for the catalog:
+
+```
+{functionName}:{functionVersion}@default
+```
+
+This allows workflows to call functions from the default catalog without needing to explicitly define it in the workflow definition. 
+
+It's important to note that the name `default` should not be used by catalogs explicitly defined at the top level, unless the intent is to override the runtime's default catalog. How resources in the default catalog are stored and resolved is entirely up to the runtime, and they could be managed in various ways, such as in a database, as files, in configuration settings, or within a remote dedicated repository.
+
+#### Using Cataloged Functions
+
+When calling a custom function defined in a catalog, users must follow a specific format:
+
+```
+{functionName}:{functionVersion}@{catalogName}
+```
+
+This format ensures that the function, its version, and the catalog it belongs to are clearly defined, allowing workflows to differentiate between multiple functions with similar names across different catalogs.
+
+*Calling a custom function defined within a catalog:*
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: catalog-example
+  version: '0.1.0'
+use:
+  catalogs:
+    global:
+      endpoint:
+        uri: https://github.com/serverlessworkflow/catalog
+        authentication:
+          basic:
+            username: user
+            password: '012345'
+do:
+  - log:
+      call: log:0.5.2@global
+      with:
+        message: The cataloged custom function has been successfully called
+```
 
 ### Interoperability
 
@@ -493,7 +618,7 @@ The following example demonstrates how to use the `validateEmailAddress` custom 
 ```yaml
 # workflow.yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: default
   name: customFunctionWorkflow
   version: '0.1.0'
@@ -561,7 +686,7 @@ See the [DSL reference](dsl-reference.md#extension) for more details about exten
 *Sample logging extension:*
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: sample-workflow
   version: '0.1.0'

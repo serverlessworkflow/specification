@@ -11,9 +11,10 @@ Feature: Try Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: try-catch-404
+      version: '1.0.0'
     do:
       - tryGetPet:
           try:
@@ -54,9 +55,10 @@ Feature: Try Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: try-catch-503
+      version: '1.0.0'
     do:
       - tryGetPet:
           try:

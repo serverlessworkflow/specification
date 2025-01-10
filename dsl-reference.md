@@ -38,6 +38,7 @@
     - [Digest](#digest-authentication)
     - [OAUTH2](#oauth2-authentication)
     - [OpenIdConnect](#openidconnect-authentication)
+  + [Catalog](#catalog)
   + [Extension](#extension)
   + [Error](#error)
     - [Standard Error Types](#standard-error-types)
@@ -54,6 +55,11 @@
   + [HTTP Response](#http-response)
   + [HTTP Request](#http-request)
   + [URI Template](#uri-template)
+  + [Container Lifetime](#container-lifetime)
+  + [Process Result](#process-result)
+  + [AsyncAPI Server](#asyncapi-server)
+  + [AsyncAPI Message](#asyncapi-message)
+  + [AsyncAPI Subscription](#asyncapi-subscription)
 
 ## Abstract
 
@@ -73,7 +79,7 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | input | [`input`](#input) | `no` | Configures the workflow's input. |
 | use | [`use`](#use) | `no` | Defines the workflow's reusable components, if any. |
 | do | [`map[string, task][]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
-| timeout | [`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout. |
+| timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
 | output | [`output`](#output) | `no` | Configures the workflow's output. |
 | schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
 | evaluate | [`evaluate`](#evaluate) | `no` | Configures runtime expression evaluation. |
@@ -91,6 +97,7 @@ Documents the workflow definition.
 | title | `string` | `no` | The workflow's title. |
 | summary | `string` | `no` | The workflow's Markdown summary. |
 | tags | `map[string, string]` | `no` | A key/value mapping of the workflow's tags, if any. |
+| metadata | `map` | `no` | Additional information about the workflow. |
 
 #### Use
 
@@ -99,11 +106,13 @@ Defines the workflow's reusable components.
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | authentications | [`map[string, authentication]`](#authentication) | `no` | A name/value mapping of the workflow's reusable authentication policies. |
+| catalogs | [`map[string, catalog]`(#catalog)] | `no` | A name/value mapping of the workflow's reusable resource catalogs. |
 | errors | [`map[string, error]`](#error) | `no` | A name/value mapping of the workflow's reusable errors. | 
 | extensions | [`map[string, extension][]`](#extension) | `no` | A list of the workflow's reusable extensions. |
 | functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
 | retries | [`map[string, retryPolicy]`](#retry) | `no` | A name/value mapping of the workflow's reusable retry policies. |
 | secrets | `string[]` | `no` | A list containing the workflow's secrets. |
+| timeouts | [`map[string, timeout]`](#timeout) | `no` | A name/value mapping of the workflow's reusable timeouts. |
 
 #### Schedule
 
@@ -129,10 +138,10 @@ Configures a workflow's runtime expression evaluation.
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: order-pet
-  version: '1.0.0'
+  version: '0.1.0'
   title: Order Pet - 1.0.0
   summary: >
     # Order Pet - 1.0.0
@@ -239,7 +248,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 - [Raise](#raise), used to raise an [error](#error) and potentially fault the [workflow](#workflow).
 - [Run](#run), used to run a [container](#container-process), a [script](#script-process) , a [shell](#shell-process) command or even another [workflow](#workflow-process). 
 - [Switch](#switch), used to dynamically select and execute one of multiple alternative paths based on specified conditions
-- [Set](#set), used to dynamically set or update the [workflow](#workflow)'s data during the its execution. 
+- [Set](#set), used to dynamically set the [workflow](#workflow)'s data during the its execution. 
 - [Try](#try), used to attempt executing a specified [task](#task), and to handle any resulting [errors](#error) gracefully, allowing the [workflow](#workflow) to continue without interruption.
 - [Wait](#wait), used to pause or wait for a specified duration before proceeding to the next task.
 
@@ -247,12 +256,13 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| if | `string` | `no` | A [`runtime expression`](dsl.md#runtime-expressions), if any, used to determine whether or not the task should be run.<br>The task is considered skipped if not run. |
+| if | `string` | `no` | A [`runtime expression`](dsl.md#runtime-expressions), if any, used to determine whether or not the task should be run.<br>The task is considered skipped if not run, and the *raw* task input becomes the task's output. The expression is evaluated against the *raw* task input before any other expression of the task. |
 | input | [`input`](#input) | `no` | An object used to customize the task's input and to document its schema, if any. |
 | output | [`output`](#output) | `no` | An object used to customize the task's output and to document its schema, if any. |
 | export | [`export`](#export) | `no` | An object used to customize the content of the workflow context. | 
-| timeout | [`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any. |
+| timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
 | then | [`flowDirective`](#flow-directive) | `no` | The flow directive to execute next.<br>*If not set, defaults to `continue`.* |
+| metadata | `map` | `no` | Additional information about the task. |
 
 #### Call
 
@@ -269,7 +279,7 @@ Enables the execution of a specified function within a workflow, allowing seamle
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: call-example
   version: '0.1.0'
@@ -294,36 +304,55 @@ The [AsyncAPI Call](#asyncapi-call) enables workflows to interact with external 
 
 ###### Properties
 
-| Name | Type | Required | Description|
-|:--|:---:|:---:|:---|
-| document | [`externalResource`](#external-resource) | `yes` | The AsyncAPI document that defines the operation to call. |
-| operationRef | `string` | `yes` | A reference to the AsyncAPI operation to call. |
-| server | `string` | `no` | A reference to the server to call the specified AsyncAPI operation on.<br>If not set, default to the first server matching the operation's channel. |
-| message | `string` | `no` | The name of the message to use. <br>If not set, defaults to the first message defined by the operation. |
-| binding | `string` | `no` | The name of the binding to use. <br>If not set, defaults to the first binding defined by the operation |
-| payload | `any` | `no` | The operation's payload, as defined by the configured message |
-| authentication | `string`<br>[`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the AsyncAPI operation. |
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| document | [`externalResource`](#external-resource) | `yes` | The AsyncAPI document that defines the [operation](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationObject) to call. |
+| channel | `string` | `yes` | The name of the channel on which to perform the operation. The operation to perform is defined by declaring either `message`, in which case the [channel](https://v2.asyncapi.com/docs/reference/specification/v2.6.0#channelItemObject)'s `publish` operation will be executed, or `subscription`, in which case the [channel](https://v2.asyncapi.com/docs/reference/specification/v2.6.0#channelItemObject)'s `subscribe` operation will be executed.<br>*Used only in case the referenced document uses AsyncAPI `v2.6.0`.*  |
+| operation | `string` | `yes` | A reference to the AsyncAPI [operation](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationObject) to call.<br>*Used only in case the referenced document uses AsyncAPI `v3.0.0`.*  |
+| server | [`asyncApiServer`](#asyncapi-server) | `no` | An object used to configure to the [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject) to call the specified AsyncAPI [operation](https://www.asyncapi.com/docs/reference/specification/v3.0.0#operationObject) on.<br>If not set, default to the first [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject) matching the operation's channel. |
+| protocol | `string` | `no` | The [protocol](https://www.asyncapi.com/docs/reference/specification/v3.0.0#definitionsProtocol) to use to select the target [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject). <br>Ignored if `server` has been set.<br>*Supported values are:  `amqp`, `amqp1`, `anypointmq`, `googlepubsub`, `http`, `ibmmq`, `jms`, `kafka`, `mercure`, `mqtt`, `mqtt5`, `nats`, `pulsar`, `redis`, `sns`, `solace`, `sqs`, `stomp` and `ws`* |
+| message  | [`asyncApiMessage`](#asyncapi-message) | `no` | An object used to configure the message to publish using the target operation.<br>*Required if `subscription` has not been set.* |
+| subscription | [`asyncApiSubscription`](#asyncapi-subscription) | `no` | An object used to configure the subscription to messages consumed using the target operation.<br>*Required if `message` has not been set.*  |
+| authentication | `string`<br>[`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the AsyncAPI operation. | 
 
 ###### Examples
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: asyncapi-example
   version: '0.1.0'
 do:
-  - findPet:
+  - publishGreetings:
       call: asyncapi
       with:
         document:
           endpoint: https://fake.com/docs/asyncapi.json
-        operationRef: findPetsByStatus
-        server: staging
-        message: getPetByStatusQuery
-        binding: http
-        payload:
-          petId: ${ .pet.id }
+        operation: greet
+        server:
+          name: greetingsServer
+          variables:
+            environment:  dev
+        message:
+          payload:
+            greetings: Hello, World!
+          headers:
+            foo: bar
+            bar: baz
+  - subscribeToChatInbox:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: chat-inbox
+        protocol: http
+        subscription:
+          filter: ${ . == $workflow.input.chat.roomId } 
+          consume:
+            amount: 5
+            for:
+              seconds: 10
 ```
 
 ##### gRPC Call
@@ -346,7 +375,7 @@ The [gRPC Call](#grpc-call) enables communication with external systems via the 
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: grpc-example
   version: '0.1.0'
@@ -379,12 +408,13 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 | body | `any` | `no` | The HTTP request body, if any. |
 | query | `map[string, any]` | `no` | A name/value mapping of the query parameters to use, if any. |
 | output | `string` | `no` | The http call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
+| redirect | `boolean` | `no` | Specifies whether redirection status codes (`300–399`) should be treated as errors.<br>*If set to `false`, runtimes must raise an error for response status codes outside the `200–299` range.*<br>*If set to `true`, they must raise an error for status codes outside the `200–399` range.*<br>*Defaults to `false`.* |
 
 ###### Examples
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: http-example
   version: '0.1.0'
@@ -406,15 +436,16 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 |:--|:---:|:---:|:---|
 | document | [`externalResource`](#external-resource) | `yes` | The OpenAPI document that defines the operation to call. |
 | operationId | `string` | `yes` | The id of the OpenAPI operation to call. |
-| arguments | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
+| parameters | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
 | authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the OpenAPI operation. |
 | output | `string` | `no` | The OpenAPI call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
+| redirect | `boolean` | `no` | Specifies whether redirection status codes (`300–399`) should be treated as errors.<br>*If set to `false`, runtimes must raise an error for response status codes outside the `200–299` range.*<br>*If set to `true`, they must raise an error for status codes outside the `200–399` range.*<br>*Defaults to `false`.* |
 
 ###### Examples
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: openapi-example
   version: '0.1.0'
@@ -443,7 +474,7 @@ Serves as a fundamental building block within workflows, enabling the sequential
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: do-example
   version: '0.1.0'
@@ -503,12 +534,13 @@ Allows workflows to publish events to event brokers or messaging systems, facili
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | emit.event | [`eventProperties`](#event-properties) | `yes` | Defines the event to emit. |
+| emit.cc | [`endpoint`](#endpoint) | `no` | Specifies an additional endpoint for emitting a carbon copy of the event. While the runtime's default cloud event endpoint remains the primary destination, setting this property ensures that the event is also published to the specified endpoint. Ideally, this property is left unset so that event delivery relies solely on the runtime's configured endpoint, but when provided, the event will be sent to both endpoints concurrently. |
 
 ##### Examples
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: emit-example
   version: '0.1.0'
@@ -546,7 +578,7 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: for-example
   version: '0.1.0'
@@ -583,7 +615,7 @@ Allows workflows to execute multiple subtasks concurrently, enabling parallel pr
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: fork-example
   version: '0.1.0'
@@ -624,7 +656,7 @@ Provides a mechanism for workflows to await and react to external events, enabli
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: listen-example
   version: '0.1.0'
@@ -651,13 +683,13 @@ Intentionally triggers and propagates errors. By employing the "Raise" task, wor
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| raise.error | [`error`](#error) | `yes` | Defines the error to raise. |
+| raise.error | `string`<br>[`error`](#error) | `yes` | Defines the [error](#error) to raise.<br>*If a `string`, must be the name of an [error](#error) defined in the [workflow's reusable components](#use).* |
 
 ##### Examples
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: raise-example
   version: '0.1.0'
@@ -711,18 +743,20 @@ Provides the capability to execute external [containers](#container-process), [s
 
 ##### Properties
 
-| Name | Type | Required | Description|
+| Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | run.container | [`container`](#container-process) | `no` | The definition of the container to run.<br>*Required if `script`, `shell` and `workflow` have not been set.* |
 | run.script | [`script`](#script-process) | `no` | The definition of the script to run.<br>*Required if `container`, `shell` and `workflow` have not been set.* |
 | run.shell | [`shell`](#shell-process) | `no` | The definition of the shell command to run.<br>*Required if `container`, `script` and `workflow` have not been set.* |
 | run.workflow | [`workflow`](#workflow-process) | `no` | The definition of the workflow to run.<br>*Required if `container`, `script` and `shell` have not been set.* |
+| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*When set to `false`, the task cannot wait for the process to complete and thus cannot output the process’s result. In this case, it should simply output its transformed input.*<br>*Defaults to `true`.* |
+| return | `string` | `no` | Configures the output of the process.<br>*Supported values are:*<br>*- `stdout`: Outputs the content of the process **STDOUT**.*<br>*- `stderr`: Outputs the content of the process **STDERR**.*<br>*- `code`:  Outputs the process's **exit code**.*<br>*- `all`: Outputs the **exit code**, the **STDOUT** content and the **STDERR** content, wrapped into a new [processResult](#process-result) object.*<br>*- `none`: Does not output anything.*<br>*Defaults to `stdout`.* |
 
 ##### Examples
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: run-example
   version: '0.1.0'
@@ -766,12 +800,13 @@ Enables the execution of external processes encapsulated within a containerized 
 | ports | `map` | `no` | The container's port mappings, if any  |
 | volumes | `map` | `no` | The container's volume mappings, if any  |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured process |
+| lifetime | [`containerLifetime`](#container-lifetime) | `no` | An object used to configure the container's lifetime. |
 
 ###### Examples
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: run-container-example
   version: '0.1.0'
@@ -800,7 +835,7 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: run-script-example
   version: '0.1.0'
@@ -831,7 +866,7 @@ Enables the execution of shell commands within a workflow, enabling workflows to
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: run-shell-example
   version: '0.1.0'
@@ -858,7 +893,7 @@ Enables the invocation and execution of nested workflows within a parent workflo
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: run-workflow-example
   version: '0.1.0'
@@ -887,7 +922,7 @@ A task used to set data.
 
 ```yaml
 document:
-  dsl: 1.0.0-alpha1
+  dsl: '1.0.0-alpha5'
   namespace: default
   name: set-example
   version: '0.1.0'
@@ -913,7 +948,7 @@ Enables conditional branching within workflows, allowing them to dynamically sel
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: switch-example
   version: '0.1.0'
@@ -997,7 +1032,7 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: try-example
   version: '0.1.0'
@@ -1033,12 +1068,12 @@ Defines the configuration of a catch clause, which a concept used to catch error
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| errors | [`errorFilter`](#retry) | `no` | The definition of the errors to catch |
+| errors | [`errorFilter`](#retry) | `no` | The definition of the errors to catch. |
 | as | `string` | `no` | The name of the runtime expression variable to save the error as. Defaults to 'error'. |
-| when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error |
-| exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error |
-| retry | [`retryPolicy`](#retry) | `no` | The retry policy to use, if any, when catching errors |
-| do | [`map[string, task][]`](#task) | `no` | The definition of the task(s) to run when catching an error |
+| when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error. |
+| exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error. |
+| retry | `string`<br>[`retryPolicy`](#retry) | `no` | The [`retry policy`](#retry) to use, if any, when catching [`errors`](#error).<br>*If a `string`, must be the name of a [retry policy](#retry) defined in the [workflow's reusable components](#use).* |
+| do | [`map[string, task][]`](#task) | `no` | The definition of the task(s) to run when catching an error. |
 
 #### Wait
 
@@ -1054,7 +1089,7 @@ Allows workflows to pause or delay their execution for a specified period of tim
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: wait-example
   version: '0.1.0'
@@ -1118,7 +1153,7 @@ Defines the mechanism used to authenticate users and workflows attempting to acc
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: authentication-example
   version: '0.1.0'
@@ -1155,7 +1190,7 @@ Defines the fundamentals of a 'basic' authentication.
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: basic-authentication-example
   version: '0.1.0'
@@ -1190,7 +1225,7 @@ Defines the fundamentals of a 'bearer' authentication
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: bearer-authentication-example
   version: '0.1.0'
@@ -1224,7 +1259,7 @@ Defines the fundamentals of a 'digest' authentication.
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: digest-authentication-example
   version: '0.1.0'
@@ -1275,7 +1310,7 @@ Defines the fundamentals of an 'oauth2' authentication.
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: oauth2-authentication-example
   version: '0.1.0'
@@ -1337,7 +1372,7 @@ Defines the fundamentals of an 'oidc' authentication.
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: oidc-authentication-example
   version: '0.1.0'
@@ -1357,6 +1392,44 @@ do:
                 secret: "**********"
               scopes: [ api ]
               audiences: [ runtime ]
+```
+
+### Catalog
+
+A **resource catalog** is an external collection of reusable components, such as functions, that can be referenced and imported into workflows. Catalogs allow workflows to integrate with externally defined resources, making it easier to manage reuse and versioning across different workflows.
+
+Each catalog is defined by an `endpoint` property, specifying the root URL where the resources are hosted, enabling workflows to access external functions and services. For portability, catalogs must adhere to a specific file structure, as defined [here](https://github.com/serverlessworkflow/catalog?tab=readme-ov-file#structure).
+
+For more information about catalogs, refer to the [Serverless Workflow DSL document](https://github.com/serverlessworkflow/specification/blob/main/dsl.md#catalogs).
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| endpoint | [`endpoint`](#endpoint) | `yes` | The endpoint that defines the root URL at which the catalog is located. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: catalog-example
+  version: '0.1.0'
+use:
+  catalogs:
+    global:
+      endpoint:
+        uri: https://github.com/serverlessworkflow/catalog
+        authentication:
+          basic:
+            username: user
+            password: '012345'
+do:
+  - log:
+      call: log:0.5.2@global
+      with:
+        message: The cataloged custom function has been successfully called
 ```
 
 ### Extension
@@ -1379,7 +1452,7 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 *Perform logging before and after any non-extension task is run:*
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: logging-extension-example
   version: '0.1.0'
@@ -1414,7 +1487,7 @@ do:
 *Intercept HTTP calls to 'https://mocked.service.com' and mock its response:*
 ```yaml
 document:  
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: test
   name: intercept-extension-example
   version: '0.1.0'
@@ -1588,17 +1661,17 @@ Represents the definition of the parameters that control the randomness or varia
 
 ### Input
 
-Documents the structure - and optionally configures the filtering of - workflow/task input data.
+Documents the structure - and optionally configures the transformation of - workflow/task input data.
 
 It's crucial for authors to document the schema of input data whenever feasible. This documentation empowers consuming applications to provide contextual auto-suggestions when handling runtime expressions.
 
-When set, runtimes must validate input data against the defined schema, unless defined otherwise.
+When set, runtimes must validate raw input data against the defined schema before applying transformations, unless defined otherwise.
 
 #### Properties
 
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
-| schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate input data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
+| schema | [`schema`](#schema) | `no` | The [`schema`](#schema) used to describe and validate raw input data.<br>*Even though the schema is not required, it is strongly encouraged to document it, whenever feasible.* |
 | from | `string`<br>`object` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter and/or mutate the workflow/task input.  |
 
 #### Examples
@@ -1609,9 +1682,16 @@ schema:
   document:
     type: object
     properties:
-      petId:
-        type: string
-    required: [ petId ]
+      order:
+        type: object
+        required: [ pet ]
+        properties:
+          pet:
+            type: object
+            required: [ id ]
+            properties:
+              id:
+                type: string
 from: .order.pet
 ```
 
@@ -1621,7 +1701,7 @@ Documents the structure - and optionally configures the transformations of - wor
 
 It's crucial for authors to document the schema of output data whenever feasible. This documentation empowers consuming applications to provide contextual auto-suggestions when handling runtime expressions.
 
-When set, runtimes must validate output data against the defined schema, unless defined otherwise.
+When set, runtimes must validate output data against the defined schema after applying transformations, unless defined otherwise.
 
 #### Properties
 
@@ -1644,16 +1724,13 @@ output:
       required: [ petId ]
   as:
     petId: '${ .pet.id }'
-export:
-  as: 
-   '.petList += [ $task.output ]'  
 ```
 
 ### Export
 
-Certain task needs to set the workflow context to save the task output for later usage. Users set the content of the context through a runtime expression. The result of the expression is the new value of the context. The expression is evaluated against the existing context. 
+Certain task needs to set the workflow context to save the task output for later usage. Users set the content of the context through a runtime expression. The result of the expression is the new value of the context. The expression is evaluated against the transformed task output.
 
-Optionally, the context might have an associated schema. 
+Optionally, the context might have an associated schema which is validated against the result of the expression.
 
 #### Properties
 
@@ -1667,13 +1744,13 @@ Optionally, the context might have an associated schema.
 Merge the task output into the current context.
 
 ```yaml
-as: '.+$output'
+as: '$context+.'
 ```
 
 Replace the context with the task output.
 
 ```yaml
-as: $output
+as: '.'
 ```
 
 ### Schema
@@ -1726,7 +1803,7 @@ Defines a workflow or task timeout.
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha1'
+  dsl: '1.0.0-alpha5'
   namespace: default
   name: timeout-example
   version: '0.1.0'
@@ -1771,7 +1848,7 @@ Describes an enpoint.
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | uri | `string` | `yes` | The endpoint's URI. |
-| authentication | `[authentication](#authentication)` | `no` | The authentication policy to use. |
+| authentication | [authentication](#authentication) | `no` | The authentication policy to use. |
 
 ### HTTP Response
 
@@ -1840,4 +1917,214 @@ This has the following limitations compared to runtime expressions:
 
 ```yaml
 uri: https://petstore.swagger.io/v2/pet/{petId}
+```
+
+### Container Lifetime
+
+Configures the lifetime of a container.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| cleanup | `string` | `yes` | The cleanup policy to use.<br>*Supported values are:<br>- `always`: the container is deleted immediately after execution.<br>-`never`: the runtime should never delete the container.<br>-`eventually`: the container is deleted after a configured amount of time after its execution.*<br>*Defaults to `never`.* |
+| after | [`duration`](#duration) | `no` | The [`duration`](#duration), if any, after which to delete the container once executed.<br>*Required if `cleanup` has been set to `eventually`, otherwise ignored.* |
+### Process Result
+
+Describes the result of a process.
+
+#### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| code | `integer` | `yes` | The process's exit code. |
+| stdout | `string` | `yes` | The process's **STDOUT** output. |
+| stderr | `string` | `yes` | The process's **STDERR** output. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: run-container-example
+  version: '0.1.0'
+do:
+  - runContainer:
+      run:
+        container:
+          image: fake-image
+          lifetime:
+            cleanup: eventually
+            after:
+              minutes: 30
+        return: stderr
+
+  - runScript:
+      run:
+        script:
+          language: js
+          code: >
+            Some cool multiline script
+        return: code
+
+  - runShell:
+      run:
+        shell:
+          command: 'echo "Hello, ${ .user.name }"'
+        return: all
+
+  - runWorkflow:
+      run:
+        workflow:
+          namespace: another-one
+          name: do-stuff
+          version: '0.1.0'
+          input: {}
+        return: none
+```
+
+### AsyncAPI Server
+
+Configures the target server of an AsyncAPI operation.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| name | `string` | `yes` | The name of the [server](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverObject) to call the specified AsyncAPI operation on. |
+| variables | `object` | `no` | The target [server's variables](https://www.asyncapi.com/docs/reference/specification/v3.0.0#serverVariableObject), if any. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: asyncapi-example
+  version: '0.1.0'
+do:
+  - publishGreetings:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: greet
+        server:
+          name: greetingsServer
+          variables:
+            environment:  dev
+        message:
+          payload:
+            greetings: Hello, World!
+          headers:
+            foo: bar
+            bar: baz
+```
+
+### AsyncAPI Message
+
+Configures an AsyncAPI message to publish.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| payload | `object` | `no` | The message's payload, if any. |
+| headers | `object` | `no` | The message's headers, if any. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: asyncapi-example
+  version: '0.1.0'
+do:
+  - publishGreetings:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: greet
+        protocol: http
+        message:
+          payload:
+            greetings: Hello, World!
+          headers:
+            foo: bar
+            bar: baz
+```
+
+### AsyncAPI Subscription
+
+Configures a subscription to an AsyncAPI operation.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| filter | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to filter consumed messages. |
+| consume | [`subscriptionLifetime`](#asyncapi-subscription-lifetime) | `yes` | An object used to configure the subscription's lifetime. |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: asyncapi-example
+  version: '0.1.0'
+do:
+  - subscribeToChatInboxForAmount:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: chat-inbox
+        protocol: http
+        subscription:
+          filter: ${ . == $workflow.input.chat.roomId } 
+          consume:
+            amount: 5
+            for:
+              seconds: 10
+```
+
+### AsyncAPI Subscription Lifetime
+
+Configures the lifetime of an AsyncAPI subscription
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-------|:------:|:----------:|:--------------|
+| amount | `integer` | `no` | The amount of messages to consume.<br>*Required if `while` and `until` have not been set.* |
+| for | [`duration`](#duration) | `no` | The [`duration`](#duration) that defines for how long to consume messages. |
+| while | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to determine whether or not to keep consuming messages.<br>*Required if `amount` and `until` have not been set.* |
+| until | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to determine until when to consume messages.<br>*Required if `amount` and `while` have not been set.* |
+
+#### Examples
+
+```yaml
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: asyncapi-example
+  version: '0.1.0'
+do:
+  - subscribeToChatInboxUntil:
+      call: asyncapi
+      with:
+        document:
+          endpoint: https://fake.com/docs/asyncapi.json
+        operation: chat-inbox
+        protocol: http
+        subscription:
+          filter: ${ . == $workflow.input.chat.roomId } 
+          consume:
+            until: '${ ($context.messages | length) == 5 }'
+            for:
+              seconds: 10
 ```

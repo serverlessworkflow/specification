@@ -1,20 +1,20 @@
 document:
-  dsl: 1.0.0-alpha1
+  dsl: '1.0.0-alpha5'
   namespace: examples
   name: bearer-auth
-  version: 1.0.0-alpha1
+  version: '0.1.0'
 do:
   - findPet:
       call: asyncapi
       with:
         document:
           endpoint: https://fake.com/docs/asyncapi.json
-        operationRef: findPetsByStatus
-        server: staging
-        message: getPetByStatusQuery
-        binding: http
-        payload:
-          petId: ${ .pet.id }
+        operation: findPetsByStatus
+        server:
+          name: staging
+        message:
+          payload:
+            petId: ${ .pet.id }
         authentication:
           bearer:
             token: ${ .token }

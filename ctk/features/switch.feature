@@ -7,9 +7,10 @@ Feature: Switch Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: switch-match
+      version: '1.0.0'
     do:
       - switchColor:
           switch:
@@ -51,9 +52,10 @@ Feature: Switch Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: switch-default-implicit
+      version: '1.0.0'
     do:
       - switchColor:
           switch:
@@ -93,9 +95,10 @@ Feature: Switch Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: 1.0.0-alpha1
+      dsl: '1.0.0-alpha5'
       namespace: default
       name: switch-default-implicit
+      version: '1.0.0'
     do:
       - switchColor:
           switch:
