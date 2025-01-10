@@ -1580,8 +1580,9 @@ Represents the configuration of an event consumption strategy.
 | Property | Type | Required | Description |
 |----------|:----:|:--------:|-------------|
 | all | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for all defined events before resuming execution.<br>*Required if `any` and `one` have not been set.* |
-| any | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for any of the defined events before resuming execution.<br>*Required if `all` and `one` have not been set.* |
+| any | [`eventFilter[]`](#event-filter) | `no` | Configures the workflow to wait for any of the defined events before resuming execution.<br>*Required if `all` and `one` have not been set.*<br>*If empty, listens to all incoming events, and requires `until` to be set.* |
 | one | [`eventFilter`](#event-filter) | `no` | Configures the workflow to wait for the defined event before resuming execution.<br>*Required if `all` and `any` have not been set.* |
+| until | `string`<br>[`eventConsumptionStrategy`](#event-consumption-strategy) | `no` | Configures the [runtime expression](dsl.md#runtime-expressions) condition or the events that must be consumed to stop listening.<br>*Only applies if `any` has been set, otherwise ignored.* |
 
 ### Event Properties
 

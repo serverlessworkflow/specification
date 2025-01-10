@@ -1309,14 +1309,47 @@ $defs:
               $ref: '#/$defs/eventFilter'
         required: [ all ]
       - title: AnyEventConsumptionStrategy
-        properties:
-          any:
-            type: array
-            title: AnyEventConsumptionStrategyConfiguration
-            description: A list containing any of the events to consume.
-            items:
-              $ref: '#/$defs/eventFilter'
-        required: [ any ]
+        oneOf:
+          - properties:
+              any:
+                type: array
+                title: AnyEventConsumptionStrategyConfiguration
+                description: A list containing any of the events to consume.
+                items:
+                  $ref: '#/$defs/eventFilter'
+                minItems: 1
+              until:
+                oneOf:
+                  - type: string
+                    title: AnyEventUntilCondition
+                    description: A runtime expression condition evaluated after consuming an event and which determines whether or not to continue listening.
+                  - allOf:
+                      - $ref: '#/$defs/eventConsumptionStrategy'
+                        title: AnyEventUntilConsumed
+                        description: The strategy that defines the event(s) to consume to stop listening.
+                      - properties:
+                          until: false
+            required: [ any ]
+          - properties:
+              any:
+                type: array
+                title: AnyEventConsumptionStrategyConfiguration
+                description: A list containing any of the events to consume.
+                items:
+                  $ref: '#/$defs/eventFilter'
+                maxItems: 0
+              until:
+                oneOf:
+                  - type: string
+                    title: AnyEventUntilCondition
+                    description: A runtime expression condition evaluated after consuming an event and which determines whether or not to continue listening.
+                  - allOf:
+                      - $ref: '#/$defs/eventConsumptionStrategy'
+                        title: AnyEventUntilConsumed
+                        description: The strategy that defines the event(s) to consume to stop listening.
+                      - properties:
+                          until: false
+            required: [ any, until ]
       - title: OneEventConsumptionStrategy
         properties:
           one:
