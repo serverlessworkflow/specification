@@ -820,7 +820,7 @@ do:
 > [!NOTE]
 > When a `container process` is executed, it is recommended that runtime implementations follow a predictable naming convention for the container name. This can improve monitoring, logging, and container lifecycle management.
 >
-> We recommand using the following convention: `{workflow.name}-{uuid}.{workflow.namespace}-{task.name}`
+The ServerlessWorkflow specification recommends using the following convention: `{workflow.name}-{uuid}.{workflow.namespace}-{task.name}`
 
 
 ##### Script Process
