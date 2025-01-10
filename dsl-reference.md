@@ -76,12 +76,12 @@
   + [HTTP Response](#http-response)
   + [HTTP Request](#http-request)
   + [URI Template](#uri-template)
+  + [Container Lifetime](#container-lifetime)
   + [Process Result](#process-result)
   + [AsyncAPI Server](#asyncapi-server)
   + [AsyncAPI Message](#asyncapi-message)
   + [AsyncAPI Subscription](#asyncapi-subscription)
   + [Workflow Definition Reference](#workflow-definition-reference)
-
 
 ## Abstract
 
@@ -430,6 +430,7 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 | body | `any` | `no` | The HTTP request body, if any. |
 | query | `map[string, any]` | `no` | A name/value mapping of the query parameters to use, if any. |
 | output | `string` | `no` | The http call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
+| redirect | `boolean` | `no` | Specifies whether redirection status codes (`300–399`) should be treated as errors.<br>*If set to `false`, runtimes must raise an error for response status codes outside the `200–299` range.*<br>*If set to `true`, they must raise an error for status codes outside the `200–399` range.*<br>*Defaults to `false`.* |
 
 ###### Examples
 
@@ -460,6 +461,7 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 | parameters | `map` | `no` | A name/value mapping of the parameters, if any, of the OpenAPI operation to call. |
 | authentication | [`authentication`](#authentication) | `no` | The authentication policy, or the name of the authentication policy, to use when calling the OpenAPI operation. |
 | output | `string` | `no` | The OpenAPI call's output format.<br>*Supported values are:*<br>*- `raw`, which output's the base-64 encoded [http response](#http-response) content, if any.*<br>*- `content`, which outputs the content of [http response](#http-response), possibly deserialized.*<br>*- `response`, which outputs the [http response](#http-response).*<br>*Defaults to `content`.* |
+| redirect | `boolean` | `no` | Specifies whether redirection status codes (`300–399`) should be treated as errors.<br>*If set to `false`, runtimes must raise an error for response status codes outside the `200–299` range.*<br>*If set to `true`, they must raise an error for status codes outside the `200–399` range.*<br>*Defaults to `false`.* |
 
 ###### Examples
 
@@ -629,7 +631,7 @@ Allows workflows to execute multiple subtasks concurrently, enabling parallel pr
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently. | 
-| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output. Defaults to `false`. |
+| fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*If set to `false`, the task returns an array that includes the outputs from each branch, preserving the order in which the branches are declared.*<br>*If to `true`, the task returns only the output of the winning branch.*<br>*Defaults to `false`.* |
 
 ##### Examples
 
@@ -816,10 +818,12 @@ Enables the execution of external processes encapsulated within a containerized 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | image | `string` | `yes` | The name of the container image to run |
+| name | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to give specific name to the container. |
 | command | `string` | `no` | The command, if any, to execute on the container |
 | ports | `map` | `no` | The container's port mappings, if any  |
 | volumes | `map` | `no` | The container's volume mappings, if any  |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured process |
+| lifetime | [`containerLifetime`](#container-lifetime) | `no` | An object used to configure the container's lifetime. |
 
 ###### Examples
 
@@ -836,6 +840,11 @@ do:
           image: fake-image
 ```
 
+> [!NOTE]
+> When a `container process` is executed, runtime implementations are recommended to follow a predictable naming convention for the container name. This can improve monitoring, logging, and container lifecycle management.
+>
+> The Serverless Workflow specification recommends using the following convention: `{workflow.name}-{uuid}.{workflow.namespace}-{task.name}`
+
 ##### Script Process
 
 Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
@@ -844,11 +853,20 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| language | `string` | `yes` | The language of the script to run |
+| language | `string` | `yes` | The language of the script to run.<br>*Supported values are: [`js`](https://tc39.es/ecma262/2024/) and [`python`](https://www.python.org/downloads/release/python-3131/).* |
 | code | `string` | `no` | The script's code.<br>*Required if `source` has not been set.* |
 | source | [externalResource](#external-resource) | `no` | The script's resource.<br>*Required if `code` has not been set.* |
 | arguments | `map` | `no` | A list of the arguments, if any, of the script to run |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured script process |
+
+> [!WARNING]
+> To ensure cross-compatibility, Serverless Workflow strictly limits the versions of supported scripting languages. These versions may evolve with future releases. If you wish to use a different version of a language, you may do so by utilizing the [`container process`](#container-process).
+
+**Supported languages**
+| Language | Version |
+|:-----------|:---------:|
+| `JavaScript` | [`ES2024`](https://tc39.es/ecma262/2024/) |
+| `Python` | [`3.13.x`](https://www.python.org/downloads/release/python-3131/) |
 
 ###### Examples
 
@@ -1511,6 +1529,9 @@ task: '/do/1/initialize'
 updatedAt: '2024-07-26T16:59:57-05:00'
 status: completed
 ```
+
+> [!WARNING] 
+> Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
 
 ### External Resource
 
@@ -2320,6 +2341,16 @@ This has the following limitations compared to runtime expressions:
 uri: https://petstore.swagger.io/v2/pet/{petId}
 ```
 
+### Container Lifetime
+
+Configures the lifetime of a container.
+
+#### Properties
+
+| Property | Type | Required | Description |
+|----------|:----:|:--------:|-------------|
+| cleanup | `string` | `yes` | The cleanup policy to use.<br>*Supported values are:<br>- `always`: the container is deleted immediately after execution.<br>-`never`: the runtime should never delete the container.<br>-`eventually`: the container is deleted after a configured amount of time after its execution.*<br>*Defaults to `never`.* |
+| after | [`duration`](#duration) | `no` | The [`duration`](#duration), if any, after which to delete the container once executed.<br>*Required if `cleanup` has been set to `eventually`, otherwise ignored.* |
 ### Process Result
 
 Describes the result of a process.
@@ -2338,13 +2369,17 @@ Describes the result of a process.
 document:
   dsl: '1.0.0-alpha5'
   namespace: test
-  name: run-example
+  name: run-container-example
   version: '0.1.0'
 do:
   - runContainer:
       run:
         container:
           image: fake-image
+          lifetime:
+            cleanup: eventually
+            after:
+              minutes: 30
         return: stderr
 
   - runScript:
