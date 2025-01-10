@@ -825,11 +825,20 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
-| language | `string` | `yes` | The language of the script to run |
+| language | `string` | `yes` | The language of the script to run.<br>*Supported values are: [`js`](https://tc39.es/ecma262/2024/) and [`python`](https://www.python.org/downloads/release/python-3131/).* |
 | code | `string` | `no` | The script's code.<br>*Required if `source` has not been set.* |
 | source | [externalResource](#external-resource) | `no` | The script's resource.<br>*Required if `code` has not been set.* |
 | arguments | `map` | `no` | A list of the arguments, if any, of the script to run |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured script process |
+
+> [!WARNING]
+> To ensure cross-compatibility, Serverless Workflow strictly limits the versions of supported scripting languages. These versions may evolve with future releases. If you wish to use a different version of a language, you may do so by utilizing the [`container process`](#container-process).
+
+**Supported languages**
+| Language | Version |
+|:-----------|:---------:|
+| `JavaScript` | [`ES2024`](https://tc39.es/ecma262/2024/) |
+| `Python` | [`3.13.x`](https://www.python.org/downloads/release/python-3131/) |
 
 ###### Examples
 
