@@ -1254,7 +1254,7 @@ correlationKeys:
 
 ##### Workflow Cancelled Event
 
-The data carried by the cloud event that notifies that a workflow has been canceled.
+The data carried by the cloud event that notifies that a workflow has been cancelled.
 
 ###### Properties
 
@@ -1440,7 +1440,7 @@ retriedAt: '2024-07-26T16:59:57-05:00'
 
 ##### Task Cancelled Event
 
-The data carried by the cloud event that notifies that a task has been canceled.
+The data carried by the cloud event that notifies that a task has been cancelled.
 
 ###### Properties
 
