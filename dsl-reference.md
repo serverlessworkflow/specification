@@ -796,6 +796,7 @@ Enables the execution of external processes encapsulated within a containerized 
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | image | `string` | `yes` | The name of the container image to run |
+| name | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions), if any, used to give specific name to the container. |
 | command | `string` | `no` | The command, if any, to execute on the container |
 | ports | `map` | `no` | The container's port mappings, if any  |
 | volumes | `map` | `no` | The container's volume mappings, if any  |
