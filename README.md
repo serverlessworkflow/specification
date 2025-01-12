@@ -73,10 +73,12 @@ These SDKs empower developers to seamlessly integrate serverless workflows into 
 
 Explore our SDKs for different programming languages:
 
+- [.NET](https://github.com/serverlessworkflow/sdk-net)
 - [Go](https://github.com/serverlessworkflow/sdk-go)
 - [Java](https://github.com/serverlessworkflow/sdk-java)
-- [.NET](https://github.com/serverlessworkflow/sdk-net)
+- [PHP](https://github.com/serverlessworkflow/sdk-php)
 - [Python](https://github.com/serverlessworkflow/sdk-python)
+- [Rust](https://github.com/serverlessworkflow/sdk-rust)
 - [TypeScript](https://github.com/serverlessworkflow/sdk-typescript)
 
 Don't see your favorite implementation on the list? Shout out to the community about it or, even better, contribute to the ecosystem with a new SDK!
