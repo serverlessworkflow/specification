@@ -1292,6 +1292,12 @@ $defs:
           - title: ExpressionDataSchema
             $ref: '#/$defs/runtimeExpression'
             description: An expression based event data schema.
+      data:
+        title: EventData
+        description: The event's payload data
+        anyOf:
+          - $ref: '#/$defs/runtimeExpression'
+          - {}
     additionalProperties: true
   eventConsumptionStrategy:
     type: object

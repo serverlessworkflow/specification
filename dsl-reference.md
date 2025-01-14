@@ -1597,7 +1597,7 @@ An event object typically includes details such as the event type, source, times
 | subject | `string` | `no` | Describes the subject of the event in the context of the event producer. |
 | datacontenttype | `string` | `no` | Content type of `data` value. If omitted, it implies the `data` is a JSON value conforming to the "application/json" media type. |
 | dataschema | `string` | `no` | An URI formatted string, or [runtime expression](dsl.md#runtime-expressions), that identifies the schema that `data` adheres to. |
-| data | `object` | `no` | The event payload. |
+| data | `any` | `no` | The event payload. |
 
 *Additional properties can be supplied, see the Cloud Events specification [documentation](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes) for more info.*
 
