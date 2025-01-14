@@ -667,12 +667,10 @@ do:
           any:
           - with:
               type: com.fake-hospital.vitals.measurements.temperature
-              data:
-                temperature: ${ .temperature > 38 }
+              data: ${ .temperature > 38 }
           - with:
               type: com.fake-hospital.vitals.measurements.bpm
-              data:
-                temperature: ${ .bpm < 60 or .bpm > 100 }
+              data: ${ .bpm < 60 or .bpm > 100 }
 ```
 
 #### Raise
