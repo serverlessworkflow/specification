@@ -1294,10 +1294,10 @@ $defs:
             description: An expression based event data schema.
       data:
         title: EventData
-        description: Allow filtering by data content
-        oneOf:
-          - type: string
-          - type: object 
+        description: The event's payload data
+        anyOf:
+          - $ref: '#/$defs/runtimeExpression'
+          - {}
     additionalProperties: true
   eventConsumptionStrategy:
     type: object
