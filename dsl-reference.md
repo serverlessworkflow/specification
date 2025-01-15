@@ -60,6 +60,7 @@
   + [AsyncAPI Server](#asyncapi-server)
   + [AsyncAPI Outbound Message](#asyncapi-outbound-message)
   + [AsyncAPI Subscription](#asyncapi-subscription)
+  + [Subscription Iterator](#subscription-iterator)
 
 ## Abstract
 
