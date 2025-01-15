@@ -1,0 +1,17 @@
+document:
+  dsl: '1.0.0-alpha5'
+  namespace: test
+  name: listen-to-all-read-envelope
+  version: '0.1.0'
+do:
+  - callDoctor:
+      listen:
+        to:
+          all:
+          - with:
+              type: com.fake-hospital.vitals.measurements.temperature
+              data: ${ .temperature > 38 }
+          - with:
+              type: com.fake-hospital.vitals.measurements.bpm
+              data: ${ .bpm < 60 or .bpm > 100 }
+        read: envelope

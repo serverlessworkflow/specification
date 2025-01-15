@@ -1,0 +1,22 @@
+document:
+  dsl: '1.0.0-alpha1'
+  namespace: test
+  name: listen-to-any-while-foreach
+  version: '0.1.0'
+do:
+  - listenToGossips:
+      listen:
+        to:
+          any: []
+          until: '${ false }'
+      foreach:
+        item: event
+        at: i
+        do:
+          - postToChatApi:
+              call: http
+              with:
+                method: post
+                endpoint: https://fake-chat-api.com/room/{roomId}
+                body:
+                  event: ${ $event }

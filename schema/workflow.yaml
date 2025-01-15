@@ -558,7 +558,17 @@ $defs:
             $ref: '#/$defs/eventConsumptionStrategy'
             title: ListenTo
             description: Defines the event(s) to listen to.
+          read:
+            type: string
+            enum: [ data, envelope, raw ]
+            default: data
+            title: ListenAndReadAs
+            description: Specifies how events are read during the listen operation.
         required: [ to ]
+      foreach:
+        $ref: '#/$defs/subscriptionIterator'
+        title: ListenIterator
+        description: Configures the iterator, if any, for processing consumed event(s).
   raiseTask:
     type: object
     $ref: '#/$defs/taskBase'
@@ -1292,6 +1302,12 @@ $defs:
           - title: ExpressionDataSchema
             $ref: '#/$defs/runtimeExpression'
             description: An expression based event data schema.
+      data:
+        title: EventData
+        description: The event's payload data
+        anyOf:
+          - $ref: '#/$defs/runtimeExpression'
+          - {}
     additionalProperties: true
   eventConsumptionStrategy:
     type: object
@@ -1704,6 +1720,10 @@ $defs:
         $ref: '#/$defs/asyncApiMessageConsumptionPolicy'
         title: AsyncApiMessageConsumptionPolicy
         description: An object used to configure the subscription's message consumption policy.
+      foreach:
+        $ref: '#/$defs/subscriptionIterator'
+        title: AsyncApiSubscriptionIterator
+        description: Configures the iterator, if any, for processing consumed messages(s).
     required: [ consume ]
   asyncApiMessageConsumptionPolicy:
     type: object
@@ -1734,3 +1754,31 @@ $defs:
             title: AsyncApiMessageConsumptionPolicyUntil
             description: A runtime expression evaluated before each consumed (filtered) message to decide if message consumption should continue.
         required: [ until ]
+  subscriptionIterator:
+    type: object
+    title: SubscriptionIterator
+    description: Configures the iteration over each item (event or message) consumed by a subscription.
+    unevaluatedProperties: false
+    properties:
+      item:
+        type: string
+        title: SubscriptionIteratorItem
+        description: The name of the variable used to store the current item being enumerated.
+        default: item
+      at:
+        type: string
+        title: SubscriptionIteratorIndex
+        description: The name of the variable used to store the index of the current item being enumerated.
+        default: index
+      do:
+        $ref: '#/$defs/taskList'
+        title: SubscriptionIteratorTasks
+        description: The tasks to perform for each consumed item.
+      output:
+        $ref: '#/$defs/output'
+        title: SubscriptionIteratorOutput
+        description: An object, if any, used to customize the item's output and to document its schema.
+      export:
+        $ref: '#/$defs/export'
+        title: SubscriptionIteratorExport
+        description: An object, if any, used to customize the content of the workflow context.
