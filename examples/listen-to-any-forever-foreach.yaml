@@ -8,7 +8,7 @@ do:
       listen:
         to:
           any: []
-          while: '${ true }'
+          until: '${ false }'
       foreach:
         item: event
         at: i
