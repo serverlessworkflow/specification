@@ -7,10 +7,4 @@ do:
   - callDoctor:
       listen:
         to:
-          any:
-          - with:
-              type: com.fake-hospital.vitals.measurements.temperature
-              data: ${ .temperature > 38 }
-          - with:
-              type: com.fake-hospital.vitals.measurements.bpm
-              data: ${ .bpm < 60 or .bpm > 100 }
+          any: []
