@@ -9,6 +9,9 @@
 - [Concepts](#concepts)
   + [Workflow](#workflow)
     - [Status Phases](#status-phases)
+    - [Lifecycle Events](#lifecycle-events)
+      + [Workflow Lifecycle Events](#workflow-lifecycle-events)
+      + [Task Lifecycle Events](#task-lifecycle-events)
     - [Components](#components)
       + [Task](#task)
     - [Scheduling](#scheduling)
@@ -91,20 +94,61 @@ Additionally, workflows may optionally accept inputs and produce outputs, allowi
 
 #### Status Phases
 
-Workflows in the Serverless Workflow DSL can exist in several phases, each indicating the current state of the workflow execution. These phases include:
+Both workflows and tasks in the Serverless Workflow DSL can exist in several phases, each indicating the current state of the workflow/task execution. These phases include:
 
 | Phase |	Description |
 | --- | --- |
-| `pending` |	The workflow has been initiated and is pending execution. |
-| `running` |	The workflow is currently in progress. |
-| `waiting` |	The workflow execution has been paused or halted temporarily and is waiting for something to happen. |
-| `cancelled` |	The workflow execution has been terminated before completion. |
-| `faulted` |	The workflow execution has encountered an error. |
-| `completed` |	The workflow execution has successfully finished all tasks. |
+| `pending` |	The workflow/task has been initiated and is pending execution. |
+| `running` |	The workflow/task is currently in progress. |
+| `waiting` |	The workflow/task execution is temporarily paused, awaiting either inbound event(s) or a specified time interval as defined by a [`wait`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#wait) task. |
+| `suspended` |	The workflow/task execution has been manually paused by a user and will remain halted until explicitly resumed. |
+| `cancelled` |	The workflow/task execution has been terminated before completion. |
+| `faulted` |	The workflow/task execution has encountered an error. |
+| `completed` |	The workflow/task ran to completion. |
 
 Additionally, the flow of execution within a workflow can be controlled using [directives*](dsl-reference.md#flow-directive), which provide instructions to the workflow engine on how to manage and handle specific aspects of workflow execution.
 
 \**To learn more about flow directives and how they can be utilized to control the execution and behavior of workflows, please refer to [Flow Directives](dsl-reference.md#flow-directive).*
+
+#### Lifecycle Events
+
+Lifecycle [cloud events](https://github.com/cloudevents/spec) standardize notifications for key state changes in workflows and tasks—such as start, suspend, resume, cancel, fault, complete, and status change. These events carry consistent information like IDs, status transitions, timestamps, and relevant metadata, enabling users to reliably respond to updates, enhancing interoperability and simplifying integration across different implementations.
+
+Runtimes are expected to publish these events upon state changes. While using the [HTTP protocol binding](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/bindings/http-protocol-binding.md) with [structured content mode](https://github.com/cloudevents/spec/blob/v1.0.2/cloudevents/bindings/http-protocol-binding.md#32-structured-content-mode) is recommended, other transports adhering to the [CloudEvents](https://github.com/cloudevents/spec) specification may be used.
+
+##### Workflow Lifecycle Events
+
+| Type | Data | Required | Description |
+|:----:|:----:|:--------:|:------------|
+| <pre>`io.serverlessworkflow.workflow.started.v1`</pre> | [`workflowStartedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-started-event) | `yes` | Notifies about the start of a workflow. |
+| <pre>`io.serverlessworkflow.workflow.suspended.v1`</pre> | [`workflowSupsendedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-suspended-event) | `yes` | Notifies about suspending a workflow execution. |
+| <pre>`io.serverlessworkflow.workflow.resumed.v1`</pre> | [`workflowResumedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-resumed-event) | `yes` | Notifies about resuming a workflow execution. |
+| <pre>`io.serverlessworkflow.workflow.correlation-started.v1`</pre> | [`workflowCorrelationStartedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-correlation-started-event) | `yes` | Notifies about a workflow starting to correlate events. |
+| <pre>`io.serverlessworkflow.workflow.correlation-completed.v1`</pre> | [`workflowCorrelationCompletedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-correlation-completed-event) | `yes` | Notifies about a workflow completing an event correlation. |
+| <pre>`io.serverlessworkflow.workflow.cancelled.v1`</pre> | [`workflowCancelledEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-cancelled-event) | `yes` | Notifies about the cancellation of a workflow execution. |
+| <pre>`io.serverlessworkflow.workflow.faulted.v1`</pre> | [`workflowFaultedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-faulted-event) | `yes` | Notifies about a workflow being faulted. |
+| <pre>`io.serverlessworkflow.workflow.completed.v1`</pre> | [`workflowCompletedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-completed-event) | `yes` |Notifies about the completion of a workflow execution. |
+| <pre>`io.serverlessworkflow.workflow.status-changed.v1`</pre> | [`workflowStatusChangedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#workflow-status-changed-event) | `no` |Notifies about the change of a workflow's status phase. |
+
+> [!NOTE]  
+> The `io.serverlessworkflow.workflow.status-changed.v1` event is an optional convenience event that notifies consumers solely about a workflow’s status changes, without carrying extra data. It is typically used by consumers who only need to track or report status updates (and not details like faults or outputs). Its use is optional because it requires runtimes to publish an additional event for each necessary lifecycle change.
+
+##### Task Lifecycle Events
+
+| Type | Data | Required | Description |
+|:----:|:----:|:--------:|:------------|
+| <pre>`io.serverlessworkflow.task.created.v1`</pre> | [`taskCreatedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-created-event) | `yes` | Notifies about the creation of a task. |
+| <pre>`io.serverlessworkflow.task.started.v1`</pre> | [`taskStartedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-started-event) | `yes` | Notifies about the start of a task. |
+| <pre>`io.serverlessworkflow.task.suspended.v1`</pre> | [`taskSuspendedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-suspended-event) | `yes` | Notifies about suspending a task's execution. |
+| <pre>`io.serverlessworkflow.task.resumed.v1`</pre> | [`taskResumedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-resumed-event) | `yes` | Notifies about resuming a task's execution. |
+| <pre>`io.serverlessworkflow.task.retried.v1`</pre> | [`taskRetriedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-retried-event) | `yes` | Notifies about retrying a task's execution. |
+| <pre>`io.serverlessworkflow.task.cancelled.v1`</pre> | [`taskCancelledEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-cancelled-event) | `yes` | Notifies about the cancellation of a task's execution. |
+| <pre>`io.serverlessworkflow.task.faulted.v1`</pre> | [`taskFaultedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-faulted-event) | `yes` | Notifies about a task being faulted. |
+| <pre>`io.serverlessworkflow.task.completed.v1`</pre> | [`taskCompletedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-completed-event) | `yes` | Notifies about the completion of a task's execution. |
+| <pre>`io.serverlessworkflow.task.status-changed.v1`</pre> | [`taskStatusChangedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-status-changed-event) | `no` | Notifies about the change of a task's status phase. |
+
+> [!NOTE]  
+> The `io.serverlessworkflow.task.status-changed.v1` event is an optional convenience event that notifies consumers solely about a task's status changes, without carrying extra data. It is typically used by consumers who only need to track or report status updates (and not details like faults or outputs). Its use is optional because it requires runtimes to publish an additional event for each necessary lifecycle change.
 
 #### Components
 
