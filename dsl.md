@@ -148,7 +148,7 @@ Runtimes are expected to publish these events upon state changes. While using th
 | <pre>`io.serverlessworkflow.task.status-changed.v1`</pre> | [`taskStatusChangedEvent`](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#task-status-changed-event) | `no` | Notifies about the change of a task's status phase. |
 
 > [!NOTE]  
-> The `io.serverlessworkflow.task.status-changed.v1` event is an optional convenience event that notifies consumers solely about a workflow’s status changes, without carrying extra data. It is typically used by consumers who only need to track or report status updates (and not details like faults or outputs). Its use is optional because it requires runtimes to publish an additional event for each necessary lifecycle change.
+> The `io.serverlessworkflow.task.status-changed.v1` event is an optional convenience event that notifies consumers solely about a task's status changes, without carrying extra data. It is typically used by consumers who only need to track or report status updates (and not details like faults or outputs). Its use is optional because it requires runtimes to publish an additional event for each necessary lifecycle change.
 
 #### Components
 
