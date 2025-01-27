@@ -1713,20 +1713,20 @@ $defs:
       - properties:
           amount:
             type: integer
-            title: AsyncApiMessageConsumptionPolicyAmount
             description: The amount of (filtered) messages to consume before disposing of the subscription.
+        title: AsyncApiMessageConsumptionPolicyAmount
         required: [ amount ]
       - properties:
           while:
             $ref: '#/$defs/runtimeExpression'
-            title: AsyncApiMessageConsumptionPolicyWhile
             description: A runtime expression evaluated after each consumed (filtered) message to decide if message consumption should continue.
+        title: AsyncApiMessageConsumptionPolicyWhile
         required: [ while ]
       - properties:
           until:
             $ref: '#/$defs/runtimeExpression'
-            title: AsyncApiMessageConsumptionPolicyUntil
             description: A runtime expression evaluated before each consumed (filtered) message to decide if message consumption should continue.
+        title: AsyncApiMessageConsumptionPolicyUntil
         required: [ until ]
   subscriptionIterator:
     type: object
