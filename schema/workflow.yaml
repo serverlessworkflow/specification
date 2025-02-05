@@ -1188,11 +1188,11 @@ $defs:
             title: ExpressionErrorInstance
             description: An expression based error instance.
       title:
-        type: string
+        $ref: '#/$defs/runtimeExpression'
         title: ErrorTitle
         description: A short, human-readable summary of the error.
       detail:
-        type: string
+        $ref: '#/$defs/runtimeExpression'
         title: ErrorDetails
         description: A human-readable explanation specific to this occurrence of the error.
     required: [ type, status ]
