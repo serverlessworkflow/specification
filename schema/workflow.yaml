@@ -357,14 +357,22 @@ $defs:
                 description: The HTTP endpoint to send the request to.
                 $ref: '#/$defs/endpoint'
               headers:
-                type: object
+                oneOf:
+                  - type: object
+                    additionalProperties:
+                      type: string
+                  - $ref: '#/$defs/runtimeExpression'
                 title: HTTPHeaders
                 description: A name/value mapping of the headers, if any, of the HTTP request to perform.
               body:
                 title: HTTPBody
                 description: The body, if any, of the HTTP request to perform.
               query:
-                type: object
+                oneOf:
+                  - type: object
+                    additionalProperties:
+                      type: string
+                  - $ref: '#/$defs/runtimeExpression'
                 title: HTTPQuery
                 description: A name/value mapping of the query parameters, if any, of the HTTP request to perform.
                 additionalProperties: true
