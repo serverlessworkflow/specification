@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../schema/workflow.yaml
+document:
+  dsl: 1.0.0-alpha2
+  namespace: examples
+  name: http-query-headers-expressions
+  version: 1.0.0-alpha2
+input:
+  schema:
+    format: json
+    document:
+      type: object
+      required:
+        - searchQuery
+      properties:
+        searchQuery:
+          type: string
+do:
+  - setQueryAndHeaders:
+      set:
+        query:
+          search: ${.searchQuery}
+        headers:
+          Accept: application/json
+  - searchStarWarsCharacters:
+      call: http
+      with:
+        method: get
+        endpoint: https://swapi.dev/api/people/
+        headers: ${.headers}
+        query: ${.query}
+      
