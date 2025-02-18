@@ -63,7 +63,7 @@ The following diagram represents the high-level flow of the workflow:
 
 ```yaml
 document:
-  dsl: '1.0.0-alpha5'
+  dsl: '1.0.0'
   namespace: default
   name: manage-github-issues
   version: '0.1.0'
