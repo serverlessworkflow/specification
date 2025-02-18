@@ -96,16 +96,16 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 
 #### Properties
 
-| Name | Type | Required | Description|
-|:--|:---:|:---:|:---|
-| document | [`document`](#document) | `yes` | Documents the defined workflow. |
-| input | [`input`](#input) | `no` | Configures the workflow's input. |
-| use | [`use`](#use) | `no` | Defines the workflow's reusable components, if any. |
-| do | [`map[string, task][]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
+| Name |               Type                | Required | Description|
+|:--|:---------------------------------:|:---:|:---|
+| document |      [`document`](#document)      | `yes` | Documents the defined workflow. |
+| input |         [`input`](#input)         | `no` | Configures the workflow's input. |
+| use |           [`use`](#use)           | `no` | Defines the workflow's reusable components, if any. |
+| do |    [`map[string, task`](#task)    | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
 | timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
-| output | [`output`](#output) | `no` | Configures the workflow's output. |
-| schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
-| evaluate | [`evaluate`](#evaluate) | `no` | Configures runtime expression evaluation. |
+| output |        [`output`](#output)        | `no` | Configures the workflow's output. |
+| schedule |      [`schedule`](#schedule)      | `no` | Configures the workflow's schedule, if any. |
+| evaluate |      [`evaluate`](#evaluate)      | `no` | Configures runtime expression evaluation. |
 
 #### Document
 
@@ -588,13 +588,13 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 
 ##### Properties
 
-| Name | Type | Required | Description|
-|:--|:---:|:---:|:---|
-| for.each | `string` | `no` | The name of the variable used to store the current item being enumerated.<br>Defaults to `item`. |
-| for.in | `string` | `yes` | A [runtime expression](dsl.md#runtime-expressions) used to get the collection to enumerate. |
-| for.at | `string` | `no` | The name of the variable used to store the index of the current item being enumerated.<br>Defaults to `index`. |
-| while | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions) that represents the condition, if any, that must be met for the iteration to continue. |
-| do | [`task`](#task) | `yes` | The task to perform for each item in the collection. |
+| Name |             Type             | Required | Description|
+|:--|:----------------------------:|:---:|:---|
+| for.each |           `string`           | `no` | The name of the variable used to store the current item being enumerated.<br>Defaults to `item`. |
+| for.in |           `string`           | `yes` | A [runtime expression](dsl.md#runtime-expressions) used to get the collection to enumerate. |
+| for.at |           `string`           | `no` | The name of the variable used to store the index of the current item being enumerated.<br>Defaults to `index`. |
+| while |           `string`           | `no` | A [runtime expression](dsl.md#runtime-expressions) that represents the condition, if any, that must be met for the iteration to continue. |
+| do | [`map[string, task]`](#task) | `yes` | The [task(s)](#task) to perform for each item in the collection. |
 
 ##### Examples
 
@@ -1157,6 +1157,9 @@ Flow Directives are commands within a workflow that dictate its progression.
 | `"end"` | Provides a graceful conclusion to the workflow execution, signaling its completion explicitly. |
 | `string` | Continues the workflow at the task with the specified name |
 
+> [!WARNING]
+> Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
+
 ### Lifecycle Events
 
 Lifecycle events are [cloud events](https://github.com/cloudevents/spec) used to notify users and external services about key state changes in workflows and tasks.
@@ -1539,9 +1542,6 @@ task: '/do/1/initialize'
 updatedAt: '2024-07-26T16:59:57-05:00'
 status: completed
 ```
-
-> [!WARNING] 
-> Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
 
 ### External Resource
 
