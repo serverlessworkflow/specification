@@ -78,7 +78,7 @@ This versioning strategy ensures clarity and transparency in tracking changes an
 | `change: feature` | `0.x.0` | Addition of significant capabilities, enhancements, or functionalities that extend the DSL's capabilities or improve its usability. |
 | `change: breaking` | `x.0.0` | Alterations that are incompatible with previous versions, necessitating adjustments in existing workflows or implementations. |
 
-In addition to versioning changes denoted by labels in pull requests, pre-release versions will be suffixed with either `alphaX`, `betaX`, or `rcX` where `X` represents the pre-release version number (ex: `1.0.0`). These pre-release versions are designated to indicate different stages of development and testing before the final release.
+In addition to versioning changes denoted by labels in pull requests, pre-release versions will be suffixed with either `alphaX`, `betaX`, or `rcX` where `X` represents the pre-release version number (ex: `1.0.0-alpha1`). These pre-release versions are designated to indicate different stages of development and testing before the final release.
 
 - **Alpha versions** are the earliest stages of testing and development. They typically contain incomplete features and may have known issues. They are intended for a limited audience, such as internal testers or early adopters, for initial feedback and testing.
 
