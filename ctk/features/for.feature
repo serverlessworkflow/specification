@@ -10,7 +10,7 @@ Feature: For Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: '1.0.0-alpha5'
+      dsl: '1.0.0'
       namespace: default
       name: for
       version: '1.0.0'
