@@ -241,7 +241,7 @@ Before the workflow starts, the input data provided to the workflow can be valid
 The execution only proceeds if the input is valid. Otherwise, it will fault with a [ValidationError (https://serverlessworkflow.io/spec/1.0.0/errors/validation)](dsl-reference.md#error).
 
 2. **Transform Workflow Input**
-Before the workflow starts, the input data provided to the workflow can be transformed to ensure only relevant data in the expected format is passed into the workflow context. This can be done using the top level `input.from` expression. It evaluates on the raw workflow input and defaults to the identity expression which leaves the input unchanged. This step allows the workflow to start with a clean and focused dataset, reducing potential overhead and complexity in subsequent tasks. The result of this expression will set as the initial value for the `$context` runtime expression argument and be passed to the first task.
+Before the workflow starts, the input data provided to the workflow can be transformed to ensure only relevant data in the expected format is passed into the workflow context. This can be done using the top level `input.from` expression. It evaluates on the raw workflow input and defaults to the identity expression which leaves the input unchanged. This step allows the workflow to start with a clean and focused dataset, reducing potential overhead and complexity in subsequent tasks. The result of this expression will set as the initial value for the `$input` runtime expression argument and be passed to the first task.
 
 *Example: If the workflow receives a JSON object as input, a transformation can be applied to remove unnecessary fields and retain only those that are required for the workflow's execution.*
 
