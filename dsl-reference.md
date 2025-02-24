@@ -101,7 +101,7 @@ A [workflow](#workflow) serves as a blueprint outlining the series of [tasks](#t
 | document | [`document`](#document) | `yes` | Documents the defined workflow. |
 | input | [`input`](#input) | `no` | Configures the workflow's input. |
 | use | [`use`](#use) | `no` | Defines the workflow's reusable components, if any. |
-| do | [`map[string, task][]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
+| do | [`map[string, task]`](#task) | `yes` | The [task(s)](#task) that must be performed by the [workflow](#workflow). |
 | timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration, if any, of the workflow's timeout.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
 | output | [`output`](#output) | `no` | Configures the workflow's output. |
 | schedule | [`schedule`](#schedule) | `no` | Configures the workflow's schedule, if any. |
@@ -131,7 +131,7 @@ Defines the workflow's reusable components.
 | authentications | [`map[string, authentication]`](#authentication) | `no` | A name/value mapping of the workflow's reusable authentication policies. |
 | catalogs | [`map[string, catalog]`(#catalog)] | `no` | A name/value mapping of the workflow's reusable resource catalogs. |
 | errors | [`map[string, error]`](#error) | `no` | A name/value mapping of the workflow's reusable errors. | 
-| extensions | [`map[string, extension][]`](#extension) | `no` | A list of the workflow's reusable extensions. |
+| extensions | [`map[string, extension]`](#extension) | `no` | A list of the workflow's reusable extensions. |
 | functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
 | retries | [`map[string, retryPolicy]`](#retry) | `no` | A name/value mapping of the workflow's reusable retry policies. |
 | secrets | `string[]` | `no` | A list containing the workflow's secrets. |
@@ -491,7 +491,7 @@ Serves as a fundamental building block within workflows, enabling the sequential
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| do | [`map[string, task][]`](#task) | `no` | The tasks to perform sequentially. |
+| do | [`map[string, task]`](#task) | `no` | The tasks to perform sequentially. |
 
 ##### Examples
 
@@ -594,7 +594,7 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 | for.in | `string` | `yes` | A [runtime expression](dsl.md#runtime-expressions) used to get the collection to enumerate. |
 | for.at | `string` | `no` | The name of the variable used to store the index of the current item being enumerated.<br>Defaults to `index`. |
 | while | `string` | `no` | A [runtime expression](dsl.md#runtime-expressions) that represents the condition, if any, that must be met for the iteration to continue. |
-| do | [`task`](#task) | `yes` | The task to perform for each item in the collection. |
+| do | [`map[string, task]`](#task) | `yes` | The [task(s)](#task) to perform for each item in the collection. |
 
 ##### Examples
 
@@ -630,7 +630,7 @@ Allows workflows to execute multiple subtasks concurrently, enabling parallel pr
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| fork.branches | [`map[string, task][]`](#task) | `no` | The tasks to perform concurrently. | 
+| fork.branches | [`map[string, task]`](#task) | `no` | The tasks to perform concurrently. | 
 | fork.compete | `boolean` | `no` | Indicates whether or not the concurrent [`tasks`](#task) are racing against each other, with a single possible winner, which sets the composite task's output.<br>*If set to `false`, the task returns an array that includes the outputs from each branch, preserving the order in which the branches are declared.*<br>*If to `true`, the task returns only the output of the winning branch.*<br>*Defaults to `false`.* |
 
 ##### Examples
@@ -1072,7 +1072,7 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| try | [`map[string, task][]`](#task) | `yes` | The task(s) to perform. |
+| try | [`map[string, task]`](#task) | `yes` | The task(s) to perform. |
 | catch | [`catch`](#catch) | `yes` | Configures the errors to catch and how to handle them. |
 
 ##### Examples
@@ -1120,7 +1120,7 @@ Defines the configuration of a catch clause, which a concept used to catch error
 | when | `string`| `no` | A runtime expression used to determine whether or not to catch the filtered error. |
 | exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error. |
 | retry | `string`<br>[`retryPolicy`](#retry) | `no` | The [`retry policy`](#retry) to use, if any, when catching [`errors`](#error).<br>*If a `string`, must be the name of a [retry policy](#retry) defined in the [workflow's reusable components](#use).* |
-| do | [`map[string, task][]`](#task) | `no` | The definition of the task(s) to run when catching an error. |
+| do | [`map[string, task]`](#task) | `no` | The definition of the task(s) to run when catching an error. |
 
 #### Wait
 
@@ -1153,9 +1153,12 @@ Flow Directives are commands within a workflow that dictate its progression.
 | Directive | Description |
 | --------- | ----------- |
 | `"continue"` | Instructs the workflow to proceed with the next task in line. This action may conclude the execution of a particular workflow or branch if there are not task defined after the continue one. |
-| `"exit"` | Halts the current branch's execution, potentially terminating the entire workflow if the current task resides within the main branch. |
+| `"exit"` | Completes the current scope's execution, potentially terminating the entire workflow if the current task resides within the main `do` scope. |
 | `"end"` | Provides a graceful conclusion to the workflow execution, signaling its completion explicitly. |
-| `string` | Continues the workflow at the task with the specified name |
+| `string` | Continues the workflow at the task with the specified name. |
+
+> [!WARNING]
+> Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
 
 ### Lifecycle Events
 
@@ -1540,9 +1543,6 @@ updatedAt: '2024-07-26T16:59:57-05:00'
 status: completed
 ```
 
-> [!WARNING] 
-> Flow directives may only redirect to tasks declared within their own scope. In other words, they cannot target tasks at a different depth.
-
 ### External Resource
 
 Defines an external resource.
@@ -1877,8 +1877,8 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 |----------|:----:|:--------:|-------------|
 | extend |  `string` | `yes` | The type of task to extend<br>Supported values are: `call`, `composite`, `emit`, `extension`, `for`, `listen`, `raise`, `run`, `set`, `switch`, `try`, `wait` and `all` |
 | when | `string` | `no` | A runtime expression used to determine whether or not the extension should apply in the specified context |
-| before | [`map[string, task][]`](#task) | `no` | The task to execute, if any, before the extended task |
-| after | [`map[string, task][]`](#task) | `no` | The task to execute, if any, after the extended task |
+| before | [`map[string, task]`](#task) | `no` | The task to execute, if any, before the extended task |
+| after | [`map[string, task]`](#task) | `no` | The task to execute, if any, after the extended task |
 
 #### Examples
 
@@ -2602,7 +2602,7 @@ Configures the iteration over each item (event or message) consumed by a subscri
 |:-----|:----:|:--------:|:------------|
 | item | `string` | `no` | The name of the variable used to store the current item being enumerated.<br>*Defaults to `item`.* |
 | at | `string` | `no` | The name of the variable used to store the index of the current item being enumerated.<br>*Defaults to `index`.* |
-| do | [`map[string, task][]`](#task) | `no` | The tasks to perform for each consumed item. |
+| do | [`map[string, task]`](#task) | `no` | The tasks to perform for each consumed item. |
 | output | [`output`](#output) | `no` | An object, if any, used to customize the item's output and to document its schema. |
 | export | [`export`](#export) | `no` | An object, if any, used to customize the content of the workflow context. |
 
