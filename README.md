@@ -57,7 +57,7 @@ It encompasses a comprehensive suite of components and tools designed to facilit
 
 1. **[DSL](dsl.md) (Domain Specific Language)**: The core of the ecosystem, defining the fundamental syntax and semantics of Serverless Workflow specifications.
 
-2. **[CTK](/ctk/readme.md) (Conformance Test Kit)**: A set of Gherkin features utilized for both conformance testing and Behavior Driven Design (BDD), ensuring compliance and facilitating testing across implementations.
+2. **[CTK](/ctk/README.md) (Conformance Test Kit)**: A set of Gherkin features utilized for both conformance testing and Behavior Driven Design (BDD), ensuring compliance and facilitating testing across implementations.
 
 3. **[SDKs](#sdks) (Software Development Kits)**: These enable developers to interact with serverless workflows in various programming languages, providing functionalities such as reading, writing, building, and validating workflows.
 
