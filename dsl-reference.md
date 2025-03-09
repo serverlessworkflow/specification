@@ -961,9 +961,9 @@ A task used to set data.
 
 ##### Properties
 
-| Name | Type | Required | Description |
-|:--|:---:|:---:|:---|
-| set | `object` | `string` | `yes` | A name/value mapping of the data to set. Can be an object or a direct runtime expression. |
+| Name |        Type        | Required | Description                                                          |
+|:--|:------------------:|:--------:|:---------------------------------------------------------------------|
+| set | `object \| string` | `yes` | Can be an object or a direct runtime expression.                     |
 
 ##### Examples
 
