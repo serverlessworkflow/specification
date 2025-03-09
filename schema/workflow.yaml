@@ -759,7 +759,7 @@ $defs:
                 required: [ namespace, name, version ]
             required: [ workflow ]
   setTask:
-    type: object | string
+    type: object
     $ref: '#/$defs/taskBase'
     title: SetTask
     description: A task used to set data.
@@ -767,7 +767,7 @@ $defs:
     unevaluatedProperties: false
     properties:
       set:
-        type: object | string
+        type: [object, string]
         title: SetTaskConfiguration
         description: The data to set.
         minProperties: 1
