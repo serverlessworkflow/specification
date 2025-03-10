@@ -10,6 +10,4 @@ schedule:
         type: io.serverlessworkflow.samples.events.trigger.v1
 do:
   - initialize:
-      set:
-        startEvent:
-          input: ${ $workflow.input[0] }
+      set: ${ $workflow.input[0] }
