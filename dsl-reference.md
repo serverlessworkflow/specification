@@ -963,7 +963,7 @@ A task used to set data.
 
 | Name | Type | Required | Description |
 |:-------|:------:|:----------:|:-------------|
-| set | `map` <br> `string` | `yes` | The data to set.<br>*Can be an object or a direct runtime expression. *  |
+| set | `map` <br> `string` | `yes` | The data to set.<br>*Can be an object or a direct runtime expression.* |
 
 ##### Examples
 
