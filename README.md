@@ -112,8 +112,9 @@ It is a member project of the [CNCF Serverless Working Group](https://github.com
 
 The documentation for Serverless Workflow includes:
 
-- [**DSL**](dsl.md): Documents the fundamentals aspects and concepts of the Serverless Workflow DSL
-- [**DSL Reference**](dsl-reference.md): References all the definitions used by the Serverless Workflow DSL
+- [**DSL**](dsl.md): Documents the fundamentals aspects and concepts of the Serverless Workflow DSL.
+- [**DSL Reference**](dsl-reference.md): References all the definitions used by the Serverless Workflow DSL.
+- [**Comparison**](comparison.md): See how Serverless Workflow compares to other DSLs.
 - [**Examples**](./examples/README.md): A collection of practical examples demonstrating specific features and functionalities of Serverless Workflow.
 - [**Use Cases**](./use-cases/README.md): Detailed use cases illustrating how Serverless Workflow can be applied in various real-world scenarios.
 
