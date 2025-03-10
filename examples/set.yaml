@@ -8,7 +8,7 @@ schedule:
     one:
       with:
         type: io.serverlessworkflow.samples.events.trigger.v1
-do: 
+do:
   - initialize:
       set:
         startEvent: ${ $workflow.input[0] }
