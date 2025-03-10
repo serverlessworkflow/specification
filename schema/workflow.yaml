@@ -767,11 +767,13 @@ $defs:
     unevaluatedProperties: false
     properties:
       set:
-        type: [object, string]
+        oneOf:
+          - type: object
+            minProperties: 1
+            additionalProperties: true
+          - type: string
         title: SetTaskConfiguration
         description: The data to set.
-        minProperties: 1
-        additionalProperties: true
   switchTask:
     type: object
     $ref: '#/$defs/taskBase'
