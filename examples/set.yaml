@@ -11,5 +11,4 @@ schedule:
 do:
   - initialize:
       set:
-        startEvent:
-          input: ${ $workflow.input[0] }
+        startEvent: ${ $workflow.input[0] }
