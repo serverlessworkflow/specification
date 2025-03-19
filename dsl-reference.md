@@ -962,8 +962,8 @@ A task used to set data.
 ##### Properties
 
 | Name | Type | Required | Description |
-|:--|:---:|:---:|:---|
-| set | `object` | `yes` | A name/value mapping of the data to set. |
+|:-------|:------:|:----------:|:-------------|
+| set | `map` <br> `string` | `yes` | The data to set.<br>*Can be an object or a direct runtime expression.* |
 
 ##### Examples
 
@@ -979,6 +979,8 @@ do:
         shape: circle
         size: ${ .configuration.size }
         fill: ${ .configuration.fill }
+  - setColor:
+      set: ${ .configuration.color }      
 ```
 
 #### Switch
