@@ -85,3 +85,126 @@ Feature: Try Task
     """
     When the workflow is executed
     Then the workflow should fault
+
+  # Tests task-level catch functionality
+  # Tests error handling without try block
+  # Tests custom error variable name
+  # Tests error instance path
+  Scenario: Task Level Catch Handle Error
+    Given a workflow with definition:
+    """yaml
+    document:
+      dsl: '1.0.0'
+      namespace: default
+      name: task-level-catch
+      version: '1.0.0'
+    do:
+      - getPet:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://petstore.swagger.io/v2/pet/getPetByName/{petName}
+          catch:
+            errors:
+              with:
+                type: https://serverlessworkflow.io/dsl/errors/types/communication
+                status: 404
+            as: taskError
+            do:
+              - handleError:
+                  set:
+                    error: ${ $taskError }
+    """
+    And given the workflow input is:
+    """yaml
+    petName: Milou
+    """
+    When the workflow is executed
+    Then the workflow should complete
+    And the workflow output should have properties 'error', 'error.type', 'error.status', 'error.title'
+    And the workflow output should have a 'error.instance' property with value:
+    """yaml
+    /do/0/getPet
+    """
+
+  # Tests task-level catch with retry
+  # Tests retry policy configuration
+  # Tests error handling
+  Scenario: Task Level Catch With Retry
+    Given a workflow with definition:
+    """yaml
+    document:
+      dsl: '1.0.0'
+      namespace: default
+      name: task-level-catch-retry
+      version: '1.0.0'
+    do:
+      - getPet:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://petstore.swagger.io/v2/pet/getPetByName/{petName}
+          catch:
+            errors:
+              with:
+                type: https://serverlessworkflow.io/dsl/errors/types/communication
+                status: 503
+            retry:
+              delay:
+                seconds: 2
+              backoff:
+                exponential: {}
+              limit:
+                attempt:
+                  count: 3
+            do:
+              - handleError:
+                  set:
+                    status: "service_unavailable"
+    """
+    And given the workflow input is:
+    """yaml
+    petName: Milou
+    """
+    When the workflow is executed
+    Then the workflow should complete
+    And the workflow output should have a 'status' property with value 'service_unavailable'
+
+  # Tests task-level catch with conditional handling
+  # Tests when condition in catch
+  # Tests error variable access
+  Scenario: Task Level Catch With Condition
+    Given a workflow with definition:
+    """yaml
+    document:
+      dsl: '1.0.0'
+      namespace: default
+      name: task-level-catch-condition
+      version: '1.0.0'
+    do:
+      - getPet:
+          call: http
+          with:
+            method: get
+            endpoint:
+              uri: https://petstore.swagger.io/v2/pet/getPetByName/{petName}
+          catch:
+            errors:
+              with:
+                type: https://serverlessworkflow.io/dsl/errors/types/communication
+            when: $error.status == 404
+            as: notFoundError
+            do:
+              - handleNotFound:
+                  set:
+                    message: "Pet not found"
+    """
+    And given the workflow input is:
+    """yaml
+    petName: Milou
+    """
+    When the workflow is executed
+    Then the workflow should complete
+    And the workflow output should have a 'message' property with value 'Pet not found'

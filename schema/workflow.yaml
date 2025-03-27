@@ -203,6 +203,8 @@ $defs:
         title: TaskMetadata
         description: Holds additional information about the task.
         additionalProperties: true
+      catch:
+        $ref: '#/$defs/taskCatch'
   task:
     title: Task
     description: A discrete unit of work that contributes to achieving the overall objectives defined by the workflow.
@@ -820,42 +822,7 @@ $defs:
         title: TryTaskConfiguration
         description: The task(s) to perform.
       catch:
-        type: object
-        title: TryTaskCatch
-        description: The object used to define the errors to catch.
-        unevaluatedProperties: false
-        properties:
-          errors:
-            type: object
-            title: CatchErrors
-            properties:
-              with:
-                $ref: '#/$defs/errorFilter'
-            description: static error filter
-          as:
-            type: string
-            title: CatchAs
-            description: The name of the runtime expression variable to save the error as. Defaults to 'error'.
-          when:
-            type: string
-            title: CatchWhen
-            description: A runtime expression used to determine whether to catch the filtered error.
-          exceptWhen:
-            type: string
-            title: CatchExceptWhen
-            description: A runtime expression used to determine whether not to catch the filtered error.
-          retry:
-            oneOf:
-              - $ref: '#/$defs/retryPolicy'
-                title: RetryPolicyDefinition
-                description: The retry policy to use, if any, when catching errors.
-              - type: string
-                title: RetryPolicyReference
-                description: The name of the retry policy to use, if any, when catching errors.
-          do:
-            $ref: '#/$defs/taskList'
-            title: TryTaskCatchDo
-            description: The definition of the task(s) to run when catching an error.
+        $ref: '#/$defs/taskCatch'
   waitTask:
     type: object
     $ref: '#/$defs/taskBase'
@@ -1774,3 +1741,40 @@ $defs:
         $ref: '#/$defs/export'
         title: SubscriptionIteratorExport
         description: An object, if any, used to customize the content of the workflow context.
+  taskCatch:
+    type: object
+    title: TaskCatch
+    description: The object used to define error handling at the task level.
+    unevaluatedProperties: false
+    properties:
+      errors:
+        type: object
+        title: CatchErrors
+        properties:
+          with:
+            $ref: '#/$defs/errorFilter'
+        description: static error filter
+      as:
+        type: string
+        title: CatchAs
+        description: The name of the runtime expression variable to save the error as. Defaults to 'error'.
+      when:
+        type: string
+        title: CatchWhen
+        description: A runtime expression used to determine whether to catch the filtered error.
+      exceptWhen:
+        type: string
+        title: CatchExceptWhen
+        description: A runtime expression used to determine whether not to catch the filtered error.
+      retry:
+        oneOf:
+          - $ref: '#/$defs/retryPolicy'
+            title: RetryPolicyDefinition
+            description: The retry policy to use, if any, when catching errors.
+          - type: string
+            title: RetryPolicyReference
+            description: The name of the retry policy to use, if any, when catching errors.
+      do:
+        $ref: '#/$defs/taskList'
+        title: TaskCatchDo
+        description: The definition of the task(s) to run when catching an error.

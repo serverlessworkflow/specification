@@ -1,0 +1,32 @@
+document:
+  dsl: '1.0.0'
+  namespace: examples
+  name: task-level-catch-basic
+  version: '1.0.0'
+description: |
+  This example demonstrates basic task-level error handling using catch.
+  It shows how to handle errors directly on individual tasks without using a try block.
+
+do:
+  - failingTask:
+      call: custom
+      with:
+        function: simulateFailure
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io/dsl/errors/types/custom
+        as: taskError
+        do:
+          handleError:
+            set:
+              value: ${ { "error": taskError, "message": "Handled error at task level" } }
+
+  - successTask:
+      set:
+        value: "Task completed successfully after error handling"
+
+functions:
+  - name: simulateFailure
+    type: custom
+    operation: fake.operation

@@ -285,6 +285,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 | export | [`export`](#export) | `no` | An object used to customize the content of the workflow context. | 
 | timeout | `string`<br>[`timeout`](#timeout) | `no` | The configuration of the task's timeout, if any.<br>*If a `string`, must be the name of a [timeout](#timeout) defined in the [workflow's reusable components](#use).* |
 | then | [`flowDirective`](#flow-directive) | `no` | The flow directive to execute next.<br>*If not set, defaults to `continue`.* |
+| catch | [`catch`](#catch) | `no` | Used to handle errors and define retry policies for the current task. See [Catch](#catch) for detailed documentation. |
 | metadata | `map` | `no` | Additional information about the task. |
 
 #### Call
@@ -1111,7 +1112,12 @@ do:
 
 ##### Catch
 
-Defines the configuration of a catch clause, which a concept used to catch errors.
+Defines the configuration of a catch clause, which is a concept used to catch errors and to define what should happen when they occur.
+Catch nodes can be used in two ways:
+1. With any [`task`](#task) to handle errors on that single task
+2. With the [`try`](#try) task to handle errors on a group of tasks
+
+This flexibility allows for both fine-grained error handling at the task level and broader error handling for groups of tasks.
 
 ###### Properties
 
@@ -1123,6 +1129,36 @@ Defines the configuration of a catch clause, which a concept used to catch error
 | exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to catch the filtered error. |
 | retry | `string`<br>[`retryPolicy`](#retry) | `no` | The [`retry policy`](#retry) to use, if any, when catching [`errors`](#error).<br>*If a `string`, must be the name of a [retry policy](#retry) defined in the [workflow's reusable components](#use).* |
 | do | [`map[string, task]`](#task) | `no` | The definition of the task(s) to run when catching an error. |
+
+##### Examples
+
+```yaml
+document:
+  dsl: '1.0.0'
+  namespace: test
+  name: catch-example
+  version: '0.1.0'
+do:
+  - invalidHttpCall:
+      call: http
+      with:
+        method: get
+        endpoint: https://
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io.io/dsl/errors/types/communication
+            status: 503
+        as: error
+        retry:
+          delay:
+            seconds: 3
+          backoff:
+            exponential: {}
+          limit:
+            attempt:
+              count: 5
+```
 
 #### Wait
 

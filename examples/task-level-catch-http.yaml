@@ -1,0 +1,53 @@
+document:
+  dsl: '1.0.0'
+  namespace: examples
+  name: task-level-catch-http
+  version: '1.0.0'
+description: |
+  This example demonstrates task-level error handling with HTTP calls.
+  It shows how to handle common HTTP errors like timeouts and server errors,
+  including retry logic for transient failures.
+
+do:
+  - callExternalService:
+      call: http
+      with:
+        method: GET
+        endpoint: https://api.example.com/potentially-unstable-service
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io/dsl/errors/types/communication
+            status: 503
+        retry:
+          delay:
+            seconds: 2
+          backoff:
+            exponential: {}
+          limit:
+            attempt:
+              count: 3
+        do:
+          handleServiceUnavailable:
+            set:
+              value: ${ { "status": "service_unavailable", "message": "External service temporarily unavailable" } }
+
+  - callAnotherEndpoint:
+      call: http
+      with:
+        method: GET
+        endpoint: https://api.example.com/timeout-prone-service
+        timeout: 5
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io/dsl/errors/types/timeout
+        as: timeoutError
+        do:
+          handleTimeout:
+            set:
+              value: ${ { "status": "timeout", "error": timeoutError, "message": "Request timed out" } }
+
+  - finalizeWorkflow:
+      set:
+        value: "Workflow completed with error handling"

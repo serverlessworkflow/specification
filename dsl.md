@@ -483,7 +483,7 @@ See the [DSL reference](dsl-reference.md#error) for more details about errors.
 
 #### Retries
 
-Errors are critical for both authors and runtimes as they provide a means to communicate and describe the occurrence of problems. This, in turn, enables the definition of mechanisms to catch and act upon these errors. For instance, some errors caught using a [`try`](dsl-reference.md#try) block may be transient and temporary, such as a `503 Service Unavailable`. In such cases, the DSL provides a mechanism to retry a faulted task, allowing for recovery from temporary issues.
+Errors are critical for both authors and runtimes as they provide a means to communicate and describe the occurrence of problems. This, in turn, enables the definition of mechanisms to catch and act upon these errors. For instance, some errors may be transient and temporary, such as a `503 Service Unavailable`. In such cases, the DSL provides a mechanism to retry a [`faulted task`](dsl-reference.md#task), or a [`group of tasks`](dsl-reference.md#try), allowing for recovery from temporary issues.
 
 *Retrying 5 times when an error with 503 is caught:*
 ```yaml
@@ -506,6 +506,102 @@ catch:
       attempt:
         count: 5
 ```
+
+#### Task-Level Error Handling
+
+In addition to the try-catch mechanism, any task can define its own error handling using the `catch` property. This allows for more granular error handling at the task level without the need to wrap the task in a try block.
+
+Task-level error handling provides several benefits:
+1. More concise and readable code by avoiding nested try blocks
+2. Direct association of error handling with the task that might fail
+3. Reusability of error handling logic when the task is used as a function
+
+*Example of task-level error handling:*
+```yaml
+do:
+  - getPetById:
+      call: http
+      with:
+        method: get
+        endpoint:
+          uri: https://petstore.swagger.io/v2/pet/{id}
+      catch:
+        errors:
+          with:
+            status: 404
+        do:
+          - createDefaultPet:
+              call: http
+              with:
+                method: post
+                endpoint:
+                  uri: https://petstore.swagger.io/v2/pet
+                body:
+                  id: ${ .id }
+                  name: "Default Pet"
+                  status: "available"
+```
+
+*Example comparing try-catch with task-level catch:*
+```yaml
+# Using try-catch
+do:
+  - handlePet:
+      try:
+        call: http
+        with:
+          method: get
+          endpoint:
+            uri: https://petstore.swagger.io/v2/pet/{id}
+      catch:
+        errors:
+          with:
+            status: 404
+        do:
+          - createDefaultPet:
+              call: http
+              with:
+                method: post
+                endpoint:
+                  uri: https://petstore.swagger.io/v2/pet
+                body:
+                  id: ${ .id }
+                  name: "Default Pet"
+                  status: "available"
+
+# Using task-level catch (more concise)
+do:
+  - getPetById:
+      call: http
+      with:
+        method: get
+        endpoint:
+          uri: https://petstore.swagger.io/v2/pet/{id}
+      catch:
+        errors:
+          with:
+            status: 404
+        do:
+          - createDefaultPet:
+              call: http
+              with:
+                method: post
+                endpoint:
+                  uri: https://petstore.swagger.io/v2/pet
+                body:
+                  id: ${ .id }
+                  name: "Default Pet"
+                  status: "available"
+```
+
+Task-level error handling supports all the same features as try-catch:
+- Error filtering with `with`
+- Error variable naming with `as`
+- Conditional catching with `when` and `exceptWhen`
+- Retry policies
+- Task list execution with `do`
+
+See the [DSL reference](dsl-reference.md#task-catch) for more details about task-level error handling.
 
 ### Timeouts
 

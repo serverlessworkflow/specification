@@ -1,0 +1,90 @@
+document:
+  dsl: '1.0.0'
+  namespace: examples
+  name: task-level-vs-try-catch
+  version: '1.0.0'
+description: |
+  This example demonstrates the difference between task-level catch and try-catch blocks.
+  It shows when to use each approach and how they can be combined effectively.
+
+do:
+  # Example 1: Task-level catch for individual error handling
+  - individualTask:
+      call: http
+      with:
+        method: GET
+        endpoint: https://api.example.com/service1
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io/dsl/errors/types/communication
+        as: service1Error
+        do:
+          handleService1Error:
+            set:
+              value: ${ { "service": "service1", "error": service1Error } }
+
+  # Example 2: Try-catch block for group error handling
+  - groupedTasks:
+      try:
+        do:
+          - service2Call:
+              call: http
+              with:
+                method: GET
+                endpoint: https://api.example.com/service2
+
+          - service3Call:
+              call: http
+              with:
+                method: POST
+                endpoint: https://api.example.com/service3
+                body: ${ .service2Call }
+
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io/dsl/errors/types/communication
+        as: groupError
+        do:
+          handleGroupError:
+            set:
+              value: ${ { "group": "service2-3", "error": groupError } }
+
+  # Example 3: Combining both approaches
+  - combinedExample:
+      try:
+        do:
+          - service4Call:
+              call: http
+              with:
+                method: GET
+                endpoint: https://api.example.com/service4
+              catch:
+                errors:
+                  with:
+                    type: https://serverlessworkflow.io/dsl/errors/types/timeout
+                retry:
+                  delay:
+                    seconds: 1
+                  limit:
+                    attempt:
+                      count: 2
+
+          - service5Call:
+              call: http
+              with:
+                method: POST
+                endpoint: https://api.example.com/service5
+      catch:
+        errors:
+          with:
+            type: https://serverlessworkflow.io/dsl/errors/types/communication
+        do:
+          handleOverallError:
+            set:
+              value: "Handling any remaining communication errors"
+
+  - finalStatus:
+      set:
+        value: "Workflow completed with different error handling approaches"
