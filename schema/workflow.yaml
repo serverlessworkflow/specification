@@ -1,4 +1,4 @@
-$id: https://serverlessworkflow.io/schemas/1.0.0/workflow.yaml
+$id: https://serverlessworkflow.io/schemas/1.0.1/workflow.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
 description: Serverless Workflow DSL - Workflow Schema.
 type: object
@@ -226,648 +226,664 @@ $defs:
     oneOf:
       - title: CallAsyncAPI
         description: Defines the AsyncAPI call to perform.
-        $ref: '#/$defs/taskBase'
         type: object
         required: [ call, with ]
         unevaluatedProperties: false
-        properties:
-          call:
-            type: string
-            const: asyncapi
-          with:
-            type: object
-            title: AsyncApiArguments
-            description: The Async API call arguments.
-            properties:
-              document:
-                $ref: '#/$defs/externalResource'
-                title: AsyncAPIDocument
-                description: The document that defines the AsyncAPI operation to call.
-              channel:
-                type: string
-                title: With
-                description: The name of the channel on which to perform the operation. Used only in case the referenced document uses AsyncAPI v2.6.0.
-              operation:
-                type: string
-                title: AsyncAPIOperation
-                description: A reference to the AsyncAPI operation to call.
-              server:
-                $ref: '#/$defs/asyncApiServer'
-                title: AsyncAPIServer
-                description: An object used to configure to the server to call the specified AsyncAPI operation on.
-              protocol:
-                type: string
-                title: AsyncApiProtocol
-                description: The protocol to use to select the target server.
-                enum: [ amqp, amqp1, anypointmq, googlepubsub, http, ibmmq, jms, kafka, mercure, mqtt, mqtt5, nats, pulsar, redis, sns, solace, sqs, stomp, ws ]
-              message:
-                $ref: '#/$defs/asyncApiOutboundMessage'
-                title: AsyncApiMessage
-                description: An object used to configure the message to publish using the target operation.
-              subscription:
-                $ref: '#/$defs/asyncApiSubscription'
-                title: AsyncApiSubscription
-                description: An object used to configure the subscription to messages consumed using the target operation.
-              authentication:
-                $ref: '#/$defs/referenceableAuthenticationPolicy'
-                title: AsyncAPIAuthentication
-                description: The authentication policy, if any, to use when calling the AsyncAPI operation.
-            oneOf:
-              - required: [ document, operation, message ]
-              - required: [ document, operation, subscription ]
-              - required: [ document, channel, message ]
-              - required: [ document, channel, subscription ]
-            unevaluatedProperties: false
+        allOf:
+        - $ref: '#/$defs/taskBase'
+        - properties:
+            call:
+              type: string
+              const: asyncapi
+            with:
+              type: object
+              title: AsyncApiArguments
+              description: The Async API call arguments.
+              properties:
+                document:
+                  $ref: '#/$defs/externalResource'
+                  title: AsyncAPIDocument
+                  description: The document that defines the AsyncAPI operation to call.
+                channel:
+                  type: string
+                  title: With
+                  description: The name of the channel on which to perform the operation. Used only in case the referenced document uses AsyncAPI v2.6.0.
+                operation:
+                  type: string
+                  title: AsyncAPIOperation
+                  description: A reference to the AsyncAPI operation to call.
+                server:
+                  $ref: '#/$defs/asyncApiServer'
+                  title: AsyncAPIServer
+                  description: An object used to configure to the server to call the specified AsyncAPI operation on.
+                protocol:
+                  type: string
+                  title: AsyncApiProtocol
+                  description: The protocol to use to select the target server.
+                  enum: [ amqp, amqp1, anypointmq, googlepubsub, http, ibmmq, jms, kafka, mercure, mqtt, mqtt5, nats, pulsar, redis, sns, solace, sqs, stomp, ws ]
+                message:
+                  $ref: '#/$defs/asyncApiOutboundMessage'
+                  title: AsyncApiMessage
+                  description: An object used to configure the message to publish using the target operation.
+                subscription:
+                  $ref: '#/$defs/asyncApiSubscription'
+                  title: AsyncApiSubscription
+                  description: An object used to configure the subscription to messages consumed using the target operation.
+                authentication:
+                  $ref: '#/$defs/referenceableAuthenticationPolicy'
+                  title: AsyncAPIAuthentication
+                  description: The authentication policy, if any, to use when calling the AsyncAPI operation.
+              oneOf:
+                - required: [ document, operation, message ]
+                - required: [ document, operation, subscription ]
+                - required: [ document, channel, message ]
+                - required: [ document, channel, subscription ]
+              unevaluatedProperties: false
       - title: CallGRPC
         description: Defines the GRPC call to perform.
-        $ref: '#/$defs/taskBase'
         type: object
         unevaluatedProperties: false
         required: [ call, with ]
-        properties:
-          call:
-            type: string
-            const: grpc
-          with:
-            type: object
-            title: GRPCArguments
-            description: The GRPC call arguments.
-            properties:
-              proto:
-                $ref: '#/$defs/externalResource'
-                title: WithGRPCProto
-                description: The proto resource that describes the GRPC service to call.
-              service:
-                type: object
-                title: WithGRPCService
-                unevaluatedProperties: false
-                properties:
-                  name:
-                    type: string
-                    title: WithGRPCServiceName
-                    description: The name of the GRPC service to call.
-                  host:
-                    type: string
-                    title: WithGRPCServiceHost
-                    description: The hostname of the GRPC service to call.
-                    pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
-                  port:
-                    type: integer
-                    title: WithGRPCServicePost
-                    description: The port number of the GRPC service to call.
-                    minimum: 0
-                    maximum: 65535
-                  authentication:
-                    $ref: '#/$defs/referenceableAuthenticationPolicy'
-                    title: WithGRPCServiceAuthentication
-                    description: The endpoint's authentication policy, if any.
-                required: [ name, host ]
-              method:
-                type: string
-                title: WithGRPCMethod
-                description: The name of the method to call on the defined GRPC service.
-              arguments:
-                type: object
-                title: WithGRPCArguments
-                description: The arguments, if any, to call the method with.
-                additionalProperties: true
-            required: [ proto, service, method ]
-            unevaluatedProperties: false
+        allOf:
+        - $ref: '#/$defs/taskBase'
+        - properties:
+            call:
+              type: string
+              const: grpc
+            with:
+              type: object
+              title: GRPCArguments
+              description: The GRPC call arguments.
+              properties:
+                proto:
+                  $ref: '#/$defs/externalResource'
+                  title: WithGRPCProto
+                  description: The proto resource that describes the GRPC service to call.
+                service:
+                  type: object
+                  title: WithGRPCService
+                  unevaluatedProperties: false
+                  properties:
+                    name:
+                      type: string
+                      title: WithGRPCServiceName
+                      description: The name of the GRPC service to call.
+                    host:
+                      type: string
+                      title: WithGRPCServiceHost
+                      description: The hostname of the GRPC service to call.
+                      pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
+                    port:
+                      type: integer
+                      title: WithGRPCServicePost
+                      description: The port number of the GRPC service to call.
+                      minimum: 0
+                      maximum: 65535
+                    authentication:
+                      $ref: '#/$defs/referenceableAuthenticationPolicy'
+                      title: WithGRPCServiceAuthentication
+                      description: The endpoint's authentication policy, if any.
+                  required: [ name, host ]
+                method:
+                  type: string
+                  title: WithGRPCMethod
+                  description: The name of the method to call on the defined GRPC service.
+                arguments:
+                  type: object
+                  title: WithGRPCArguments
+                  description: The arguments, if any, to call the method with.
+                  additionalProperties: true
+              required: [ proto, service, method ]
+              unevaluatedProperties: false
       - title: CallHTTP
         description: Defines the HTTP call to perform.
-        $ref: '#/$defs/taskBase'
         type: object
         unevaluatedProperties: false
         required: [ call, with ]
-        properties:
-          call:
-            type: string
-            const: http
-          with:
-            type: object
-            title: HTTPArguments
-            description: The HTTP call arguments.
-            properties:
-              method:
-                type: string
-                title: HTTPMethod
-                description: The HTTP method of the HTTP request to perform.
-              endpoint:
-                title: HTTPEndpoint
-                description: The HTTP endpoint to send the request to.
-                $ref: '#/$defs/endpoint'
-              headers:
-                oneOf:
-                  - type: object
-                    additionalProperties:
-                      type: string
-                  - $ref: '#/$defs/runtimeExpression'
-                title: HTTPHeaders
-                description: A name/value mapping of the headers, if any, of the HTTP request to perform.
-              body:
-                title: HTTPBody
-                description: The body, if any, of the HTTP request to perform.
-              query:
-                oneOf:
-                  - type: object
-                    additionalProperties:
-                      type: string
-                  - $ref: '#/$defs/runtimeExpression'
-                title: HTTPQuery
-                description: A name/value mapping of the query parameters, if any, of the HTTP request to perform.
-                additionalProperties: true
-              output:
-                type: string
-                title: HTTPOutput
-                description: The http call output format. Defaults to 'content'.
-                enum: [ raw, content, response ]
-              redirect:
-                type: boolean
-                title: HttpRedirect
-                description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
-            required: [ method, endpoint ]
-            unevaluatedProperties: false
+        allOf:
+        - $ref: '#/$defs/taskBase'
+        - properties:
+            call:
+              type: string
+              const: http
+            with:
+              type: object
+              title: HTTPArguments
+              description: The HTTP call arguments.
+              properties:
+                method:
+                  type: string
+                  title: HTTPMethod
+                  description: The HTTP method of the HTTP request to perform.
+                endpoint:
+                  title: HTTPEndpoint
+                  description: The HTTP endpoint to send the request to.
+                  $ref: '#/$defs/endpoint'
+                headers:
+                  oneOf:
+                    - type: object
+                      additionalProperties:
+                        type: string
+                    - $ref: '#/$defs/runtimeExpression'
+                  title: HTTPHeaders
+                  description: A name/value mapping of the headers, if any, of the HTTP request to perform.
+                body:
+                  title: HTTPBody
+                  description: The body, if any, of the HTTP request to perform.
+                query:
+                  oneOf:
+                    - type: object
+                      additionalProperties:
+                        type: string
+                    - $ref: '#/$defs/runtimeExpression'
+                  title: HTTPQuery
+                  description: A name/value mapping of the query parameters, if any, of the HTTP request to perform.
+                  additionalProperties: true
+                output:
+                  type: string
+                  title: HTTPOutput
+                  description: The http call output format. Defaults to 'content'.
+                  enum: [ raw, content, response ]
+                redirect:
+                  type: boolean
+                  title: HttpRedirect
+                  description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
+              required: [ method, endpoint ]
+              unevaluatedProperties: false
       - title: CallOpenAPI
         description: Defines the OpenAPI call to perform.
-        $ref: '#/$defs/taskBase'
         type: object
         unevaluatedProperties: false
         required: [ call, with ]
-        properties:
-          call:
-            type: string
-            const: openapi
-          with:
-            type: object
-            title: OpenAPIArguments
-            description: The OpenAPI call arguments.
-            properties:
-              document:
-                $ref: '#/$defs/externalResource'
-                title: WithOpenAPIDocument
-                description: The document that defines the OpenAPI operation to call.
-              operationId:
-                type: string
-                title: WithOpenAPIOperation
-                description: The id of the OpenAPI operation to call.
-              parameters:
-                type: object
-                title: WithOpenAPIParameters
-                description: A name/value mapping of the parameters of the OpenAPI operation to call.
-                additionalProperties: true
-              authentication:
-                $ref: '#/$defs/referenceableAuthenticationPolicy'
-                title: WithOpenAPIAuthentication
-                description: The authentication policy, if any, to use when calling the OpenAPI operation.
-              output:
-                type: string
-                enum: [ raw, content, response ]
-                title: WithOpenAPIOutput
-                description: The http call output format. Defaults to 'content'.
-              redirect:
-                type: boolean
-                title: HttpRedirect
-                description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
-            required: [ document, operationId ]
-            unevaluatedProperties: false
+        allOf:
+        - $ref: '#/$defs/taskBase'
+        - properties:
+            call:
+              type: string
+              const: openapi
+            with:
+              type: object
+              title: OpenAPIArguments
+              description: The OpenAPI call arguments.
+              properties:
+                document:
+                  $ref: '#/$defs/externalResource'
+                  title: WithOpenAPIDocument
+                  description: The document that defines the OpenAPI operation to call.
+                operationId:
+                  type: string
+                  title: WithOpenAPIOperation
+                  description: The id of the OpenAPI operation to call.
+                parameters:
+                  type: object
+                  title: WithOpenAPIParameters
+                  description: A name/value mapping of the parameters of the OpenAPI operation to call.
+                  additionalProperties: true
+                authentication:
+                  $ref: '#/$defs/referenceableAuthenticationPolicy'
+                  title: WithOpenAPIAuthentication
+                  description: The authentication policy, if any, to use when calling the OpenAPI operation.
+                output:
+                  type: string
+                  enum: [ raw, content, response ]
+                  title: WithOpenAPIOutput
+                  description: The http call output format. Defaults to 'content'.
+                redirect:
+                  type: boolean
+                  title: HttpRedirect
+                  description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
+              required: [ document, operationId ]
+              unevaluatedProperties: false
       - title: CallFunction
         description: Defines the function call to perform.
-        $ref: '#/$defs/taskBase'
         type: object
         unevaluatedProperties: false
         required: [ call ]
-        properties:
-          call:
-            type: string
-            not:
-              enum: ["asyncapi", "grpc", "http", "openapi"]
-            description: The name of the function to call.
-          with:
-            type: object
-            title: FunctionArguments
-            description: A name/value mapping of the parameters, if any, to call the function with.
-            additionalProperties: true
+        allOf:
+        - $ref: '#/$defs/taskBase'
+        - properties:
+            call:
+              type: string
+              not:
+                enum: ["asyncapi", "grpc", "http", "openapi"]
+              description: The name of the function to call.
+            with:
+              type: object
+              title: FunctionArguments
+              description: A name/value mapping of the parameters, if any, to call the function with.
+              additionalProperties: true
   forkTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: ForkTask
     description: Allows workflows to execute multiple tasks concurrently and optionally race them against each other, with a single possible winner, which sets the task's output.
     unevaluatedProperties: false
     required: [ fork ]
-    properties:
-      fork:
-        type: object
-        title: ForkTaskConfiguration
-        description: The configuration of the branches to perform concurrently.
-        unevaluatedProperties: false
-        required: [ branches ]
-        properties:
-          branches:
-            $ref: '#/$defs/taskList'
-            title: ForkBranches
-          compete:
-            type: boolean
-            title: ForkCompete
-            description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
-            default: false
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        fork:
+          type: object
+          title: ForkTaskConfiguration
+          description: The configuration of the branches to perform concurrently.
+          unevaluatedProperties: false
+          required: [ branches ]
+          properties:
+            branches:
+              $ref: '#/$defs/taskList'
+              title: ForkBranches
+            compete:
+              type: boolean
+              title: ForkCompete
+              description: Indicates whether or not the concurrent tasks are racing against each other, with a single possible winner, which sets the composite task's output.
+              default: false
   doTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: DoTask
     description: Allows to execute a list of tasks in sequence.
     unevaluatedProperties: false
     required: [ do ]
-    properties:
-      do:
-        $ref: '#/$defs/taskList'
-        title: DoTaskConfiguration
-        description: The configuration of the tasks to perform sequentially.
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        do:
+          $ref: '#/$defs/taskList'
+          title: DoTaskConfiguration
+          description: The configuration of the tasks to perform sequentially.
   emitTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: EmitTask
     description: Allows workflows to publish events to event brokers or messaging systems, facilitating communication and coordination between different components and services.
     required: [ emit ]
     unevaluatedProperties: false
-    properties:
-      emit:
-        type: object
-        title: EmitTaskConfiguration
-        description: The configuration of an event's emission.
-        unevaluatedProperties: false
-        properties:
-          event:
-            type: object
-            title: EmitEventDefinition
-            description: The definition of the event to emit.
-            properties:
-              with:
-                $ref: '#/$defs/eventProperties'
-                title: EmitEventWith
-                description: Defines the properties of event to emit.
-                required: [ source, type ]
-            additionalProperties: true
-        required: [ event ]
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        emit:
+          type: object
+          title: EmitTaskConfiguration
+          description: The configuration of an event's emission.
+          unevaluatedProperties: false
+          properties:
+            event:
+              type: object
+              title: EmitEventDefinition
+              description: The definition of the event to emit.
+              properties:
+                with:
+                  $ref: '#/$defs/eventProperties'
+                  title: EmitEventWith
+                  description: Defines the properties of event to emit.
+                  required: [ source, type ]
+              additionalProperties: true
+          required: [ event ]
   forTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: ForTask
     description: Allows workflows to iterate over a collection of items, executing a defined set of subtasks for each item in the collection. This task type is instrumental in handling scenarios such as batch processing, data transformation, and repetitive operations across datasets.
     required: [ for, do ]
     unevaluatedProperties: false
-    properties:
-      for:
-        type: object
-        title: ForTaskConfiguration
-        description: The definition of the loop that iterates over a range of values.
-        unevaluatedProperties: false
-        properties:
-          each:
-            type: string
-            title: ForEach
-            description: The name of the variable used to store the current item being enumerated.
-            default: item
-          in:
-            type: string
-            title: ForIn
-            description: A runtime expression used to get the collection to enumerate.
-          at:
-            type: string
-            title: ForAt
-            description: The name of the variable used to store the index of the current item being enumerated.
-            default: index
-        required: [ in ]
-      while:
-        type: string
-        title: While
-        description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
-      do:
-        $ref: '#/$defs/taskList'
-        title: ForTaskDo
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        for:
+          type: object
+          title: ForTaskConfiguration
+          description: The definition of the loop that iterates over a range of values.
+          unevaluatedProperties: false
+          properties:
+            each:
+              type: string
+              title: ForEach
+              description: The name of the variable used to store the current item being enumerated.
+              default: item
+            in:
+              type: string
+              title: ForIn
+              description: A runtime expression used to get the collection to enumerate.
+            at:
+              type: string
+              title: ForAt
+              description: The name of the variable used to store the index of the current item being enumerated.
+              default: index
+          required: [ in ]
+        while:
+          type: string
+          title: While
+          description: A runtime expression that represents the condition, if any, that must be met for the iteration to continue.
+        do:
+          $ref: '#/$defs/taskList'
+          title: ForTaskDo
   listenTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: ListenTask
     description: Provides a mechanism for workflows to await and react to external events, enabling event-driven behavior within workflow systems.
     required: [ listen ]
     unevaluatedProperties: false
-    properties:
-      listen:
-        type: object
-        title: ListenTaskConfiguration
-        description: The configuration of the listener to use.
-        unevaluatedProperties: false
-        properties:
-          to:
-            $ref: '#/$defs/eventConsumptionStrategy'
-            title: ListenTo
-            description: Defines the event(s) to listen to.
-          read:
-            type: string
-            enum: [ data, envelope, raw ]
-            default: data
-            title: ListenAndReadAs
-            description: Specifies how events are read during the listen operation.
-        required: [ to ]
-      foreach:
-        $ref: '#/$defs/subscriptionIterator'
-        title: ListenIterator
-        description: Configures the iterator, if any, for processing consumed event(s).
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        listen:
+          type: object
+          title: ListenTaskConfiguration
+          description: The configuration of the listener to use.
+          unevaluatedProperties: false
+          properties:
+            to:
+              $ref: '#/$defs/eventConsumptionStrategy'
+              title: ListenTo
+              description: Defines the event(s) to listen to.
+            read:
+              type: string
+              enum: [ data, envelope, raw ]
+              default: data
+              title: ListenAndReadAs
+              description: Specifies how events are read during the listen operation.
+          required: [ to ]
+        foreach:
+          $ref: '#/$defs/subscriptionIterator'
+          title: ListenIterator
+          description: Configures the iterator, if any, for processing consumed event(s).
   raiseTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: RaiseTask
     description: Intentionally triggers and propagates errors.
     required: [ raise ]
     unevaluatedProperties: false
-    properties:
-      raise:
-        type: object
-        title: RaiseTaskConfiguration
-        description: The definition of the error to raise.
-        unevaluatedProperties: false
-        properties:
-          error:
-            title: RaiseTaskError
-            oneOf:
-              - $ref: '#/$defs/error'
-                title: RaiseErrorDefinition
-                description: Defines the error to raise.
-              - type: string
-                title: RaiseErrorReference
-                description: The name of the error to raise
-        required: [ error ]
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        raise:
+          type: object
+          title: RaiseTaskConfiguration
+          description: The definition of the error to raise.
+          unevaluatedProperties: false
+          properties:
+            error:
+              title: RaiseTaskError
+              oneOf:
+                - $ref: '#/$defs/error'
+                  title: RaiseErrorDefinition
+                  description: Defines the error to raise.
+                - type: string
+                  title: RaiseErrorReference
+                  description: The name of the error to raise
+          required: [ error ]
   runTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: RunTask
     description: Provides the capability to execute external containers, shell commands, scripts, or workflows.
     required: [ run ]
     unevaluatedProperties: false
-    properties:
-      run:
-        type: object
-        title: RunTaskConfiguration
-        description: The configuration of the process to execute.
-        unevaluatedProperties: false
-        properties:
-          await:
-            type: boolean
-            default: true
-            title: AwaitProcessCompletion
-            description: Whether to await the process completion before continuing.
-          return:
-            type: string
-            title: ProcessReturnType
-            description: Configures the output of the process.
-            enum: [ stdout, stderr, code, all, none ]
-            default: stdout
-        oneOf:
-          - title: RunContainer
-            description: Enables the execution of external processes encapsulated within a containerized environment.
-            properties:
-              container:
-                type: object
-                title: Container
-                description: The configuration of the container to run.
-                unevaluatedProperties: false
-                properties:
-                  image:
-                    type: string
-                    title: ContainerImage
-                    description: The name of the container image to run.
-                  name:
-                    type: string
-                    title: ContainerName
-                    description: A runtime expression, if any, used to give specific name to the container.
-                  command:
-                    type: string
-                    title: ContainerCommand
-                    description: The command, if any, to execute on the container.
-                  ports:
-                    type: object
-                    title: ContainerPorts
-                    description: The container's port mappings, if any.
-                  volumes:
-                    type: object
-                    title: ContainerVolumes
-                    description: The container's volume mappings, if any.
-                  environment:
-                    type: object
-                    title: ContainerEnvironment
-                    description: A key/value mapping of the environment variables, if any, to use when running the configured process.
-                  lifetime:
-                    $ref: '#/$defs/containerLifetime'
-                    title: ContainerLifetime
-                    description: An object, if any, used to configure the container's lifetime
-                required: [ image ]
-            required: [ container ]
-          - title: RunScript
-            description: Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
-            properties:
-              script:
-                type: object
-                title: Script
-                description: The configuration of the script to run.
-                unevaluatedProperties: false
-                properties:
-                  language:
-                    type: string
-                    title: ScriptLanguage
-                    description: The language of the script to run.
-                  arguments:
-                    type: object
-                    title: ScriptArguments
-                    description: A key/value mapping of the arguments, if any, to use when running the configured script.
-                    additionalProperties: true
-                  environment:
-                    type: object
-                    title: ScriptEnvironment
-                    description: A key/value mapping of the environment variables, if any, to use when running the configured script process.
-                    additionalProperties: true
-                oneOf:
-                  - title: InlineScript
-                    type: object
-                    description: The script's code.
-                    properties:
-                      code:
-                        type: string
-                        title: InlineScriptCode
-                    required: [ code ]
-                  - title: ExternalScript
-                    type: object
-                    description: The script's resource.
-                    properties:
-                      source:
-                        $ref: '#/$defs/externalResource'
-                        title: ExternalScriptResource
-                    required: [ source ]
-                required: [ language ]
-            required: [ script ]
-          - title: RunShell
-            description: Enables the execution of shell commands within a workflow, enabling workflows to interact with the underlying operating system and perform system-level operations, such as file manipulation, environment configuration, or system administration tasks.
-            properties:
-              shell:
-                type: object
-                title: Shell
-                description: The configuration of the shell command to run.
-                unevaluatedProperties: false
-                properties:
-                  command:
-                    type: string
-                    title: ShellCommand
-                    description: The shell command to run.
-                  arguments:
-                    type: object
-                    title: ShellArguments
-                    description: A list of the arguments of the shell command to run.
-                    additionalProperties: true
-                  environment:
-                    type: object
-                    title: ShellEnvironment
-                    description: A key/value mapping of the environment variables, if any, to use when running the configured process.
-                    additionalProperties: true
-                required: [ command ]
-            required: [ shell ]
-          - title: RunWorkflow
-            description: Enables the invocation and execution of nested workflows within a parent workflow, facilitating modularization, reusability, and abstraction of complex logic or business processes by encapsulating them into standalone workflow units.
-            properties:
-              workflow:
-                type: object
-                title: SubflowConfiguration 
-                description: The configuration of the workflow to run.
-                unevaluatedProperties: false
-                properties:
-                  namespace:
-                    type: string
-                    title: SubflowNamespace
-                    description: The namespace the workflow to run belongs to.
-                  name:
-                    type: string
-                    title: SubflowName
-                    description: The name of the workflow to run.
-                  version:
-                    type: string
-                    default: latest
-                    title: SubflowVersion
-                    description: The version of the workflow to run. Defaults to latest.
-                  input:
-                    type: object
-                    title: SubflowInput
-                    description: The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified.
-                    additionalProperties: true
-                required: [ namespace, name, version ]
-            required: [ workflow ]
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        run:
+          type: object
+          title: RunTaskConfiguration
+          description: The configuration of the process to execute.
+          unevaluatedProperties: false
+          properties:
+            await:
+              type: boolean
+              default: true
+              title: AwaitProcessCompletion
+              description: Whether to await the process completion before continuing.
+            return:
+              type: string
+              title: ProcessReturnType
+              description: Configures the output of the process.
+              enum: [ stdout, stderr, code, all, none ]
+              default: stdout
+          oneOf:
+            - title: RunContainer
+              description: Enables the execution of external processes encapsulated within a containerized environment.
+              properties:
+                container:
+                  type: object
+                  title: Container
+                  description: The configuration of the container to run.
+                  unevaluatedProperties: false
+                  properties:
+                    image:
+                      type: string
+                      title: ContainerImage
+                      description: The name of the container image to run.
+                    name:
+                      type: string
+                      title: ContainerName
+                      description: A runtime expression, if any, used to give specific name to the container.
+                    command:
+                      type: string
+                      title: ContainerCommand
+                      description: The command, if any, to execute on the container.
+                    ports:
+                      type: object
+                      title: ContainerPorts
+                      description: The container's port mappings, if any.
+                    volumes:
+                      type: object
+                      title: ContainerVolumes
+                      description: The container's volume mappings, if any.
+                    environment:
+                      type: object
+                      title: ContainerEnvironment
+                      description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                    lifetime:
+                      $ref: '#/$defs/containerLifetime'
+                      title: ContainerLifetime
+                      description: An object, if any, used to configure the container's lifetime
+                  required: [ image ]
+              required: [ container ]
+            - title: RunScript
+              description: Enables the execution of custom scripts or code within a workflow, empowering workflows to perform specialized logic, data processing, or integration tasks by executing user-defined scripts written in various programming languages.
+              properties:
+                script:
+                  type: object
+                  title: Script
+                  description: The configuration of the script to run.
+                  unevaluatedProperties: false
+                  properties:
+                    language:
+                      type: string
+                      title: ScriptLanguage
+                      description: The language of the script to run.
+                    arguments:
+                      type: object
+                      title: ScriptArguments
+                      description: A key/value mapping of the arguments, if any, to use when running the configured script.
+                      additionalProperties: true
+                    environment:
+                      type: object
+                      title: ScriptEnvironment
+                      description: A key/value mapping of the environment variables, if any, to use when running the configured script process.
+                      additionalProperties: true
+                  oneOf:
+                    - title: InlineScript
+                      type: object
+                      description: The script's code.
+                      properties:
+                        code:
+                          type: string
+                          title: InlineScriptCode
+                      required: [ code ]
+                    - title: ExternalScript
+                      type: object
+                      description: The script's resource.
+                      properties:
+                        source:
+                          $ref: '#/$defs/externalResource'
+                          title: ExternalScriptResource
+                      required: [ source ]
+                  required: [ language ]
+              required: [ script ]
+            - title: RunShell
+              description: Enables the execution of shell commands within a workflow, enabling workflows to interact with the underlying operating system and perform system-level operations, such as file manipulation, environment configuration, or system administration tasks.
+              properties:
+                shell:
+                  type: object
+                  title: Shell
+                  description: The configuration of the shell command to run.
+                  unevaluatedProperties: false
+                  properties:
+                    command:
+                      type: string
+                      title: ShellCommand
+                      description: The shell command to run.
+                    arguments:
+                      type: object
+                      title: ShellArguments
+                      description: A list of the arguments of the shell command to run.
+                      additionalProperties: true
+                    environment:
+                      type: object
+                      title: ShellEnvironment
+                      description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                      additionalProperties: true
+                  required: [ command ]
+              required: [ shell ]
+            - title: RunWorkflow
+              description: Enables the invocation and execution of nested workflows within a parent workflow, facilitating modularization, reusability, and abstraction of complex logic or business processes by encapsulating them into standalone workflow units.
+              properties:
+                workflow:
+                  type: object
+                  title: SubflowConfiguration 
+                  description: The configuration of the workflow to run.
+                  unevaluatedProperties: false
+                  properties:
+                    namespace:
+                      type: string
+                      title: SubflowNamespace
+                      description: The namespace the workflow to run belongs to.
+                    name:
+                      type: string
+                      title: SubflowName
+                      description: The name of the workflow to run.
+                    version:
+                      type: string
+                      default: latest
+                      title: SubflowVersion
+                      description: The version of the workflow to run. Defaults to latest.
+                    input:
+                      type: object
+                      title: SubflowInput
+                      description: The data, if any, to pass as input to the workflow to execute. The value should be validated against the target workflow's input schema, if specified.
+                      additionalProperties: true
+                  required: [ namespace, name, version ]
+              required: [ workflow ]
   setTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: SetTask
     description: A task used to set data.
     required: [ set ]
     unevaluatedProperties: false
-    properties:
-      set:
-        oneOf:
-          - type: object
-            minProperties: 1
-            additionalProperties: true
-          - type: string
-        title: SetTaskConfiguration
-        description: The data to set.
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        set:
+          oneOf:
+            - type: object
+              minProperties: 1
+              additionalProperties: true
+            - type: string
+          title: SetTaskConfiguration
+          description: The data to set.
   switchTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: SwitchTask
     description: Enables conditional branching within workflows, allowing them to dynamically select different paths based on specified conditions or criteria.
     required: [ switch ]
     unevaluatedProperties: false
-    properties:
-      switch:
-        type: array
-        title: SwitchTaskConfiguration
-        description: The definition of the switch to use.
-        minItems: 1
-        items:
-          type: object
-          title: SwitchItem
-          minProperties: 1
-          maxProperties: 1
-          additionalProperties:
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        switch:
+          type: array
+          title: SwitchTaskConfiguration
+          description: The definition of the switch to use.
+          minItems: 1
+          items:
             type: object
-            title: SwitchCase
-            description: The definition of a case within a switch task, defining a condition and corresponding tasks to execute if the condition is met.
-            unevaluatedProperties: false
-            required: [ then ]
-            properties:
-              when:
-                type: string
-                title: SwitchCaseCondition
-                description: A runtime expression used to determine whether or not the case matches.
-              then:
-                $ref: '#/$defs/flowDirective'
-                title: SwitchCaseOutcome
-                description: The flow directive to execute when the case matches.
+            title: SwitchItem
+            minProperties: 1
+            maxProperties: 1
+            additionalProperties:
+              type: object
+              title: SwitchCase
+              description: The definition of a case within a switch task, defining a condition and corresponding tasks to execute if the condition is met.
+              unevaluatedProperties: false
+              required: [ then ]
+              properties:
+                when:
+                  type: string
+                  title: SwitchCaseCondition
+                  description: A runtime expression used to determine whether or not the case matches.
+                then:
+                  $ref: '#/$defs/flowDirective'
+                  title: SwitchCaseOutcome
+                  description: The flow directive to execute when the case matches.
   tryTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: TryTask
     description: Serves as a mechanism within workflows to handle errors gracefully, potentially retrying failed tasks before proceeding with alternate ones.
     required: [ try, catch ]
     unevaluatedProperties: false
-    properties:
-      try:
-        $ref: '#/$defs/taskList'
-        title: TryTaskConfiguration
-        description: The task(s) to perform.
-      catch:
-        type: object
-        title: TryTaskCatch
-        description: The object used to define the errors to catch.
-        unevaluatedProperties: false
-        properties:
-          errors:
-            type: object
-            title: CatchErrors
-            properties:
-              with:
-                $ref: '#/$defs/errorFilter'
-            description: static error filter
-          as:
-            type: string
-            title: CatchAs
-            description: The name of the runtime expression variable to save the error as. Defaults to 'error'.
-          when:
-            type: string
-            title: CatchWhen
-            description: A runtime expression used to determine whether to catch the filtered error.
-          exceptWhen:
-            type: string
-            title: CatchExceptWhen
-            description: A runtime expression used to determine whether not to catch the filtered error.
-          retry:
-            oneOf:
-              - $ref: '#/$defs/retryPolicy'
-                title: RetryPolicyDefinition
-                description: The retry policy to use, if any, when catching errors.
-              - type: string
-                title: RetryPolicyReference
-                description: The name of the retry policy to use, if any, when catching errors.
-          do:
-            $ref: '#/$defs/taskList'
-            title: TryTaskCatchDo
-            description: The definition of the task(s) to run when catching an error.
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        try:
+          $ref: '#/$defs/taskList'
+          title: TryTaskConfiguration
+          description: The task(s) to perform.
+        catch:
+          type: object
+          title: TryTaskCatch
+          description: The object used to define the errors to catch.
+          unevaluatedProperties: false
+          properties:
+            errors:
+              type: object
+              title: CatchErrors
+              properties:
+                with:
+                  $ref: '#/$defs/errorFilter'
+              description: static error filter
+            as:
+              type: string
+              title: CatchAs
+              description: The name of the runtime expression variable to save the error as. Defaults to 'error'.
+            when:
+              type: string
+              title: CatchWhen
+              description: A runtime expression used to determine whether to catch the filtered error.
+            exceptWhen:
+              type: string
+              title: CatchExceptWhen
+              description: A runtime expression used to determine whether not to catch the filtered error.
+            retry:
+              oneOf:
+                - $ref: '#/$defs/retryPolicy'
+                  title: RetryPolicyDefinition
+                  description: The retry policy to use, if any, when catching errors.
+                - type: string
+                  title: RetryPolicyReference
+                  description: The name of the retry policy to use, if any, when catching errors.
+            do:
+              $ref: '#/$defs/taskList'
+              title: TryTaskCatchDo
+              description: The definition of the task(s) to run when catching an error.
   waitTask:
     type: object
-    $ref: '#/$defs/taskBase'
     title: WaitTask
     description: Allows workflows to pause or delay their execution for a specified period of time.
     required: [ wait ]
     unevaluatedProperties: false
-    properties:
-      wait:
-        $ref: '#/$defs/duration'
-        title: WaitTaskConfiguration
-        description: The amount of time to wait.
+    allOf:
+    - $ref: '#/$defs/taskBase'
+    - properties:
+        wait:
+          $ref: '#/$defs/duration'
+          title: WaitTaskConfiguration
+          description: The amount of time to wait.
   flowDirective:
     title: FlowDirective
     description: Represents different transition options for a workflow.
