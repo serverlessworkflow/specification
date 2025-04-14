@@ -130,7 +130,7 @@ Defines the workflow's reusable components.
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | authentications | [`map[string, authentication]`](#authentication) | `no` | A name/value mapping of the workflow's reusable authentication policies. |
-| catalogs | [`map[string, catalog]`(#catalog)] | `no` | A name/value mapping of the workflow's reusable resource catalogs. |
+| catalogs | [`map[string, catalog]`](#catalog) | `no` | A name/value mapping of the workflow's reusable resource catalogs. |
 | errors | [`map[string, error]`](#error) | `no` | A name/value mapping of the workflow's reusable errors. | 
 | extensions | [`map[string, extension]`](#extension) | `no` | A list of the workflow's reusable extensions. |
 | functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
@@ -964,8 +964,8 @@ A task used to set data.
 ##### Properties
 
 | Name | Type | Required | Description |
-|:--|:---:|:---:|:---|
-| set | `object` | `yes` | A name/value mapping of the data to set. |
+|:-------|:------:|:----------:|:-------------|
+| set | `map` <br> `string` | `yes` | The data to set.<br>*Can be an object or a direct runtime expression.* |
 
 ##### Examples
 
@@ -981,6 +981,8 @@ do:
         shape: circle
         size: ${ .configuration.size }
         fill: ${ .configuration.fill }
+  - setColor:
+      set: ${ .configuration.color }      
 ```
 
 #### Switch
