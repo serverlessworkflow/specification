@@ -29,6 +29,7 @@
     - [Switch](#switch)
     - [Try](#try)
     - [Wait](#wait)
+    - [While](#while)
   + [Flow Directive](#flow-directive)
   + [Lifecycle Events](#lifecycle-events)
     - [Workflow Lifecycle Events](#workflow-lifecycle-events)
@@ -274,6 +275,7 @@ The Serverless Workflow DSL defines a list of [tasks](#task) that **must be** su
 - [Set](#set), used to dynamically set the [workflow](#workflow)'s data during the its execution. 
 - [Try](#try), used to attempt executing a specified [task](#task), and to handle any resulting [errors](#error) gracefully, allowing the [workflow](#workflow) to continue without interruption.
 - [Wait](#wait), used to pause or wait for a specified duration before proceeding to the next task.
+- [While](#while), used to iterate over a collection of items based on a condition, supporting both pre-test (while) and post-test (do-while) loops.
 
 #### Properties
 
@@ -781,7 +783,7 @@ Provides the capability to execute external [containers](#container-process), [s
 | run.script | [`script`](#script-process) | `no` | The definition of the script to run.<br>*Required if `container`, `shell` and `workflow` have not been set.* |
 | run.shell | [`shell`](#shell-process) | `no` | The definition of the shell command to run.<br>*Required if `container`, `script` and `workflow` have not been set.* |
 | run.workflow | [`workflow`](#workflow-process) | `no` | The definition of the workflow to run.<br>*Required if `container`, `script` and `shell` have not been set.* |
-| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*When set to `false`, the task cannot wait for the process to complete and thus cannot output the process’s result. In this case, it should simply output its transformed input.*<br>*Defaults to `true`.* |
+| await | `boolean` | `no` | Determines whether or not the process to run should be awaited for.<br>*When set to `false`, the task cannot wait for the process to complete and thus cannot output the process's result. In this case, it should simply output its transformed input.*<br>*Defaults to `true`.* |
 | return | `string` | `no` | Configures the output of the process.<br>*Supported values are:*<br>*- `stdout`: Outputs the content of the process **STDOUT**.*<br>*- `stderr`: Outputs the content of the process **STDERR**.*<br>*- `code`:  Outputs the process's **exit code**.*<br>*- `all`: Outputs the **exit code**, the **STDOUT** content and the **STDERR** content, wrapped into a new [processResult](#process-result) object.*<br>*- `none`: Does not output anything.*<br>*Defaults to `stdout`.* |
 
 ##### Examples
@@ -1145,6 +1147,66 @@ do:
       wait:
         seconds: 10
 ```
+
+#### While
+
+Enables iterative execution of tasks based on a condition, supporting both pre-test (while) and post-test (do-while) loops. This task type is essential for scenarios requiring repetitive execution until a specific condition is met.
+
+##### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| while | `string` | `yes` | A [runtime expression](dsl.md#runtime-expressions) that represents the condition that must be met for the iteration to continue. |
+| postConditionCheck | `boolean` | `no` | Determines whether the condition is evaluated after (do-while) or before (while) executing the task.<br>*If set to `true`, implements a do-while loop (post-test).*<br>*If set to `false`, implements a while loop (pre-test).*<br>*Defaults to `false`.* |
+| maxIterations | `integer` | `no` | The maximum number of iterations allowed to prevent infinite loops.<br>*If not set, implementation-specific default limits apply.* |
+| do | [`map[string, task]`](#task) | `yes` | The [task(s)](#task) to perform while the condition is true. |
+
+##### Examples
+
+```yaml
+document:
+  dsl: '1.0.0'
+  namespace: test
+  name: while-example
+  version: '0.1.0'
+do:
+  # While loop example (pre-test)
+  - fetchPaginatedData:
+      while: .hasNextPage == true
+      maxIterations: 100
+      do:
+        - fetchPage:
+            call: getPageData
+            input:
+              pageToken: .nextPageToken
+            output: .fetchedData
+        - accumulateData:
+            run: mergeResults
+            input:
+              newData: .fetchedData
+              existingData: .accumulatedResults
+            output: .accumulatedResults
+
+  # Do-while loop example (post-test)
+  - retryOperation:
+      while: .retryNeeded == true
+      postConditionCheck: true
+      maxIterations: 3
+      do:
+        - attemptOperation:
+            call: performOperation
+            output:
+              as: |
+                if .status == "failed" then
+                  { retryNeeded: true }
+                else
+                  { retryNeeded: false }
+                end
+```
+
+In the examples above:
+- The first task demonstrates a while loop that fetches paginated data until there are no more pages, with a maximum of 100 iterations.
+- The second task shows a do-while loop that retries an operation up to 3 times, evaluating the retry condition after each attempt.
 
 ### Flow Directive
 

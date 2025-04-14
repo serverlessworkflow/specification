@@ -1,0 +1,47 @@
+document:
+  dsl: '1.0.0'
+  namespace: test
+  name: while-examples
+  version: '0.1.0'
+
+do:
+  # Example of a while loop (condition evaluated before execution)
+  - fetchPaginatedData:
+      while: .hasNextPage == true
+      maxIterations: 100
+      do:
+        - fetchPage:
+            call: getPageData
+            input:
+              pageToken: .nextPageToken
+            output: .fetchedData
+        - accumulateData:
+            run: mergeResults
+            input:
+              newData: .fetchedData
+              existingData: .accumulatedResults
+            output: .accumulatedResults
+
+  # Example of a do-while loop (condition evaluated after execution)
+  - retryOperation:
+      while: .retryCount < 3 && .success == false
+      postConditionCheck: true
+      do:
+        - attempt:
+            call: someOperation
+            output:
+              as: .success
+        - updateRetry:
+            set:
+              retryCount: '${ .retryCount + 1 }'
+
+  # Example using iteration counter
+  - countToMax:
+      while: .counter < .maxValue
+      at: iteration
+      maxIterations: 10
+      do:
+        - increment:
+            set:
+              counter: '${ .counter + 1 }'
+              iterations: '${ .iterations + [.iteration] }' 

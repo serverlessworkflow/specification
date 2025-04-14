@@ -213,6 +213,7 @@ $defs:
       - $ref: '#/$defs/forkTask'
       - $ref: '#/$defs/emitTask'
       - $ref: '#/$defs/forTask'
+      - $ref: '#/$defs/whileTask'
       - $ref: '#/$defs/listenTask'
       - $ref: '#/$defs/raiseTask'
       - $ref: '#/$defs/runTask'
@@ -544,6 +545,37 @@ $defs:
       do:
         $ref: '#/$defs/taskList'
         title: ForTaskDo
+  whileTask:
+    type: object
+    $ref: '#/$defs/taskBase'
+    title: WhileTask
+    description: A task that enables conditional looping with support for both while and do-while behavior.
+    required: [ while, do ]
+    unevaluatedProperties: false
+    properties:
+      while:
+        type: string
+        title: WhileCondition
+        description: A runtime expression that represents the condition that must be met for the iteration to continue.
+      postConditionCheck:
+        type: boolean
+        title: PostConditionCheck
+        description: Controls whether the condition is evaluated after (do-while) or before (while) executing the tasks. When true, enables do-while behavior.
+        default: false
+      maxIterations:
+        type: integer
+        title: MaxIterations
+        description: The maximum number of iterations to perform, if any.
+        minimum: 1
+      at:
+        type: string
+        title: WhileAt
+        description: The name of the variable used to store the index of the current iteration.
+        default: index
+      do:
+        $ref: '#/$defs/taskList'
+        title: WhileTaskDo
+        description: The tasks to execute in each iteration.
   listenTask:
     type: object
     $ref: '#/$defs/taskBase'
