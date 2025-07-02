@@ -985,37 +985,35 @@ $defs:
           description: The configuration of the OAuth2 authentication policy.
           unevaluatedProperties: false
           oneOf:
-            - type: object
+            - $ref: '#/$defs/oauth2AuthenticationProperties'
+              type: object
               title: OAuth2ConnectAuthenticationProperties
               description: The inline configuration of the OAuth2 authentication policy.
               unevaluatedProperties: false
-              allOf:
-                - $ref: '#/$defs/oauth2AuthenticationProperties'
-                - type: object
+              properties:
+                endpoints:
+                  type: object
+                  title: OAuth2AuthenticationPropertiesEndpoints
+                  description: The endpoint configurations for OAuth2.
                   properties:
-                    endpoints:
-                      type: object
-                      title: OAuth2AuthenticationPropertiesEndpoints
-                      description: The endpoint configurations for OAuth2.
-                      properties:
-                        token:
-                          type: string
-                          format: uri-template
-                          default: /oauth2/token
-                          title: OAuth2TokenEndpoint
-                          description: The relative path to the token endpoint. Defaults to `/oauth2/token`.
-                        revocation:
-                          type: string
-                          format: uri-template
-                          default: /oauth2/revoke
-                          title: OAuth2RevocationEndpoint
-                          description: The relative path to the revocation endpoint. Defaults to `/oauth2/revoke`.
-                        introspection:
-                          type: string
-                          format: uri-template
-                          default: /oauth2/introspect
-                          title: OAuth2IntrospectionEndpoint
-                          description: The relative path to the introspection endpoint. Defaults to `/oauth2/introspect`.
+                    token:
+                      type: string
+                      format: uri-template
+                      default: /oauth2/token
+                      title: OAuth2TokenEndpoint
+                      description: The relative path to the token endpoint. Defaults to `/oauth2/token`.
+                    revocation:
+                      type: string
+                      format: uri-template
+                      default: /oauth2/revoke
+                      title: OAuth2RevocationEndpoint
+                      description: The relative path to the revocation endpoint. Defaults to `/oauth2/revoke`.
+                    introspection:
+                      type: string
+                      format: uri-template
+                      default: /oauth2/introspect
+                      title: OAuth2IntrospectionEndpoint
+                      description: The relative path to the introspection endpoint. Defaults to `/oauth2/introspect`.
             - $ref: '#/$defs/secretBasedAuthenticationPolicy'
               title: OAuth2AuthenticationPolicySecret
               description: Secret based configuration of the OAuth2 authentication policy.
@@ -1681,18 +1679,14 @@ $defs:
         type: object
         title: AsyncApiMessagePayload
         description: The message's payload, if any.
-        additionalProperties: true
       headers:
         type: object
         title: AsyncApiMessageHeaders
         description: The message's headers, if any.
-        additionalProperties: true
   asyncApiInboundMessage:
-    type: object
+    $ref: '#/$defs/asyncApiOutboundMessage'
     title: AsyncApiInboundMessage
     description: Represents a message counsumed by an AsyncAPI subscription.
-    allOf:
-      - $ref: '#/$defs/asyncApiOutboundMessage'
     properties:
       correlationId:
         type: string
