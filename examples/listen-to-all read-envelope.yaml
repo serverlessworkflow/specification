@@ -1,5 +1,5 @@
 document:
-  dsl: '1.0.0'
+  dsl: '1.0.1'
   namespace: test
   name: listen-to-all-read-envelope
   version: '0.1.0'
