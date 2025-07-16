@@ -310,10 +310,10 @@ $defs:
                     type: string
                     title: WithGRPCServiceHost
                     description: The hostname of the GRPC service to call.
-                    pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
+                    pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-.]{0,61}[a-zA-Z0-9])?$
                   port:
                     type: integer
-                    title: WithGRPCServicePost
+                    title: WithGRPCServicePort
                     description: The port number of the GRPC service to call.
                     minimum: 0
                     maximum: 65535
