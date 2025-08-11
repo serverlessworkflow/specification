@@ -14,6 +14,7 @@
         + [gRPC](#grpc-call)
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
+        + [A2A](#a2a-call)
     - [Do](#do)
     - [Emit](#emit)
     - [For](#for)
@@ -320,6 +321,7 @@ Serverless Workflow defines several default functions that **MUST** be supported
 - [gRPC](#grpc-call)
 - [HTTP](#http-call)
 - [OpenAPI](#openapi-call)
+- [A2A](#a2a-call)
 
 ##### AsyncAPI Call
 
@@ -481,6 +483,48 @@ do:
         operationId: findPetsByStatus
         parameters:
           status: available
+```
+
+##### A2A Call
+
+The [A2A Call](#a2a-call) enables workflows to interact with AI agents described by [A2A](https://a2a-protocol.org/).
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| method | `string` | `yes` | The A2A JSON-RPC method to send. |
+| agentCard | [`externalResource`](#external-resource) | `yes` | The AgentCard resource that describes the agent to call. |
+| parameters | `any` | `no` | The parameters for the A2A rpc method. For the `message/send` and `message/stream` methods the parameters `message.messageId` and `message.role` must be automatically set if missing. |
+
+> [!NOTE]
+> The `security` and `securitySchemes` fields of the AgentCard contain authentication requirements and schemes for when communicating with the agent.
+
+> [!NOTE]
+> On success the output is the JSON-RPC result. On failure runtimes must raise an error.
+
+> [!NOTE]
+> For `message/stream` and `tasks/resubscribe` methods the output is a sequentially ordered array of all the result objects.
+
+###### Examples
+
+```yaml
+document:
+  dsl: '1.0.0'
+  namespace: test
+  name: a2a-example
+  version: '0.1.0'
+do:
+  - GenerateReport:
+      call: a2a
+      with:
+        method: message/send
+        agentCard: https://example.com/.well-known/agent-card.json
+        parameters:
+          message:
+            parts:
+              - kind: text
+                text: Generate the Q1 sales report.
 ```
 
 #### Do

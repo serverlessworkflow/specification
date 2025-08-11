@@ -430,6 +430,36 @@ $defs:
                 description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
             required: [ document, operationId ]
             unevaluatedProperties: false
+      - title: CallA2A
+        description: Defines the A2A call to perform.
+        $ref: '#/$defs/taskBase'
+        type: object
+        unevaluatedProperties: false
+        required: [ call, with ]
+        properties:
+          call:
+            type: string
+            const: a2a
+          with:
+            type: object
+            title: A2AArguments
+            description: The A2A call arguments.
+            properties:
+              agentCard:
+                $ref: '#/$defs/externalResource'
+                title: WithA2AAgentCard
+                description: The Agent Card that defines the agent to call.
+              method:
+                type: string
+                title: WithA2AMethod
+                description: The A2A method to send.
+              parameters:
+                type: object
+                title: WithA2AParameters
+                description: The parameters object to send with the A2A method.
+                additionalProperties: true
+            required: [ agentCard, method ]
+            unevaluatedProperties: false
       - title: CallFunction
         description: Defines the function call to perform.
         $ref: '#/$defs/taskBase'
@@ -440,7 +470,7 @@ $defs:
           call:
             type: string
             not:
-              enum: ["asyncapi", "grpc", "http", "openapi"]
+              enum: ["asyncapi", "grpc", "http", "openapi", "a2a"]
             description: The name of the function to call.
           with:
             type: object
