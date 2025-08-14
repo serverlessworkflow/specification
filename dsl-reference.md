@@ -493,17 +493,15 @@ The [A2A Call](#a2a-call) enables workflows to interact with AI agents described
 
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
-| method | `string` | `yes` | The A2A JSON-RPC method to send. |
+| method | `string` | `yes` | The A2A JSON-RPC method to send.<br>*Supported values are:  `message/send`, `message/stream`, `tasks/get`, `tasks/list`, `tasks/cancel`, `tasks/resubscribe`, `tasks/pushNotificationConfig/set`, `tasks/pushNotificationConfig/get`, `tasks/pushNotificationConfig/list`, `tasks/pushNotificationConfig/delete`, and `agent/getAuthenticatedExtendedCard`* |
 | agentCard | [`externalResource`](#external-resource) | `yes` | The AgentCard resource that describes the agent to call. |
-| parameters | `any` | `no` | The parameters for the A2A rpc method. For the `message/send` and `message/stream` methods the parameters `message.messageId` and `message.role` must be automatically set if missing. |
+| parameters | `map` <br> `string` | `no` | The parameters for the A2A RPC method. For the `message/send` and `message/stream` methods, runtimes must set the parameters `message.messageId` and `message.role` if missing in the definition.<br>*Can be an object or a direct runtime expression.* |
 
 > [!NOTE]
 > The `security` and `securitySchemes` fields of the AgentCard contain authentication requirements and schemes for when communicating with the agent.
-
-> [!NOTE]
-> On success the output is the JSON-RPC result. On failure runtimes must raise an error.
-
-> [!NOTE]
+>
+> On success the output is the JSON-RPC result. On failure runtimes must raise an error with type [https://serverlessworkflow.io/spec/1.0.0/errors/runtime](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#standard-error-types).
+>
 > For `message/stream` and `tasks/resubscribe` methods the output is a sequentially ordered array of all the result objects.
 
 ###### Examples

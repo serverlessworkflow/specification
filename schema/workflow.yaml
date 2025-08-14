@@ -453,11 +453,15 @@ $defs:
                 type: string
                 title: WithA2AMethod
                 description: The A2A method to send.
+                enum: [ 'message/send', 'message/stream', 'tasks/get', 'tasks/list', 'tasks/cancel', 'tasks/resubscribe', 'tasks/pushNotificationConfig/set', 'tasks/pushNotificationConfig/get', 'tasks/pushNotificationConfig/list', 'tasks/pushNotificationConfig/delete', 'agent/getAuthenticatedExtendedCard' ]
               parameters:
-                type: object
+                oneOf:
+                  - type: object
+                    minProperties: 1
+                    additionalProperties: true
+                  - type: string
                 title: WithA2AParameters
                 description: The parameters object to send with the A2A method.
-                additionalProperties: true
             required: [ agentCard, method ]
             unevaluatedProperties: false
       - title: CallFunction
