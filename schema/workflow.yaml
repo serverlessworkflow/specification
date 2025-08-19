@@ -449,6 +449,10 @@ $defs:
                 $ref: '#/$defs/externalResource'
                 title: WithA2AAgentCard
                 description: The Agent Card that defines the agent to call.
+              server:
+                title: A2AServer
+                description: The server endpoint to send the request to.
+                $ref: '#/$defs/endpoint'
               method:
                 type: string
                 title: WithA2AMethod
