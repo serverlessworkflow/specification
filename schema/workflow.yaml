@@ -466,7 +466,7 @@ $defs:
                   - type: string
                 title: WithA2AParameters
                 description: The parameters object to send with the A2A method.
-            required: [ agentCard, method ]
+            required: [ method ]
             unevaluatedProperties: false
       - title: CallFunction
         description: Defines the function call to perform.
