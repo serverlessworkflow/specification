@@ -494,7 +494,8 @@ The [A2A Call](#a2a-call) enables workflows to interact with AI agents described
 | Name | Type | Required | Description|
 |:--|:---:|:---:|:---|
 | method | `string` | `yes` | The A2A JSON-RPC method to send.<br>*Supported values are:  `message/send`, `message/stream`, `tasks/get`, `tasks/list`, `tasks/cancel`, `tasks/resubscribe`, `tasks/pushNotificationConfig/set`, `tasks/pushNotificationConfig/get`, `tasks/pushNotificationConfig/list`, `tasks/pushNotificationConfig/delete`, and `agent/getAuthenticatedExtendedCard`* |
-| agentCard | [`externalResource`](#external-resource) | `yes` | The AgentCard resource that describes the agent to call. |
+| agentCard | [`externalResource`](#external-resource) | `no` | The AgentCard resource that describes the agent to call.<br>*Required if `server` has not been set.* |
+| server | `string`\|[`endpoint`](#endpoint) | `no` | An URI or an object that describes the A2A server to call.<br>*Required if `agentCard` has not been set.* |
 | parameters | `map` <br> `string` | `no` | The parameters for the A2A RPC method. For the `message/send` and `message/stream` methods, runtimes must set the parameters `message.messageId` and `message.role` if missing in the definition.<br>*Can be an object or a direct runtime expression.* |
 
 > [!NOTE]
