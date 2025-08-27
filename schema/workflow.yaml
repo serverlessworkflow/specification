@@ -1075,21 +1075,21 @@ $defs:
       required: [ oidc ]
   oauth2AuthenticationProperties:
     type: object
-    title: OAuth2AutenthicationData
+    title: OAuth2AuthenticationData
     description: Inline configuration of the OAuth2 authentication policy.
     properties:
       authority:
         $ref: '#/$defs/uriTemplate'
-        title: OAuth2AutenthicationDataAuthority
+        title: OAuth2AuthenticationDataAuthority
         description: The URI that references the OAuth2 authority to use.
       grant:
         type: string
         enum: [ authorization_code, client_credentials, password, refresh_token, 'urn:ietf:params:oauth:grant-type:token-exchange']
-        title: OAuth2AutenthicationDataGrant
+        title: OAuth2AuthenticationDataGrant
         description: The grant type to use.
       client:
         type: object
-        title: OAuth2AutenthicationDataClient
+        title: OAuth2AuthenticationDataClient
         description: The definition of an OAuth2 client.
         unevaluatedProperties: false
         properties:
@@ -1129,31 +1129,31 @@ $defs:
           type: string
       scopes:
         type: array
-        title: OAuth2AutenthicationDataScopes
+        title: OAuth2AuthenticationDataScopes
         description: The scopes, if any, to request the token for.
         items:
           type: string
       audiences:
         type: array
-        title: OAuth2AutenthicationDataAudiences
+        title: OAuth2AuthenticationDataAudiences
         description: The audiences, if any, to request the token for.
         items:
           type: string
       username:
         type: string
-        title: OAuth2AutenthicationDataUsername
+        title: OAuth2AuthenticationDataUsername
         description: The username to use. Used only if the grant type is Password.
       password:
         type: string
-        title: OAuth2AutenthicationDataPassword
+        title: OAuth2AuthenticationDataPassword
         description: The password to use. Used only if the grant type is Password.
       subject:
         $ref: '#/$defs/oauth2Token'
-        title: OAuth2AutenthicationDataSubject
+        title: OAuth2AuthenticationDataSubject
         description: The security token that represents the identity of the party on behalf of whom the request is being made.
       actor:
         $ref: '#/$defs/oauth2Token'
-        title: OAuth2AutenthicationDataActor
+        title: OAuth2AuthenticationDataActor
         description: The security token that represents the identity of the acting party.
   oauth2Token:
     type: object
