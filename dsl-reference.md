@@ -496,7 +496,7 @@ The [A2A Call](#a2a-call) enables workflows to interact with AI agents described
 | method | `string` | `yes` | The A2A JSON-RPC method to send.<br>*Supported values are:  `message/send`, `message/stream`, `tasks/get`, `tasks/list`, `tasks/cancel`, `tasks/resubscribe`, `tasks/pushNotificationConfig/set`, `tasks/pushNotificationConfig/get`, `tasks/pushNotificationConfig/list`, `tasks/pushNotificationConfig/delete`, and `agent/getAuthenticatedExtendedCard`* |
 | agentCard | [`externalResource`](#external-resource) | `no` | The AgentCard resource that describes the agent to call.<br>*Required if `server` has not been set.* |
 | server | `string`\|[`endpoint`](#endpoint) | `no` | An URI or an object that describes the A2A server to call.<br>*Required if `agentCard` has not been set, otherwise ignored* |
-| parameters | `map` <br> `string` | `no` | The parameters for the A2A RPC method. For the `message/send` and `message/stream` methods, runtimes must set the parameters `message.messageId` and `message.role` if missing in the definition.<br>*Can be an object or a direct runtime expression.* |
+| parameters | `map` <br> `string` | `no` | The parameters for the A2A RPC method. For the `message/send` and `message/stream` methods, runtimes must default `message.messageId` to a uuid and `message.role` to `user`.<br>*Can be an object or a direct runtime expression.* |
 
 > [!NOTE]
 > The `security` and `securitySchemes` fields of the AgentCard contain authentication requirements and schemes for when communicating with the agent.
@@ -518,7 +518,8 @@ do:
       call: a2a
       with:
         method: message/send
-        agentCard: https://example.com/.well-known/agent-card.json
+        agentCard:
+          endpoint: https://example.com/.well-known/agent-card.json
         parameters:
           message:
             parts:
