@@ -14,6 +14,7 @@
         + [gRPC](#grpc-call)
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
+        + [A2A](#a2a-call)
     - [Do](#do)
     - [Emit](#emit)
     - [For](#for)
@@ -320,6 +321,7 @@ Serverless Workflow defines several default functions that **MUST** be supported
 - [gRPC](#grpc-call)
 - [HTTP](#http-call)
 - [OpenAPI](#openapi-call)
+- [A2A](#a2a-call)
 
 ##### AsyncAPI Call
 
@@ -481,6 +483,48 @@ do:
         operationId: findPetsByStatus
         parameters:
           status: available
+```
+
+##### A2A Call
+
+The [A2A Call](#a2a-call) enables workflows to interact with AI agents described by [A2A](https://a2a-protocol.org/).
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| method | `string` | `yes` | The A2A JSON-RPC method to send.<br>*Supported values are:  `message/send`, `message/stream`, `tasks/get`, `tasks/list`, `tasks/cancel`, `tasks/resubscribe`, `tasks/pushNotificationConfig/set`, `tasks/pushNotificationConfig/get`, `tasks/pushNotificationConfig/list`, `tasks/pushNotificationConfig/delete`, and `agent/getAuthenticatedExtendedCard`* |
+| agentCard | [`externalResource`](#external-resource) | `no` | The AgentCard resource that describes the agent to call.<br>*Required if `server` has not been set.* |
+| server | `string`\|[`endpoint`](#endpoint) | `no` | An URI or an object that describes the A2A server to call.<br>*Required if `agentCard` has not been set, otherwise ignored* |
+| parameters | `map` <br> `string` | `no` | The parameters for the A2A RPC method. For the `message/send` and `message/stream` methods, runtimes must default `message.messageId` to a uuid and `message.role` to `user`.<br>*Can be an object or a direct runtime expression.* |
+
+> [!NOTE]
+> The `security` and `securitySchemes` fields of the AgentCard contain authentication requirements and schemes for when communicating with the agent.
+>
+> On success the output is the JSON-RPC result. On failure runtimes must raise an error with type [https://serverlessworkflow.io/spec/1.0.0/errors/runtime](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#standard-error-types).
+>
+> For `message/stream` and `tasks/resubscribe` methods the output is a sequentially ordered array of all the result objects.
+
+###### Examples
+
+```yaml
+document:
+  dsl: '1.0.0'
+  namespace: test
+  name: a2a-example
+  version: '0.1.0'
+do:
+  - GenerateReport:
+      call: a2a
+      with:
+        method: message/send
+        agentCard:
+          endpoint: https://example.com/.well-known/agent-card.json
+        parameters:
+          message:
+            parts:
+              - kind: text
+                text: Generate the Q1 sales report.
 ```
 
 #### Do
