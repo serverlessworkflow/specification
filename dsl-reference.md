@@ -509,7 +509,7 @@ The [A2A Call](#a2a-call) enables workflows to interact with AI agents described
 
 ```yaml
 document:
-  dsl: '1.0.0'
+  dsl: '1.0.1'
   namespace: test
   name: a2a-example
   version: '0.1.0'
