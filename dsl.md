@@ -596,6 +596,7 @@ Serverless Workflow DSL is designed to seamlessly interact with a variety of ser
 - [**gRPC**](dsl-reference.md#grpc-call): Supports Remote Procedure Call (RPC) using gRPC, a high-performance, open-source universal RPC framework. This is suitable for connecting to services that require low-latency and high-throughput communication.
 - [**AsyncAPI**](dsl-reference.md#asyncapi-call): Facilitates interaction with asynchronous messaging protocols. AsyncAPI is designed for event-driven architectures, allowing workflows to publish and subscribe to events.
 - [**OpenAPI**](dsl-reference.md#openapi-call): Enables communication with services that provide OpenAPI specifications, which is useful for defining and consuming RESTful APIs.
+- [**A2A**](dsl-reference.md#a2a-call): Enables interaction with A2A servers (agents described by A2A).
 
 Runtimes **must** raise an error with type `https://serverlessworkflow.io/spec/1.0.0/errors/communication` if and when a problem occurs during a call.
 

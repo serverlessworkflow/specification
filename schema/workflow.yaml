@@ -284,57 +284,55 @@ $defs:
         type: object
         unevaluatedProperties: false
         required: [ call, with ]
-        allOf:
-        - $ref: '#/$defs/taskBase'
-        - properties:
-            call:
-              type: string
-              const: grpc
-            with:
-              type: object
-              title: GRPCArguments
-              description: The GRPC call arguments.
-              properties:
-                proto:
-                  $ref: '#/$defs/externalResource'
-                  title: WithGRPCProto
-                  description: The proto resource that describes the GRPC service to call.
-                service:
-                  type: object
-                  title: WithGRPCService
-                  unevaluatedProperties: false
-                  properties:
-                    name:
-                      type: string
-                      title: WithGRPCServiceName
-                      description: The name of the GRPC service to call.
-                    host:
-                      type: string
-                      title: WithGRPCServiceHost
-                      description: The hostname of the GRPC service to call.
-                      pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$
-                    port:
-                      type: integer
-                      title: WithGRPCServicePost
-                      description: The port number of the GRPC service to call.
-                      minimum: 0
-                      maximum: 65535
-                    authentication:
-                      $ref: '#/$defs/referenceableAuthenticationPolicy'
-                      title: WithGRPCServiceAuthentication
-                      description: The endpoint's authentication policy, if any.
-                  required: [ name, host ]
-                method:
-                  type: string
-                  title: WithGRPCMethod
-                  description: The name of the method to call on the defined GRPC service.
-                arguments:
-                  type: object
-                  title: WithGRPCArguments
-                  description: The arguments, if any, to call the method with.
-                  additionalProperties: true
-              required: [ proto, service, method ]
-              unevaluatedProperties: false
+        properties:
+          call:
+            type: string
+            const: grpc
+          with:
+            type: object
+            title: GRPCArguments
+            description: The GRPC call arguments.
+            properties:
+              proto:
+                $ref: '#/$defs/externalResource'
+                title: WithGRPCProto
+                description: The proto resource that describes the GRPC service to call.
+              service:
+                type: object
+                title: WithGRPCService
+                unevaluatedProperties: false
+                properties:
+                  name:
+                    type: string
+                    title: WithGRPCServiceName
+                    description: The name of the GRPC service to call.
+                  host:
+                    type: string
+                    title: WithGRPCServiceHost
+                    description: The hostname of the GRPC service to call.
+                    pattern: ^[a-zA-Z0-9](?:[a-zA-Z0-9-.]{0,61}[a-zA-Z0-9])?$
+                  port:
+                    type: integer
+                    title: WithGRPCServicePort
+                    description: The port number of the GRPC service to call.
+                    minimum: 0
+                    maximum: 65535
+                  authentication:
+                    $ref: '#/$defs/referenceableAuthenticationPolicy'
+                    title: WithGRPCServiceAuthentication
+                    description: The endpoint's authentication policy, if any.
+                required: [ name, host ]
+              method:
+                type: string
+                title: WithGRPCMethod
+                description: The name of the method to call on the defined GRPC service.
+              arguments:
+                type: object
+                title: WithGRPCArguments
+                description: The arguments, if any, to call the method with.
+                additionalProperties: true
+            required: [ proto, service, method ]
+            unevaluatedProperties: false
       - title: CallHTTP
         description: Defines the HTTP call to perform.
         type: object
@@ -395,63 +393,97 @@ $defs:
         type: object
         unevaluatedProperties: false
         required: [ call, with ]
-        allOf:
-        - $ref: '#/$defs/taskBase'
-        - properties:
-            call:
-              type: string
-              const: openapi
-            with:
-              type: object
-              title: OpenAPIArguments
-              description: The OpenAPI call arguments.
-              properties:
-                document:
-                  $ref: '#/$defs/externalResource'
-                  title: WithOpenAPIDocument
-                  description: The document that defines the OpenAPI operation to call.
-                operationId:
-                  type: string
-                  title: WithOpenAPIOperation
-                  description: The id of the OpenAPI operation to call.
-                parameters:
-                  type: object
-                  title: WithOpenAPIParameters
-                  description: A name/value mapping of the parameters of the OpenAPI operation to call.
-                  additionalProperties: true
-                authentication:
-                  $ref: '#/$defs/referenceableAuthenticationPolicy'
-                  title: WithOpenAPIAuthentication
-                  description: The authentication policy, if any, to use when calling the OpenAPI operation.
-                output:
-                  type: string
-                  enum: [ raw, content, response ]
-                  title: WithOpenAPIOutput
-                  description: The http call output format. Defaults to 'content'.
-                redirect:
-                  type: boolean
-                  title: HttpRedirect
-                  description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
-              required: [ document, operationId ]
-              unevaluatedProperties: false
+        properties:
+          call:
+            type: string
+            const: openapi
+          with:
+            type: object
+            title: OpenAPIArguments
+            description: The OpenAPI call arguments.
+            properties:
+              document:
+                $ref: '#/$defs/externalResource'
+                title: WithOpenAPIDocument
+                description: The document that defines the OpenAPI operation to call.
+              operationId:
+                type: string
+                title: WithOpenAPIOperation
+                description: The id of the OpenAPI operation to call.
+              parameters:
+                type: object
+                title: WithOpenAPIParameters
+                description: A name/value mapping of the parameters of the OpenAPI operation to call.
+                additionalProperties: true
+              authentication:
+                $ref: '#/$defs/referenceableAuthenticationPolicy'
+                title: WithOpenAPIAuthentication
+                description: The authentication policy, if any, to use when calling the OpenAPI operation.
+              output:
+                type: string
+                enum: [ raw, content, response ]
+                title: WithOpenAPIOutput
+                description: The http call output format. Defaults to 'content'.
+              redirect:
+                type: boolean
+                title: HttpRedirect
+                description: Specifies whether redirection status codes (`300–399`) should be treated as errors.
+            required: [ document, operationId ]
+            unevaluatedProperties: false
+      - title: CallA2A
+        description: Defines the A2A call to perform.
+        $ref: '#/$defs/taskBase'
+        type: object
+        unevaluatedProperties: false
+        required: [ call, with ]
+        properties:
+          call:
+            type: string
+            const: a2a
+          with:
+            type: object
+            title: A2AArguments
+            description: The A2A call arguments.
+            properties:
+              agentCard:
+                $ref: '#/$defs/externalResource'
+                title: WithA2AAgentCard
+                description: The Agent Card that defines the agent to call.
+              server:
+                title: A2AServer
+                description: The server endpoint to send the request to.
+                $ref: '#/$defs/endpoint'
+              method:
+                type: string
+                title: WithA2AMethod
+                description: The A2A method to send.
+                enum: [ 'message/send', 'message/stream', 'tasks/get', 'tasks/list', 'tasks/cancel', 'tasks/resubscribe', 'tasks/pushNotificationConfig/set', 'tasks/pushNotificationConfig/get', 'tasks/pushNotificationConfig/list', 'tasks/pushNotificationConfig/delete', 'agent/getAuthenticatedExtendedCard' ]
+              parameters:
+                oneOf:
+                  - type: object
+                    minProperties: 1
+                    additionalProperties: true
+                  - type: string
+                title: WithA2AParameters
+                description: The parameters object to send with the A2A method.
+            required: [ method ]
+            unevaluatedProperties: false
       - title: CallFunction
         description: Defines the function call to perform.
         type: object
         unevaluatedProperties: false
         required: [ call ]
-        allOf:
-        - $ref: '#/$defs/taskBase'
-        - properties:
-            call:
-              type: string
-              not:
-                enum: ["asyncapi", "grpc", "http", "openapi"]
-              description: The name of the function to call.
-            with:
-              type: object
-              title: FunctionArguments
-              description: A name/value mapping of the parameters, if any, to call the function with.
-              additionalProperties: true
+        properties:
+          call:
+            type: string
+            not:
+              enum: ["asyncapi", "grpc", "http", "openapi", "a2a"]
+            description: The name of the function to call.
+          with:
+            type: object
+            title: FunctionArguments
+            description: A name/value mapping of the parameters, if any, to call the function with.
+            additionalProperties: true
   forkTask:
     type: object
     title: ForkTask
@@ -1001,37 +1033,35 @@ $defs:
           description: The configuration of the OAuth2 authentication policy.
           unevaluatedProperties: false
           oneOf:
-            - type: object
+            - $ref: '#/$defs/oauth2AuthenticationProperties'
+              type: object
               title: OAuth2ConnectAuthenticationProperties
               description: The inline configuration of the OAuth2 authentication policy.
               unevaluatedProperties: false
-              allOf:
-                - $ref: '#/$defs/oauth2AuthenticationProperties'
-                - type: object
+              properties:
+                endpoints:
+                  type: object
+                  title: OAuth2AuthenticationPropertiesEndpoints
+                  description: The endpoint configurations for OAuth2.
                   properties:
-                    endpoints:
-                      type: object
-                      title: OAuth2AuthenticationPropertiesEndpoints
-                      description: The endpoint configurations for OAuth2.
-                      properties:
-                        token:
-                          type: string
-                          format: uri-template
-                          default: /oauth2/token
-                          title: OAuth2TokenEndpoint
-                          description: The relative path to the token endpoint. Defaults to `/oauth2/token`.
-                        revocation:
-                          type: string
-                          format: uri-template
-                          default: /oauth2/revoke
-                          title: OAuth2RevocationEndpoint
-                          description: The relative path to the revocation endpoint. Defaults to `/oauth2/revoke`.
-                        introspection:
-                          type: string
-                          format: uri-template
-                          default: /oauth2/introspect
-                          title: OAuth2IntrospectionEndpoint
-                          description: The relative path to the introspection endpoint. Defaults to `/oauth2/introspect`.
+                    token:
+                      type: string
+                      format: uri-template
+                      default: /oauth2/token
+                      title: OAuth2TokenEndpoint
+                      description: The relative path to the token endpoint. Defaults to `/oauth2/token`.
+                    revocation:
+                      type: string
+                      format: uri-template
+                      default: /oauth2/revoke
+                      title: OAuth2RevocationEndpoint
+                      description: The relative path to the revocation endpoint. Defaults to `/oauth2/revoke`.
+                    introspection:
+                      type: string
+                      format: uri-template
+                      default: /oauth2/introspect
+                      title: OAuth2IntrospectionEndpoint
+                      description: The relative path to the introspection endpoint. Defaults to `/oauth2/introspect`.
             - $ref: '#/$defs/secretBasedAuthenticationPolicy'
               title: OAuth2AuthenticationPolicySecret
               description: Secret based configuration of the OAuth2 authentication policy.
@@ -1055,21 +1085,21 @@ $defs:
       required: [ oidc ]
   oauth2AuthenticationProperties:
     type: object
-    title: OAuth2AutenthicationData
+    title: OAuth2AuthenticationData
     description: Inline configuration of the OAuth2 authentication policy.
     properties:
       authority:
         $ref: '#/$defs/uriTemplate'
-        title: OAuth2AutenthicationDataAuthority
+        title: OAuth2AuthenticationDataAuthority
         description: The URI that references the OAuth2 authority to use.
       grant:
         type: string
         enum: [ authorization_code, client_credentials, password, refresh_token, 'urn:ietf:params:oauth:grant-type:token-exchange']
-        title: OAuth2AutenthicationDataGrant
+        title: OAuth2AuthenticationDataGrant
         description: The grant type to use.
       client:
         type: object
-        title: OAuth2AutenthicationDataClient
+        title: OAuth2AuthenticationDataClient
         description: The definition of an OAuth2 client.
         unevaluatedProperties: false
         properties:
@@ -1109,31 +1139,31 @@ $defs:
           type: string
       scopes:
         type: array
-        title: OAuth2AutenthicationDataScopes
+        title: OAuth2AuthenticationDataScopes
         description: The scopes, if any, to request the token for.
         items:
           type: string
       audiences:
         type: array
-        title: OAuth2AutenthicationDataAudiences
+        title: OAuth2AuthenticationDataAudiences
         description: The audiences, if any, to request the token for.
         items:
           type: string
       username:
         type: string
-        title: OAuth2AutenthicationDataUsername
+        title: OAuth2AuthenticationDataUsername
         description: The username to use. Used only if the grant type is Password.
       password:
         type: string
-        title: OAuth2AutenthicationDataPassword
+        title: OAuth2AuthenticationDataPassword
         description: The password to use. Used only if the grant type is Password.
       subject:
         $ref: '#/$defs/oauth2Token'
-        title: OAuth2AutenthicationDataSubject
+        title: OAuth2AuthenticationDataSubject
         description: The security token that represents the identity of the party on behalf of whom the request is being made.
       actor:
         $ref: '#/$defs/oauth2Token'
-        title: OAuth2AutenthicationDataActor
+        title: OAuth2AuthenticationDataActor
         description: The security token that represents the identity of the acting party.
   oauth2Token:
     type: object
@@ -1697,18 +1727,14 @@ $defs:
         type: object
         title: AsyncApiMessagePayload
         description: The message's payload, if any.
-        additionalProperties: true
       headers:
         type: object
         title: AsyncApiMessageHeaders
         description: The message's headers, if any.
-        additionalProperties: true
   asyncApiInboundMessage:
-    type: object
+    $ref: '#/$defs/asyncApiOutboundMessage'
     title: AsyncApiInboundMessage
     description: Represents a message counsumed by an AsyncAPI subscription.
-    allOf:
-      - $ref: '#/$defs/asyncApiOutboundMessage'
     properties:
       correlationId:
         type: string
