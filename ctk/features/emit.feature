@@ -8,7 +8,7 @@ Feature: Emit Task
     Given a workflow with definition:
     """yaml
     document:
-      dsl: '1.0.0'
+      dsl: '1.0.1'
       namespace: default
       name: emit
       version: '1.0.0'
