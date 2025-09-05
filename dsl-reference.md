@@ -543,6 +543,8 @@ The [MCP Call](#mcp-call) enables workflows to interact with MCP servers that us
 
 > [!NOTE]
 > On success the output is the JSON-RPC result. On failure runtimes must raise an error with type [https://serverlessworkflow.io/spec/1.0.0/errors/runtime](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#standard-error-types).
+>
+> This call only supports MCP over HTTP transport mechanism and not STDIO (communication over standard in and standard out).
 
 ###### Examples
 
