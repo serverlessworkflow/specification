@@ -15,7 +15,7 @@
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
         + [A2A](#a2a-call)
-        + MCP(#mcp-call)
+        + [MCP](#mcp-call)
     - [Do](#do)
     - [Emit](#emit)
     - [For](#for)
