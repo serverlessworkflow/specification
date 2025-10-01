@@ -15,6 +15,7 @@
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
         + [A2A](#a2a-call)
+        + [MCP](#mcp-call)
     - [Do](#do)
     - [Emit](#emit)
     - [For](#for)
@@ -322,6 +323,7 @@ Serverless Workflow defines several default functions that **MUST** be supported
 - [HTTP](#http-call)
 - [OpenAPI](#openapi-call)
 - [A2A](#a2a-call)
+- [MCP](#mcp-call)
 
 ##### AsyncAPI Call
 
@@ -525,6 +527,71 @@ do:
             parts:
               - kind: text
                 text: Generate the Q1 sales report.
+```
+
+##### MCP Call
+
+The [MCP Call](#mcp-call) enables workflows to interact with MCP servers that are used by AI agents (https://modelcontextprotocol.io/).
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:--|:---:|:---:|:---|
+| method | `string` | `yes` | The MCP JSON-RPC method to send.<br>*Supported values are: `initialize`, `notifications/initialized`, `prompts/list`, `prompts/get`, `notifications/prompts/list_changed`, `resources/list`, `resources/read`, `resources/templates/list`, `notifications/resources/list_changed`, `tools/list`, `tools/call`, `notifications/tools/list_changed`, `logging/setLevel`, and `notifications/message`* |
+| server | `string`\|[`endpoint`](#endpoint) | `yes` | An URI, an object (for HTTP) or a filename (for STDIO) that describes the MCP server to call.<br>|
+| parameters | `map` <br> `string` | `no` | The parameters for the MCP RPC method. For the `initialize` method, runtimes must set the `protocolVersion` parameter to the used version. Runtimes must implement the MCP specification version of 2025-06-18. <br>*Can be an object or a runtime expression.* |
+
+> [!NOTE]
+> On success the output is the JSON-RPC result. On failure runtimes must raise an error with type [https://serverlessworkflow.io/spec/1.0.0/errors/runtime](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#standard-error-types).
+>
+> This call supports MCP over both HTTP and STDIO (communication over standard in and standard out) transport mechanisms.
+
+###### Examples
+
+This example shows an initialization phase as the first interaction between MCP client and server. The client sends its supported version, capabilities, and implementation information in the initialize request. The server MUST respond with its own capabilities and information including the supported version.
+
+```yaml
+document:
+  dsl: '1.0.1'
+  namespace: test
+  name: mcp-example
+  version: '0.1.0'
+do:
+  - GenerateReport:
+      call: mcp
+      with:
+        method: initialize
+        server:
+          endpoint: https://example.com/mcp
+        parameters:
+          protocolVersion: '2025-03-26'
+          capabilities:
+            roots:
+              listChanged: true 
+          clientInfo:
+            name: 'ExampleClient'
+            version: '1.0.0'
+```
+
+The following example showcases a prompts/list request by the client to retrieve available prompts from the MCP server.
+
+```yaml
+document:
+  dsl: '1.0.1'
+  namespace: test
+  name: mcp-example
+  version: '0.1.0'
+do:
+  - GenerateReport:
+      call: mcp
+      with:
+        method: prompts/get
+        server:
+          endpoint: https://example.com/mcp
+        parameters:
+          name: "code_review"
+          arguments:
+            code: "def hello():\n    print('world')"
 ```
 
 #### Do
