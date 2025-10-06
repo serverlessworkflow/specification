@@ -564,13 +564,13 @@ do:
         server:
           endpoint: https://example.com/mcp
         parameters:
-          protocolVersion: '2025-03-26'
+          protocolVersion: '2025-06-18'
           capabilities:
             roots:
               listChanged: true 
           clientInfo:
             name: 'ExampleClient'
-            version: '1.0.0'
+            version: '0.1.0'
 ```
 
 The following example showcases a prompts/list request by the client to retrieve available prompts from the MCP server.
