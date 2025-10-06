@@ -1,0 +1,20 @@
+document:
+  dsl: '1.0.1'
+  namespace: test
+  name: mcp-example
+  version: '0.1.0'
+do:
+  - GenerateReport:
+      call: mcp
+      with:
+        method: initialize
+        server:
+          endpoint: https://example.com/mcp
+        parameters:
+          protocolVersion: '2025-06-18'
+          capabilities:
+            roots:
+              listChanged: true 
+          clientInfo:
+            name: 'ExampleClient'
+            version: '0.1.0'
