@@ -567,10 +567,7 @@ do:
           protocolVersion: '2025-06-18'
           capabilities:
             roots:
-              listChanged: true 
-          clientInfo:
-            name: 'ExampleClient'
-            version: '0.1.0'
+              listChanged: true
 ```
 
 The following example showcases a prompts/list request by the client to retrieve available prompts from the MCP server.
