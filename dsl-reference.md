@@ -2358,7 +2358,7 @@ timeout:
 
 ### Duration
 
-Defines a duration.
+Defines a duration. Durations can be defined through properties, with an ISO 8601 string or with a runtime expression that is evaluated to an ISO 8601 string
 
 #### Properties
 
