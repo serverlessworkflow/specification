@@ -1215,10 +1215,13 @@ $defs:
             description: Number of milliseconds, if any.
         title: DurationInline
         description: The inline definition of a duration.
+      - $ref: '#/$defs/runtimeExpression'
+        title: DurationExpression
+        description: Runtime expression that generates an ISO 8601 
       - type: string
         pattern: '^P(?!$)(\d+(?:\.\d+)?Y)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?W)?(\d+(?:\.\d+)?D)?(T(?=\d)(\d+(?:\.\d+)?H)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?S)?)?$'
-        title: DurationExpression
-        description: The ISO 8601 expression of a duration.
+        title: DurationLiteral
+        description: The Literal ISO 8601 representation of a duration. 
   error:
     type: object
     title: Error
