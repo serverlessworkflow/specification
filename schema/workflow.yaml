@@ -506,8 +506,8 @@ $defs:
                     - type: string
                   title: WithMCPParameters
                   description: The parameters object to send with the MCP method.
-              required: [ method, server ]
-              unevaluatedProperties: false              
+              required: [ server, method ]
+              unevaluatedProperties: false
       - title: CallFunction
         description: Defines the function call to perform.
         type: object
