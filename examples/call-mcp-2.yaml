@@ -1,7 +1,7 @@
 document:
   dsl: '1.0.1'
   namespace: test
-  name: mcp-example
+  name: mcp-example-1
   version: '0.1.0'
 do:
   - GenerateReport:

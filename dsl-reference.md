@@ -554,7 +554,7 @@ This example shows an initialization phase as the first interaction between MCP 
 document:
   dsl: '1.0.1'
   namespace: test
-  name: mcp-example
+  name: mcp-example-1
   version: '0.1.0'
 do:
   - GenerateReport:
@@ -565,9 +565,6 @@ do:
           endpoint: https://example.com/mcp
         parameters:
           protocolVersion: '2025-06-18'
-          capabilities:
-            roots:
-              listChanged: true
 ```
 
 The following example showcases a prompts/list request by the client to retrieve available prompts from the MCP server.
@@ -576,7 +573,7 @@ The following example showcases a prompts/list request by the client to retrieve
 document:
   dsl: '1.0.1'
   namespace: test
-  name: mcp-example
+  name: mcp-example-2
   version: '0.1.0'
 do:
   - GenerateReport:
