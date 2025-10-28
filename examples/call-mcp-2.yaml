@@ -4,7 +4,7 @@ document:
   name: mcp-example-1
   version: '0.1.0'
 do:
-  - GenerateReport:
+  - getPrompts:
       call: mcp
       with:
         method: prompts/get

@@ -557,7 +557,7 @@ document:
   name: mcp-example-1
   version: '0.1.0'
 do:
-  - GenerateReport:
+  - initializeMCP:
       call: mcp
       with:
         method: initialize
@@ -576,7 +576,7 @@ document:
   name: mcp-example-2
   version: '0.1.0'
 do:
-  - GenerateReport:
+  - getPrompts:
       call: mcp
       with:
         method: prompts/get
