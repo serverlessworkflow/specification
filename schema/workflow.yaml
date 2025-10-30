@@ -586,7 +586,7 @@ $defs:
             call:
               type: string
               not:
-                enum: ["asyncapi", "grpc", "http", "openapi", "a2a"]
+                enum: ["asyncapi", "grpc", "http", "openapi", "a2a", "mcp"]
               description: The name of the function to call.
             with:
               type: object
