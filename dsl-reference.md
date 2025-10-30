@@ -15,6 +15,7 @@
         + [HTTP](#http-call)
         + [OpenAPI](#openapi-call)
         + [A2A](#a2a-call)
+        + [MCP](#mcp-call)
     - [Do](#do)
     - [Emit](#emit)
     - [For](#for)
@@ -496,7 +497,7 @@ The [A2A Call](#a2a-call) enables workflows to interact with AI agents described
 | method | `string` | `yes` | The A2A JSON-RPC method to send.<br>*Supported values are:  `message/send`, `message/stream`, `tasks/get`, `tasks/list`, `tasks/cancel`, `tasks/resubscribe`, `tasks/pushNotificationConfig/set`, `tasks/pushNotificationConfig/get`, `tasks/pushNotificationConfig/list`, `tasks/pushNotificationConfig/delete`, and `agent/getAuthenticatedExtendedCard`* |
 | agentCard | [`externalResource`](#external-resource) | `no` | The AgentCard resource that describes the agent to call.<br>*Required if `server` has not been set.* |
 | server | `string`\|[`endpoint`](#endpoint) | `no` | An URI or an object that describes the A2A server to call.<br>*Required if `agentCard` has not been set, otherwise ignored* |
-| parameters | `map` <br> `string` | `no` | The parameters for the A2A RPC method. For the `message/send` and `message/stream` methods, runtimes must default `message.messageId` to a uuid and `message.role` to `user`.<br>*Can be an object or a direct runtime expression.* |
+| parameters | `map` <br> `string` | `no` | The parameters for the A2A RPC method. For the `message/send` and `message/stream` methods, runtimes must default `message.messageId` to a uuid and `message.role` to `user`.<br>*Supports [runtime expressions](dsl.md#runtime-expressions).* |
 
 > [!NOTE]
 > The `security` and `securitySchemes` fields of the AgentCard contain authentication requirements and schemes for when communicating with the agent.
@@ -525,6 +526,56 @@ do:
             parts:
               - kind: text
                 text: Generate the Q1 sales report.
+```
+
+##### MCP Call
+
+The [MCP Call](#mcp-call) enables workflows to interact with [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers.
+
+###### Properties
+
+| Name | Type | Required | Description|
+|:-----|:----:|:--------:|:-----------|
+| protocolVersion | `string` | `yes` | The version of the MCP protocol to use.<br>*Defaults to `2025-06-18`.* |
+| method | `string` | `yes` | The MCP method to call.<br>*Supported values are:*<br>*- `tools/list`: Lists available tools*<br>*- `tools/call`: Calls a specific tool.*<br>*- `prompts/list`: Lists available prompts*<br>*- `prompts/get`: Gets a specific prompt.*<br>*- `resources/list`: Lists available resources.*<br>*- `resources/read`: Reads a specific resource.*<br>*- `resources/templates/list`: Lists available resource templates* |
+| parameters | `map`<br>`string` | `no` | The MCP method parameters.<br>*Supports [runtime expressions](dsl.md#runtime-expressions).* |
+| timeout | `string`<br>[`duration`](#duration) | `no` | The [`duration`](#duration) after which the MCP call times out. |
+| transport | [`transport`](#mcp-transport) | `yes` | The transport to use to perform the MCP call. |
+| client | [`client`](#mcp-client) | `no` | Describes the client used to perform the MCP call. |
+
+> [!IMPORTANT]
+> Before making any MCP requests, runtimes **must** first send an `initialize` call to establish the connection.
+> In most cases, client libraries handle this initialization automatically.
+
+> [!NOTE]
+> On success the output of the call is the JSON-RPC result. On failure, runtimes must raise an error with type [https://serverlessworkflow.io/spec/1.0.0/errors/runtime](https://github.com/serverlessworkflow/specification/blob/main/dsl-reference.md#standard-error-types).
+
+###### Examples
+
+```yaml
+document:
+  dsl: '1.0.1'
+  namespace: test
+  name: a2a-example
+  version: '0.1.0'
+do:
+  - publishMessageToSlack:
+      call: mcp
+      with:
+        method: tools/call
+        parameters:
+          name: conversations_add_message
+          arguments:
+            channel_id: 'C1234567890'
+            thread_ts: '1623456789.123456'
+            payload: 'Hello, world! :wave:'
+            content_type: text/markdown
+        transport:
+          stdio:
+            command: npx
+            arguments: [ slack-mcp-serverr@latest, --transport, stdio ]
+            environment:
+              SLACK_MCP_XOXP_TOKEN: xoxp-xv6Cv3jKqNW8esm5YnsftKwIzoQHUzAP
 ```
 
 #### Do
@@ -2706,4 +2757,76 @@ References a workflow definition.
 name: greet
 namespace: samples
 version: '0.1.0-rc2'
+```
+
+### MCP Transport
+
+Defines the transport to use for a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) call.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-----|:----:|:--------:|:------------|
+| http | [`mcpHttpTransport`](#mcp-http-transport) | `no` | The definition of the HTTP transport to use.<br>*Required if `stdio` has not been set.* |
+| stdio | [`mcpStdioTransport`](#mcp-stdio-transport) | `no` |  The definition of the STDIO transport to use.<br>*Required if `http` has not been set.* |
+| options | `map[string, string]` | `no` | A key/value mapping containing additional transport-specific configuration options, if any. |
+
+### MCP HTTP Transport
+
+Defines a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) HTTP transport.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-----|:----:|:--------:|:------------|
+| endpoint | `string`<br>[`endpoint`](#endpoint) | `yes` | An URI or an object that references the MCP server endpoint to connect to.<br>*Supports [runtime expressions](dsl.md#runtime-expressions).* |
+| headers | `map[string, string]` | `no` | A key/value mapping of the HTTP headers to send with requests, if any. |
+
+#### Examples
+
+```yaml
+transport:
+  http:
+    endpoint: https://mcp.contoso.com
+    headers:
+      authorization: Bearer 8AE4SZgJX8tw40oJJq7VJt1plKnVnH8I
+```
+
+### MCP STDIO Transport
+
+Defines a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) STDIO transport.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-----|:----:|:--------:|:------------|
+| command | `string` | `yes` | The command used to run the MCP server.<br>*Supports [runtime expressions](dsl.md#runtime-expressions).* |
+| arguments | `string[]` | `no` | An optional list of arguments to pass to the command. |
+| environment | `map[sttring, string]` | `no` | A key/value mapping, if any, of environment variables used to configure the MCP server. |
+
+#### Examples
+
+```yaml
+transport:
+  stdio:
+    command: uvx  
+    arguments: [ mcp-server-fetch ]
+```
+
+### MCP Client
+
+Describes the client of a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) call.
+
+#### Properties
+
+| Name | Type | Required | Description |
+|:-----|:----:|:--------:|:------------|
+| name | `string` | `yes` | The name of the client used to connect to the MCP server. |
+| version | `string` | `yes` | The version of the client used to connect to the MCP server. |
+
+#### Examples
+
+```yaml
+name: synapse
+version: '1.0.0-alpha5.2'
 ```
