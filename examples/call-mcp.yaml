@@ -1,0 +1,23 @@
+document:
+  dsl: '1.0.1'
+  namespace: test
+  name: mcp-example
+  version: '0.1.0'
+do:
+  - publishMessageToSlack:
+      call: mcp
+      with:
+        method: tools/call
+        parameters:
+          name: conversations_add_message
+          arguments:
+            channel_id: 'C1234567890'
+            thread_ts: '1623456789.123456'
+            payload: 'Hello, world! :wave:'
+            content_type: text/markdown
+        transport:
+          stdio:
+            command: npx
+            arguments: [ slack-mcp-serverr@latest, --transport, stdio ]
+            environment:
+              SLACK_MCP_XOXP_TOKEN: xoxp-xv6Cv3jKqNW8esm5YnsftKwIzoQHUzAP

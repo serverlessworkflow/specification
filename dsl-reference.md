@@ -556,7 +556,7 @@ The [MCP Call](#mcp-call) enables workflows to interact with [Model Context Prot
 document:
   dsl: '1.0.1'
   namespace: test
-  name: a2a-example
+  name: mcp-example
   version: '0.1.0'
 do:
   - publishMessageToSlack:
