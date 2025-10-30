@@ -573,7 +573,7 @@ $defs:
                       type: string
                       title: McpClientVersion
                       description: The version of the client used to connect to the MCP server.
-                  requireed: [ name, version ]
+                  required: [ name, version ]
               required: [ method, transport ]
       - title: CallFunction
         description: Defines the function call to perform.
