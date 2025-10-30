@@ -573,7 +573,7 @@ do:
         transport:
           stdio:
             command: npx
-            arguments: [ slack-mcp-serverr@latest, --transport, stdio ]
+            arguments: [ slack-mcp-server@latest, --transport, stdio ]
             environment:
               SLACK_MCP_XOXP_TOKEN: xoxp-xv6Cv3jKqNW8esm5YnsftKwIzoQHUzAP
 ```
