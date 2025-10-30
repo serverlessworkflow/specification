@@ -24,7 +24,7 @@ export module SWSchemaValidator {
   const ajv = new Ajv({ strict: false, allowUnionTypes: true });
   addFormats(ajv);
 
-  const workflowSchemaId = "https://serverlessworkflow.io/schemas/1.0.1/workflow.yaml";
+  const workflowSchemaId = "https://serverlessworkflow.io/schemas/1.0.2/workflow.yaml";
   const schemaPath = "../../../schema";
   export const defaultEncoding = "utf-8";
 
@@ -61,7 +61,7 @@ export module SWSchemaValidator {
     const validate = ajv.getSchema(workflowSchemaId);
 
     if (!validate) {
-      throw new Error(`Failed to validate schema on workflow`);
+      throw new Error(`Unable to find schema with id '${workflowSchemaId }'`);
     }
 
     const isValid = validate(workflow);
