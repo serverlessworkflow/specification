@@ -1,4 +1,4 @@
-$id: https://serverlessworkflow.io/schemas/1.0.1/workflow.yaml
+$id: https://serverlessworkflow.io/schemas/1.0.2/workflow.yaml
 $schema: https://json-schema.org/draft/2020-12/schema
 description: Serverless Workflow DSL - Workflow Schema.
 type: object
@@ -473,6 +473,108 @@ $defs:
                   description: The parameters object to send with the A2A method.
               required: [ method ]
               unevaluatedProperties: false
+      - title: CallMCP
+        description: Defines the MCP call to perform.
+        type: object
+        unevaluatedProperties: false
+        required: [ call, with ]
+        allOf:
+        - $ref: '#/$defs/taskBase'
+        - properties:
+            call:
+              type: string
+              const: mcp
+            with:
+              type: object
+              title: MCPArguments
+              description: The MCP call arguments.
+              properties:
+                protocolVersion:
+                  type: string
+                  default: '2025-06-18'
+                  title: McpProtocolVersion
+                  description: The version of the MCP protocol to use.
+                method:
+                  type: string
+                  enum: [ tools/list, tools/call, prompts/list, prompts/get, resources/list, resources/read, resources/templates/list ]
+                  title: McpMethod
+                  description: The MCP method to call.
+                parameters:
+                  oneOf:
+                    - type: object
+                      additionalProperties: true
+                    - type: string
+                  title: McpMethodParameters
+                  description: The MCP method parameters.
+                timeout:
+                  $ref: '#/$defs/duration'
+                  title: McpCallTimeout
+                  description: The duration after which the MCP call times out.
+                transport:
+                  type: object
+                  title: McpCallTransport
+                  description: The transport to use to perform the MCP call.
+                  properties:
+                    http:
+                      type: object
+                      title: McpHttpTransport
+                      description: The definition of the HTTP transport to use.
+                      properties:
+                        endpoint:
+                          $ref: '#/$defs/endpoint'
+                          title: McpHttpTransportEndpoint
+                          description: The MCP server endpoint to connect to.
+                        headers:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          title: McpHttpTransportHeaders
+                          description: A key/value mapping of the HTTP headers to send with requests, if any.
+                      required: [ endpoint ]
+                    stdio:
+                      type: object
+                      title: McpStdioTransport
+                      description: The definition of the STDIO transport to use.
+                      properties:
+                        command:
+                          type: string
+                          title: McpStdioTransportCommand
+                          description: The command used to run the MCP server.
+                        arguments:
+                          type: array
+                          items:
+                            type: string
+                          title: McpStdioTransportArguments
+                          description: An optional list of arguments to pass to the command.
+                        environment:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          title: McpStdioTransportEnvironment
+                          description: A key/value mapping, if any, of environment variables used to configure the MCP server.
+                      required: [ command ]
+                    options:
+                      type: object
+                      additionalProperties:
+                        type: string
+                  oneOf:
+                    - required: [http]
+                    - required: [stdio]
+                client:
+                  type: object
+                  title: McpClient
+                  description: Describes the client used to perform the MCP call.
+                  properties:
+                    name:
+                      type: string
+                      title: McpClientName
+                      description: The name of the client used to connect to the MCP server.
+                    description:
+                      type: string
+                      title: McpClientVersion
+                      description: The version of the client used to connect to the MCP server.
+                  required: [ name, version ]
+              required: [ method, transport ]
       - title: CallFunction
         description: Defines the function call to perform.
         type: object
@@ -484,7 +586,7 @@ $defs:
             call:
               type: string
               not:
-                enum: ["asyncapi", "grpc", "http", "openapi", "a2a"]
+                enum: ["asyncapi", "grpc", "http", "openapi", "a2a", "mcp"]
               description: The name of the function to call.
             with:
               type: object
