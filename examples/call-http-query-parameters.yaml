@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../schema/workflow.yaml
 document:
-  dsl: '1.0.1'
+  dsl: '1.0.2'
   namespace: examples
   name: http-query-params
   version: '1.0.0'
