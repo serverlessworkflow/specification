@@ -809,6 +809,16 @@ $defs:
                       type: object
                       title: ContainerEnvironment
                       description: A key/value mapping of the environment variables, if any, to use when running the configured process.
+                    stdin:
+                      type: string
+                      title: ContainerStdin
+                      description: A runtime expression, if any, passed as argv to the command or default container CMD
+                    arguments:
+                      type: array
+                      title: ContainerArguments
+                      description: A list of the arguments, if any, passed as argv to the command or default container CMD
+                      items:
+                        type: string
                     lifetime:
                       $ref: '#/$defs/containerLifetime'
                       title: ContainerLifetime
@@ -828,11 +838,16 @@ $defs:
                       type: string
                       title: ScriptLanguage
                       description: The language of the script to run.
+                    stdin:
+                      type: string
+                      title: ScriptStdin
+                      description: A runtime expression, if any, to the script as standard input (stdin).
                     arguments:
-                      type: object
+                      type: array
                       title: ScriptArguments
-                      description: A key/value mapping of the arguments, if any, to use when running the configured script.
-                      additionalProperties: true
+                      description: A list of the arguments, if any, to the script as argv
+                      items:
+                        type: string                    
                     environment:
                       type: object
                       title: ScriptEnvironment
@@ -870,11 +885,16 @@ $defs:
                       type: string
                       title: ShellCommand
                       description: The shell command to run.
+                    stdin:
+                      type: string
+                      title: ShellStdin
+                      description: A runtime expression, if any, to the shell command as standard input (stdin).
                     arguments:
-                      type: object
+                      type: array
                       title: ShellArguments
-                      description: A list of the arguments of the shell command to run.
-                      additionalProperties: true
+                      description: A list of the arguments, if any, to the shell command as argv
+                      items:
+                        type: string    
                     environment:
                       type: object
                       title: ShellEnvironment
