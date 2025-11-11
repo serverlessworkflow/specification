@@ -1,0 +1,22 @@
+document:
+  dsl: 1.0.2
+  namespace: examples
+  name: run-script-with-stdin-and-arguments
+  version: 1.0.0
+do:
+  - setInput:
+      set:
+        message: Hello World
+  - runShell:
+      input:
+        from: ${ .message }
+      run:
+        shell:
+          stdin: ${ . }
+          command: |
+            input=$(cat)
+            echo "STDIN was: $input"
+            echo "ARGS are $1 $2"
+          arguments:
+          - Foo
+          - Bar

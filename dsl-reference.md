@@ -941,12 +941,6 @@ document:
   name: run-container-example
   version: '0.1.0'
 do:
-document:
-  dsl: 1.0.0
-  namespace: examples
-  name: call-script-input-type-example
-  version: 1.0.0-alpha1
-do:
   - setInput:
       set:
         message: Hello World

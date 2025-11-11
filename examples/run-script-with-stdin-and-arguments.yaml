@@ -1,0 +1,46 @@
+document:
+  dsl: 1.0.2
+  namespace: examples
+  name: run-script-with-stdin-and-arguments
+  version: 1.0.0
+do:
+  - setInput:
+      set:
+        url: https://petstore.swagger.io/v2/pet/2
+  - runScript:
+      output: 
+        as: "${ fromjson }"
+      run:
+        script:
+          language: javascript
+          stdin: ${ . }
+          environment:
+           url: https://petstore.swagger.io/v2/pet/2
+          arguments:
+          - https://petstore.swagger.io/v2/pet/2
+          code: |
+            // Reading Input from STDIN
+            const input = await new Promise((resolve) => {
+              let data = '';
+              process.stdin.setEncoding('utf8');
+              process.stdin.on('data', chunk => data += chunk);
+              process.stdin.on('end', () => {
+                try {
+                  resolve(JSON.parse(data));
+                } catch (error) {
+                  resolve({})
+                }
+              });
+            });
+
+            const responseStdin = await fetch(input.url);
+
+            // Reading from argv
+            const [_, __, url] = process.argv;
+            const responseArgv = await fetch(url);
+
+            // Reading from env
+            const envUrl = process.env.url;
+            const responseEnv = await fetch(envUrl);
+
+            console.log(JSON.stringify({responseStdin: responseStdin.data, responseArgv: responseArgv.data, responseEnv: responseEnv.data }))
