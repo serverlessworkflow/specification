@@ -4,43 +4,27 @@ document:
   name: run-script-with-stdin-and-arguments
   version: 1.0.0
 do:
-  - setInput:
-      set:
-        url: https://petstore.swagger.io/v2/pet/2
   - runScript:
       output: 
         as: "${ fromjson }"
       run:
         script:
           language: javascript
-          stdin: ${ . }
+          stdin: "Hello Workflow"
           environment:
-           url: https://petstore.swagger.io/v2/pet/2
+           foo: bar
           arguments:
-          - https://petstore.swagger.io/v2/pet/2
+          - hello
           code: |
             // Reading Input from STDIN
-            const input = await new Promise((resolve) => {
-              let data = '';
-              process.stdin.setEncoding('utf8');
-              process.stdin.on('data', chunk => data += chunk);
-              process.stdin.on('end', () => {
-                try {
-                  resolve(JSON.parse(data));
-                } catch (error) {
-                  resolve({})
-                }
-              });
-            });
-
-            const responseStdin = await fetch(input.url);
+            import { readFileSync } from 'node:fs';
+            const stdin = readFileSync(process.stdin.fd, 'utf8');
+            console.log('stdin > ', stdin) // Output: stdin > Hello Workflow
 
             // Reading from argv
-            const [_, __, url] = process.argv;
-            const responseArgv = await fetch(url);
+            const [_, __, arg] = process.argv;
+            console.log('arg > ', arg) // Output: arg > hello
 
             // Reading from env
-            const envUrl = process.env.url;
-            const responseEnv = await fetch(envUrl);
-
-            console.log(JSON.stringify({responseStdin: responseStdin.data, responseArgv: responseArgv.data, responseEnv: responseEnv.data }))
+            const foo = process.env.foo;
+            console.log('env > ', foo) // Output: env > bar
