@@ -17,6 +17,7 @@ do:
             input=$(cat)
             echo "STDIN was: $input"
             echo "ARGS are $1 $2"
+          stdin: ${ . }
           arguments:
           - Foo
           - Bar

@@ -950,6 +950,7 @@ do:
       run:
         container:
           image: alpine
+          stdin: ${ . }
           command: |
             input=$(cat)
             echo "STDIN was: $input"
