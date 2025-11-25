@@ -896,7 +896,7 @@ do:
   - runScript:
       run:
         script:
-          language: js
+          language: javascript
           code: >
             Some cool multiline script
 
@@ -928,6 +928,8 @@ Enables the execution of external processes encapsulated within a containerized 
 | ports | `map` | `no` | The container's port mappings, if any  |
 | volumes | `map` | `no` | The container's volume mappings, if any  |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured process |
+| stdin | `string` | `no` | A runtime expression, if any, passed as standard input to the command or default container CMD|
+| arguments | `string[]` | `no` | A list of the arguments, if any, passed as argv to the command or default container CMD |
 | lifetime | [`containerLifetime`](#container-lifetime) | `no` | An object used to configure the container's lifetime. |
 
 ###### Examples
@@ -939,10 +941,23 @@ document:
   name: run-container-example
   version: '0.1.0'
 do:
+  - setInput:
+      set:
+        message: Hello World
   - runContainer:
+      input:
+        from: ${ .message }
       run:
         container:
-          image: fake-image
+          image: alpine
+          stdin: ${ . }
+          command: |
+            input=$(cat)
+            echo "STDIN was: $input"
+            echo "ARGS are $1 $2"
+          arguments:
+          - Foo
+          - Bar
 ```
 
 > [!NOTE]
@@ -961,8 +976,10 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 | language | `string` | `yes` | The language of the script to run.<br>*Supported values are: [`js`](https://tc39.es/ecma262/2024/) and [`python`](https://www.python.org/downloads/release/python-3131/).* |
 | code | `string` | `no` | The script's code.<br>*Required if `source` has not been set.* |
 | source | [externalResource](#external-resource) | `no` | The script's resource.<br>*Required if `code` has not been set.* |
-| arguments | `map` | `no` | A list of the arguments, if any, of the script to run |
+| stdin | `string` | `no` | A runtime expression, if any, to the script as standard input (stdin).|
+| arguments | `string[]` | `no` | A list of the arguments, if any, to the script as argv |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured script process |
+
 
 > [!WARNING]
 > To ensure cross-compatibility, Serverless Workflow strictly limits the versions of supported scripting languages. These versions may evolve with future releases. If you wish to use a different version of a language, you may do so by utilizing the [`container process`](#container-process).
@@ -977,19 +994,21 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 
 ```yaml
 document:
-  dsl: '1.0.2'
-  namespace: test
+  dsl: 1.0.2
+  namespace: examples
   name: run-script-example
-  version: '0.1.0'
+  version: 1.0.0
 do:
   - runScript:
       run:
         script:
-          language: js
+          language: javascript
           arguments:
-            greetings: Hello, world!
-          code: >
-            console.log(greetings)
+          - hello
+          - world
+          code: |
+            const [_, __, arg0, arg1] = process.argv;
+            console.log('arg > ', arg0, arg1)
 ```
 
 ##### Shell Process
@@ -1001,7 +1020,8 @@ Enables the execution of shell commands within a workflow, enabling workflows to
 | Name | Type | Required | Description |
 |:--|:---:|:---:|:---|
 | command | `string` | `yes` | The shell command to run |
-| arguments | `map` | `no` | A list of the arguments of the shell command to run |
+| stdin | `string` | `no` | A runtime expression, if any, to the shell command as standard input (stdin).|
+| arguments | `string[]` | `no` | A list of the arguments, if any, to the shell command as argv |
 | environment | `map` | `no` | A key/value mapping of the environment variables, if any, to use when running the configured process |
 
 ###### Examples
@@ -1013,10 +1033,22 @@ document:
   name: run-shell-example
   version: '0.1.0'
 do:
+  - setInput:
+      set:
+        message: Hello World
   - runShell:
+      input:
+        from: ${ .message }
       run:
         shell:
-          command: 'echo "Hello, ${ .user.name }"'
+          stdin: ${ . }
+          command: |
+            input=$(cat)
+            echo "STDIN was: $input"
+            echo "ARGS are $1 $2"
+          arguments:
+          - Foo
+          - Bar
 ```
 
 ##### Workflow Process
@@ -2493,7 +2525,7 @@ do:
   - runScript:
       run:
         script:
-          language: js
+          language: javascript
           code: >
             Some cool multiline script
         return: code
