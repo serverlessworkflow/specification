@@ -87,6 +87,10 @@ Feature: Data Flow
           output:
             as: '{ ids: [ $input, .id ] }'
     """
+    And given the workflow input is:
+      """yaml
+      petId: 1
+      """
     When the workflow is executed
     Then the workflow should complete with output:
     """yaml
