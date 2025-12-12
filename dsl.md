@@ -742,24 +742,24 @@ document:
   version: '0.1.0'
 use:
   extensions:
-    logging:
-      extend: all
-      before:
-        - sendLog:
-            call: http
-            with:
-              method: post
-              uri: https://fake.log.collector.com
-              body:
-                message: "${ \"Executing task '\($task.reference)'...\" }"
-      after:
-        - sendLog:
-            call: http
-            with:
-              method: post
-              uri: https://fake.log.collector.com
-              body:
-                message: "${ \"Executed task '\($task.reference)'...\" }"
+    - logging:
+        extend: all
+        before:
+          - sendLog:
+              call: http
+              with:
+                method: post
+                uri: https://fake.log.collector.com
+                body:
+                  message: "${ \"Executing task '\($task.reference)'...\" }"
+        after:
+          - sendLog:
+              call: http
+              with:
+                method: post
+                uri: https://fake.log.collector.com
+                body:
+                  message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
   - sampleTask:
       call: http
