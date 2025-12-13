@@ -749,7 +749,7 @@ use:
               call: http
               with:
                 method: post
-                uri: https://fake.log.collector.com
+                endpoint: https://fake.log.collector.com
                 body:
                   message: "${ \"Executing task '\($task.reference)'...\" }"
         after:
@@ -757,7 +757,7 @@ use:
               call: http
               with:
                 method: post
-                uri: https://fake.log.collector.com
+                endpoint: https://fake.log.collector.com
                 body:
                   message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
