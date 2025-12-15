@@ -931,6 +931,7 @@ Enables the execution of external processes encapsulated within a containerized 
 | stdin | `string` | `no` | A runtime expression, if any, passed as standard input to the command or default container CMD|
 | arguments | `string[]` | `no` | A list of the arguments, if any, passed as argv to the command or default container CMD |
 | lifetime | [`containerLifetime`](#container-lifetime) | `no` | An object used to configure the container's lifetime. |
+| pullPolicy | `string` | `no` | Policy that controls how the container's image should be pulled from the registry. Defaults to `ifNotPresent` |
 
 ###### Examples
 
@@ -958,6 +959,7 @@ do:
           arguments:
           - Foo
           - Bar
+          pullPolicy: always
 ```
 
 > [!NOTE]

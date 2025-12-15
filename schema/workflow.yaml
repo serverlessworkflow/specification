@@ -823,6 +823,11 @@ $defs:
                       $ref: '#/$defs/containerLifetime'
                       title: ContainerLifetime
                       description: An object, if any, used to configure the container's lifetime
+                    pullPolicy:
+                      type: string
+                      title: ContainerPullPolicy
+                      description: Policy that controls how the container's image should be pulled from the registry. Defaults to `ifNotPresent`
+                      enum: [ ifNotPresent, always, never ]
                   required: [ image ]
               required: [ container ]
             - title: RunScript
