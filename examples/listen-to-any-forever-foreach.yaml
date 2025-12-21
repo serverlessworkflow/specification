@@ -1,5 +1,5 @@
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: listen-to-any-while-foreach
   version: '0.1.0'
