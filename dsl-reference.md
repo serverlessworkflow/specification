@@ -2182,6 +2182,7 @@ The Retry is a fundamental concept in the Serverless Workflow DSL, used to defin
 |----------|:----:|:--------:|-------------|
 | when | `string` | `no` | A a runtime expression used to determine whether or not to retry running the task, in a given context. |
 | exceptWhen | `string` | `no` | A runtime expression used to determine whether or not to retry running the task, in a given context. |
+| delay | [`duration`](#duration) | `no` | The duration, if any, to wait between retry attempts. |
 | limit | [`retry`](#retry-limit) | `no` | The limits, if any, to impose to the retry policy. |
 | backoff | [`backoff`](#backoff) | `no` | The backoff strategy to use, if any. |
 | jitter | [`jitter`](#jitter) | `no` | The parameters, if any, that control the randomness or variability of the delay between retry attempts. |
