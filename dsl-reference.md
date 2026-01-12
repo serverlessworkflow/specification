@@ -133,7 +133,7 @@ Defines the workflow's reusable components.
 | authentications | [`map[string, authentication]`](#authentication) | `no` | A name/value mapping of the workflow's reusable authentication policies. |
 | catalogs | [`map[string, catalog]`](#catalog) | `no` | A name/value mapping of the workflow's reusable resource catalogs. |
 | errors | [`map[string, error]`](#error) | `no` | A name/value mapping of the workflow's reusable errors. | 
-| extensions | [`map[string, extension]`](#extension) | `no` | A list of the workflow's reusable extensions. |
+| extensions | [`extension[]`](#extension) | `no` | A list of the workflow's reusable extensions. |
 | functions | [`map[string, task]`](#task) | `no` | A name/value mapping of the workflow's reusable tasks. |
 | retries | [`map[string, retryPolicy]`](#retry) | `no` | A name/value mapping of the workflow's reusable retry policies. |
 | secrets | `string[]` | `no` | A list containing the workflow's secrets. |
@@ -2006,8 +2006,8 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 |----------|:----:|:--------:|-------------|
 | extend |  `string` | `yes` | The type of task to extend<br>Supported values are: `call`, `composite`, `emit`, `extension`, `for`, `listen`, `raise`, `run`, `set`, `switch`, `try`, `wait` and `all` |
 | when | `string` | `no` | A runtime expression used to determine whether or not the extension should apply in the specified context |
-| before | [`map[string, task]`](#task) | `no` | The task to execute, if any, before the extended task |
-| after | [`map[string, task]`](#task) | `no` | The task to execute, if any, after the extended task |
+| before | [`task[]`](#task) | `no` | The list of tasks to execute, if any, before the extended task |
+| after | [`task[]`](#task) | `no` | The list of tasks to execute, if any, after the extended task |
 
 #### Examples
 
