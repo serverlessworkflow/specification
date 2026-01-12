@@ -448,8 +448,8 @@ The following table shows which arguments are available for each runtime express
 | Runtime Expression | Evaluated on | Produces | `$context` | `$input` | `$output` | `$secrets` | `$task` | `$workflow` | `$runtime` | `$authorization` |
 |:-------------------|:---------:|:---------:|:---------:|:---------:|:-------:|:---------:|:-------:|:----------:|:----------:|:----------:|
 | Workflow `input.from` | Raw workflow input | Transformed workflow input | | | | ✔ | | ✔ | ✔ | |
+| Task `if` | Raw task input (i.e. transformed workflow input for the first task, transformed output from previous task otherwise) | | ✔ | | | ✔ | ✔ | ✔ | ✔ | |
 | Task `input.from` | Raw task input (i.e. transformed workflow input for the first task, transformed output from previous task otherwise) | Transformed task input | ✔ | | | ✔ | ✔ | ✔ | ✔ | |
-| Task `if` | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | |
 | Task definition | Transformed task input | | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | ✔ |
 | Task `output.as` | Raw task output | Transformed task output | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | ✔ |
 | Task `export.as` | Transformed task output | `$context` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
@@ -742,24 +742,24 @@ document:
   version: '0.1.0'
 use:
   extensions:
-    logging:
-      extend: all
-      before:
-        - sendLog:
-            call: http
-            with:
-              method: post
-              uri: https://fake.log.collector.com
-              body:
-                message: "${ \"Executing task '\($task.reference)'...\" }"
-      after:
-        - sendLog:
-            call: http
-            with:
-              method: post
-              uri: https://fake.log.collector.com
-              body:
-                message: "${ \"Executed task '\($task.reference)'...\" }"
+    - logging:
+        extend: all
+        before:
+          - sendLog:
+              call: http
+              with:
+                method: post
+                endpoint: https://fake.log.collector.com
+                body:
+                  message: "${ \"Executing task '\($task.reference)'...\" }"
+        after:
+          - sendLog:
+              call: http
+              with:
+                method: post
+                endpoint: https://fake.log.collector.com
+                body:
+                  message: "${ \"Executed task '\($task.reference)'...\" }"
 do:
   - sampleTask:
       call: http
