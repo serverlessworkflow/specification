@@ -1,12 +1,11 @@
 document:
   dsl: '1.0.3'
   namespace: test
-  name: run-container
+  name: run-container-with-pull-policy
   version: '0.1.0'
 do:
   - runContainer:
       run:
         container:
           image: hello-world
-          lifetime:
-            cleanup: always
+          pullPolicy: always

@@ -163,7 +163,7 @@ Configures a workflow's runtime expression evaluation.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: order-pet
   version: '0.1.0'
@@ -304,7 +304,7 @@ Enables the execution of a specified function within a workflow, allowing seamle
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: call-example
   version: '0.1.0'
@@ -345,7 +345,7 @@ The [AsyncAPI Call](#asyncapi-call) enables workflows to interact with external 
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: asyncapi-example
   version: '0.1.0'
@@ -401,7 +401,7 @@ The [gRPC Call](#grpc-call) enables communication with external systems via the 
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: grpc-example
   version: '0.1.0'
@@ -440,7 +440,7 @@ The [HTTP Call](#http-call) enables workflows to interact with external services
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: http-example
   version: '0.1.0'
@@ -471,7 +471,7 @@ The [OpenAPI Call](#openapi-call) enables workflows to interact with external se
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: openapi-example
   version: '0.1.0'
@@ -510,7 +510,7 @@ The [A2A Call](#a2a-call) enables workflows to interact with AI agents described
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: a2a-example
   version: '0.1.0'
@@ -554,7 +554,7 @@ The [MCP Call](#mcp-call) enables workflows to interact with [Model Context Prot
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: mcp-example
   version: '0.1.0'
@@ -592,7 +592,7 @@ Serves as a fundamental building block within workflows, enabling the sequential
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: do-example
   version: '0.1.0'
@@ -657,7 +657,7 @@ Allows workflows to publish events to event brokers or messaging systems, facili
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: emit-example
   version: '0.1.0'
@@ -695,7 +695,7 @@ Allows workflows to iterate over a collection of items, executing a defined set 
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: for-example
   version: '0.1.0'
@@ -732,7 +732,7 @@ Allows workflows to execute multiple subtasks concurrently, enabling parallel pr
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: fork-example
   version: '0.1.0'
@@ -785,7 +785,7 @@ Provides a mechanism for workflows to await and react to external events, enabli
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: listen-example
   version: '0.1.0'
@@ -816,7 +816,7 @@ Intentionally triggers and propagates errors. By employing the "Raise" task, wor
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: raise-example
   version: '0.1.0'
@@ -883,7 +883,7 @@ Provides the capability to execute external [containers](#container-process), [s
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: run-example
   version: '0.1.0'
@@ -931,12 +931,13 @@ Enables the execution of external processes encapsulated within a containerized 
 | stdin | `string` | `no` | A runtime expression, if any, passed as standard input to the command or default container CMD|
 | arguments | `string[]` | `no` | A list of the arguments, if any, passed as argv to the command or default container CMD |
 | lifetime | [`containerLifetime`](#container-lifetime) | `no` | An object used to configure the container's lifetime. |
+| pullPolicy | `string` | `no` | Policy that controls how the container's image should be pulled from the registry. Defaults to `ifNotPresent` |
 
 ###### Examples
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: run-container-example
   version: '0.1.0'
@@ -958,6 +959,7 @@ do:
           arguments:
           - Foo
           - Bar
+          pullPolicy: always
 ```
 
 > [!NOTE]
@@ -994,7 +996,7 @@ Enables the execution of custom scripts or code within a workflow, empowering wo
 
 ```yaml
 document:
-  dsl: 1.0.2
+  dsl: 1.0.3
   namespace: examples
   name: run-script-example
   version: 1.0.0
@@ -1028,7 +1030,7 @@ Enables the execution of shell commands within a workflow, enabling workflows to
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: run-shell-example
   version: '0.1.0'
@@ -1067,7 +1069,7 @@ Enables the invocation and execution of nested workflows within a parent workflo
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: run-workflow-example
   version: '0.1.0'
@@ -1096,7 +1098,7 @@ A task used to set data.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: default
   name: set-example
   version: '0.1.0'
@@ -1124,7 +1126,7 @@ Enables conditional branching within workflows, allowing them to dynamically sel
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: switch-example
   version: '0.1.0'
@@ -1208,7 +1210,7 @@ Serves as a mechanism within workflows to handle errors gracefully, potentially 
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: try-example
   version: '0.1.0'
@@ -1265,7 +1267,7 @@ Allows workflows to pause or delay their execution for a specified period of tim
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: wait-example
   version: '0.1.0'
@@ -1715,7 +1717,7 @@ Defines the mechanism used to authenticate users and workflows attempting to acc
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: authentication-example
   version: '0.1.0'
@@ -1752,7 +1754,7 @@ Defines the fundamentals of a 'basic' authentication.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: basic-authentication-example
   version: '0.1.0'
@@ -1787,7 +1789,7 @@ Defines the fundamentals of a 'bearer' authentication
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: bearer-authentication-example
   version: '0.1.0'
@@ -1821,7 +1823,7 @@ Defines the fundamentals of a 'digest' authentication.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: digest-authentication-example
   version: '0.1.0'
@@ -1872,7 +1874,7 @@ Defines the fundamentals of an 'oauth2' authentication.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: oauth2-authentication-example
   version: '0.1.0'
@@ -1934,7 +1936,7 @@ Defines the fundamentals of an 'oidc' authentication.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: oidc-authentication-example
   version: '0.1.0'
@@ -1974,7 +1976,7 @@ For more information about catalogs, refer to the [Serverless Workflow DSL docum
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: catalog-example
   version: '0.1.0'
@@ -2014,7 +2016,7 @@ Extensions enable the execution of tasks prior to those they extend, offering th
 *Perform logging before and after any non-extension task is run:*
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: logging-extension-example
   version: '0.1.0'
@@ -2049,7 +2051,7 @@ do:
 *Intercept HTTP calls to 'https://mocked.service.com' and mock its response:*
 ```yaml
 document:  
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: intercept-extension-example
   version: '0.1.0'
@@ -2365,7 +2367,7 @@ Defines a workflow or task timeout.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: default
   name: timeout-example
   version: '0.1.0'
@@ -2507,7 +2509,7 @@ Describes the result of a process.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: run-container-example
   version: '0.1.0'
@@ -2561,7 +2563,7 @@ Configures the target server of an AsyncAPI operation.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: asyncapi-example
   version: '0.1.0'
@@ -2599,7 +2601,7 @@ Configures an AsyncAPI message to publish.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: asyncapi-example
   version: '0.1.0'
@@ -2664,7 +2666,7 @@ Configures a subscription to an AsyncAPI operation.
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: asyncapi-example
   version: '0.1.0'
@@ -2701,7 +2703,7 @@ Configures the lifetime of an AsyncAPI subscription
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: asyncapi-example
   version: '0.1.0'
@@ -2739,7 +2741,7 @@ Configures the iteration over each item (event or message) consumed by a subscri
 
 ```yaml
 document:
-  dsl: '1.0.2'
+  dsl: '1.0.3'
   namespace: test
   name: asyncapi-example
   version: '0.1.0'
